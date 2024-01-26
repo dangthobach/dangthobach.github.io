@@ -2,7 +2,7 @@
 
 section {
     padding-top: 4vh;
-    height: 70vh;
+    height: 80vh;
     margin: 0 10rem;
     box-sizing: border-box;
     min-height: fit-content;
@@ -114,11 +114,7 @@ section {
   }
   
   /* ABOUT SECTION */
-  
-  #about {
-    position: relative;
-  }
-  
+    
   .about-containers {
     gap: 2rem;
     margin-bottom: 2rem;
@@ -168,9 +164,7 @@ section {
   
   /* EXPERIENCE SECTION */
   
-  #experience {
-    position: relative;
-  }
+
   
   .experience-sub-title {
     color: rgb(85, 85, 85);
@@ -208,3 +202,57 @@ section {
   .section__pic-container  > img {
     border-radius: 50%;
   }
+
+  wired-card{
+    height: 250px;
+  }
+
+  /* CONTACT */
+#contact{
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  height: 70vh;
+}
+
+.contact-info-upper-container {
+  display: flex;
+  justify-content: center;
+  border-radius: 2rem;
+  border: rgb(53, 53, 53) 0.1rem solid;
+  border-color: rgb(163, 163, 163);
+  background: (250, 250, 250);
+  margin: 2rem auto;
+  padding: 0.5rem;
+}
+
+.contact-info-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 1rem;
+}
+
+.contact-info-container p {
+  font-size: larger;
+}
+
+.contact-icon {
+  cursor: default;
+}
+
+.email-icon {
+  height: 2.5rem;
+}
+
+  /* FOOTER */
+
+footer p {
+  text-align: center;
+}
+
+footer{
+  height: 26vh;
+  margin : 0 1rem;
+}

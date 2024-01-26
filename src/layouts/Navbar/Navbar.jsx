@@ -4,6 +4,9 @@ import { RoughNotation} from "react-rough-notation";
 
 
 const Navbar = () => {
+  const divider = {
+    margin : "0 10rem"
+  }
  
   const [isShown, setIsShown] = useState([false,false,false,false]);
 
@@ -31,6 +34,7 @@ const Navbar = () => {
           </ul>
         </div>
       </nav>
+      <wired-divider style={divider}></wired-divider>
       </>
   )
 }

@@ -12,8 +12,8 @@
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-rough-notation": "^1.0.5",
-    "rough-notation": "^0.5.1"
+    "wired-elements": "3.0.0-rc.6",
+    "react-rough-notation": "^1.0.5"
   },
   "devDependencies": {
     "@types/react": "^18.2.43",
