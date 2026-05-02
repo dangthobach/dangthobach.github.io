@@ -804,16 +804,16 @@
     <lastmod>2026-05-02T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/_templates/template-concept</loc>
-    <lastmod>2026-05-02T05:08:30.613Z</lastmod>
+    <lastmod>2026-05-02T09:27:58.383Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/_templates/template-framework-concept</loc>
     <lastmod>2026-05-02T04:58:37.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/_templates/template-pattern</loc>
-    <lastmod>2026-05-02T05:08:30.623Z</lastmod>
+    <lastmod>2026-05-02T09:27:58.406Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/_templates/template-til</loc>
-    <lastmod>2026-05-02T05:08:30.630Z</lastmod>
+    <lastmod>2026-05-02T09:27:58.416Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/concepts/README</loc>
     <lastmod>2026-05-02T04:58:37.000Z</lastmod>
@@ -862,6 +862,9 @@
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/concepts/four-golden-signals</loc>
     <lastmod>2026-04-14T00:00:00.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/concepts/gc-llvm-runtime-cpu-memory-internals</loc>
+    <lastmod>2026-05-02T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/concepts/grpc-protobuf-deep-dive</loc>
     <lastmod>2026-05-02T04:58:37.000Z</lastmod>
