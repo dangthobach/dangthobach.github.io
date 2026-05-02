@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>A Guide to Database Transactions- From ACID to Concurrency Control</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="Dang Tho Bach's Knowledge Base"/><meta property="og:title" content="A Guide to Database Transactions- From ACID to Concurrency Control"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="A Guide to Database Transactions- From ACID to Concurrency Control"/><meta name="twitter:description" content="Modern applications don’t operate in a vacuum."/><meta property="og:description" content="Modern applications don’t operate in a vacuum."/><meta property="og:image:alt" content="Modern applications don’t operate in a vacuum."/><meta property="twitter:domain" content="dangthobach.github.io/knowledge"/><meta property="og:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Guide-to-Database-Transactions--From-ACID-to-Concurrency-Control"/><meta property="twitter:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Guide-to-Database-Transactions--From-ACID-to-Concurrency-Control"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="Modern applications don’t operate in a vacuum."/><meta name="generator" content="Quartz"/><link href="../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiL2hvbWUvcnVubmVyL3dvcmsvZGFuZ3Rob2JhY2guZ2l0aHViLmlvL2Rhbmd0aG9iYWNoLmdpdGh1Yi5pby9xdWFydHovcXVhcnR6L2NvbXBvbmVudHMvc3R5bGVzIiwic291cmNlcyI6WyJtZXJtYWlkLmlubGluZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFHRjtFQUNFOzs7QUFLRjtFQUNFO0VBQ0E7OztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTs7QUFJRjtFQUNFO0VBQ0E7RUFDQSIsInNvdXJjZXNDb250ZW50IjpbIi5leHBhbmQtYnV0dG9uIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbG9hdDogcmlnaHQ7XG4gIHBhZGRpbmc6IDAuNHJlbTtcbiAgbWFyZ2luOiAwLjNyZW07XG4gIHJpZ2h0OiAwOyAvLyBOT1RFOiByaWdodCB3aWxsIGJlIHNldCBpbiBtZXJtYWlkLmlubGluZS50c1xuICBjb2xvcjogdmFyKC0tZ3JheSk7XG4gIGJvcmRlci1jb2xvcjogdmFyKC0tZGFyayk7XG4gIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgYm9yZGVyOiAxcHggc29saWQ7XG4gIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgb3BhY2l0eTogMDtcbiAgdHJhbnNpdGlvbjogMC4ycztcblxuICAmID4gc3ZnIHtcbiAgICBmaWxsOiB2YXIoLS1saWdodCk7XG4gICAgZmlsdGVyOiBjb250cmFzdCgwLjMpO1xuICB9XG5cbiAgJjpob3ZlciB7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIGJvcmRlci1jb2xvcjogdmFyKC0tc2Vjb25kYXJ5KTtcbiAgfVxuXG4gICY6Zm9jdXMge1xuICAgIG91dGxpbmU6IDA7XG4gIH1cbn1cblxucHJlIHtcbiAgJjpob3ZlciA+IC5leHBhbmQtYnV0dG9uIHtcbiAgICBvcGFjaXR5OiAxO1xuICAgIHRyYW5zaXRpb246IDAuMnM7XG4gIH1cbn1cblxuI21lcm1haWQtY29udGFpbmVyIHtcbiAgcG9zaXRpb246IGZpeGVkO1xuICBjb250YWluOiBsYXlvdXQ7XG4gIHotaW5kZXg6IDk5OTtcbiAgbGVmdDogMDtcbiAgdG9wOiAwO1xuICB3aWR0aDogMTAwdnc7XG4gIGhlaWdodDogMTAwdmg7XG4gIG92ZXJmbG93OiBoaWRkZW47XG4gIGRpc3BsYXk6IG5vbmU7XG4gIGJhY2tkcm9wLWZpbHRlcjogYmx1cig0cHgpO1xuICBiYWNrZ3JvdW5kOiByZ2JhKDAsIDAsIDAsIDAuNSk7XG5cbiAgJi5hY3RpdmUge1xuICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgfVxuXG4gICYgPiAjbWVybWFpZC1zcGFjZSB7XG4gICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gICAgYm9yZGVyLXJhZGl1czogNXB4O1xuICAgIHBvc2l0aW9uOiBmaXhlZDtcbiAgICB0b3A6IDUwJTtcbiAgICBsZWZ0OiA1MCU7XG4gICAgdHJhbnNmb3JtOiB0cmFuc2xhdGUoLTUwJSwgLTUwJSk7XG4gICAgaGVpZ2h0OiA4MHZoO1xuICAgIHdpZHRoOiA4MHZ3O1xuICAgIG92ZXJmbG93OiBoaWRkZW47XG5cbiAgICAmID4gLm1lcm1haWQtY29udGVudCB7XG4gICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgICB0cmFuc2Zvcm0tb3JpZ2luOiAwIDA7XG4gICAgICB0cmFuc2l0aW9uOiB0cmFuc2Zvcm0gMC4xcyBlYXNlO1xuICAgICAgb3ZlcmZsb3c6IHZpc2libGU7XG4gICAgICBtaW4taGVpZ2h0OiAyMDBweDtcbiAgICAgIG1pbi13aWR0aDogMjAwcHg7XG5cbiAgICAgIHByZSB7XG4gICAgICAgIG1hcmdpbjogMDtcbiAgICAgICAgYm9yZGVyOiBub25lO1xuICAgICAgfVxuXG4gICAgICBzdmcge1xuICAgICAgICBtYXgtd2lkdGg6IG5vbmU7XG4gICAgICAgIGhlaWdodDogYXV0bztcbiAgICAgIH1cbiAgICB9XG5cbiAgICAmID4gLm1lcm1haWQtY29udHJvbHMge1xuICAgICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgICAgYm90dG9tOiAyMHB4O1xuICAgICAgcmlnaHQ6IDIwcHg7XG4gICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgZ2FwOiA4cHg7XG4gICAgICBwYWRkaW5nOiA4cHg7XG4gICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgYm9yZGVyLXJhZGl1czogNnB4O1xuICAgICAgYm94LXNoYWRvdzogMCAycHggNHB4IHJnYmEoMCwgMCwgMCwgMC4xKTtcbiAgICAgIHotaW5kZXg6IDI7XG5cbiAgICAgIC5tZXJtYWlkLWNvbnRyb2wtYnV0dG9uIHtcbiAgICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgIHdpZHRoOiAzMnB4O1xuICAgICAgICBoZWlnaHQ6IDMycHg7XG4gICAgICAgIHBhZGRpbmc6IDA7XG4gICAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgICAgY29sb3I6IHZhcigtLWRhcmspO1xuICAgICAgICBib3JkZXItcmFkaXVzOiA0cHg7XG4gICAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICAgICAgZm9udC1zaXplOiAxNnB4O1xuICAgICAgICBmb250LWZhbWlseTogdmFyKC0tYm9keUZvbnQpO1xuICAgICAgICB0cmFuc2l0aW9uOiBhbGwgMC4ycyBlYXNlO1xuXG4gICAgICAgICY6aG92ZXIge1xuICAgICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIH1cblxuICAgICAgICAmOmFjdGl2ZSB7XG4gICAgICAgICAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKDFweCk7XG4gICAgICAgIH1cblxuICAgICAgICAvLyBTdHlsZSB0aGUgcmVzZXQgYnV0dG9uIGRpZmZlcmVudGx5XG4gICAgICAgICY6bnRoLWNoaWxkKDIpIHtcbiAgICAgICAgICB3aWR0aDogYXV0bztcbiAgICAgICAgICBwYWRkaW5nOiAwIDEycHg7XG4gICAgICAgICAgZm9udC1zaXplOiAxNHB4O1xuICAgICAgICB9XG4gICAgICB9XG4gICAgfVxuICB9XG59XG4iXX0= */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://dangthobach.github.io/knowledge/index.xml"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Guide-to-Database-Transactions--From-ACID-to-Concurrency-Control-og-image.webp"/><meta property="og:image:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Guide-to-Database-Transactions--From-ACID-to-Concurrency-Control-og-image.webp"/><meta name="twitter:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Guide-to-Database-Transactions--From-ACID-to-Concurrency-Control-og-image.webp"/><meta property="og:image:type" content="image/.webp"/></head><body data-slug="Notion-Knowledge/Note/A-Guide-to-Database-Transactions--From-ACID-to-Concurrency-Control"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../..">Dang Tho Bach's Knowledge Base</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-270"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-270" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/">Notion Knowledge</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/Note/">Note</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>A Guide to Database Transactions  From ACID to Concurrency Control</a></div></nav><h1 class="article-title">A Guide to Database Transactions- From ACID to Concurrency Control</h1><p show-comma="true" class="content-meta"><time datetime="2026-05-02T04:58:37.000Z">May 02, 2026</time><span>13 min read</span></p></div></div><article class="popover-hint"><p>Modern applications don’t operate in a vacuum. Every time a ride is booked, an item is purchased, or a balance is updated, the backend juggles multiple operations (reads, writes, validations) often across different tables or services. These operations must either succeed together or fail as a unit.</p>
+<p>That’s where transactions step in.</p>
+<p>A database transaction wraps a series of actions into an all-or-nothing unit. Either the entire thing commits and becomes visible to the world, or none of it does. In other words, the goal is to have no half-finished orders, no inconsistent account balances, and no phantom bookings.</p>
+<p>However, maintaining correctness gets harder when concurrency enters the picture.</p>
+<p>This is because transactions don’t run in isolation. Real systems deal with dozens, hundreds, or thousands of simultaneous users. And every one of them expects their operation to be successful. Behind the scenes, the database has to balance isolation, performance, and consistency without grinding the system to a halt.</p>
+<p>This balancing act isn’t trivial. Here are a few cases:</p>
+<ul>
+<li>
+<p>One transaction might read data that another is about to update.</p>
+</li>
+<li>
+<p>Two users might try to reserve the same inventory slot.</p>
+</li>
+<li>
+<p>A background job might lock a record moments before a customer clicks “Confirm.”</p>
+</li>
+</ul>
+<p>Such scenarios can result in conflicts, race conditions, and deadlocks that stall the system entirely.</p>
+<p>In this article, we break down the key building blocks that make transactional systems reliable in the face of concurrency. We will start with the fundamentals: what a transaction is, and why the ACID properties matter. We will then dig deeper into the mechanics of concurrency control (pessimistic and optimistic) and understand the trade-offs related to them.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!XGsc!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fcd483dd1-9d8f-4e1e-b030-44a384f3d8e8_2250x2624.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!XGsc!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fcd483dd1-9d8f-4e1e-b030-44a384f3d8e8_2250x2624.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h2 id="what-is-a-database-transaction"><strong>What is a Database Transaction?</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#what-is-a-database-transaction" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>A transaction is the database’s answer to a fundamental problem: how to guarantee correctness when multiple operations need to act as a single unit.</p>
+<p>Think of it as a contract. Either everything in the transaction happens, or nothing does.</p>
+<p>At its core, a transaction is a bundle of read and write operations treated atomically. This might mean debiting one account and crediting another in a fund transfer, or updating inventory and logging an order when a customer checks out. In both cases, doing only part of the work (like debiting an account but failing to credit the other) leaves the system in a broken state. Transactions prevent that.</p>
+<p>Most relational databases (PostgreSQL, MySQL, SQL Server) treat transactions as first-class primitives. Non-relational systems such as MongoDB or Apache Cassandra may offer transactional guarantees as well, though often with caveats around scope (for example, document-level versus multi-document).</p>
+<p>Regardless of the model, the idea stays the same: all-or-nothing state changes, ideally with isolation from other concurrent changes.</p>
+<h3 id="the-transaction-lifecycle"><strong>The Transaction Lifecycle</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#the-transaction-lifecycle" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Transactions follow a predictable lifecycle with some key stages:</p>
+<ul>
+<li>
+<p><strong>BEGIN:</strong> The database starts tracking changes.</p>
+</li>
+<li>
+<p><strong>READ/WRITE:</strong> The transaction performs its work (queries, updates, inserts, deletes).</p>
+</li>
+<li>
+<p><strong>COMMIT:</strong> If everything looks good, the changes are finalized and made visible.</p>
+</li>
+<li>
+<p><strong>ROLLBACK:</strong> If something fails due to an error, a constraint violation, or an explicit abort, then all changes are undone.</p>
+</li>
+</ul>
+<p>See the diagram below that shows the high-level stages in a typical transaction lifecycle.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!nRpg!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F56cdfac3-0beb-451d-ba98-2f3c699c3648_2976x1508.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!nRpg!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F56cdfac3-0beb-451d-ba98-2f3c699c3648_2976x1508.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>The database engine uses internal mechanisms like write-ahead logs or undo buffers to ensure that rollback and commit are reliable, even during power loss or crash recovery.</p>
+<p>This lifecycle gives developers a clean mental model: wrap related operations in a transaction block, and either get a consistent result or a clean failure.</p>
+<h3 id="transactions-in-concurrent-systems"><strong>Transactions in Concurrent Systems</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#transactions-in-concurrent-systems" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The real challenge is running transactions concurrently without introducing subtle bugs.</p>
+<p>Databases rarely run transactions one after the other. Doing so would kill throughput. Instead, they interleave reads and writes from multiple transactions to keep the system responsive. But when operations overlap on the same data, things get tricky.</p>
+<p>Imagine a ride-hailing app where two drivers accept the same request at the same moment. Without isolation, both transactions could see the ride as unassigned and confirm it. Or consider an analytics platform where one process updates a record while another reads it halfway through. Without consistency, the reader might see an incorrect version of the data.</p>
+<p>This is why isolation matters. The database must shield transactions from the side effects of others, to preserve the illusion that they each ran independently, even if they didn’t.</p>
+<h2 id="the-acid-properties"><strong>The ACID Properties</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#the-acid-properties" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>When we mention “correct” transactional behavior, it usually means adhering to ACID compliance.</p>
+<p>ACID is a contract between the application and the database. It outlines four core guarantees that define what it means for a transaction to be trustworthy: Atomicity, Consistency, Isolation, and Durability.</p>
+<p>Each one addresses a different kind of failure or concurrency risk. Let’s look at them in a little more detail.</p>
+<h3 id="atomicity"><strong>Atomicity</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#atomicity" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Atomicity ensures that every transaction either completes in full or has no effect at all. If a single step fails, the whole thing rolls back. There’s no room for half-success.</p>
+<p>See the diagram below:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!_qF3!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Ff9ab8c1a-4995-4af3-82f5-0534c0437f24_2976x1762.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!_qF3!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Ff9ab8c1a-4995-4af3-82f5-0534c0437f24_2976x1762.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>This is critical in multi-step operations.</p>
+<p>Consider a transaction that deducts funds from one account and credits another. If the first step succeeds but the second fails, and there’s no rollback, the money simply vanishes.</p>
+<p>Atomicity prevents this class of data corruption.</p>
+<p>Under the hood, atomicity is typically enforced using write-ahead logging (WAL) or undo/redo logs. Before applying any changes to the main storage, the database logs the intended operations. If the system crashes mid-transaction, it consults the log on restart: either roll everything back (undo log) or reapply changes that were pending commit (redo log).</p>
+<p>This makes atomicity a foundational protection against system crashes, disk write failures, or application bugs that abort mid-flight.</p>
+<h3 id="consistency"><strong>Consistency</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#consistency" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Consistency ensures that a transaction moves the database from one valid state to another.</p>
+<p>A valid state is defined by constraints such as primary keys, foreign keys, data types, uniqueness, and any custom rules enforced by business logic.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!RMoB!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Ff2749d43-9dbd-4177-9666-2f2ee0f54a40_2052x1222.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!RMoB!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Ff2749d43-9dbd-4177-9666-2f2ee0f54a40_2052x1222.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Contrary to common belief, consistency isn’t fully enforced by the database. The system can guarantee internal constraints (for example, no duplicate keys), but application-level consistency (for example, “a driver can’t be assigned to two rides at once”) must be supported by the developer using logic or transaction scoping.</p>
+<p>Still, the ACID contract guarantees that no transaction will leave the system in an invalid state from the database’s perspective. If a constraint is violated, the transaction fails and rolls back.</p>
+<p>This results in predictable behavior even when many processes interact with the data at once.</p>
+<h3 id="isolation"><strong>Isolation</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#isolation" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Isolation ensures that concurrently executing transactions do not see each other’s intermediate states. Each transaction must behave as if it were running alone, even though the database may be interleaving its operations for performance.</p>
+<p>See the example below for reference:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!20Q-!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fd76ef585-2707-4df1-b5c9-07890bb63cfd_2190x1222.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!20Q-!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fd76ef585-2707-4df1-b5c9-07890bb63cfd_2190x1222.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Isolation is where things can get a little messy.</p>
+<p>Full isolation (known as serializability) means transactions execute as if they were run in strict sequence. It’s safe but expensive. Most production systems run with weaker isolation levels to trade some safety for throughput.</p>
+<p>There are generally four levels:</p>
+<ul>
+<li>
+<p><strong>Read Uncommitted:</strong> It allows dirty reads where one transaction may see changes from another that rolls back later.</p>
+</li>
+<li>
+<p><strong>Read Committed:</strong> Only sees committed changes from other transactions. Prevents dirty reads but allows non-repeatable reads.</p>
+</li>
+<li>
+<p><strong>Repeatable Read:</strong> Guarantees that repeated reads within a transaction see the same data. Still allows phantom rows to appear on re-query.</p>
+</li>
+<li>
+<p><strong>Serializable:</strong> Enforces full isolation by making transactions behave as if they ran one after another. Rarely used outside of high-integrity systems.</p>
+</li>
+</ul>
+<p>These isolation levels aim to protect against common anomalies:</p>
+<ul>
+<li>
+<p><strong>Dirty read:</strong> Reading uncommitted data from another transaction.</p>
+</li>
+<li>
+<p><strong>Non-repeatable read:</strong> Reading the same row twice and getting different results.</p>
+</li>
+<li>
+<p><strong>Phantom read:</strong> A new row appears in a subsequent read due to another transaction’s insert.</p>
+</li>
+</ul>
+<p>Each stronger level prevents more anomalies but increases contention and the risk of deadlocks. Choosing the right isolation level is a performance versus correctness decision. For example, financial systems may lean toward Serializable, while analytics dashboards might settle for Read Committed.</p>
+<h3 id="durability"><strong>Durability</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#durability" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Durability ensures that once a transaction commits, its changes are permanent, even if the database crashes milliseconds later.</p>
+<p>This guarantee exists because in distributed or stateful systems, crashes are inevitable. The durability property ensures that successful operations don’t vanish due to hardware failures, software crashes, or power loss.</p>
+<p>Databases implement durability by persisting transaction logs (typically WAL files) to disk before acknowledging the commit. Other techniques for durability also include replication.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!9aWe!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F66fcff5f-6d1a-48d8-b3a6-8c51886caac5_2160x1352.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!9aWe!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F66fcff5f-6d1a-48d8-b3a6-8c51886caac5_2160x1352.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h2 id="concurrency-control"><strong>Concurrency Control</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#concurrency-control" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Databases don’t process one transaction at a time. As mentioned, it would waste resources and frustrate users.</p>
+<p>Instead, they run transactions concurrently, allowing thousands of operations to execute in parallel. This improves throughput but creates a new class of problems: data races, dirty reads, lost updates, and consistency violations.</p>
+<p>Imagine two users editing the same shopping cart at the same time, or two warehouse workers updating inventory for the same SKU. Without coordination, one update might overwrite the other. The system becomes unpredictable.</p>
+<p>To preserve correctness in the presence of concurrency, databases rely on concurrency control mechanisms. These techniques ensure that even when transactions overlap, the final result is consistent and logically sound, as if the transactions had been executed in some serial order.</p>
+<p>There are two main strategies to achieve this: pessimistic locking and optimistic locking. Let’s look at both in more detail:</p>
+<h3 id="pessimistic-locking"><strong>Pessimistic Locking</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#pessimistic-locking" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Pessimistic locking assumes that conflicts are likely. It protects data by locking it upfront before other transactions get a chance to touch it.</p>
+<p>The idea is simple: if one transaction wants to read or write a piece of data, it grabs a lock, and everyone else waits for their turn.</p>
+<p>This model avoids surprises. There’s no need to roll back later because a conflict is blocked from happening in the first place. But that safety comes at a cost. Blocking can become a bottleneck under heavy load.</p>
+<p>Pessimistic locks can be applied at different granularities:</p>
+<ul>
+<li>
+<p><strong>Row-level locking:</strong> The most precise form of locking. Only the rows being read or written are locked.</p>
+</li>
+<li>
+<p><strong>Table-level locking:</strong> This is coarser. The entire table is locked, preventing others from modifying any row.</p>
+</li>
+<li>
+<p><strong>Page-level locking:</strong> Locks a group of rows stored together on disk. Rare in modern OLTP systems but still used in some engines.</p>
+</li>
+</ul>
+<p>Here’s an example flow of pessimistic locking:</p>
+<ul>
+<li>
+<p>Sarah requests account data from the database for account ID 1. The current balance is 40.</p>
+</li>
+<li>
+<p>The database responds with the data and places a shared (read) lock on the row. No other transaction can write to it until this lock is released.</p>
+</li>
+<li>
+<p>John tries to read the same account. Because the row is locked, he must wait. His read is blocked until Sarah’s transaction is finished.</p>
+</li>
+<li>
+<p>Sarah reduces the balance by 20, updating the account to 20.</p>
+</li>
+<li>
+<p>She commits the transaction, and the database releases the lock.</p>
+</li>
+<li>
+<p>Only now can John proceed, but by then the balance has changed. If he re-reads the row, he sees the updated value.</p>
+</li>
+</ul>
+<p>See the diagram below for a high-level reference to pessimistic locking.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!elcN!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F555ab840-949d-4ca9-8c7d-e3af9e5a8d24_2602x1892.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!elcN!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F555ab840-949d-4ca9-8c7d-e3af9e5a8d24_2602x1892.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h3 id="optimistic-locking"><strong>Optimistic Locking</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#optimistic-locking" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Optimistic locking allows transactions to proceed without locking anything upfront. Validation happens at the end. If a conflict is detected, the transaction rolls back.</p>
+<p>This model reduces blocking and improves throughput in read-heavy systems with low contention. It’s ideal for workloads like user profile updates, document editing, or background processes that touch different parts of the dataset.</p>
+<p>A typical sample optimistic locking flow looks like this:</p>
+<ul>
+<li>
+<p>Sarah reads the account data, which includes both the balance and a version number (version: 1).</p>
+</li>
+<li>
+<p>John also reads the same data with the same version number (version: 1). No locks are placed at this stage. Both transactions proceed.</p>
+</li>
+<li>
+<p>John attempts to reduce the balance by 20 and commit his change. At commit time, the database checks: is the row still at “version: 1”?</p>
+</li>
+<li>
+<p>If this is the case, the update succeeds and the version is incremented to 2.</p>
+</li>
+<li>
+<p>Sarah then tries to commit her update, also expecting the row to still be at “version: 1”.</p>
+</li>
+<li>
+<p>But the version has changed to 2, so the database rejects the update. No row matches the original versioned condition.</p>
+</li>
+<li>
+<p>Sarah’s transaction fails, and she must retry with the latest data.</p>
+</li>
+</ul>
+<p>See the diagram below for reference:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!u1p8!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F7637441f-d947-4e70-ab25-8ac5b74ab4f3_2602x1892.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!u1p8!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F7637441f-d947-4e70-ab25-8ac5b74ab4f3_2602x1892.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Many systems implement this pattern using a version column or last-modified timestamp. At commit time, they run a conditional update. Here’s a simple example:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>UPDATE products</span></span>
+<span data-line><span>SET stock = 150, version = version + 1</span></span>
+<span data-line><span>WHERE id = 42 AND version = 3;</span></span></code></pre></figure>
+<p>Optimistic locking tries to avoid deadlocks wherever possible. However, that doesn’t mean it’s always better.</p>
+<p>This approach can run into problems during high-contention scenarios. If many transactions try to update the same record, most of them will fail and retry, creating a thundering herd. Systems that can’t tolerate high retry rates can struggle.</p>
+<h2 id="best-practices"><strong>Best Practices</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#best-practices" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Transactional semantics show up every time a backend service touches shared state, whether it’s booking a ticket, updating inventory, or deducting credits from a user’s wallet.</p>
+<p>Here are some best practices that should be kept in mind:</p>
+<ul>
+<li>
+<p><strong>Keep transactions short and focused:</strong> The longer a transaction holds locks or occupies resources, the higher the risk of contention, blocking, or deadlocks. Avoid doing network calls, user prompts, or complex calculations inside an open transaction. Read what’s needed, write what’s necessary, and commit quickly.</p>
+</li>
+<li>
+<p><strong>Access data in a consistent order:</strong> Many deadlocks arise from transactions acquiring locks in different sequences. By standardizing access order, we can reduce the risk significantly.</p>
+</li>
+<li>
+<p><strong>Choose isolation levels deliberately:</strong> Don’t default to Serializable just because it sounds safe. In many use cases, Read Committed or Repeatable Read provides sufficient guarantees with better performance.</p>
+</li>
+<li>
+<p><strong>Know your database’s concurrency model:</strong> Different databases behave differently. PostgreSQL uses MVCC and snapshot isolation. MySQL’s InnoDB engine applies a mix of row-level locks and MVCC, but handles repeatable reads differently. SQL Server enforces locks more aggressively unless snapshot isolation is enabled. Understanding how your chosen system implements locking, isolation, and deadlock detection is essential tuning knowledge.</p>
+</li>
+<li>
+<p><strong>Build retry logic that’s resilient:</strong> Transaction retries should back off, log intelligently, and respect context timeouts.</p>
+</li>
+</ul>
+<h2 id="summary"><strong>Summary</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#summary" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>We have looked at database transactions and concurrency control strategies in detail.</p>
+<p>Here are the key learning points in brief:</p>
+<ul>
+<li>
+<p>Transactions ensure that a group of operations either all succeed or none do, maintaining consistency in the face of failures or concurrency.</p>
+</li>
+<li>
+<p>A solid grasp of transactional behavior and concurrency control is essential for building safe, high-integrity backend systems.</p>
+</li>
+<li>
+<p>The ACID properties (Atomicity, Consistency, Isolation, and Durability) define the fundamental guarantees of reliable transactional systems.</p>
+</li>
+<li>
+<p>Atomicity and Durability are enforced through mechanisms like write-ahead logs, ensuring no partial changes and recovery after crashes.</p>
+</li>
+<li>
+<p>Consistency depends not just on the database but also on application-level rules and constraints.</p>
+</li>
+<li>
+<p>Isolation protects transactions from interfering with one another, with different levels (Read Committed to Serializable) offering trade-offs between safety and performance.</p>
+</li>
+<li>
+<p>Concurrency control prevents race conditions and inconsistencies, using pessimistic or optimistic techniques depending on workload characteristics.</p>
+</li>
+<li>
+<p>Pessimistic locking uses explicit locks to prevent conflicts, while optimistic locking avoids them by validating data versions at commit time.</p>
+</li>
+<li>
+<p>Engineering best practices include keeping transactions short, accessing data in a consistent order, tuning isolation levels deliberately, and implementing proper retry logic.</p>
+</li>
+</ul></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-117" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#what-is-a-database-transaction" data-for="what-is-a-database-transaction">What is a Database Transaction?</a></li><li class="depth-1"><a href="#the-transaction-lifecycle" data-for="the-transaction-lifecycle">The Transaction Lifecycle</a></li><li class="depth-1"><a href="#transactions-in-concurrent-systems" data-for="transactions-in-concurrent-systems">Transactions in Concurrent Systems</a></li><li class="depth-0"><a href="#the-acid-properties" data-for="the-acid-properties">The ACID Properties</a></li><li class="depth-1"><a href="#atomicity" data-for="atomicity">Atomicity</a></li><li class="depth-1"><a href="#consistency" data-for="consistency">Consistency</a></li><li class="depth-1"><a href="#isolation" data-for="isolation">Isolation</a></li><li class="depth-1"><a href="#durability" data-for="durability">Durability</a></li><li class="depth-0"><a href="#concurrency-control" data-for="concurrency-control">Concurrency Control</a></li><li class="depth-1"><a href="#pessimistic-locking" data-for="pessimistic-locking">Pessimistic Locking</a></li><li class="depth-1"><a href="#optimistic-locking" data-for="optimistic-locking">Optimistic Locking</a></li><li class="depth-0"><a href="#best-practices" data-for="best-practices">Best Practices</a></li><li class="depth-0"><a href="#summary" data-for="summary">Summary</a></li><li class="overflow-end"></li></ul></div><div class="backlinks"><h3>Backlinks</h3><ul id="list-2" class="overflow"><li><a href="../../Notion-Knowledge/Note" class="internal">Note</a></li><li><a href="../../Notion-Knowledge/Note/SQL-Query-Optimization-—-From-Simple-to-Complex" class="internal">SQL Query Optimization — From Simple to Complex</a></li><li><a href="../../_moc/MOC-Database" class="internal">MOC-Database</a></li><li><a href="../../_moc/MOC-Reading-List" class="internal">MOC-Reading-List</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://dangthobach.github.io/">Back to Portfolio</a></li><li><a href="https://github.com/dangthobach">GitHub</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../postscript.js" type="module" data-persist="true"></script></html>

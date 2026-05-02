@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>A Crash Course on Scaling the API Layer</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="Dang Tho Bach's Knowledge Base"/><meta property="og:title" content="A Crash Course on Scaling the API Layer"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="A Crash Course on Scaling the API Layer"/><meta name="twitter:description" content="The API (Application Programming Interface) layer serves as the backbone for communication between clients and the backend services in modern internet-based applications."/><meta property="og:description" content="The API (Application Programming Interface) layer serves as the backbone for communication between clients and the backend services in modern internet-based applications."/><meta property="og:image:alt" content="The API (Application Programming Interface) layer serves as the backbone for communication between clients and the backend services in modern internet-based applications."/><meta property="twitter:domain" content="dangthobach.github.io/knowledge"/><meta property="og:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Crash-Course-on-Scaling-the-API-Layer"/><meta property="twitter:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Crash-Course-on-Scaling-the-API-Layer"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="The API (Application Programming Interface) layer serves as the backbone for communication between clients and the backend services in modern internet-based applications."/><meta name="generator" content="Quartz"/><link href="../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiL2hvbWUvcnVubmVyL3dvcmsvZGFuZ3Rob2JhY2guZ2l0aHViLmlvL2Rhbmd0aG9iYWNoLmdpdGh1Yi5pby9xdWFydHovcXVhcnR6L2NvbXBvbmVudHMvc3R5bGVzIiwic291cmNlcyI6WyJtZXJtYWlkLmlubGluZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFHRjtFQUNFOzs7QUFLRjtFQUNFO0VBQ0E7OztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTs7QUFJRjtFQUNFO0VBQ0E7RUFDQSIsInNvdXJjZXNDb250ZW50IjpbIi5leHBhbmQtYnV0dG9uIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbG9hdDogcmlnaHQ7XG4gIHBhZGRpbmc6IDAuNHJlbTtcbiAgbWFyZ2luOiAwLjNyZW07XG4gIHJpZ2h0OiAwOyAvLyBOT1RFOiByaWdodCB3aWxsIGJlIHNldCBpbiBtZXJtYWlkLmlubGluZS50c1xuICBjb2xvcjogdmFyKC0tZ3JheSk7XG4gIGJvcmRlci1jb2xvcjogdmFyKC0tZGFyayk7XG4gIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgYm9yZGVyOiAxcHggc29saWQ7XG4gIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgb3BhY2l0eTogMDtcbiAgdHJhbnNpdGlvbjogMC4ycztcblxuICAmID4gc3ZnIHtcbiAgICBmaWxsOiB2YXIoLS1saWdodCk7XG4gICAgZmlsdGVyOiBjb250cmFzdCgwLjMpO1xuICB9XG5cbiAgJjpob3ZlciB7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIGJvcmRlci1jb2xvcjogdmFyKC0tc2Vjb25kYXJ5KTtcbiAgfVxuXG4gICY6Zm9jdXMge1xuICAgIG91dGxpbmU6IDA7XG4gIH1cbn1cblxucHJlIHtcbiAgJjpob3ZlciA+IC5leHBhbmQtYnV0dG9uIHtcbiAgICBvcGFjaXR5OiAxO1xuICAgIHRyYW5zaXRpb246IDAuMnM7XG4gIH1cbn1cblxuI21lcm1haWQtY29udGFpbmVyIHtcbiAgcG9zaXRpb246IGZpeGVkO1xuICBjb250YWluOiBsYXlvdXQ7XG4gIHotaW5kZXg6IDk5OTtcbiAgbGVmdDogMDtcbiAgdG9wOiAwO1xuICB3aWR0aDogMTAwdnc7XG4gIGhlaWdodDogMTAwdmg7XG4gIG92ZXJmbG93OiBoaWRkZW47XG4gIGRpc3BsYXk6IG5vbmU7XG4gIGJhY2tkcm9wLWZpbHRlcjogYmx1cig0cHgpO1xuICBiYWNrZ3JvdW5kOiByZ2JhKDAsIDAsIDAsIDAuNSk7XG5cbiAgJi5hY3RpdmUge1xuICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgfVxuXG4gICYgPiAjbWVybWFpZC1zcGFjZSB7XG4gICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gICAgYm9yZGVyLXJhZGl1czogNXB4O1xuICAgIHBvc2l0aW9uOiBmaXhlZDtcbiAgICB0b3A6IDUwJTtcbiAgICBsZWZ0OiA1MCU7XG4gICAgdHJhbnNmb3JtOiB0cmFuc2xhdGUoLTUwJSwgLTUwJSk7XG4gICAgaGVpZ2h0OiA4MHZoO1xuICAgIHdpZHRoOiA4MHZ3O1xuICAgIG92ZXJmbG93OiBoaWRkZW47XG5cbiAgICAmID4gLm1lcm1haWQtY29udGVudCB7XG4gICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgICB0cmFuc2Zvcm0tb3JpZ2luOiAwIDA7XG4gICAgICB0cmFuc2l0aW9uOiB0cmFuc2Zvcm0gMC4xcyBlYXNlO1xuICAgICAgb3ZlcmZsb3c6IHZpc2libGU7XG4gICAgICBtaW4taGVpZ2h0OiAyMDBweDtcbiAgICAgIG1pbi13aWR0aDogMjAwcHg7XG5cbiAgICAgIHByZSB7XG4gICAgICAgIG1hcmdpbjogMDtcbiAgICAgICAgYm9yZGVyOiBub25lO1xuICAgICAgfVxuXG4gICAgICBzdmcge1xuICAgICAgICBtYXgtd2lkdGg6IG5vbmU7XG4gICAgICAgIGhlaWdodDogYXV0bztcbiAgICAgIH1cbiAgICB9XG5cbiAgICAmID4gLm1lcm1haWQtY29udHJvbHMge1xuICAgICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgICAgYm90dG9tOiAyMHB4O1xuICAgICAgcmlnaHQ6IDIwcHg7XG4gICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgZ2FwOiA4cHg7XG4gICAgICBwYWRkaW5nOiA4cHg7XG4gICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgYm9yZGVyLXJhZGl1czogNnB4O1xuICAgICAgYm94LXNoYWRvdzogMCAycHggNHB4IHJnYmEoMCwgMCwgMCwgMC4xKTtcbiAgICAgIHotaW5kZXg6IDI7XG5cbiAgICAgIC5tZXJtYWlkLWNvbnRyb2wtYnV0dG9uIHtcbiAgICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgIHdpZHRoOiAzMnB4O1xuICAgICAgICBoZWlnaHQ6IDMycHg7XG4gICAgICAgIHBhZGRpbmc6IDA7XG4gICAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgICAgY29sb3I6IHZhcigtLWRhcmspO1xuICAgICAgICBib3JkZXItcmFkaXVzOiA0cHg7XG4gICAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICAgICAgZm9udC1zaXplOiAxNnB4O1xuICAgICAgICBmb250LWZhbWlseTogdmFyKC0tYm9keUZvbnQpO1xuICAgICAgICB0cmFuc2l0aW9uOiBhbGwgMC4ycyBlYXNlO1xuXG4gICAgICAgICY6aG92ZXIge1xuICAgICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIH1cblxuICAgICAgICAmOmFjdGl2ZSB7XG4gICAgICAgICAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKDFweCk7XG4gICAgICAgIH1cblxuICAgICAgICAvLyBTdHlsZSB0aGUgcmVzZXQgYnV0dG9uIGRpZmZlcmVudGx5XG4gICAgICAgICY6bnRoLWNoaWxkKDIpIHtcbiAgICAgICAgICB3aWR0aDogYXV0bztcbiAgICAgICAgICBwYWRkaW5nOiAwIDEycHg7XG4gICAgICAgICAgZm9udC1zaXplOiAxNHB4O1xuICAgICAgICB9XG4gICAgICB9XG4gICAgfVxuICB9XG59XG4iXX0= */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://dangthobach.github.io/knowledge/index.xml"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Crash-Course-on-Scaling-the-API-Layer-og-image.webp"/><meta property="og:image:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Crash-Course-on-Scaling-the-API-Layer-og-image.webp"/><meta name="twitter:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Crash-Course-on-Scaling-the-API-Layer-og-image.webp"/><meta property="og:image:type" content="image/.webp"/></head><body data-slug="Notion-Knowledge/Note/A-Crash-Course-on-Scaling-the-API-Layer"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../..">Dang Tho Bach's Knowledge Base</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-259"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-259" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/">Notion Knowledge</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/Note/">Note</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>A Crash Course on Scaling the API Layer</a></div></nav><h1 class="article-title">A Crash Course on Scaling the API Layer</h1><p show-comma="true" class="content-meta"><time datetime="2026-05-02T04:58:37.000Z">May 02, 2026</time><span>15 min read</span></p></div></div><article class="popover-hint"><p>The API (Application Programming Interface) layer serves as the backbone for communication between clients and the backend services in modern internet-based applications.</p>
+<p>It acts as the primary interface through which clients, such as web or mobile applications, access the functionality and data provided by the application. The API Layer of any application has several key responsibilities such as:</p>
+<ul>
+<li>
+<p>Process incoming requests from clients based on the defined API contract.</p>
+</li>
+<li>
+<p>Enforce security mechanisms and protocols by authenticating and authorizing clients based on their credentials or access tokens.</p>
+</li>
+<li>
+<p>Orchestrate interactions between various backend services and aggregate the responses received from them.</p>
+</li>
+<li>
+<p>Handle responses by formatting and returning the result to the client.</p>
+</li>
+</ul>
+<p>Due to the central role APIs play in the application architecture, they become critical for the application scalability.</p>
+<p>The scalability of the API layer is crucial due to the following reasons:</p>
+<ul>
+<li>
+<p><strong>Handling Load and Traffic Spikes:</strong> As applications become popular, they encounter increased traffic and sudden spikes in user demand. A scalable API can manage the increased load efficiently.</p>
+</li>
+<li>
+<p><strong>Better User Experience:</strong> The bar for user expectation has gone up. Most users these days expect fast and responsive applications. A scalable API ensures that the application can support a high number of users without compromising performance.</p>
+</li>
+<li>
+<p><strong>Cost and Resource Optimization:</strong> Scalable APIs unlock the path to better resource utilization. Rather than provisioning the infrastructure upfront for the highest demand level, instances are added and removed based on demand, resulting in reduced operational costs.</p>
+</li>
+</ul>
+<p>In this article, we’ll learn the key concepts a developer must understand for API scalability. We will also look at some tried and tested strategies for scaling the API layer with basic code examples for clarity. Lastly, we will also look at some best practices that can help with scaling the API layer.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!jNsK!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F9e469dc6-af33-408b-acc5-e11f57fd9aca_1437x1600.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!jNsK!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F9e469dc6-af33-408b-acc5-e11f57fd9aca_1437x1600.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h2 id="key-concepts"><strong>Key Concepts</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#key-concepts" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Let us first look at some key concepts that should be understood before going for any API scalability strategy.</p>
+<h3 id="scalability"><strong>Scalability</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#scalability" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Scalability refers to the ability of the API layer to efficiently handle increased load by adding resources, such as additional server instances or computing power.</p>
+<p>The main concern of any scalability strategy is that it should not degrade the performance of the application. A scalable API can adapt to varying levels of traffic while keeping the system responsive and available.</p>
+<p>While vertical scaling is also a form of scaling, most modern scalability approaches leverage horizontal scaling in which more instances of the API are deployed to distribute the load.</p>
+<h3 id="latency"><strong>Latency</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#latency" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Latency is the time taken for an API to process a request and return a response to the client.</p>
+<p>High latency can lead to slow response times and a poor user experience. This is the reason low latency is essential for ensuring the APIs remain responsive, especially in real-time or interactive scenarios.</p>
+<p>Minimizing latency involves optimizing various aspects of the API, such as efficient request processing, reducing network delays, and implementing caching strategies to quickly serve frequently requested data.</p>
+<h3 id="throughput"><strong>Throughput</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#throughput" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Throughput is the measure of how many requests an API can handle per second or any other unit of time.</p>
+<p>It is a key indicator of an API’s scalability and performance, with higher throughput signifying the API’s ability to process more requests efficiently.</p>
+<p>Achieving high throughput involves optimizing server resources, implementing load balancing to distribute requests evenly, and using asynchronous processing to handle concurrent requests.</p>
+<h2 id="api-scaling-strategies"><strong>API Scaling Strategies</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#api-scaling-strategies" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Let’s now look at some popular and battle-tested strategies for scaling the API layer.</p>
+<h3 id="stateless-architecture"><strong>Stateless Architecture</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#stateless-architecture" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Building the API Layer using a stateless architecture is the key to horizontal scalability.</p>
+<p>In a stateless architecture, each instance of an application operates independently, without storing any session-specific data within its own memory or local storage. This means that the application does not maintain any state information between requests.</p>
+<p>When a client sends a request to a stateless application, the request contains all the necessary information for the application to process it. The application does not rely on any stored context from previous requests. Each request is treated as an independent transaction, and the application generates a response based solely on the information provided in the request.</p>
+<p>Some key benefits of stateless architecture are as follows:</p>
+<ul>
+<li>
+<p><strong>Horizontal Scalability:</strong> Stateless applications can scale horizontally by adding more instances as the workload increases.</p>
+</li>
+<li>
+<p><strong>Fault Tolerance:</strong> In a stateless architecture, if an instance fails or becomes unavailable, it does not impact the overall functionality of the application.</p>
+</li>
+<li>
+<p><strong>Flexibility:</strong> Since instances do not maintain a persistent state, they can be added, removed, or replaced without complex state migration or coordination.</p>
+</li>
+</ul>
+<p>While stateless architecture offers numerous benefits, it raises the question of how to handle session data that needs to persist across multiple requests. In a stateless application, session data cannot be stored within the application instances themselves.</p>
+<p>To address this challenge, stateless architectures often rely on external storage solutions like databases or in-memory storage solutions like Redis or Memcached to manage session data. These storage systems provide a centralized and distributed place that all instances can access.</p>
+<p>The diagram below shows such a design on a high level.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!qhc9!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Ffa5611d2-3bcf-460d-86e2-d5bcc50a4595_1464x1600.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!qhc9!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Ffa5611d2-3bcf-460d-86e2-d5bcc50a4595_1464x1600.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Most frameworks used to build API layers support this sort of integration out of the box.</p>
+<p>For example, in the popular Spring Boot framework, the spring-session-data-redis dependency automatically configures the application to use Redis as the backing store for HTTP sessions.</p>
+<p>See the sample code below for reference:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>@RestController</span></span>
+<span data-line><span>@RequestMapping(&quot;/session&quot;)</span></span>
+<span data-line><span>public class SessionController {</span></span>
+<span data-line> </span>
+<span data-line><span>    @GetMapping(&quot;/set&quot;)</span></span>
+<span data-line><span>    public String setSession(HttpSession session) {</span></span>
+<span data-line><span>// Set session attribute</span></span>
+<span data-line><span>        session.setAttribute(&quot;user&quot;, &quot;John Doe&quot;);</span></span>
+<span data-line><span>        return &quot;Session data set for user: John Doe&quot;;</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    @GetMapping(&quot;/get&quot;)</span></span>
+<span data-line><span>    public String getSession(HttpSession session) {</span></span>
+<span data-line><span>// Retrieve session attribute</span></span>
+<span data-line><span>        String user = (String) session.getAttribute(&quot;user&quot;);</span></span>
+<span data-line><span>        return &quot;Session data: &quot; + (user != null ? user : &quot;No session data found&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>Note that this is just an example code to demonstrate using a separate storage to store session data.</p>
+<h3 id="load-balancing"><strong>Load Balancing</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#load-balancing" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Load balancing involves distributing incoming network traffic across multiple servers to ensure no single server is overwhelmed.</p>
+<p>Some important use cases of Load Balancing are as follows:</p>
+<h3 id="1---reverse-proxy"><strong>1 - Reverse Proxy</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1---reverse-proxy" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>A reverse proxy sits in front of the backend servers and handles client requests on their behalf.</p>
+<p>When a client sends a request to the application, the reverse proxy receives the request and determines which backend server is best suited to handle it. The reverse proxy then forwards the request to the selected server and waits for the response.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!GKBA!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Ffb4af8d1-91e1-4a20-a706-5cbfbdb8a4b2_1600x974.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!GKBA!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Ffb4af8d1-91e1-4a20-a706-5cbfbdb8a4b2_1600x974.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>The main benefits of a reverse proxy are as follows:</p>
+<ul>
+<li>
+<p><strong>Load Balancing:</strong> Reverse proxies can distribute incoming requests across multiple backend servers. Backend servers can be added, removed, or updated without affecting the client.</p>
+</li>
+<li>
+<p><strong>Increased Security:</strong> By acting as a single entry point for client requests, reverse proxies hide the internal structure of the backend servers. They can also implement additional security measures, such as SSL termination and request filtering.</p>
+</li>
+<li>
+<p><strong>Caching and Compression:</strong> Reverse proxies can cache frequently accessed content to reduce the load on backend servers and improve response times. They can also compress responses before sending them back to the client.</p>
+</li>
+</ul>
+<p>In modern API architectures, popular tools such as NGINX and HAProxy can be used as reverse proxies and load balancers.</p>
+<p>Here’s a basic example of HAProxy configuration to work as a reverse proxy for load-balancing HTTP traffic across multiple backend servers. Note that this is just a demo code to explain the various options.</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>global</span></span>
+<span data-line><span>    log stdout format raw local0</span></span>
+<span data-line><span>    maxconn 4096</span></span>
+<span data-line> </span>
+<span data-line><span>defaults</span></span>
+<span data-line><span>    log global</span></span>
+<span data-line><span>    mode http</span></span>
+<span data-line><span>    option httplog</span></span>
+<span data-line><span>    option dontlognull</span></span>
+<span data-line><span>    timeout connect 5000ms</span></span>
+<span data-line><span>    timeout client 50000ms</span></span>
+<span data-line><span>    timeout server 50000ms</span></span>
+<span data-line> </span>
+<span data-line><span>frontend http_front</span></span>
+<span data-line><span>    bind *:80</span></span>
+<span data-line><span>    default_backend http_back</span></span>
+<span data-line> </span>
+<span data-line><span>backend http_back</span></span>
+<span data-line><span>    balance roundrobin</span></span>
+<span data-line><span>    server server1 192.168.1.101:80 check</span></span>
+<span data-line><span>    server server2 192.168.1.102:80 check</span></span>
+<span data-line><span>    server server3 192.168.1.103:80 check</span></span></code></pre></figure>
+<p>Here the frontend section defines the entry point for incoming HTTP requests by listening on port 80 and forwarding the requests to the default backend http_back.</p>
+<p>The backend section specifies the backend servers and the load-balancing algorithm.</p>
+<h3 id="2---dns-load-balancing"><strong>2 - DNS Load Balancing</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2---dns-load-balancing" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>DNS load balancing is a technique that distributes traffic across multiple servers by leveraging the Domain Name System (DNS). It maps a single domain name to multiple IP addresses, allowing the DNS server to direct clients to different servers based on various load-balancing algorithms.</p>
+<p>The selection of the IP address is determined by the load-balancing algorithm employed by the DNS server. Some common algorithms include:</p>
+<ul>
+<li>
+<p>Round Robin</p>
+</li>
+<li>
+<p>Geo-location</p>
+</li>
+<li>
+<p>Weighted Distribution</p>
+</li>
+</ul>
+<h3 id="3---health-checks"><strong>3 - Health Checks</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3---health-checks" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Health checks are essential to ensure traffic is only directed to healthy instances.</p>
+<p>Load balancers regularly monitor the health of backend servers by sending periodic requests to check their status.</p>
+<p>If a server fails a health check, it is temporarily removed from the pool of available servers until it recovers. In the HAProxy example, the check option in the backend configuration enables health checks for each server.</p>
+<h3 id="rate-limiting"><strong>Rate Limiting</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#rate-limiting" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Rate limiting is a mechanism that restricts the number of requests a client can make to an API within a predefined period.</p>
+<p>It sets a limit on the frequency and volume of requests, preventing any single client from monopolizing the API’s resources or causing performance issues for other users. This is critical for keeping the API layer scalable for the right set of users.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!zAgF!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F6e13c022-e146-4a94-8c8b-030625d6cf0e_1600x1031.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!zAgF!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F6e13c022-e146-4a94-8c8b-030625d6cf0e_1600x1031.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>The primary goals of rate limiting are:</p>
+<ul>
+<li>
+<p><strong>Preventing Abuse:</strong> Rate limiting helps mitigate the risk of denial-of-service attacks, where an attacker attempts to flood the API with a large number of requests to disrupt its functionality.</p>
+</li>
+<li>
+<p><strong>Ensuring Fair Usage:</strong> By imposing limits on the number of requests per client, rate limiting ensures that no single client can consume a disproportionate amount of resources, allowing fair access for all users.</p>
+</li>
+<li>
+<p><strong>Protecting Backend Services:</strong> Rate limiting acts as a safeguard for backend services, preventing them from being overwhelmed by excessive traffic.</p>
+</li>
+</ul>
+<p>When implementing rate limiting, there are several key aspects to consider:</p>
+<ul>
+<li>
+<p><strong>Quota-Based Limits:</strong> Rate limiting often involves setting a quota or a maximum number of requests a client can make within a specific time frame. For example, an API may allow a particular client to make 1000 requests per hour. Once the quota is exceeded, additional requests are rejected or delayed until the next time window begins.</p>
+</li>
+<li>
+<p><strong>Granularity:</strong> Rate limits can be applied at different levels of granularity, depending on the specific requirements of the API. Common granularity levels include:</p>
+<ul>
+<li>
+<p><strong>Per User:</strong> Each user is assigned a separate quota, ensuring that individual users cannot exceed their allocated limits.</p>
+</li>
+<li>
+<p><strong>Per IP Address:</strong> Rate limits are enforced based on the client’s IP address, preventing a single IP from making excessive requests.</p>
+</li>
+<li>
+<p><strong>Per API Key:</strong> If the API uses API keys for authentication, rate limits can be associated with each API key, allowing for more fine-grained control over client access.</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Response Headers:</strong> To provide transparency and help clients manage their request rates, APIs often include rate-limiting information in the response headers. By including these headers, APIs enable clients to monitor their usage and adjust their request patterns accordingly. These headers may include:</p>
+<ul>
+<li>
+<p>X-RateLimit-Limit: The maximum number of requests allowed within a time window.</p>
+</li>
+<li>
+<p>X-RateLimit-Remaining: The number of remaining requests available for the current time window.</p>
+</li>
+<li>
+<p>X-RateLimit-Reset: The timestamp or duration indicating when the rate limit will reset.</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="asynchronous-processing"><strong>Asynchronous Processing</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#asynchronous-processing" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Asynchronous processing involves executing tasks in the background, separate from the main application thread.</p>
+<p>By offloading time-consuming or resource-intensive tasks to a separate thread or process, the application can remain responsive and continue handling incoming requests without blocking.</p>
+<p>Message queues play a crucial role in facilitating asynchronous communication between components of an application. They act as intermediaries, allowing components to send and receive messages asynchronously, without direct coupling or synchronous dependencies.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!2ks_!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F9d4fab29-af50-45a5-b61a-4add4d28a983_1600x1405.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!2ks_!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F9d4fab29-af50-45a5-b61a-4add4d28a983_1600x1405.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>As an example, message brokers like RabbitMQ facilitate this by providing a reliable way to send, receive, and process messages. Using them, components can communicate asynchronously by sending messages to a queue and processing them independently.</p>
+<p>Here’s a simple code sample of a MessageProducer in Spring Boot that sends a message to a RabbitMQ instance.</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>@RestController</span></span>
+<span data-line><span>public class MessageProducer {</span></span>
+<span data-line> </span>
+<span data-line><span>    @Autowired</span></span>
+<span data-line><span>    private RabbitTemplate rabbitTemplate;</span></span>
+<span data-line> </span>
+<span data-line><span>    @GetMapping(&quot;/send&quot;)</span></span>
+<span data-line><span>    public String sendMessage() {</span></span>
+<span data-line><span>        rabbitTemplate.convertAndSend(&quot;myQueue&quot;, &quot;Hello, World!&quot;);</span></span>
+<span data-line><span>        return &quot;Message sent!&quot;;</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>Here’s the basic code sample of a corresponding MessageListener.</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>@Component</span></span>
+<span data-line><span>public class MessageListener {</span></span>
+<span data-line> </span>
+<span data-line><span>    @RabbitListener(queues = &quot;myQueue&quot;)</span></span>
+<span data-line><span>    public void receiveMessage(String message) {</span></span>
+<span data-line><span>        System.out.println(&quot;Received message: &quot; + message);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>In this example, a message is sent to a RabbitMQ queue, and a listener processes the message asynchronously.</p>
+<h3 id="microservices-architecture"><strong>Microservices Architecture</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#microservices-architecture" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>One of the most common obstacles to scaling an API is often the service supporting that API being part of a big monolithic application. It is not easy to scale such a monolithic application.</p>
+<p>This is where using a microservices architecture can indirectly make the APIs more scalable.</p>
+<p>Microservices architecture is an approach to designing and building applications as a collection of small, independent services that communicate with each other over a network. Each microservice represents a self-contained unit that encapsulates a specific business capability, such as user authentication, order processing, or inventory management.</p>
+<p>See the diagram below for reference:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!Fwuv!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F75a5b45b-d180-4d7e-8bfc-f1f7f735072a_1600x1029.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!Fwuv!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F75a5b45b-d180-4d7e-8bfc-f1f7f735072a_1600x1029.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>To illustrate the concept of decoupling services, let’s consider an e-commerce application initially built as a monolith.</p>
+<p>In a microservices architecture, this application could be broken down into the following services:</p>
+<ul>
+<li>
+<p><strong>User Service:</strong> Manages user registration, authentication, and profile management.</p>
+</li>
+<li>
+<p><strong>Product Service:</strong> Handles product catalog, inventory, and pricing.</p>
+</li>
+<li>
+<p><strong>Order Service:</strong> Manages order creation, processing, and tracking.</p>
+</li>
+<li>
+<p><strong>Payment Service:</strong> Handles payment processing and transaction management.</p>
+</li>
+<li>
+<p><strong>Notification Service:</strong> Sends emails, SMS, or push notifications to users.</p>
+</li>
+</ul>
+<p>Each service can be developed, deployed, and scaled independently, allowing greater flexibility and efficiency. Also, these different services can communicate using lightweight protocols such as HTTP/REST, gRPC, or messaging systems like RabbitMQ or Kafka. The choice of communication protocol depends on the specific requirements and characteristics of the system.</p>
+<p>By breaking down a monolithic application into smaller, loosely coupled services, the microservices architecture enables teams to develop, deploy, and scale services independently, leading to faster development cycles and more efficient resource utilization.</p>
+<h2 id="best-practices-while-scaling-the-api-layer"><strong>Best Practices While Scaling the API Layer</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#best-practices-while-scaling-the-api-layer" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Implementing best practices is crucial for ensuring that the API is scalable, maintainable, and secure. Here are some practices that should ideally be followed:</p>
+<h3 id="monitoring-and-logging"><strong>Monitoring and Logging</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#monitoring-and-logging" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Monitoring and logging are critical components of API management that enable developers to gain insights into the performance, health, and usage patterns of the various APIs.</p>
+<p>Monitoring involves tracking and analyzing key metrics related to API performance and usage. Some essential metrics to monitor include:</p>
+<ul>
+<li>
+<p>Response Times</p>
+</li>
+<li>
+<p>Error Rates</p>
+</li>
+<li>
+<p>Request Volumes</p>
+</li>
+</ul>
+<p>To facilitate effective monitoring, various tools and platforms are available, such as Prometheus, Grafana, and the ELK Stack (Elasticsearch, Logstash, Kibana).</p>
+<p>Logging also involves capturing detailed records of API interactions, including request and response data, timestamps, and other relevant information.</p>
+<p>These logs are valuable for solving debugging issues, auditing usage patterns, and understanding how clients interact with the API.</p>
+<h3 id="api-versioning"><strong>API Versioning</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#api-versioning" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>As APIs evolve, new features may be introduced, existing functionality may be modified, or deprecated features may be removed.</p>
+<p>API versioning enables developers to release multiple versions of the API concurrently, allowing clients to continue using the version they are familiar with while gradually transitioning to newer versions at their own pace. This approach minimizes disruption to existing integrations and ensures a smooth migration process for clients.</p>
+<p>Common versioning strategies include:</p>
+<ul>
+<li>
+<p>URI Versioning</p>
+</li>
+<li>
+<p>Query Parameter Versioning</p>
+</li>
+<li>
+<p>Customer Header Versioning</p>
+</li>
+</ul>
+<h3 id="api-security"><strong>API Security</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#api-security" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>APIs often expose sensitive data and functionality, making it crucial to implement robust security measures to protect against unauthorized access, data breaches, and other security threats.</p>
+<p>Key components of API security include:</p>
+<ul>
+<li>
+<p><strong>Authentication:</strong> Verifying the identity of users or applications accessing the API. Common authentication methods include OAuth 2.0, which enables secure delegated access, and JSON Web Tokens (JWT), which provide a compact and self-contained way to transmit authentication information.</p>
+</li>
+<li>
+<p><strong>Authorization:</strong> Determining the permissions and access rights of authenticated users or applications. Role-based access control (RBAC) and attribute-based access control (ABAC) are commonly used to enforce fine-grained authorization policies.</p>
+</li>
+<li>
+<p><strong>Data Encryption:</strong> Protecting data in transit and at rest using encryption protocols such as HTTPS/TLS for secure communication and encryption algorithms for data storage.</p>
+</li>
+</ul>
+<h3 id="api-documentation"><strong>API Documentation</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#api-documentation" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Clear, comprehensive, and up-to-date documentation is essential for reducing the learning curve, minimizing support requests, and encouraging the adoption of the API.</p>
+<p>Effective API documentation should include:</p>
+<ul>
+<li>
+<p>Endpoint details</p>
+</li>
+<li>
+<p>Authentication and Authorization Instructions</p>
+</li>
+<li>
+<p>Error handling</p>
+</li>
+<li>
+<p>Usage examples</p>
+</li>
+</ul>
+<p>Tools like Swagger (OpenAPI Specification) and Postman can greatly simplify the process of creating and maintaining API documentation.</p>
+<h2 id="summary"><strong>Summary</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#summary" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>APIs form the backbone of modern software development, allowing communication between the various components of distributed systems and applications.</p>
+<p>Successfully scaling an application depends heavily on the scalability of the API layer. In this article, we’ve looked at several strategies for API scaling. Let’s go over them in brief:</p>
+<ul>
+<li>
+<p>The API Layer acts as the interface between clients and backend services, handling requests, enforcing security, and orchestrating service interactions.</p>
+</li>
+<li>
+<p>The key concepts one should understand in the context of API scalability are the definitions of scalability, latency, and throughput.</p>
+</li>
+<li>
+<p>There are multiple strategies for API scalability, especially when it comes to horizontal scalability.</p>
+</li>
+<li>
+<p>Stateless architecture is the key to achieving horizontal scalability since it helps design APIs to be independent of previous requests.</p>
+</li>
+<li>
+<p>Load balancing helps distribute requests across multiple instances to prevent overload. Load balancers can play the role of reverse proxy and API Gateway to provide a single entry point for the API layer.</p>
+</li>
+<li>
+<p>Rate limiting is the key to controlling request volume to ensure fair usage and keep the API scalable for valid users.</p>
+</li>
+<li>
+<p>Asynchronous processing helps scale the API by handling the tasks asynchronously using a background process.</p>
+</li>
+<li>
+<p>Microservices architecture allows the breaking down of monolithic APIs into individual service deployments that are easier to scale.</p>
+</li>
+<li>
+<p>Some best practices that support API scalability are monitoring and logging, versioning, security, and documentation.</p>
+</li>
+</ul></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-111" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#key-concepts" data-for="key-concepts">Key Concepts</a></li><li class="depth-1"><a href="#scalability" data-for="scalability">Scalability</a></li><li class="depth-1"><a href="#latency" data-for="latency">Latency</a></li><li class="depth-1"><a href="#throughput" data-for="throughput">Throughput</a></li><li class="depth-0"><a href="#api-scaling-strategies" data-for="api-scaling-strategies">API Scaling Strategies</a></li><li class="depth-1"><a href="#stateless-architecture" data-for="stateless-architecture">Stateless Architecture</a></li><li class="depth-1"><a href="#load-balancing" data-for="load-balancing">Load Balancing</a></li><li class="depth-1"><a href="#1---reverse-proxy" data-for="1---reverse-proxy">1 - Reverse Proxy</a></li><li class="depth-1"><a href="#2---dns-load-balancing" data-for="2---dns-load-balancing">2 - DNS Load Balancing</a></li><li class="depth-1"><a href="#3---health-checks" data-for="3---health-checks">3 - Health Checks</a></li><li class="depth-1"><a href="#rate-limiting" data-for="rate-limiting">Rate Limiting</a></li><li class="depth-1"><a href="#asynchronous-processing" data-for="asynchronous-processing">Asynchronous Processing</a></li><li class="depth-1"><a href="#microservices-architecture" data-for="microservices-architecture">Microservices Architecture</a></li><li class="depth-0"><a href="#best-practices-while-scaling-the-api-layer" data-for="best-practices-while-scaling-the-api-layer">Best Practices While Scaling the API Layer</a></li><li class="depth-1"><a href="#monitoring-and-logging" data-for="monitoring-and-logging">Monitoring and Logging</a></li><li class="depth-1"><a href="#api-versioning" data-for="api-versioning">API Versioning</a></li><li class="depth-1"><a href="#api-security" data-for="api-security">API Security</a></li><li class="depth-1"><a href="#api-documentation" data-for="api-documentation">API Documentation</a></li><li class="depth-0"><a href="#summary" data-for="summary">Summary</a></li><li class="overflow-end"></li></ul></div><div class="backlinks"><h3>Backlinks</h3><ul id="list-2" class="overflow"><li><a href="../../Notion-Knowledge/Note" class="internal">Note</a></li><li><a href="../../_moc/MOC-API-Design" class="internal">MOC-API-Design</a></li><li><a href="../../_moc/MOC-Reading-List" class="internal">MOC-Reading-List</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://dangthobach.github.io/">Back to Portfolio</a></li><li><a href="https://github.com/dangthobach">GitHub</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../postscript.js" type="module" data-persist="true"></script></html>

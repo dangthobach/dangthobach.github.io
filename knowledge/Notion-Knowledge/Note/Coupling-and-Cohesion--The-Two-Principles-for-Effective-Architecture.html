@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>Coupling and Cohesion- The Two Principles for Effective Architecture</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="Dang Tho Bach's Knowledge Base"/><meta property="og:title" content="Coupling and Cohesion- The Two Principles for Effective Architecture"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="Coupling and Cohesion- The Two Principles for Effective Architecture"/><meta name="twitter:description" content="Every large system that spirals out of control starts the same way: small, functional, and deceptively simple."/><meta property="og:description" content="Every large system that spirals out of control starts the same way: small, functional, and deceptively simple."/><meta property="og:image:alt" content="Every large system that spirals out of control starts the same way: small, functional, and deceptively simple."/><meta property="twitter:domain" content="dangthobach.github.io/knowledge"/><meta property="og:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Coupling-and-Cohesion--The-Two-Principles-for-Effective-Architecture"/><meta property="twitter:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Coupling-and-Cohesion--The-Two-Principles-for-Effective-Architecture"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="Every large system that spirals out of control starts the same way: small, functional, and deceptively simple."/><meta name="generator" content="Quartz"/><link href="../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiL2hvbWUvcnVubmVyL3dvcmsvZGFuZ3Rob2JhY2guZ2l0aHViLmlvL2Rhbmd0aG9iYWNoLmdpdGh1Yi5pby9xdWFydHovcXVhcnR6L2NvbXBvbmVudHMvc3R5bGVzIiwic291cmNlcyI6WyJtZXJtYWlkLmlubGluZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFHRjtFQUNFOzs7QUFLRjtFQUNFO0VBQ0E7OztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTs7QUFJRjtFQUNFO0VBQ0E7RUFDQSIsInNvdXJjZXNDb250ZW50IjpbIi5leHBhbmQtYnV0dG9uIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbG9hdDogcmlnaHQ7XG4gIHBhZGRpbmc6IDAuNHJlbTtcbiAgbWFyZ2luOiAwLjNyZW07XG4gIHJpZ2h0OiAwOyAvLyBOT1RFOiByaWdodCB3aWxsIGJlIHNldCBpbiBtZXJtYWlkLmlubGluZS50c1xuICBjb2xvcjogdmFyKC0tZ3JheSk7XG4gIGJvcmRlci1jb2xvcjogdmFyKC0tZGFyayk7XG4gIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgYm9yZGVyOiAxcHggc29saWQ7XG4gIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgb3BhY2l0eTogMDtcbiAgdHJhbnNpdGlvbjogMC4ycztcblxuICAmID4gc3ZnIHtcbiAgICBmaWxsOiB2YXIoLS1saWdodCk7XG4gICAgZmlsdGVyOiBjb250cmFzdCgwLjMpO1xuICB9XG5cbiAgJjpob3ZlciB7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIGJvcmRlci1jb2xvcjogdmFyKC0tc2Vjb25kYXJ5KTtcbiAgfVxuXG4gICY6Zm9jdXMge1xuICAgIG91dGxpbmU6IDA7XG4gIH1cbn1cblxucHJlIHtcbiAgJjpob3ZlciA+IC5leHBhbmQtYnV0dG9uIHtcbiAgICBvcGFjaXR5OiAxO1xuICAgIHRyYW5zaXRpb246IDAuMnM7XG4gIH1cbn1cblxuI21lcm1haWQtY29udGFpbmVyIHtcbiAgcG9zaXRpb246IGZpeGVkO1xuICBjb250YWluOiBsYXlvdXQ7XG4gIHotaW5kZXg6IDk5OTtcbiAgbGVmdDogMDtcbiAgdG9wOiAwO1xuICB3aWR0aDogMTAwdnc7XG4gIGhlaWdodDogMTAwdmg7XG4gIG92ZXJmbG93OiBoaWRkZW47XG4gIGRpc3BsYXk6IG5vbmU7XG4gIGJhY2tkcm9wLWZpbHRlcjogYmx1cig0cHgpO1xuICBiYWNrZ3JvdW5kOiByZ2JhKDAsIDAsIDAsIDAuNSk7XG5cbiAgJi5hY3RpdmUge1xuICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgfVxuXG4gICYgPiAjbWVybWFpZC1zcGFjZSB7XG4gICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gICAgYm9yZGVyLXJhZGl1czogNXB4O1xuICAgIHBvc2l0aW9uOiBmaXhlZDtcbiAgICB0b3A6IDUwJTtcbiAgICBsZWZ0OiA1MCU7XG4gICAgdHJhbnNmb3JtOiB0cmFuc2xhdGUoLTUwJSwgLTUwJSk7XG4gICAgaGVpZ2h0OiA4MHZoO1xuICAgIHdpZHRoOiA4MHZ3O1xuICAgIG92ZXJmbG93OiBoaWRkZW47XG5cbiAgICAmID4gLm1lcm1haWQtY29udGVudCB7XG4gICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgICB0cmFuc2Zvcm0tb3JpZ2luOiAwIDA7XG4gICAgICB0cmFuc2l0aW9uOiB0cmFuc2Zvcm0gMC4xcyBlYXNlO1xuICAgICAgb3ZlcmZsb3c6IHZpc2libGU7XG4gICAgICBtaW4taGVpZ2h0OiAyMDBweDtcbiAgICAgIG1pbi13aWR0aDogMjAwcHg7XG5cbiAgICAgIHByZSB7XG4gICAgICAgIG1hcmdpbjogMDtcbiAgICAgICAgYm9yZGVyOiBub25lO1xuICAgICAgfVxuXG4gICAgICBzdmcge1xuICAgICAgICBtYXgtd2lkdGg6IG5vbmU7XG4gICAgICAgIGhlaWdodDogYXV0bztcbiAgICAgIH1cbiAgICB9XG5cbiAgICAmID4gLm1lcm1haWQtY29udHJvbHMge1xuICAgICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgICAgYm90dG9tOiAyMHB4O1xuICAgICAgcmlnaHQ6IDIwcHg7XG4gICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgZ2FwOiA4cHg7XG4gICAgICBwYWRkaW5nOiA4cHg7XG4gICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgYm9yZGVyLXJhZGl1czogNnB4O1xuICAgICAgYm94LXNoYWRvdzogMCAycHggNHB4IHJnYmEoMCwgMCwgMCwgMC4xKTtcbiAgICAgIHotaW5kZXg6IDI7XG5cbiAgICAgIC5tZXJtYWlkLWNvbnRyb2wtYnV0dG9uIHtcbiAgICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgIHdpZHRoOiAzMnB4O1xuICAgICAgICBoZWlnaHQ6IDMycHg7XG4gICAgICAgIHBhZGRpbmc6IDA7XG4gICAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgICAgY29sb3I6IHZhcigtLWRhcmspO1xuICAgICAgICBib3JkZXItcmFkaXVzOiA0cHg7XG4gICAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICAgICAgZm9udC1zaXplOiAxNnB4O1xuICAgICAgICBmb250LWZhbWlseTogdmFyKC0tYm9keUZvbnQpO1xuICAgICAgICB0cmFuc2l0aW9uOiBhbGwgMC4ycyBlYXNlO1xuXG4gICAgICAgICY6aG92ZXIge1xuICAgICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIH1cblxuICAgICAgICAmOmFjdGl2ZSB7XG4gICAgICAgICAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKDFweCk7XG4gICAgICAgIH1cblxuICAgICAgICAvLyBTdHlsZSB0aGUgcmVzZXQgYnV0dG9uIGRpZmZlcmVudGx5XG4gICAgICAgICY6bnRoLWNoaWxkKDIpIHtcbiAgICAgICAgICB3aWR0aDogYXV0bztcbiAgICAgICAgICBwYWRkaW5nOiAwIDEycHg7XG4gICAgICAgICAgZm9udC1zaXplOiAxNHB4O1xuICAgICAgICB9XG4gICAgICB9XG4gICAgfVxuICB9XG59XG4iXX0= */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://dangthobach.github.io/knowledge/index.xml"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Coupling-and-Cohesion--The-Two-Principles-for-Effective-Architecture-og-image.webp"/><meta property="og:image:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Coupling-and-Cohesion--The-Two-Principles-for-Effective-Architecture-og-image.webp"/><meta name="twitter:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Coupling-and-Cohesion--The-Two-Principles-for-Effective-Architecture-og-image.webp"/><meta property="og:image:type" content="image/.webp"/></head><body data-slug="Notion-Knowledge/Note/Coupling-and-Cohesion--The-Two-Principles-for-Effective-Architecture"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../..">Dang Tho Bach's Knowledge Base</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-301"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-301" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/">Notion Knowledge</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/Note/">Note</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>Coupling and Cohesion  The Two Principles for Effective Architecture</a></div></nav><h1 class="article-title">Coupling and Cohesion- The Two Principles for Effective Architecture</h1><p show-comma="true" class="content-meta"><time datetime="2026-05-02T04:58:37.000Z">May 02, 2026</time><span>21 min read</span></p></div></div><article class="popover-hint"><p>Every large system that spirals out of control starts the same way: small, functional, and deceptively simple. However, as the system evolves, things spiral out of control.</p>
+<p>A feature is added here, a helper function squeezed there, and a “temporary” dependency for some urgent task that never gets removed. Months later, debugging requires going through five layers of indirection, and touching one module can break the entire system.</p>
+<p>Behind the scenes of that slow collapse, two invisible forces often play tug-of-war: coupling and cohesion.</p>
+<p>Most developers first hear these terms in textbooks or blog posts, often lumped into a “good design” checklist.</p>
+<ul>
+<li>
+<p>High cohesion: good.</p>
+</li>
+<li>
+<p>Loose coupling: also good.</p>
+</li>
+</ul>
+<p>But beyond the concepts, the practical meaning often gets lost. What does coupling look like? When does cohesion break down in real teams? And why do some projects feel like a breeze to change, while others offer challenges with every pull request?</p>
+<p>Coupling and cohesion aren’t abstract guidelines. They are practical engineering realities that define how easily code could evolve, how confidently teams could deploy, and how painful it becomes to onboard a new teammate or fix a bug under pressure.</p>
+<p>In this article, we’ll attempt to understand coupling and cohesion in more realistic terms and how they might show up in different architectural styles and patterns.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!v2p5!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F1a16589b-604b-4954-9a25-ac2cc07eeed9_2250x2862.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!v2p5!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F1a16589b-604b-4954-9a25-ac2cc07eeed9_2250x2862.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h2 id="understanding-coupling"><strong>Understanding Coupling</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#understanding-coupling" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Coupling refers to how much one module depends on another.</p>
+<p>The tighter the coupling between two modules, the more they need to know about each other’s internals: how they’re implemented, what assumptions they make, when they run, and what they return. The looser the coupling, the more independent those modules become, communicating only through well-defined interfaces or messages.</p>
+<p>In other words, tight coupling makes systems rigid and loose coupling makes them flexible, but often harder to trace.</p>
+<p>When a simple change triggers a cascade of issues across unrelated parts of the system, coupling is usually the culprit. The signs of coupling hide in plain sight: inside shared data structures and hardcoded dependencies. But when it breaks, everything breaks together.</p>
+<h3 id="tight-coupling"><strong>Tight Coupling</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#tight-coupling" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Tight coupling usually shows up when:</p>
+<ul>
+<li>
+<p>One module calls another’s internal methods or accesses its internal state directly.</p>
+</li>
+<li>
+<p>A change in one module forces changes in others, even when their responsibilities seem unrelated.</p>
+</li>
+<li>
+<p>Control flow and logic are spread across multiple classes that assume each other’s behavior.</p>
+</li>
+</ul>
+<p>See the diagram below that shows a representation of tight coupling in practice.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!VGOC!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fd570716b-de66-4089-819b-e7be3d130364_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!VGOC!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fd570716b-de66-4089-819b-e7be3d130364_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>For example, a ProductController that constructs and manipulates a ProductRepository directly, not through an interface, not via inversion of control, but by hardwiring the exact class, creates tight coupling. If the repository changes (say, to fetch from a different database), the controller breaks. Unit tests suffer too, because mocking tightly coupled classes becomes difficult.</p>
+<p>See the code example below:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>// Tightly Coupled Example</span></span>
+<span data-line> </span>
+<span data-line><span>public class ProductRepository {</span></span>
+<span data-line><span>    public String getProductById(String id) {</span></span>
+<span data-line><span>        // Simulate DB access</span></span>
+<span data-line><span>        return &quot;Product: &quot; + id;</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>public class ProductController {</span></span>
+<span data-line><span>    private ProductRepository repository;</span></span>
+<span data-line> </span>
+<span data-line><span>    public ProductController() {</span></span>
+<span data-line><span>        // Direct instantiation = tight coupling</span></span>
+<span data-line><span>        this.repository = new ProductRepository();</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    public void handleRequest(String productId) {</span></span>
+<span data-line><span>        String product = repository.getProductById(productId);</span></span>
+<span data-line><span>        System.out.println(&quot;Fetched: &quot; + product);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>Note that this code example is just for demonstration purposes.</p>
+<p>Tight coupling usually creeps in when developers choose convenience. Developers optimize for speed, skip abstractions, and “just call the method directly.” Over time, this results in increased coupling.</p>
+<p>Still, not all tight coupling is bad. In performance-critical paths, tight integration may improve latency. Also, in early prototypes, it reduces the time to market. However, coupling tends to trade flexibility for immediacy, and that cost can grow with time.</p>
+<h3 id="loose-coupling"><strong>Loose Coupling</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#loose-coupling" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Two modules or components are said to be loosely coupled when:</p>
+<ul>
+<li>
+<p>Modules depend on interfaces, not concrete implementations.</p>
+</li>
+<li>
+<p>Communication happens through events, messages, or abstract APIs.</p>
+</li>
+<li>
+<p>Modules expose minimal surface area, just enough to get the job done and no more.</p>
+</li>
+</ul>
+<p>See the diagram below for a possible representation of loose coupling.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!OO5G!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fe6e550f9-ba73-4505-8a1d-a59087d33889_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!OO5G!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fe6e550f9-ba73-4505-8a1d-a59087d33889_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>In a typical example, a UserService might depend on an INotificationSender rather than directly calling an EmailService. That shift decouples the business logic from the notification mechanism. Tomorrow, switching to SMS or a third-party API doesn’t touch UserService at all. The contract remains; the implementation evolves.</p>
+<p>See the code example below for reference:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>interface INotificationSender {</span></span>
+<span data-line><span>    void sendNotification(String recipient, String message);</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>class EmailService implements INotificationSender {</span></span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    public void sendNotification(String recipient, String message) {</span></span>
+<span data-line><span>        System.out.println(&quot;Sending EMAIL to &quot; + recipient + &quot;: &quot; + message);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>class SmsService implements INotificationSender {</span></span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    public void sendNotification(String recipient, String message) {</span></span>
+<span data-line><span>        System.out.println(&quot;Sending SMS to &quot; + recipient + &quot;: &quot; + message);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>class UserService {</span></span>
+<span data-line><span>    private INotificationSender notificationSender;</span></span>
+<span data-line> </span>
+<span data-line><span>    public UserService(INotificationSender notificationSender) {</span></span>
+<span data-line><span>        this.notificationSender = notificationSender;</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    public void registerUser(String username) {</span></span>
+<span data-line><span>        // Simulate user registration logic</span></span>
+<span data-line><span>        System.out.println(&quot;Registering user: &quot; + username);</span></span>
+<span data-line><span>        notificationSender.sendNotification(username, &quot;Welcome to the platform!&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>public class App {</span></span>
+<span data-line><span>    public static void main(String[] args) {</span></span>
+<span data-line><span>        // Use EmailService</span></span>
+<span data-line><span>        INotificationSender emailSender = new EmailService();</span></span>
+<span data-line><span>        UserService emailUserService = new UserService(emailSender);</span></span>
+<span data-line><span>        emailUserService.registerUser(&quot;alice@example.com&quot;);</span></span>
+<span data-line> </span>
+<span data-line><span>        System.out.println();</span></span>
+<span data-line> </span>
+<span data-line><span>        // Swap to SmsService without touching UserService</span></span>
+<span data-line><span>        INotificationSender smsSender = new SmsService();</span></span>
+<span data-line><span>        UserService smsUserService = new UserService(smsSender);</span></span>
+<span data-line><span>        smsUserService.registerUser(&quot;555-1234&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>Loose coupling improves testability, modularity, and reuse. But it also spreads logic across boundaries, which can increase complexity. In distributed systems, loose coupling comes at the cost of observability and latency</p>
+<h3 id="the-trade-off"><strong>The Trade-Off</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#the-trade-off" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Coupling isn’t inherently good or bad. It’s a constraint that has to be managed as part of the project. A few points to keep in mind are as follows:</p>
+<ul>
+<li>
+<p>Tighter coupling works when simplicity, speed, or co-location matter. Loose coupling wins when change is constant and boundaries matter more than call speed.</p>
+</li>
+<li>
+<p>Too much coupling, and every deploy becomes risky. Teams can’t move independently. On the other hand, if there’s too much abstraction in pursuit of loose coupling, clarity suffers. Engineers can struggle to trace a feature across five interfaces and three DI bindings.</p>
+</li>
+</ul>
+<p>Coupling decisions impact system boundaries, team velocity, and incident response. Therefore, they should be deliberate and meaningful. Design begins with one question: “What kind of change is this system likely to face?” The answer determines how tight or how loose the coupling should be.</p>
+<h2 id="cohesion-the-glue-that-holds-a-module-together"><strong>Cohesion: The Glue That Holds A Module Together</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#cohesion-the-glue-that-holds-a-module-together" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Some modules feel intuitive at first glance. Their classes work together toward a clear goal. Their methods appear clear and understandable. Making changes feels easy and safe from an impact point of view.</p>
+<p>One of the reasons this happens is because of cohesion.</p>
+<p>Cohesion describes how tightly related the responsibilities inside a module are. A highly cohesive module focuses on a single purpose. Every function, class, and variable exists to support that purpose. A low-cohesion module mixes unrelated concerns, often because responsibilities have drifted over time or weren’t clearly defined to begin with.</p>
+<p>If coupling defines how much a module depends on others, cohesion defines how well a module stands on its own.</p>
+<p>See the diagram below that tries to show the concept of cohesion.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!IJsf!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F2b0e4c12-0d83-4b55-927c-fd4c99b33a55_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!IJsf!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F2b0e4c12-0d83-4b55-927c-fd4c99b33a55_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h3 id="low-cohesion"><strong>Low Cohesion</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#low-cohesion" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Low cohesion often sneaks in when teams optimize for reuse or try to “group related things” too early. It shows up in catch-all service classes, bloated controllers, and utility files that handle everything from database access to date formatting.</p>
+<p>Consider a UserManager class that handles:</p>
+<ul>
+<li>
+<p>Creating and updating user records</p>
+</li>
+<li>
+<p>Authenticating logins</p>
+</li>
+<li>
+<p>Sending password reset emails</p>
+</li>
+<li>
+<p>Logging suspicious activity</p>
+</li>
+<li>
+<p>Caching user sessions</p>
+</li>
+</ul>
+<p>At first, this might feel convenient. Everything about “users” lives in one place. But the responsibilities vary wildly. Business logic, security, infrastructure, and communication all sit in the same module, tightly entangled. Testing becomes fragile, and changes ripple unpredictably. For example, a tweak to the cache logic might accidentally break email notifications.</p>
+<p>Low cohesion tends to:</p>
+<ul>
+<li>
+<p><strong>Increase cognitive load:</strong> Developers must understand multiple concepts to change one.</p>
+</li>
+<li>
+<p><strong>Introduce hidden dependencies:</strong> Methods rely on side effects of unrelated logic.</p>
+</li>
+<li>
+<p><strong>Encourage spaghetti architecture:</strong> Everything depends on everything else.</p>
+</li>
+</ul>
+<p>Worse, when these bloated modules get reused, their internal coupling spreads into other parts of the system, creating accidental coupling between components that only needed a small piece of shared logic.</p>
+<h3 id="high-cohesion"><strong>High Cohesion</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#high-cohesion" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>A cohesive module draws a clear boundary around its responsibility. It encapsulates one purpose, does it well, and offers a minimal interface to the outside world. Internally, its components are tightly aligned. Externally, it remains simple and predictable.</p>
+<p>For example, take a TokenService that only handles JWT creation, validation, and expiration. It doesn’t care about user credentials, logging, or cookies. Those concerns belong elsewhere. Such a narrow focus means:</p>
+<ul>
+<li>
+<p>Tests are easy to write and understand.</p>
+</li>
+<li>
+<p>Internal changes rarely affect external code.</p>
+</li>
+<li>
+<p>Reuse feels natural, not forced.</p>
+</li>
+</ul>
+<p>Cohesion doesn’t necessarily mean tiny modules. It is about relatedness, not size. A module can be large and still cohesive if all the parts serve a unified purpose. Conversely, breaking up logic into many small but unfocused files doesn’t help.</p>
+<h2 id="the-role-of-naming-and-boundaries"><strong>The Role of Naming and Boundaries</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#the-role-of-naming-and-boundaries" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Poor cohesion often stems from vague naming and unclear ownership.</p>
+<p>When a module’s name (Utils, Helper, Manager) doesn’t reveal its purpose, it usually doesn’t have one. Strong cohesion starts with naming: “What does this module exist to do?”</p>
+<p>A well-defined domain boundary also promotes cohesion. In Domain-Driven Design, the concept of a “bounded context” exists for this reason. It gives each module a clearly defined area of responsibility, limiting the scope of ambiguity.</p>
+<p>See the diagram below that shows the concept of bounded contexts in DDD.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!1pvP!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F04839e58-beae-4056-b17b-2177aa8ca83c_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!1pvP!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F04839e58-beae-4056-b17b-2177aa8ca83c_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h2 id="coupling-and-cohesion"><strong>Coupling and Cohesion</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#coupling-and-cohesion" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Coupling and cohesion are tightly linked concepts. They push and pull against each other, and when balanced well, they form the backbone of clean, adaptable systems.</p>
+<ul>
+<li>
+<p><strong>Coupling looks outward:</strong> how much a module relies on others.</p>
+</li>
+<li>
+<p><strong>Cohesion looks inward:</strong> how well a module aligns with its intended role.</p>
+</li>
+</ul>
+<p>A design that solely optimizes for one while ignoring the other tends to break in subtle ways.</p>
+<h3 id="high-cohesion-can-expose-coupling"><strong>High Cohesion Can Expose Coupling</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#high-cohesion-can-expose-coupling" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>A cohesive module draws a sharp boundary around a specific responsibility. That’s good. But the sharper the boundary, the more pressure it puts on communication with other parts of the system.</p>
+<p>Consider a well-designed BillingService that handles invoicing, tax calculation, and payments. Its logic is tight and coherent. But if ten other services all depend on it directly (calling methods, sharing data structures, or reaching into its internals), the system is now tightly coupled to billing. Any internal change risks a cascade of breakages.</p>
+<p>Cohesion makes a module easier to understand and reason about. But unless it’s paired with thoughtful interfaces and contracts, other modules can become overly dependent on it, creating fragile coupling.</p>
+<h3 id="loose-coupling-can-obscure-cohesion"><strong>Loose Coupling Can Obscure Cohesion</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#loose-coupling-can-obscure-cohesion" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The flip side is also common: developers chasing decoupling end up scattering logic across multiple layers, classes, or services. Everything talks through abstractions. Dependencies are injected. Event buses handle communication. And yet, despite all this indirection, the logic itself remains blurry.</p>
+<p>For example, take a microservices setup where the user registration process touches five services: one handles identity, another triggers emails, a third logs the activity, a fourth updates a CRM, and a fifth provisions cloud storage. Each service is loosely coupled. But together, they form a brittle setup with no clear owner of the process.</p>
+<p>This is where cohesion suffers. The business logic (what happens when a new user signs up) gets lost across boundaries. Debugging becomes harder, and ownership becomes murky. The coordination overhead grows. This is where the concept of bounded contexts becomes important.</p>
+<p>Loose coupling improves flexibility, but without cohesion, the system starts to feel hollow: modular on paper, chaotic in practice.</p>
+<h3 id="the-sweet-spot-local-focus-global-independence"><strong>The Sweet Spot: Local Focus, Global Independence</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#the-sweet-spot-local-focus-global-independence" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Coupling and cohesion aren’t independent dials to be tweaked in isolation. They’re part of the same system. When one shifts, the other reacts.</p>
+<p>The goal shouldn’t be to maximize cohesion or minimize coupling in isolation. The goal is modularity: small, focused units that interact through clear, minimal contracts.</p>
+<p>Well-structured systems tend to follow this shape:</p>
+<ul>
+<li>
+<p><strong>Internally cohesive:</strong> Each module owns a clear responsibility and has internal consistency.</p>
+</li>
+<li>
+<p><strong>Externally decoupled:</strong> Modules depend on each other through stable interfaces, not hidden knowledge.</p>
+</li>
+</ul>
+<p>Some signs that the balance is working are as follows:</p>
+<ul>
+<li>
+<p>A change to one module requires minimal changes elsewhere.</p>
+</li>
+<li>
+<p>Features map cleanly to one or two components.</p>
+</li>
+<li>
+<p>Onboarding developers can understand a module without the need to understand the whole system.</p>
+</li>
+</ul>
+<h2 id="measuring-coupling-and-cohesion"><strong>Measuring Coupling and Cohesion</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#measuring-coupling-and-cohesion" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>As mentioned, coupling grows when modules rely too heavily on each other’s structure, behavior, or lifecycle. While no module exists in isolation and some dependency is necessary, problems arise when that dependency becomes rigid or implicit.</p>
+<p>Some ways coupling can be measured are as follows:</p>
+<ul>
+<li>
+<p><strong>Fan-in and Fan-out:</strong> Modules with a high number of inbound or outbound connections tend to be risk zones. A high fan-in indicates that many modules depend on this one. Any change carries ripple effects. A high fan-out suggests the module itself depends on many others, making it fragile and hard to reuse.</p>
+</li>
+<li>
+<p><strong>Change Propagation:</strong> Frequent commits that touch the same group of files, even across features, often point to tight coupling. When a small change demands edits in multiple modules, boundaries are probably unclear.</p>
+</li>
+<li>
+<p><strong>Coupling Between Objects (CBO):</strong> This static analysis metric counts how many other classes a particular class is coupled to. A high score doesn’t always mean bad design, but it signals areas worth inspecting.</p>
+</li>
+<li>
+<p><strong>Runtime Coupling:</strong> Dynamic dependencies, such as services that call each other in production, can be traced using observability tools. Service meshes, tracing tools (for example, Jaeger, Zipkin), and structured logging can reveal hidden entanglements between microservices.</p>
+</li>
+</ul>
+<p>Cohesion is harder to measure directly. It’s about how well a module’s internal components support a single, well-defined responsibility. A few indicators can help:</p>
+<ul>
+<li>
+<p><strong>Lack of Cohesion in Methods (LCOM)</strong>: This is one of the oldest cohesion metrics. It measures how often methods in a class operate on the same set of fields. High LCOM means methods are doing unrelated things, often a sign of weak internal consistency.</p>
+</li>
+<li>
+<p><strong>Semantic Diffusion</strong>: If explaining what a module does takes more than one clear sentence, or if that sentence includes “and also”, cohesion is probably suffering. This isn’t a metric a tool can compute, but it’s a useful verbal check.</p>
+</li>
+<li>
+<p><strong>Churn vs. Complexity</strong>: Modules that change often and are also complex tend to have low cohesion. They’re doing too much, and each change touches unrelated logic. Tools like SonarQube can help visualize these hotspots using historical data.</p>
+</li>
+<li>
+<p><strong>Test Scope Clarity</strong>: Well-cohesive modules are easy to test in isolation. If tests constantly mock unrelated dependencies or touch too many behaviors, the module probably lacks cohesion.</p>
+</li>
+</ul>
+<p>No metric tells the whole story. High coupling doesn’t always mean bad design. Some modules act as integration points by necessity. Also, low cohesion isn’t always a bug. Sometimes, legacy systems force broader responsibilities.</p>
+<p>The key is using metrics as guidance:</p>
+<ul>
+<li>
+<p>Use them to find candidates for review, not to gate deployments.</p>
+</li>
+<li>
+<p>Compare modules over time to spot worsening trends, not one-time spikes.</p>
+</li>
+<li>
+<p>Combine static metrics with human context: ownership, domain knowledge, and user impact.</p>
+</li>
+</ul>
+<h2 id="design-patterns-that-encourage-loose-coupling-and-high-cohesion"><strong>Design Patterns That Encourage Loose Coupling and High Cohesion</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#design-patterns-that-encourage-loose-coupling-and-high-cohesion" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Design patterns often encode battle-tested solutions to recurring architectural problems. Some of them exist specifically to help decouple modules, clarify responsibilities, and reduce the cost of change. When used with care, these patterns strengthen cohesion inside components and loosen the coupling between them.</p>
+<p>Let’s look at a few such design patterns:</p>
+<h3 id="strategy-pattern"><strong>Strategy Pattern</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#strategy-pattern" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>When a module needs to perform a task that could vary, but the surrounding logic stays the same, the strategy pattern keeps things cohesive and decoupled.</p>
+<p>Instead of hardcoding behavior, the module delegates it to a strategy interface. Each strategy implements the same contract but behaves differently and supports high cohesion. Also, since the caller depends only on an interface, it encourages loose coupling.</p>
+<p>See the diagram below:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!Q3Pl!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F7903196b-41d2-42ae-8576-585b9c816684_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!Q3Pl!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F7903196b-41d2-42ae-8576-585b9c816684_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>This pattern is good for handling business logic that needs to change frequently. It also helps avoid if-else or switch blocks full of behavioral branching.</p>
+<p>However, the pattern can introduce indirection. For simple cases, it may feel like overengineering. It pays off well when variations grow.</p>
+<h3 id="observer-pattern"><strong>Observer Pattern</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#observer-pattern" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>When one module needs to react to changes in another, but without knowing who or how, observer decouples them via publish-subscribe behavior.</p>
+<p>In this pattern, a subject exposes events. Observers subscribe and respond when those events occur. These observers can be added, removed, or modified without touching the subject, encouraging loose coupling. Also, the logic stays cohesive within each observer.</p>
+<p>See the diagram below:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!hNHq!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F5a24ff7f-8215-4e7c-a482-562941ee436c_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!hNHq!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F5a24ff7f-8215-4e7c-a482-562941ee436c_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>This pattern is often used when UI updates are triggered by model changes. Also, it is common in event-driven systems where multiple components react to a single change.</p>
+<p>The downside of this pattern is that it becomes harder to reason about control flow. Debugging event chains across dozens of observers can be difficult.</p>
+<h3 id="dependency-injection"><strong>Dependency Injection</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#dependency-injection" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Instead of hardcoding dependencies, dependency injection (DI) lets a container or caller supply them. This pattern separates what a class does from how it gets the tools required to do the job.</p>
+<p>It helps systems with lots of interchangeable components. Also, it is useful in testable code that needs to swap real dependencies for mocks or fakes.</p>
+<p>With DI, classes depend on interfaces rather than implementations, thereby reducing coupling. Also, business logic focuses on its job and not on constructing dependencies, thereby increasing cohesion.</p>
+<p>On the downside, DI frameworks can introduce hidden complexity and startup indirection. When abused, they create unclear wiring and debugging challenges.</p>
+<h3 id="facade-pattern"><strong>Facade Pattern</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#facade-pattern" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>When multiple modules interact with a messy or low-level API, a facade wraps that complexity in a clean, unified interface.</p>
+<p>This is great for integration with legacy systems, SDKs, or deeply nested internal libraries. It helps reduce coupling between business logic and infrastructure.</p>
+<p>Facades support loose coupling since consumers deal with one clean interface, instead of multiple fragmented ones. Also, the facade manages the orchestration, keeping external callers focused and thereby encouraging cohesion.</p>
+<p>The risk involves a facade becoming too large or too leaky if not carefully scoped.</p>
+<h3 id="adapter-pattern"><strong>Adapter Pattern</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#adapter-pattern" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Adapters wrap one interface to match another, allowing components to talk without being directly compatible.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!_rM-!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F4f33fb5c-7f3c-4033-8fb7-381e098f4aaf_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!_rM-!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F4f33fb5c-7f3c-4033-8fb7-381e098f4aaf_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>They help integrate third-party libraries without polluting internal code. Also, it can support multiple implementations under a single abstraction.</p>
+<p>Since the systems depend on internal contracts, the facade pattern encourages loose coupling. Also, the translation logic stays in one place, supporting high cohesion. The trade-off is that additional layers can obscure behavior, and their benefit depends on long-term variability.</p>
+<h2 id="coupling-and-cohesion-in-popular-architectural-styles"><strong>Coupling and Cohesion in Popular Architectural Styles</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#coupling-and-cohesion-in-popular-architectural-styles" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Understanding how coupling and cohesion behave across popular architectural styles helps avoid common failure modes such as rigid services, leaky layers, brittle APIs, and systems that are modular in theory but entangled in practice.</p>
+<h3 id="monoliths"><strong>Monoliths</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#monoliths" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Monoliths concentrate logic in one deployable unit.</p>
+<p>This co-location makes it easier to share data, call methods, and trace code paths. It also makes it tempting to blur boundaries.</p>
+<p>See the diagram below:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!7A1L!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F18b00f1c-4e6a-45e6-9435-2c6d1dce4679_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!7A1L!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F18b00f1c-4e6a-45e6-9435-2c6d1dce4679_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Here’s how cohesion and coupling work in a typical monolithic setup:</p>
+<ul>
+<li>
+<p>Cohesion in monoliths tends to be easier to maintain early on. Related logic lives in the same codebase, can share types, and often shares language-level context (for example, a common ORM or framework).</p>
+</li>
+<li>
+<p>Coupling, however, grows silently. Without a strong modular design, different features and domains start depending on each other’s internals via direct calls, shared states, and tight layering. Over time, the monolith becomes a distributed system in disguise, with implicit dependencies and high coordination costs.</p>
+</li>
+</ul>
+<p>Adding or changing a feature triggers ripple effects. Refactoring becomes risky, and ownership blurs. Teams step on each other’s code, even when working in separate domains.</p>
+<p>Enforcing modularity within the monolith can help alleviate these challenges. Use clear domain boundaries, module interfaces, and layered contracts, even if everything ships together.</p>
+<h3 id="microservices"><strong>Microservices</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#microservices" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Microservices enforce physical separation where each service lives in its process, communicates over the network, and owns the data.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!mz_D!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F30aaf39d-7169-4aa4-87da-dedba0036b4f_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!mz_D!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F30aaf39d-7169-4aa4-87da-dedba0036b4f_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Here’s how this pattern impacts coupling and cohesion.</p>
+<ul>
+<li>
+<p>Coupling is reduced at the infrastructure level. Services talk through APIs, not method calls. Shared state becomes harder intentionally, making dependencies more explicit and evolution safer.</p>
+</li>
+<li>
+<p>Cohesion becomes critical. Each microservice must own a single, well-defined responsibility. Without that, the system fragments into tiny, chatty services that collaborate poorly and fail together.</p>
+</li>
+</ul>
+<p>If service boundaries are cut by technical concerns instead of domain logic (for example, “auth service” + “email service” + “user details service”), cohesion suffers. No single service owns the whole business workflow, and the system relies heavily on coordination.</p>
+<p>Use domain-driven design (DDD) to define bounded contexts. Treat services as independently deployable business capabilities, not just APIs.</p>
+<h3 id="layered-architecture"><strong>Layered Architecture</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#layered-architecture" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Layered or “n-tier” architecture (presentation, business logic, data access) has been the default pattern for decades. It structures code by technical responsibility, not business domain.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!cesE!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F709e1d1c-da95-42c0-a1b6-39af645931d8_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!cesE!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F709e1d1c-da95-42c0-a1b6-39af645931d8_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Here’s how this pattern impacts coupling and cohesion:</p>
+<ul>
+<li>
+<p>Cohesion within layers depends on discipline. Ideally, each layer does one thing: render views, apply rules, and persist data. But in practice, logic often leaks. Services start making UI decisions. Controllers validate business rules. DAOs handle formatting.</p>
+</li>
+<li>
+<p>Coupling tends to grow vertically. Higher layers call lower layers directly. Any change in the data model can impact business logic and UI. This creates temporal coupling in the sense that layers need to change and deploy together.</p>
+</li>
+</ul>
+<p>Large systems with layered architectures often suffer from “God services” or “fat controllers” because no layer owns domain logic. Testing becomes difficult because of too many layers to mock and unclear responsibility boundaries.</p>
+<p>To handle these challenges, invert dependencies where needed (for example., use-case-driven services calling out to infrastructure). Encapsulate domain logic in its cohesive layer. Treat the business model as the center, not an afterthought.</p>
+<h3 id="clean-architecture"><strong>Clean Architecture</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#clean-architecture" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Clean Architecture flips traditional layering on its head. Instead of organizing code by technology, they organize it by use-case and domain, pushing infrastructure to the edges.</p>
+<p>See the diagram below:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!uwsS!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fb15395ed-8459-47c9-b01b-025da49ae9ab_1938x1356.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!uwsS!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fb15395ed-8459-47c9-b01b-025da49ae9ab_1938x1356.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Here’s how clean architecture impacts cohesion and coupling:</p>
+<ul>
+<li>
+<p>Cohesion is intentionally high within the domain layer. All core business logic lives here, independent of databases, frameworks, or transport protocols.</p>
+</li>
+<li>
+<p>Coupling is explicitly controlled through interfaces. The domain depends on abstractions, and adapters (such as controllers, databases, and message brokers) implement those contracts from the outside.</p>
+</li>
+</ul>
+<p>Initial complexity can feel heavy for small teams or MVPs. Writing abstractions before real behavior exists can lead to overengineering or vague boundaries.</p>
+<p>The goal should be to start simple and focus on isolating business rules. Avoid premature abstraction. Only introduce interfaces where change is likely or infrastructure is volatile.</p>
+<h3 id="takeaway"><strong>Takeaway</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#takeaway" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>No architecture can have perfect coupling or cohesion. Each one makes trade-offs between speed and stability, flexibility and clarity, short-term delivery and long-term maintainability.</p>
+<ul>
+<li>
+<p>Monoliths make cohesion easier, but coupling is increased.</p>
+</li>
+<li>
+<p>Microservices force decoupling but demand strong cohesion.</p>
+</li>
+<li>
+<p>Layered architectures clarify technical roles but often blur domain ownership.</p>
+</li>
+<li>
+<p>Hexagonal designs elevate business logic but require clear intent.</p>
+</li>
+</ul>
+<p>Choosing the right architecture means asking hard questions: Where is change expected? Who owns which domain? How often will these modules evolve independently?</p>
+<p>The better those questions are answered, the more likely the architecture will serve the system, not the other way around.</p>
+<h2 id="summary"><strong>Summary</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#summary" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>In this article, we’ve looked at coupling and cohesion in detail along with how these concepts play out in different patterns and architecture styles.</p>
+<p>Let’s summarize the key learning points in brief:</p>
+<ul>
+<li>
+<p>Coupling describes how much one module relies on another. Tight coupling increases fragility and coordination cost, while loose coupling allows modules to evolve independently through clear interfaces.</p>
+</li>
+<li>
+<p>Cohesion measures how well the responsibilities within a module align. High cohesion makes code easier to understand, test, and change; low cohesion leads to confusion and entangled logic.</p>
+</li>
+<li>
+<p>Tight coupling often creeps in silently through direct dependencies, shared internal state, and implicit assumptions between components.</p>
+</li>
+<li>
+<p>Loose coupling favors change and modularity, but can introduce complexity and debugging overhead if the boundaries aren’t managed.</p>
+</li>
+<li>
+<p>Low cohesion turns modules into junk drawers of unrelated responsibilities, making testing harder and increasing the likelihood of accidental coupling.</p>
+</li>
+<li>
+<p>High cohesion keeps code focused, limits side effects, and helps engineers reason locally about behavior and intent.</p>
+</li>
+<li>
+<p>Coupling and cohesion must be balanced. Optimizing for one while ignoring the other can lead to brittle or incoherent systems.</p>
+</li>
+<li>
+<p>Metrics like CBO, LCOM, fan-in/fan-out, and change frequency can help diagnose structural problems, but they must be interpreted in context, not followed blindly.</p>
+</li>
+<li>
+<p>Design patterns such as strategy, observer, and dependency injection are effective tools for reducing coupling and increasing cohesion when applied thoughtfully.</p>
+</li>
+<li>
+<p>Different architectural styles make different trade-offs. Monoliths risk hidden coupling, microservices demand cohesive boundaries, layered architectures can blur responsibilities, and clean architecture emphasize separation and clarity.</p>
+</li>
+<li>
+<p>Modularity is the ultimate goal. Systems with high internal cohesion and low external coupling are easier to change, scale, and understand over time.</p>
+</li>
+<li>
+<p>Good design anticipates change. Decisions about structure, boundaries, and dependencies should reflect how the system is expected to evolve.</p>
+</li>
+</ul></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-130" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#understanding-coupling" data-for="understanding-coupling">Understanding Coupling</a></li><li class="depth-1"><a href="#tight-coupling" data-for="tight-coupling">Tight Coupling</a></li><li class="depth-1"><a href="#loose-coupling" data-for="loose-coupling">Loose Coupling</a></li><li class="depth-1"><a href="#the-trade-off" data-for="the-trade-off">The Trade-Off</a></li><li class="depth-0"><a href="#cohesion-the-glue-that-holds-a-module-together" data-for="cohesion-the-glue-that-holds-a-module-together">Cohesion: The Glue That Holds A Module Together</a></li><li class="depth-1"><a href="#low-cohesion" data-for="low-cohesion">Low Cohesion</a></li><li class="depth-1"><a href="#high-cohesion" data-for="high-cohesion">High Cohesion</a></li><li class="depth-0"><a href="#the-role-of-naming-and-boundaries" data-for="the-role-of-naming-and-boundaries">The Role of Naming and Boundaries</a></li><li class="depth-0"><a href="#coupling-and-cohesion" data-for="coupling-and-cohesion">Coupling and Cohesion</a></li><li class="depth-1"><a href="#high-cohesion-can-expose-coupling" data-for="high-cohesion-can-expose-coupling">High Cohesion Can Expose Coupling</a></li><li class="depth-1"><a href="#loose-coupling-can-obscure-cohesion" data-for="loose-coupling-can-obscure-cohesion">Loose Coupling Can Obscure Cohesion</a></li><li class="depth-1"><a href="#the-sweet-spot-local-focus-global-independence" data-for="the-sweet-spot-local-focus-global-independence">The Sweet Spot: Local Focus, Global Independence</a></li><li class="depth-0"><a href="#measuring-coupling-and-cohesion" data-for="measuring-coupling-and-cohesion">Measuring Coupling and Cohesion</a></li><li class="depth-0"><a href="#design-patterns-that-encourage-loose-coupling-and-high-cohesion" data-for="design-patterns-that-encourage-loose-coupling-and-high-cohesion">Design Patterns That Encourage Loose Coupling and High Cohesion</a></li><li class="depth-1"><a href="#strategy-pattern" data-for="strategy-pattern">Strategy Pattern</a></li><li class="depth-1"><a href="#observer-pattern" data-for="observer-pattern">Observer Pattern</a></li><li class="depth-1"><a href="#dependency-injection" data-for="dependency-injection">Dependency Injection</a></li><li class="depth-1"><a href="#facade-pattern" data-for="facade-pattern">Facade Pattern</a></li><li class="depth-1"><a href="#adapter-pattern" data-for="adapter-pattern">Adapter Pattern</a></li><li class="depth-0"><a href="#coupling-and-cohesion-in-popular-architectural-styles" data-for="coupling-and-cohesion-in-popular-architectural-styles">Coupling and Cohesion in Popular Architectural Styles</a></li><li class="depth-1"><a href="#monoliths" data-for="monoliths">Monoliths</a></li><li class="depth-1"><a href="#microservices" data-for="microservices">Microservices</a></li><li class="depth-1"><a href="#layered-architecture" data-for="layered-architecture">Layered Architecture</a></li><li class="depth-1"><a href="#clean-architecture" data-for="clean-architecture">Clean Architecture</a></li><li class="depth-1"><a href="#takeaway" data-for="takeaway">Takeaway</a></li><li class="depth-0"><a href="#summary" data-for="summary">Summary</a></li><li class="overflow-end"></li></ul></div><div class="backlinks"><h3>Backlinks</h3><ul id="list-2" class="overflow"><li><a href="../../Notion-Knowledge/Note" class="internal">Note</a></li><li><a href="../../_moc/MOC-Reading-List" class="internal">MOC-Reading-List</a></li><li><a href="../../_moc/MOC-System-Design" class="internal">MOC-System-Design</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://dangthobach.github.io/">Back to Portfolio</a></li><li><a href="https://github.com/dangthobach">GitHub</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../postscript.js" type="module" data-persist="true"></script></html>

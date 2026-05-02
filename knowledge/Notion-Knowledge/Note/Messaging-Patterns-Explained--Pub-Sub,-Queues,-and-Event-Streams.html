@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>Messaging Patterns Explained- Pub-Sub, Queues, and Event Streams</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="Dang Tho Bach's Knowledge Base"/><meta property="og:title" content="Messaging Patterns Explained- Pub-Sub, Queues, and Event Streams"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="Messaging Patterns Explained- Pub-Sub, Queues, and Event Streams"/><meta name="twitter:description" content="Modern software rarely lives on one machine anymore."/><meta property="og:description" content="Modern software rarely lives on one machine anymore."/><meta property="og:image:alt" content="Modern software rarely lives on one machine anymore."/><meta property="twitter:domain" content="dangthobach.github.io/knowledge"/><meta property="og:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Messaging-Patterns-Explained--Pub-Sub,-Queues,-and-Event-Streams"/><meta property="twitter:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Messaging-Patterns-Explained--Pub-Sub,-Queues,-and-Event-Streams"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="Modern software rarely lives on one machine anymore."/><meta name="generator" content="Quartz"/><link href="../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiL2hvbWUvcnVubmVyL3dvcmsvZGFuZ3Rob2JhY2guZ2l0aHViLmlvL2Rhbmd0aG9iYWNoLmdpdGh1Yi5pby9xdWFydHovcXVhcnR6L2NvbXBvbmVudHMvc3R5bGVzIiwic291cmNlcyI6WyJtZXJtYWlkLmlubGluZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFHRjtFQUNFOzs7QUFLRjtFQUNFO0VBQ0E7OztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTs7QUFJRjtFQUNFO0VBQ0E7RUFDQSIsInNvdXJjZXNDb250ZW50IjpbIi5leHBhbmQtYnV0dG9uIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbG9hdDogcmlnaHQ7XG4gIHBhZGRpbmc6IDAuNHJlbTtcbiAgbWFyZ2luOiAwLjNyZW07XG4gIHJpZ2h0OiAwOyAvLyBOT1RFOiByaWdodCB3aWxsIGJlIHNldCBpbiBtZXJtYWlkLmlubGluZS50c1xuICBjb2xvcjogdmFyKC0tZ3JheSk7XG4gIGJvcmRlci1jb2xvcjogdmFyKC0tZGFyayk7XG4gIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgYm9yZGVyOiAxcHggc29saWQ7XG4gIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgb3BhY2l0eTogMDtcbiAgdHJhbnNpdGlvbjogMC4ycztcblxuICAmID4gc3ZnIHtcbiAgICBmaWxsOiB2YXIoLS1saWdodCk7XG4gICAgZmlsdGVyOiBjb250cmFzdCgwLjMpO1xuICB9XG5cbiAgJjpob3ZlciB7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIGJvcmRlci1jb2xvcjogdmFyKC0tc2Vjb25kYXJ5KTtcbiAgfVxuXG4gICY6Zm9jdXMge1xuICAgIG91dGxpbmU6IDA7XG4gIH1cbn1cblxucHJlIHtcbiAgJjpob3ZlciA+IC5leHBhbmQtYnV0dG9uIHtcbiAgICBvcGFjaXR5OiAxO1xuICAgIHRyYW5zaXRpb246IDAuMnM7XG4gIH1cbn1cblxuI21lcm1haWQtY29udGFpbmVyIHtcbiAgcG9zaXRpb246IGZpeGVkO1xuICBjb250YWluOiBsYXlvdXQ7XG4gIHotaW5kZXg6IDk5OTtcbiAgbGVmdDogMDtcbiAgdG9wOiAwO1xuICB3aWR0aDogMTAwdnc7XG4gIGhlaWdodDogMTAwdmg7XG4gIG92ZXJmbG93OiBoaWRkZW47XG4gIGRpc3BsYXk6IG5vbmU7XG4gIGJhY2tkcm9wLWZpbHRlcjogYmx1cig0cHgpO1xuICBiYWNrZ3JvdW5kOiByZ2JhKDAsIDAsIDAsIDAuNSk7XG5cbiAgJi5hY3RpdmUge1xuICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgfVxuXG4gICYgPiAjbWVybWFpZC1zcGFjZSB7XG4gICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gICAgYm9yZGVyLXJhZGl1czogNXB4O1xuICAgIHBvc2l0aW9uOiBmaXhlZDtcbiAgICB0b3A6IDUwJTtcbiAgICBsZWZ0OiA1MCU7XG4gICAgdHJhbnNmb3JtOiB0cmFuc2xhdGUoLTUwJSwgLTUwJSk7XG4gICAgaGVpZ2h0OiA4MHZoO1xuICAgIHdpZHRoOiA4MHZ3O1xuICAgIG92ZXJmbG93OiBoaWRkZW47XG5cbiAgICAmID4gLm1lcm1haWQtY29udGVudCB7XG4gICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgICB0cmFuc2Zvcm0tb3JpZ2luOiAwIDA7XG4gICAgICB0cmFuc2l0aW9uOiB0cmFuc2Zvcm0gMC4xcyBlYXNlO1xuICAgICAgb3ZlcmZsb3c6IHZpc2libGU7XG4gICAgICBtaW4taGVpZ2h0OiAyMDBweDtcbiAgICAgIG1pbi13aWR0aDogMjAwcHg7XG5cbiAgICAgIHByZSB7XG4gICAgICAgIG1hcmdpbjogMDtcbiAgICAgICAgYm9yZGVyOiBub25lO1xuICAgICAgfVxuXG4gICAgICBzdmcge1xuICAgICAgICBtYXgtd2lkdGg6IG5vbmU7XG4gICAgICAgIGhlaWdodDogYXV0bztcbiAgICAgIH1cbiAgICB9XG5cbiAgICAmID4gLm1lcm1haWQtY29udHJvbHMge1xuICAgICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgICAgYm90dG9tOiAyMHB4O1xuICAgICAgcmlnaHQ6IDIwcHg7XG4gICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgZ2FwOiA4cHg7XG4gICAgICBwYWRkaW5nOiA4cHg7XG4gICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgYm9yZGVyLXJhZGl1czogNnB4O1xuICAgICAgYm94LXNoYWRvdzogMCAycHggNHB4IHJnYmEoMCwgMCwgMCwgMC4xKTtcbiAgICAgIHotaW5kZXg6IDI7XG5cbiAgICAgIC5tZXJtYWlkLWNvbnRyb2wtYnV0dG9uIHtcbiAgICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgIHdpZHRoOiAzMnB4O1xuICAgICAgICBoZWlnaHQ6IDMycHg7XG4gICAgICAgIHBhZGRpbmc6IDA7XG4gICAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgICAgY29sb3I6IHZhcigtLWRhcmspO1xuICAgICAgICBib3JkZXItcmFkaXVzOiA0cHg7XG4gICAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICAgICAgZm9udC1zaXplOiAxNnB4O1xuICAgICAgICBmb250LWZhbWlseTogdmFyKC0tYm9keUZvbnQpO1xuICAgICAgICB0cmFuc2l0aW9uOiBhbGwgMC4ycyBlYXNlO1xuXG4gICAgICAgICY6aG92ZXIge1xuICAgICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIH1cblxuICAgICAgICAmOmFjdGl2ZSB7XG4gICAgICAgICAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKDFweCk7XG4gICAgICAgIH1cblxuICAgICAgICAvLyBTdHlsZSB0aGUgcmVzZXQgYnV0dG9uIGRpZmZlcmVudGx5XG4gICAgICAgICY6bnRoLWNoaWxkKDIpIHtcbiAgICAgICAgICB3aWR0aDogYXV0bztcbiAgICAgICAgICBwYWRkaW5nOiAwIDEycHg7XG4gICAgICAgICAgZm9udC1zaXplOiAxNHB4O1xuICAgICAgICB9XG4gICAgICB9XG4gICAgfVxuICB9XG59XG4iXX0= */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://dangthobach.github.io/knowledge/index.xml"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Messaging-Patterns-Explained--Pub-Sub,-Queues,-and-Event-Streams-og-image.webp"/><meta property="og:image:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Messaging-Patterns-Explained--Pub-Sub,-Queues,-and-Event-Streams-og-image.webp"/><meta name="twitter:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Messaging-Patterns-Explained--Pub-Sub,-Queues,-and-Event-Streams-og-image.webp"/><meta property="og:image:type" content="image/.webp"/></head><body data-slug="Notion-Knowledge/Note/Messaging-Patterns-Explained--Pub-Sub,-Queues,-and-Event-Streams"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../..">Dang Tho Bach's Knowledge Base</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-380"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-380" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/">Notion Knowledge</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/Note/">Note</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>Messaging Patterns Explained  Pub Sub, Queues, and Event Streams</a></div></nav><h1 class="article-title">Messaging Patterns Explained- Pub-Sub, Queues, and Event Streams</h1><p show-comma="true" class="content-meta"><time datetime="2026-05-02T04:58:37.000Z">May 02, 2026</time><span>14 min read</span></p></div></div><article class="popover-hint"><p>Modern software rarely lives on one machine anymore. Services run across clusters, web applications are dynamically rendered on the browser, and data resides on a mix of cloud platforms and in-house data centers.</p>
+<p>In such a scenario, coordination becomes harder, latency becomes visible, and reliability is crucial. In this environment, messaging patterns become a key implementation detail.</p>
+<p>When two services or applications need to talk, the simplest move is a direct API call. It’s easy, familiar, and synchronous: one service waits for the other to respond. But that wait is exactly where things break.</p>
+<p>What happens when the downstream service is overloaded? Or slow? Or down entirely? Suddenly, the system starts to stall: call chains pile up, retries back up, and failures increase drastically.</p>
+<p>That’s where asynchronous communication changes the game.</p>
+<p>Messaging decouples the sender from the receiver. A service doesn’t wait for another to complete work. It hands off a message and moves on. The message is safely stored in a broker, and the recipient can process it whenever it’s ready. If the recipient fails, the message waits. If it’s slow, nothing else stalls.</p>
+<p>However, not all messaging systems look the same. Three main patterns show up frequently:</p>
+<ul>
+<li>
+<p><strong>Message Queues</strong>: One producer, one consumer. Tasks get processed once and only once.</p>
+</li>
+<li>
+<p><strong>Publish-Subscribe</strong>: One producer, many consumers. Messages fan out to multiple subscribers.</p>
+</li>
+<li>
+<p><strong>Event Streams</strong>: A durable, replayable log of events. Consumers can rewind, catch up, or read in parallel.</p>
+</li>
+</ul>
+<p>Each pattern solves a different problem and comes with trade-offs in reliability, ordering, throughput, and complexity. And each maps to different real-world use cases, from task queues in background job systems to high-throughput clickstream analytics to real-time chat.</p>
+<p>In this article, we will look at these patterns in more detail, along with some common technologies that help implement these patterns.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!3jiz!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F81ccfded-9aa1-43fe-9888-aff03bc92b03_2250x2624.heic" class="external"><img src="https://substackcdn.com/image/fetch/$s_!3jiz!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F81ccfded-9aa1-43fe-9888-aff03bc92b03_2250x2624.heic" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h2 id="core-concepts"><strong>Core Concepts</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#core-concepts" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Before we look at the patterns, let’s understand a few core concepts about messaging systems.</p>
+<p>At its simplest, a messaging system moves information from one part of the system to another. A producer sends a message. A broker stores and routes it. A consumer picks it up and does something useful with it.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!rxSB!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F9aa6d4f5-5144-4852-9438-e3f7bc7edccc_1938x1010.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!rxSB!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F9aa6d4f5-5144-4852-9438-e3f7bc7edccc_1938x1010.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>This pattern forms the backbone of event-driven systems, job queues, stream processors, and real-time notifications.</p>
+<h3 id="producers-consumers-and-brokers"><strong>Producers, Consumers, and Brokers</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#producers-consumers-and-brokers" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>A producer is any component that generates messages, usually by pushing data into a queue or topic. That might be a frontend service publishing user activity, or a backend service enqueueing a task for later.</p>
+<p>A consumer pulls messages from the system and processes them. It might trigger a database write, send a notification, or kick off a background computation.</p>
+<p>Sitting between them is the broker or the middleman responsible for receiving, storing, and delivering messages. Without the broker, producers and consumers are tightly coupled. With it, they’re decoupled, fault-tolerant, and able to scale independently.</p>
+<h3 id="topics-queues-and-partitions"><strong>Topics, Queues, and Partitions</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#topics-queues-and-partitions" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Messages are usually organized into topics or queues, depending on the messaging model. A queue implies a single line of consumption: one consumer gets each message. A topic opens the door to multiple subscribers, where each gets their copy.</p>
+<p>To scale processing, systems often divide topics into partitions. Each partition is an independent log, allowing multiple consumers to read in parallel. But partitioning introduces its trade-offs, especially around message ordering and load balancing.</p>
+<h3 id="delivery-semantics-at-most-once-at-least-once-exactly-once"><strong>Delivery Semantics: At-most-once, At-least-once, Exactly-once</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#delivery-semantics-at-most-once-at-least-once-exactly-once" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Not every message arrives the way it was sent. Network blips, service crashes, and retries all interfere. This leads to three critical delivery guarantees:</p>
+<ul>
+<li>
+<p><strong>At-most-once</strong>: Messages are delivered once or not at all. There are no retries. This is a fast but risky approach</p>
+</li>
+<li>
+<p><strong>At-least-once</strong>: Messages are delivered one or more times. Retries happen, but duplicates are possible.</p>
+</li>
+<li>
+<p><strong>Exactly-once</strong>: Each message is delivered once and only once. The gold standard but the most challenging.</p>
+</li>
+</ul>
+<p>Most systems settle for at-least-once because it strikes a practical balance. Duplicates can be handled by making downstream operations idempotent. In other words, safe to run multiple times.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!ObV3!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fde8d3d6c-0e59-46ee-b295-b44e00940a6a_1938x1246.heic" class="external"><img src="https://substackcdn.com/image/fetch/$s_!ObV3!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fde8d3d6c-0e59-46ee-b295-b44e00940a6a_1938x1246.heic" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h2 id="messaging-queues"><strong>Messaging Queues</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#messaging-queues" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Consider a line at the airport counter. One person at the counter, one person being served, and everyone else waiting their turn. That’s the essence of a message queue: one producer drops a task into a line, and one consumer picks it up to process.</p>
+<p>This model, called point-to-point messaging, powers some of the most critical infrastructure in backend systems. When a service needs to offload work, distribute tasks to workers, or decouple synchronous execution from downstream slowness, queues get the job done.</p>
+<h3 id="how-message-queues-work"><strong>How Message Queues Work</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#how-message-queues-work" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>A producer pushes messages into a queue. These messages typically represent discrete units of work: generate a PDF, resize an image, send an email, recalculate a user’s billing status.</p>
+<p>A consumer pulls from the queue and processes each message. Once done, it can also provide an acknowledgment, telling the system that this message has been handled.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!spfo!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F27b58339-2c9a-409b-920c-c5b9222355f8_1938x906.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!spfo!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F27b58339-2c9a-409b-920c-c5b9222355f8_1938x906.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Key behaviors of message queues include:</p>
+<ul>
+<li>
+<p><strong>Single consumption</strong>: Once a message is processed and acknowledged, it’s gone. No other consumer gets it.</p>
+</li>
+<li>
+<p><strong>FIFO (First-In, First-Out)</strong>: Many queues aim for ordered processing, but in practice, ordering isn’t guaranteed unless explicitly configured.</p>
+</li>
+<li>
+<p><strong>Retries and redelivery</strong>: If a consumer crashes or fails mid-task, the system can retry the message after a timeout. This helps maintain reliability but introduces the risk of duplicate work unless the processing is idempotent.</p>
+</li>
+<li>
+<p><strong>Dead-letter queues (DLQs)</strong>: If a message keeps failing after several attempts, it’s moved to a special queue for inspection. This avoids poison messages clogging the system.</p>
+</li>
+</ul>
+<h3 id="use-cases-that-fit-the-model"><strong>Use Cases That Fit the Model</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#use-cases-that-fit-the-model" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Message queues thrive in work distribution scenarios where each message represents a job that should be handled once and only once:</p>
+<ul>
+<li>
+<p><strong>Background job processing</strong>: Queue up non-critical tasks (like sending emails) so the main request thread stays responsive.</p>
+</li>
+<li>
+<p><strong>Worker pools</strong>: Distribute tasks across multiple instances that pull from the same queue, scaling horizontally without coordination headaches.</p>
+</li>
+<li>
+<p><strong>Rate limiting or throttling</strong>: When downstream services have tight capacity constraints, queues can absorb bursts and smooth out the load.</p>
+</li>
+<li>
+<p><strong>Transactional systems</strong>: Ensure tasks are processed exactly once per event by isolating them and ensuring they complete before acknowledgment.</p>
+</li>
+</ul>
+<p>Think of queues as a shock absorber. They smooth out the bumps between fast producers and slower consumers, letting each side work at its own pace. But they also introduce latency and backlogs if left unchecked. Monitoring queue depth, message age, and processing time becomes critical in production.</p>
+<h3 id="where-things-get-tricky"><strong>Where Things Get Tricky</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#where-things-get-tricky" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Here are a few things to keep in mind when using message queues.</p>
+<ul>
+<li>
+<p>Scaling consumers sounds easy: just add more workers. But ordering may break, and coordination becomes key.</p>
+</li>
+<li>
+<p>Retries can flood a system with duplicate work if not properly delayed or deduplicated.</p>
+</li>
+<li>
+<p>Stuck consumers can quietly hold up processing unless health checks and timeouts are enforced.</p>
+</li>
+</ul>
+<h2 id="publish-subscribe"><strong>Publish Subscribe</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#publish-subscribe" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Imagine a news bulletin going live. It doesn’t matter if there’s one viewer or a million. Everyone subscriber gets the same message. That’s the essence of publish-subscribe (pub-sub) messaging: one message, many recipients.</p>
+<p>Where message queues push a job to a single worker, pub-sub systems fan out messages to multiple independent subscribers. Each subscriber gets their copy and processes it at their own pace.</p>
+<h3 id="how-pub-sub-works"><strong>How Pub-Sub Works</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#how-pub-sub-works" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>A producer publishes a message to a topic. That topic acts like a broadcast channel. Any number of subscribers listening to the topic receive a copy of the message.</p>
+<p>This pattern introduces two key benefits:</p>
+<ul>
+<li>
+<p><strong>Decoupling:</strong> Publishers don’t know who’s listening.</p>
+</li>
+<li>
+<p><strong>Scalability:</strong> New consumers can be added without changing the producer or broker.</p>
+</li>
+</ul>
+<p>But pub-sub systems aren’t all the same. The way they manage subscriptions and deliver messages varies.</p>
+<p>See the diagram below that shows an example:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!-3oX!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F27840576-b247-4459-bb99-81c637b4b02f_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!-3oX!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F27840576-b247-4459-bb99-81c637b4b02f_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h3 id="consumer-groups-and-load-sharing"><strong>Consumer Groups and Load Sharing</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#consumer-groups-and-load-sharing" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>In some pub-sub systems (like Kafka or Pulsar), consumer groups allow messages to be shared among multiple consumers within a group, while still broadcasting to all groups. This adds a hybrid dimension:</p>
+<ul>
+<li>
+<p>Every group gets every message.</p>
+</li>
+<li>
+<p>Within a group, consumers share the load, similar to a queue.</p>
+</li>
+</ul>
+<p>This pattern is common in large-scale systems where multiple services need the same data, but don’t want to process the full stream on a single machine.</p>
+<h3 id="where-pub-sub-fits"><strong>Where Pub-Sub Fits</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#where-pub-sub-fits" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Pub-sub patterns are a natural fit when multiple systems care about the same event:</p>
+<ul>
+<li>
+<p><strong>Event broadcasting</strong>: When a user uploads a photo, notifies friends, updates timelines, and logs the event, all triggered by the same publish.</p>
+</li>
+<li>
+<p><strong>Real-time updates</strong>: Financial tickers, sports scores, and collaborative editors rely on low-latency, fan-out delivery.</p>
+</li>
+<li>
+<p><strong>Notification systems</strong>: Send emails, push alerts, and in-app pings, each handled by a different subscriber.</p>
+</li>
+<li>
+<p><strong>Logging and telemetry</strong>: Push events to multiple sinks: Elasticsearch for search, S3 for archiving, Prometheus for metrics.</p>
+</li>
+</ul>
+<h3 id="common-challenges-and-trade-offs"><strong>Common Challenges and Trade-Offs</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#common-challenges-and-trade-offs" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Some common challenges with the pub-sub pattern are as follows:</p>
+<ul>
+<li>
+<p><strong>Backpressure</strong>: If one subscriber lags, should the system slow down, buffer, or drop messages? This choice affects durability and latency.</p>
+</li>
+<li>
+<p><strong>Replayability</strong>: Not all pub-sub systems retain messages. Some only deliver in real-time.</p>
+</li>
+<li>
+<p><strong>Delivery guarantees:</strong> These vary wildly from at-most-once to exactly-once. Choosing the right broker and configuration matters.</p>
+</li>
+</ul>
+<h2 id="event-streams"><strong>Event Streams</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#event-streams" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Picture a ledger with every transaction recorded and timestamped. That’s the core of an event stream: a durable, append-only log of what happened in the system, in the exact order it occurred. There are no overwrites or deletions.</p>
+<p>Unlike queues or pub-sub, event streaming isn’t just about message delivery. It’s about retaining the entire history. Consumers don’t just get what’s happening now. They can go back and replay what happened before. This fundamentally shifts how systems store, process, and reason about data.</p>
+<h3 id="what-is-an-event-stream"><strong>What Is an Event Stream?</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#what-is-an-event-stream" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>An event stream is a chronological record of immutable events, written to a log-like structure by producers.</p>
+<p>Each new event gets appended to the end of a partition, which preserves ordering within that stream. Events are not removed once consumed. Instead, they persist for a defined retention period (or indefinitely).</p>
+<p>Consumers subscribe to the stream and maintain their offset as a marker of how far they’ve read. This lets different consumers move at different speeds, start from different positions, and even rewind for reprocessing.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!aKVh!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F435d9ad2-8496-473d-8cc8-5da6381967d8_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!aKVh!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F435d9ad2-8496-473d-8cc8-5da6381967d8_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>This model enables a set of powerful features:</p>
+<ul>
+<li>
+<p><strong>Replayability</strong>: Rewind to reprocess past data. Fix bugs, rebuild state, or feed new consumers.</p>
+</li>
+<li>
+<p><strong>Time-travel debugging</strong>: Trace exactly what happened and when. Pinpoint the sequence of events leading to a bug.</p>
+</li>
+<li>
+<p><strong>Data auditability</strong>: Keep a complete trail of business activity, ideal for compliance, analytics, and fraud detection.</p>
+</li>
+<li>
+<p><strong>Multiple independent consumers</strong>: Each system reads the log at its own pace without any need for coordination.</p>
+</li>
+</ul>
+<h2 id="comparing-patterns"><strong>Comparing Patterns</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#comparing-patterns" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>No pattern wins in every situation. Each serves a different purpose, makes different trade-offs, and breaks down under different pressures. Understanding those trade-offs is what separates brittle systems from ones that adapt.</p>
+<p>Here’s how the three core patterns compare across six critical dimensions:</p>
+<h3 id="delivery-model"><strong>Delivery Model</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#delivery-model" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>
+<p>Message Queues follow a point-to-point model. One producer, one consumer. Once a message is acknowledged, it’s gone.</p>
+</li>
+<li>
+<p>Pub-Sub follows a one-to-many model. One message is broadcast to multiple subscribers. Each receives and processes its copy.</p>
+</li>
+<li>
+<p>Event Streams also support one-to-many, but with a key difference: consumers don’t get their copy temporarily. They read from a shared, durable log at their own pace.</p>
+</li>
+</ul>
+<h3 id="ordering-guarantees"><strong>Ordering Guarantees</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#ordering-guarantees" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>
+<p>Queues often aim for FIFO delivery, but that guarantee may break under retries. Ordering is per queue but not globally consistent.</p>
+</li>
+<li>
+<p>Pub-Sub typically offers no global ordering across subscribers. Some systems (like Google Pub/Sub) may preserve ordering within specific keys or subscriptions, but it’s not the default.</p>
+</li>
+<li>
+<p>Event Streams preserve strong ordering within each partition. This is critical for systems that need deterministic replay or consistent state reconstruction.</p>
+</li>
+</ul>
+<h3 id="replayability"><strong>Replayability</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#replayability" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>
+<p>Queues discard messages once acknowledged. Replay isn’t possible without external storage or logging.</p>
+</li>
+<li>
+<p>Pub-Sub behavior depends on the broker. Some implementations (such as Redis Pub/Sub) offer no retention, while others (such as Pulsar, NATS JetStream) support limited replay with durable subscriptions.</p>
+</li>
+<li>
+<p>Event Streams offer first-class replayability. Consumers can rewind to a specific offset or timestamp and reprocess data as needed, making them ideal for bug recovery, state rebuilding, and backfills.</p>
+</li>
+</ul>
+<h3 id="latency-and-throughput"><strong>Latency and Throughput</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#latency-and-throughput" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>
+<p>Queues typically have low latency, especially with a single fast consumer. Throughput scales with the number of parallel consumers, up to the limit of ordering guarantees.</p>
+</li>
+<li>
+<p>Pub-Sub can offer low latency and moderate throughput, but large fan-out or slow subscribers may introduce head-of-line blocking or backpressure.</p>
+</li>
+<li>
+<p>Event Streams optimize for high throughput, often in the millions of messages per second. Latency may be higher depending on buffering, batching, and partitioning.</p>
+</li>
+</ul>
+<h2 id="deep-dive-kafka-and-rabbitmq"><strong>Deep Dive: Kafka and RabbitMQ</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#deep-dive-kafka-and-rabbitmq" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>No messaging pattern exists in a vacuum, and neither do tools. Each tool comes with its design philosophy, operational quirks, and architectural sweet spots. Choosing between tools like  Kafka or RabbitMQ is about understanding what each one optimizes for and what it expects from the system around it.</p>
+<h3 id="apache-kafka"><strong>Apache Kafka</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#apache-kafka" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Kafka is more than a messaging system. It’s a durable, distributed log built for high-throughput, scalable, and replayable event streaming. Originally developed at LinkedIn, Kafka treats events as first-class citizens and emphasizes immutability, order, and persistence.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!QMsh!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F8d4cc664-cccc-4dac-9a78-84ba5bac88d2_1938x1342.heic" class="external"><img src="https://substackcdn.com/image/fetch/$s_!QMsh!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F8d4cc664-cccc-4dac-9a78-84ba5bac88d2_1938x1342.heic" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Key characteristics are as follows:</p>
+<ul>
+<li>
+<p><strong>Partitioned logs</strong>: Topics are divided into partitions, each an ordered, append-only log. This enables horizontal scaling and high read/write throughput.</p>
+</li>
+<li>
+<p><strong>Offset-based consumption</strong>: Consumers track their position in the log, enabling replay, backfill, and time-based consumption.</p>
+</li>
+<li>
+<p><strong>Built-in durability</strong>: Messages are persisted to disk and replicated across brokers. Data can be retained for hours, weeks, or forever.</p>
+</li>
+<li>
+<p><strong>High throughput</strong>: Kafka handles millions of messages per second. It’s used heavily in telemetry, metrics pipelines, and clickstream analytics.</p>
+</li>
+</ul>
+<p><a href="https://substackcdn.com/image/fetch/$s_!TkE6!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F07c6add8-8485-489c-8339-a62f6f48dd92_2028x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!TkE6!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F07c6add8-8485-489c-8339-a62f6f48dd92_2028x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Core use cases of Kafka are as follows:</p>
+<ul>
+<li>
+<p>Change data capture (CDC)</p>
+</li>
+<li>
+<p>Real-time stream processing with Kafka Streams or Flink</p>
+</li>
+<li>
+<p>Audit logs and operational telemetry</p>
+</li>
+</ul>
+<h3 id="rabbitmq"><strong>RabbitMQ</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#rabbitmq" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>RabbitMQ is a battle-tested, general-purpose message broker rooted in traditional queueing semantics. It implements the AMQP protocol, giving it rich capabilities around routing, acknowledgement, and delivery guarantees.</p>
+<p>Key characteristics of RabbitMQ are as follows:</p>
+<ul>
+<li>
+<p><strong>Queue-first design</strong>: Messages are stored in queues and consumed once. Durable queues and acknowledgments protect against data loss.</p>
+</li>
+<li>
+<p><strong>Routing flexibility</strong>: Offers exchanges (direct, fanout, topic, headers) to support complex message routing logic.</p>
+</li>
+<li>
+<p><strong>Protocol support</strong>: Works out-of-the-box with AMQP, MQTT, STOMP, and more—great for integrating with legacy systems.</p>
+</li>
+<li>
+<p><strong>Low latency</strong>: Lightweight, fast, and great for task dispatching and synchronous workflows.</p>
+</li>
+</ul>
+<p><a href="https://substackcdn.com/image/fetch/$s_!CT7f!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F9ddc3afd-0001-46d7-a63e-9bdf1c7abde5_2592x1656.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!CT7f!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F9ddc3afd-0001-46d7-a63e-9bdf1c7abde5_2592x1656.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>The core use cases of RabbitMQ are as follows:</p>
+<ul>
+<li>
+<p>Transactional systems that need strict ordering.</p>
+</li>
+<li>
+<p>Worker queues and task orchestration.</p>
+</li>
+<li>
+<p>Pub-sub over short-lived connections.</p>
+</li>
+</ul>
+<h2 id="summary"><strong>Summary</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#summary" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>In this article, we’ve looked at messaging patterns in detail, along with their suitability in various scenarios.</p>
+<p>Here are the key learning points in brief:</p>
+<ul>
+<li>
+<p>Messaging systems decouple services and absorb failures, making them essential for building scalable, resilient architectures in distributed environments.</p>
+</li>
+<li>
+<p>Message queues follow a point-to-point model, ideal for background job processing, worker pools, and task delegation, where each message is processed once by one consumer.</p>
+</li>
+<li>
+<p>Publish-subscribe enables one-to-many communication, allowing multiple consumers to independently react to the same message. It is useful for real-time updates, alerts, and distributed state changes.</p>
+</li>
+<li>
+<p>Event streams offer durable, ordered, and replayable logs of events, empowering systems to rebuild state, audit activity, and run large-scale stream processing pipelines.</p>
+</li>
+<li>
+<p>Queues emphasize reliability over speed, working best when latency is less important than guaranteed task completion and load smoothing.</p>
+</li>
+<li>
+<p>Pub-sub reduces tight coupling across systems and enables scalable fan-out, especially in environments where producers shouldn’t know who’s consuming the data.</p>
+</li>
+<li>
+<p>Event streams are the backbone of event-driven architectures where high throughput, history, and state reconstruction matter more than low latency or simple delivery.</p>
+</li>
+<li>
+<p>Apache Kafka is a high-throughput, partitioned log system optimized for event streaming, best suited for analytics, telemetry, and replay-heavy architectures.</p>
+</li>
+<li>
+<p>RabbitMQ is a flexible message broker with strong queuing and routing capabilities, ideal for transactional tasks, job queues, and legacy protocol support.</p>
+</li>
+<li>
+<p>Apache Pulsar offers a hybrid model supporting both streaming and queuing, with tiered storage, geo-replication, and multi-tenancy built for cloud-native platforms.</p>
+</li>
+</ul></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-164" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#core-concepts" data-for="core-concepts">Core Concepts</a></li><li class="depth-1"><a href="#producers-consumers-and-brokers" data-for="producers-consumers-and-brokers">Producers, Consumers, and Brokers</a></li><li class="depth-1"><a href="#topics-queues-and-partitions" data-for="topics-queues-and-partitions">Topics, Queues, and Partitions</a></li><li class="depth-1"><a href="#delivery-semantics-at-most-once-at-least-once-exactly-once" data-for="delivery-semantics-at-most-once-at-least-once-exactly-once">Delivery Semantics: At-most-once, At-least-once, Exactly-once</a></li><li class="depth-0"><a href="#messaging-queues" data-for="messaging-queues">Messaging Queues</a></li><li class="depth-1"><a href="#how-message-queues-work" data-for="how-message-queues-work">How Message Queues Work</a></li><li class="depth-1"><a href="#use-cases-that-fit-the-model" data-for="use-cases-that-fit-the-model">Use Cases That Fit the Model</a></li><li class="depth-1"><a href="#where-things-get-tricky" data-for="where-things-get-tricky">Where Things Get Tricky</a></li><li class="depth-0"><a href="#publish-subscribe" data-for="publish-subscribe">Publish Subscribe</a></li><li class="depth-1"><a href="#how-pub-sub-works" data-for="how-pub-sub-works">How Pub-Sub Works</a></li><li class="depth-1"><a href="#consumer-groups-and-load-sharing" data-for="consumer-groups-and-load-sharing">Consumer Groups and Load Sharing</a></li><li class="depth-1"><a href="#where-pub-sub-fits" data-for="where-pub-sub-fits">Where Pub-Sub Fits</a></li><li class="depth-1"><a href="#common-challenges-and-trade-offs" data-for="common-challenges-and-trade-offs">Common Challenges and Trade-Offs</a></li><li class="depth-0"><a href="#event-streams" data-for="event-streams">Event Streams</a></li><li class="depth-1"><a href="#what-is-an-event-stream" data-for="what-is-an-event-stream">What Is an Event Stream?</a></li><li class="depth-0"><a href="#comparing-patterns" data-for="comparing-patterns">Comparing Patterns</a></li><li class="depth-1"><a href="#delivery-model" data-for="delivery-model">Delivery Model</a></li><li class="depth-1"><a href="#ordering-guarantees" data-for="ordering-guarantees">Ordering Guarantees</a></li><li class="depth-1"><a href="#replayability" data-for="replayability">Replayability</a></li><li class="depth-1"><a href="#latency-and-throughput" data-for="latency-and-throughput">Latency and Throughput</a></li><li class="depth-0"><a href="#deep-dive-kafka-and-rabbitmq" data-for="deep-dive-kafka-and-rabbitmq">Deep Dive: Kafka and RabbitMQ</a></li><li class="depth-1"><a href="#apache-kafka" data-for="apache-kafka">Apache Kafka</a></li><li class="depth-1"><a href="#rabbitmq" data-for="rabbitmq">RabbitMQ</a></li><li class="depth-0"><a href="#summary" data-for="summary">Summary</a></li><li class="overflow-end"></li></ul></div><div class="backlinks"><h3>Backlinks</h3><ul id="list-2" class="overflow"><li><a href="../../Notion-Knowledge/Note" class="internal">Note</a></li><li><a href="../../_moc/MOC-Distributed-Systems" class="internal">MOC-Distributed-Systems</a></li><li><a href="../../_moc/MOC-Reading-List" class="internal">MOC-Reading-List</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://dangthobach.github.io/">Back to Portfolio</a></li><li><a href="https://github.com/dangthobach">GitHub</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../postscript.js" type="module" data-persist="true"></script></html>

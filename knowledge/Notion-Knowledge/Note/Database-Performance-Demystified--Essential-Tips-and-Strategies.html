@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>Database Performance Demystified- Essential Tips and Strategies</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="Dang Tho Bach's Knowledge Base"/><meta property="og:title" content="Database Performance Demystified- Essential Tips and Strategies"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="Database Performance Demystified- Essential Tips and Strategies"/><meta name="twitter:description" content="Databases are the backbone of modern applications."/><meta property="og:description" content="Databases are the backbone of modern applications."/><meta property="og:image:alt" content="Databases are the backbone of modern applications."/><meta property="twitter:domain" content="dangthobach.github.io/knowledge"/><meta property="og:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Database-Performance-Demystified--Essential-Tips-and-Strategies"/><meta property="twitter:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Database-Performance-Demystified--Essential-Tips-and-Strategies"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="Databases are the backbone of modern applications."/><meta name="generator" content="Quartz"/><link href="../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiL2hvbWUvcnVubmVyL3dvcmsvZGFuZ3Rob2JhY2guZ2l0aHViLmlvL2Rhbmd0aG9iYWNoLmdpdGh1Yi5pby9xdWFydHovcXVhcnR6L2NvbXBvbmVudHMvc3R5bGVzIiwic291cmNlcyI6WyJtZXJtYWlkLmlubGluZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFHRjtFQUNFOzs7QUFLRjtFQUNFO0VBQ0E7OztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTs7QUFJRjtFQUNFO0VBQ0E7RUFDQSIsInNvdXJjZXNDb250ZW50IjpbIi5leHBhbmQtYnV0dG9uIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbG9hdDogcmlnaHQ7XG4gIHBhZGRpbmc6IDAuNHJlbTtcbiAgbWFyZ2luOiAwLjNyZW07XG4gIHJpZ2h0OiAwOyAvLyBOT1RFOiByaWdodCB3aWxsIGJlIHNldCBpbiBtZXJtYWlkLmlubGluZS50c1xuICBjb2xvcjogdmFyKC0tZ3JheSk7XG4gIGJvcmRlci1jb2xvcjogdmFyKC0tZGFyayk7XG4gIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgYm9yZGVyOiAxcHggc29saWQ7XG4gIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgb3BhY2l0eTogMDtcbiAgdHJhbnNpdGlvbjogMC4ycztcblxuICAmID4gc3ZnIHtcbiAgICBmaWxsOiB2YXIoLS1saWdodCk7XG4gICAgZmlsdGVyOiBjb250cmFzdCgwLjMpO1xuICB9XG5cbiAgJjpob3ZlciB7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIGJvcmRlci1jb2xvcjogdmFyKC0tc2Vjb25kYXJ5KTtcbiAgfVxuXG4gICY6Zm9jdXMge1xuICAgIG91dGxpbmU6IDA7XG4gIH1cbn1cblxucHJlIHtcbiAgJjpob3ZlciA+IC5leHBhbmQtYnV0dG9uIHtcbiAgICBvcGFjaXR5OiAxO1xuICAgIHRyYW5zaXRpb246IDAuMnM7XG4gIH1cbn1cblxuI21lcm1haWQtY29udGFpbmVyIHtcbiAgcG9zaXRpb246IGZpeGVkO1xuICBjb250YWluOiBsYXlvdXQ7XG4gIHotaW5kZXg6IDk5OTtcbiAgbGVmdDogMDtcbiAgdG9wOiAwO1xuICB3aWR0aDogMTAwdnc7XG4gIGhlaWdodDogMTAwdmg7XG4gIG92ZXJmbG93OiBoaWRkZW47XG4gIGRpc3BsYXk6IG5vbmU7XG4gIGJhY2tkcm9wLWZpbHRlcjogYmx1cig0cHgpO1xuICBiYWNrZ3JvdW5kOiByZ2JhKDAsIDAsIDAsIDAuNSk7XG5cbiAgJi5hY3RpdmUge1xuICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgfVxuXG4gICYgPiAjbWVybWFpZC1zcGFjZSB7XG4gICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gICAgYm9yZGVyLXJhZGl1czogNXB4O1xuICAgIHBvc2l0aW9uOiBmaXhlZDtcbiAgICB0b3A6IDUwJTtcbiAgICBsZWZ0OiA1MCU7XG4gICAgdHJhbnNmb3JtOiB0cmFuc2xhdGUoLTUwJSwgLTUwJSk7XG4gICAgaGVpZ2h0OiA4MHZoO1xuICAgIHdpZHRoOiA4MHZ3O1xuICAgIG92ZXJmbG93OiBoaWRkZW47XG5cbiAgICAmID4gLm1lcm1haWQtY29udGVudCB7XG4gICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgICB0cmFuc2Zvcm0tb3JpZ2luOiAwIDA7XG4gICAgICB0cmFuc2l0aW9uOiB0cmFuc2Zvcm0gMC4xcyBlYXNlO1xuICAgICAgb3ZlcmZsb3c6IHZpc2libGU7XG4gICAgICBtaW4taGVpZ2h0OiAyMDBweDtcbiAgICAgIG1pbi13aWR0aDogMjAwcHg7XG5cbiAgICAgIHByZSB7XG4gICAgICAgIG1hcmdpbjogMDtcbiAgICAgICAgYm9yZGVyOiBub25lO1xuICAgICAgfVxuXG4gICAgICBzdmcge1xuICAgICAgICBtYXgtd2lkdGg6IG5vbmU7XG4gICAgICAgIGhlaWdodDogYXV0bztcbiAgICAgIH1cbiAgICB9XG5cbiAgICAmID4gLm1lcm1haWQtY29udHJvbHMge1xuICAgICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgICAgYm90dG9tOiAyMHB4O1xuICAgICAgcmlnaHQ6IDIwcHg7XG4gICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgZ2FwOiA4cHg7XG4gICAgICBwYWRkaW5nOiA4cHg7XG4gICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgYm9yZGVyLXJhZGl1czogNnB4O1xuICAgICAgYm94LXNoYWRvdzogMCAycHggNHB4IHJnYmEoMCwgMCwgMCwgMC4xKTtcbiAgICAgIHotaW5kZXg6IDI7XG5cbiAgICAgIC5tZXJtYWlkLWNvbnRyb2wtYnV0dG9uIHtcbiAgICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgIHdpZHRoOiAzMnB4O1xuICAgICAgICBoZWlnaHQ6IDMycHg7XG4gICAgICAgIHBhZGRpbmc6IDA7XG4gICAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgICAgY29sb3I6IHZhcigtLWRhcmspO1xuICAgICAgICBib3JkZXItcmFkaXVzOiA0cHg7XG4gICAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICAgICAgZm9udC1zaXplOiAxNnB4O1xuICAgICAgICBmb250LWZhbWlseTogdmFyKC0tYm9keUZvbnQpO1xuICAgICAgICB0cmFuc2l0aW9uOiBhbGwgMC4ycyBlYXNlO1xuXG4gICAgICAgICY6aG92ZXIge1xuICAgICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIH1cblxuICAgICAgICAmOmFjdGl2ZSB7XG4gICAgICAgICAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKDFweCk7XG4gICAgICAgIH1cblxuICAgICAgICAvLyBTdHlsZSB0aGUgcmVzZXQgYnV0dG9uIGRpZmZlcmVudGx5XG4gICAgICAgICY6bnRoLWNoaWxkKDIpIHtcbiAgICAgICAgICB3aWR0aDogYXV0bztcbiAgICAgICAgICBwYWRkaW5nOiAwIDEycHg7XG4gICAgICAgICAgZm9udC1zaXplOiAxNHB4O1xuICAgICAgICB9XG4gICAgICB9XG4gICAgfVxuICB9XG59XG4iXX0= */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://dangthobach.github.io/knowledge/index.xml"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Database-Performance-Demystified--Essential-Tips-and-Strategies-og-image.webp"/><meta property="og:image:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Database-Performance-Demystified--Essential-Tips-and-Strategies-og-image.webp"/><meta name="twitter:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Database-Performance-Demystified--Essential-Tips-and-Strategies-og-image.webp"/><meta property="og:image:type" content="image/.webp"/></head><body data-slug="Notion-Knowledge/Note/Database-Performance-Demystified--Essential-Tips-and-Strategies"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../..">Dang Tho Bach's Knowledge Base</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-313"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-313" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/">Notion Knowledge</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/Note/">Note</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>Database Performance Demystified  Essential Tips and Strategies</a></div></nav><h1 class="article-title">Database Performance Demystified- Essential Tips and Strategies</h1><p show-comma="true" class="content-meta"><time datetime="2026-05-02T04:58:37.000Z">May 02, 2026</time><span>21 min read</span></p></div></div><article class="popover-hint"><p>Databases are the backbone of modern applications. They power everything from e-commerce platforms and financial systems to social media and analytics tools.</p>
+<p>Ensuring good database performance is critical, as it directly impacts user experience, operational costs, and the ability to scale when needed.</p>
+<p>Users expect applications to respond instantly. A slow database can lead to delays in fetching data, resulting in poor application performance and monetary impact. For example:</p>
+<ul>
+<li>
+<p>Delayed product searches or sluggish checkout processes can frustrate customers, increasing cart abandonment rates in an e-commerce platform.</p>
+</li>
+<li>
+<p>Slow feed updates can reduce user engagement for a social media application.</p>
+</li>
+</ul>
+<p>A strong database performance is the key to retaining users and keeping them positively engaged with the application.</p>
+<p>Database inefficiencies often lead to increased hardware requirements and higher cloud usage bills. Poorly optimized queries can consume excessive CPU, memory, and disk I/O. This leads to organizations provisioning expensive resources to compensate for poor performance, which could have been avoided with proper optimization.</p>
+<p>However, optimizing database performance requires a multi-faceted approach. There is no magical one-size-fits-all strategy.</p>
+<p>In this post, we’ll explore the various factors that can impact the performance of a database. We’ll also look at multiple strategies that can help improve the database performance.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!tpzP!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F64991a04-4e41-4e54-ab88-de6612b026b2_1592x1600.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!tpzP!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F64991a04-4e41-4e54-ab88-de6612b026b2_1592x1600.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h2 id="key-metrics-to-evaluate-database-performance"><strong>Key Metrics to Evaluate Database Performance</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#key-metrics-to-evaluate-database-performance" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Effective evaluation of database performance depends on understanding and monitoring key metrics. These metrics provide insights into how the database handles queries, resources, and user demands, helping to identify and resolve bottlenecks.</p>
+<p>Below are the primary metrics used in the industry:</p>
+<h3 id="1---query-execution-time"><strong>1 - Query Execution Time</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1---query-execution-time" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>This is the time it takes for a database to process and return the results of a query.</p>
+<p>High query execution time often indicates issues with query optimization, lack of proper indexing, or large dataset scans. For example, a query fetching customer order history in an e-commerce database might take several seconds if it performs a full table scan instead of utilizing an index.</p>
+<p>We can use database profiling tools like EXPLAIN and EXPLAIN ANALYZE in PostgreSQL or the Query Store in SQL Server to measure the query execution time.</p>
+<h3 id="2---throughput"><strong>2 - Throughput</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2---throughput" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Throughput is the number of database transactions (reads, writes, updates) processed per second. The common unit is Transactions Per Second (TPS).</p>
+<p>A low throughput under high traffic could point to resource bottlenecks or inefficient query handling. For example, an analytics platform processing user event logs might require a throughput of 10,000 transactions per second.</p>
+<h3 id="3---latency"><strong>3 - Latency</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3---latency" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>This is the time taken for a database request to travel from the client, be processed, and return the response.</p>
+<p>Latency is critical for real-time applications where user experience depends on quick responses.</p>
+<p>For example, in a messaging app, if the latency for fetching new messages exceeds a few milliseconds, users might experience unacceptable delays in chat updates.</p>
+<h3 id="4---resource-utilization"><strong>4 - Resource Utilization</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4---resource-utilization" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Resource utilization involves measuring the consumption of CPU, memory, disk I/O, and network resources by the database.</p>
+<p>Measuring these parameters is important to identify whether resource limitations are causing bottlenecks. For example, a database experiencing 90% CPU utilization during peak hours may require query optimization or vertical scaling to avoid performance degradation.</p>
+<p>Here’s how these parameters are typically measured:</p>
+<ul>
+<li>
+<p><strong>CPU</strong>: Monitor query workloads and CPU usage per session or process.</p>
+</li>
+<li>
+<p><strong>Memory</strong>: Track buffer pool usage (for example, InnoDB buffer pool in MySQL).</p>
+</li>
+<li>
+<p><strong>Disk I/O</strong>: Monitor read/write operations per second.</p>
+</li>
+<li>
+<p><strong>Network</strong>: Measure data transfer rates for distributed systems or replication.</p>
+</li>
+</ul>
+<h2 id="factors-affecting-database-performance"><strong>Factors Affecting Database Performance</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#factors-affecting-database-performance" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Several factors can impact the performance of a database. Let’s look at some of the most common factors:</p>
+<h3 id="item-size"><strong>Item Size</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#item-size" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The size of individual records or rows directly impacts storage requirements and query performance.</p>
+<p>It dictates whether the workload is CPU-bound or storage-bound. For example, running 100K operations with an average payload size of 80KB is much different than managing the same throughput with a 1KB payload.</p>
+<p>Having a larger number of smaller-sized items may introduce CPU overhead. However, large items may require more I/O to issue, process, and merge several data pages.</p>
+<p>When working with extremely large payloads, it’s important to have realistic latency and throughput expectations. Generally speaking, databases should not be used to store large blobs.</p>
+<p>Some strategies are as follows:</p>
+<ul>
+<li>
+<p>Techniques like compression to reduce storage overhead and data pruning to remove unnecessary or redundant fields.</p>
+</li>
+<li>
+<p>Storing large items, such as media files, in dedicated object storage (e.g., Amazon S3) while referencing them via the database can also improve performance.</p>
+</li>
+</ul>
+<h3 id="item-type"><strong>Item Type</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#item-type" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The nature of data stored, such as text, numbers, JSON, or binary formats, impacts database performance due to differences in how these types are processed.</p>
+<p>For instance, querying structured numeric data is typically faster than parsing and filtering unstructured JSON data. As a general rule of thumb, we should choose the data type that’s the minimum needed to store the type of data. For example, we don’t need to store a year as bigint.</p>
+<p>Optimizing performance also involves using specialized indexes, like JSON indexes for document-based data, and ensuring that complex types are only used when necessary. For example, flattening JSON fields into separate columns can simplify query patterns and improve retrieval speeds.</p>
+<h3 id="dataset-size"><strong>Dataset Size</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#dataset-size" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>As the dataset grows, query execution times and maintenance operations like indexing or backups can become slower.</p>
+<p>Large datasets often lead to full table scans, causing significant performance bottlenecks.</p>
+<p>Strategies to address this include partitioning the data into smaller, manageable chunks (e.g., by date or region), and archiving infrequently accessed records to external storage. For example, an analytics database can use horizontal partitioning to split data by year, ensuring that queries only scan relevant partitions.</p>
+<h3 id="concurrency"><strong>Concurrency</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#concurrency" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Concurrency refers to the ability of a database to handle simultaneous operations.</p>
+<p>High concurrency can lead to contention for resources like locks on rows or tables. This is common in multi-user systems, such as financial applications where transactions must be consistent and isolated.</p>
+<p>Concurrency must be balanced to reach appropriate throughput and latency values. Little’s law can help with this. The law states that:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>Total Concurrent Requests Being Processed or Queued = Average Throughput * Average Latency</span></span></code></pre></figure>
+<p>For example, if we want a system to serve 500K requests per second at 2 ms average latency, the possible concurrency is around 1000 in-flight requests.</p>
+<p>Some optimizations that can help are as follows:</p>
+<ul>
+<li>
+<p>Include using optimistic locking for low-conflict scenarios or pessimistic locking when conflicts are frequent. We will look at them in more detail in a later section.</p>
+</li>
+<li>
+<p>Adjusting transaction isolation levels, such as using READ COMMITTED instead of SERIALIZABLE, can also balance performance and consistency.</p>
+</li>
+</ul>
+<h3 id="consistency-expectations"><strong>Consistency Expectations</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#consistency-expectations" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Different applications require varying levels of consistency.</p>
+<p>While strong consistency ensures immediate synchronization across nodes, it can increase latency in distributed systems. Conversely, eventual consistency allows for temporary inconsistencies but offers better performance.</p>
+<p>For example, a social media platform might use eventual consistency for displaying user posts but enforce strong consistency for financial transactions.</p>
+<p>Optimizations include choosing the right consistency model based on application needs and using caching layers to reduce the perceived delay for eventual consistency.</p>
+<h3 id="geographic-distribution"><strong>Geographic Distribution</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#geographic-distribution" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Databases spanning multiple geographic locations face challenges such as network latency and synchronization delays.</p>
+<p>For example, a global e-commerce platform might experience slower response times for users far from the primary database.</p>
+<p>A couple of common strategies to handle this are as follows:</p>
+<ul>
+<li>
+<p>Geo-replication to store data closer to users.</p>
+</li>
+<li>
+<p>Latency-based routing to direct traffic to the nearest replica.</p>
+</li>
+</ul>
+<p>Typically, read-heavy applications benefit greatly from replicating data across regions, while write-heavy systems require more complex conflict resolution mechanisms.</p>
+<h3 id="high-availability-ha-expectations"><strong>High Availability (HA) Expectations</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#high-availability-ha-expectations" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Ensuring uptime and fault tolerance often involves replicating data across multiple nodes or regions, which can introduce performance trade-offs. For instance, synchronous replication guarantees that all nodes are updated simultaneously but increases write latency.</p>
+<p>To optimize HA expectations:</p>
+<ul>
+<li>
+<p>Use asynchronous replication for non-critical data and prioritize synchronous replication for critical operations.</p>
+</li>
+<li>
+<p>Clustering and automated failover mechanisms further enhance availability without compromising performance. For example, a payment processing system might use synchronous replication for transaction data while using asynchronous replication for logging.</p>
+</li>
+</ul>
+<h3 id="workload-variability"><strong>Workload Variability</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#workload-variability" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Fluctuations in workload, such as traffic spikes during sales events, can strain database performance. For instance, an online retailer might experience 10x traffic during Black Friday, overwhelming the database.</p>
+<p>Auto-scaling database resources during peak times and implementing rate limiting to control the number of concurrent requests can help maintain stability. Also, partitioning heavy batch operations into smaller tasks ensures real-time queries are not blocked during high-demand periods.</p>
+<h2 id="impact-of-workload-types-on-database-performance"><strong>Impact of Workload Types on Database Performance</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#impact-of-workload-types-on-database-performance" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Database workloads vary based on the nature and frequency of operations performed.</p>
+<p>Each type of workload, such as write-heavy, read-heavy, mixed, delete-heavy, and competing workloads, poses unique challenges and requires specific optimization strategies.</p>
+<p>Let’s look at each workload type, its impact, and practical optimization strategies in more detail.</p>
+<h3 id="1---write-heavy-workloads"><strong>1 - Write-Heavy Workloads</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1---write-heavy-workloads" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Write-heavy workloads involve frequent INSERT and UPDATE operations. They are common in logging systems, real-time IoT applications, and order management systems in e-commerce platforms.</p>
+<p>There are multiple challenges with such workloads:</p>
+<ul>
+<li>
+<p>Disk I/O bottlenecks.</p>
+</li>
+<li>
+<p>Increased latency due to frequent disk writes.</p>
+</li>
+<li>
+<p>Lock contention, particularly in concurrent environments.</p>
+</li>
+<li>
+<p>Index maintenance overhead during frequent updates.</p>
+</li>
+</ul>
+<p>Several optimization strategies can be applied to handle write-heavy workloads:</p>
+<ul>
+<li>
+<p><strong>Batch Writing</strong>: Aggregate multiple writes into a single operation to reduce disk I/O.</p>
+</li>
+<li>
+<p><strong>Asynchronous Writes</strong>: Use write-ahead logs (WAL) or message queues to decouple write operations from the main database workload.</p>
+</li>
+<li>
+<p><strong>Reduce Index Overhead</strong>: Limit the number of indexes on frequently updated tables, as each write requires index updates.</p>
+</li>
+<li>
+<p><strong>Fast Storage:</strong> Use extremely fast storage, such as NVMe drives if the peak throughput requirement is high.</p>
+</li>
+<li>
+<p><strong>Partitioning</strong>: Split data (e.g., by date or region) to distribute writes across multiple partitions, reducing contention.</p>
+</li>
+</ul>
+<h3 id="2---read-heavy-workloads"><strong>2 - Read-Heavy Workloads</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2---read-heavy-workloads" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Read-heavy workloads consist of frequent SELECT operations, often seen in content delivery systems, dashboards, or e-commerce platforms where customers browse products.</p>
+<p>The challenges with such workloads are as follows:</p>
+<ul>
+<li>
+<p>High latency for complex queries on large datasets.</p>
+</li>
+<li>
+<p>Cache misses leading to increased disk I/O.</p>
+</li>
+<li>
+<p>Strain on a single database instance serving both reads and writes.</p>
+</li>
+</ul>
+<p>Some optimization strategies to deal with read-heavy workloads are as follows:</p>
+<ul>
+<li>
+<p><strong>Caching</strong>: Use in-memory caching systems like Redis or Memcached to store frequently accessed data (for example, product details or user profiles).</p>
+</li>
+<li>
+<p><strong>Replication</strong>: Set up read replicas to distribute read queries, reducing the load on the primary database.</p>
+</li>
+<li>
+<p><strong>Materialized Views</strong>: Precompute complex queries and store the results for faster access.</p>
+</li>
+<li>
+<p><strong>Efficient Indexing</strong>: Use covering indexes to optimize queries that retrieve multiple columns.</p>
+</li>
+</ul>
+<p>See the diagram below that shows the concept of materialized views:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!XTX-!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F679bf91a-f9e1-47eb-b2a1-5ed9aa4b5f6f_1600x1127.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!XTX-!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F679bf91a-f9e1-47eb-b2a1-5ed9aa4b5f6f_1600x1127.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h3 id="3---delete-heavy-workloads"><strong>3 - Delete-Heavy Workloads</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3---delete-heavy-workloads" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Delete-heavy workloads involve frequent removal of records, often seen in systems implementing data retention policies, archival processes, or GDPR compliance.</p>
+<p>Excessive deletions can cause several challenges such as:</p>
+<ul>
+<li>
+<p>Fragmentation and performance degradation</p>
+</li>
+<li>
+<p>Index bloat as deleted entries persist until explicitly rebuilt.</p>
+</li>
+<li>
+<p>Table locks and delays in completing other operations.</p>
+</li>
+</ul>
+<p>Some optimization strategies to handle delete-heavy workloads are as follows:</p>
+<ul>
+<li>
+<p><strong>Soft Deletes</strong>: Mark rows as inactive (e.g., with a status column) instead of physically deleting them, deferring actual deletion to off-peak hours.</p>
+</li>
+<li>
+<p><strong>Batch Deletions</strong>: Perform deletions in small batches to minimize lock contention and resource spikes.</p>
+</li>
+<li>
+<p><strong>Partition Dropping</strong>: For large-scale deletions, drop entire partitions (e.g., monthly logs) instead of deleting row-by-row.</p>
+</li>
+<li>
+<p><strong>Regular Index Maintenance</strong>: Rebuild or reorganize indexes periodically to avoid bloat.</p>
+</li>
+</ul>
+<h3 id="4---competing-workloads-real-time-vs-batch"><strong>4 - Competing Workloads (Real-Time vs Batch)</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4---competing-workloads-real-time-vs-batch" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Competing workloads occur when real-time operations (user-facing queries) and batch jobs (ETL processes) run on the same database.</p>
+<p>This is common in data warehouses or hybrid systems, where both workloads need resources simultaneously. The challenges are as follows:</p>
+<ul>
+<li>
+<p>Batch jobs consuming resources can slow down real-time queries.</p>
+</li>
+<li>
+<p>Increased latency for user-facing operations due to resource contention.</p>
+</li>
+<li>
+<p>Unpredictable query performance during peak load.</p>
+</li>
+</ul>
+<p>Several optimization strategies are available to manage competing workloads:</p>
+<ul>
+<li>
+<p><strong>Workload Scheduling</strong>: Schedule batch jobs during off-peak hours to avoid conflicting with real-time workloads.</p>
+</li>
+<li>
+<p><strong>Resource Isolation</strong>: Use resource groups or quotas to allocate dedicated CPU, memory, or I/O bandwidth for real-time queries.</p>
+</li>
+<li>
+<p><strong>Separate Workloads</strong>: Move batch processing to a separate database or data warehouse.</p>
+</li>
+<li>
+<p><strong>Incremental Processing</strong>: Break large batch jobs into smaller chunks to minimize resource contention.</p>
+</li>
+</ul>
+<h2 id="optimizing-schema-and-data-design"><strong>Optimizing Schema and Data Design</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#optimizing-schema-and-data-design" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Schema and data design are foundational to database performance. Poor design can lead to inefficiencies that ripple through every layer of an application.</p>
+<p>Let’s look at some strategies to achieve an efficient database design.</p>
+<h3 id="normalization-vs-denormalization"><strong>Normalization vs Denormalization</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#normalization-vs-denormalization" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Normalization organizes data into separate, related tables to eliminate redundancy and maintain data integrity. It is ideal for transactional systems where consistency is critical.</p>
+<p>For example:</p>
+<ul>
+<li>
+<p>A Product table contains product details, while an Orders table references the product through a product_id foreign key.</p>
+</li>
+<li>
+<p>This approach means that every time order details have to be shown, the product name has to be fetched from the Product table.</p>
+</li>
+</ul>
+<p>However, Denormalization combines data into fewer tables to reduce the overhead of joins, improving read performance.</p>
+<p>See the diagram below:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!I36L!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fe7ceb9ba-d831-4e9e-a801-301cdb34cda1_1600x1136.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!I36L!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fe7ceb9ba-d831-4e9e-a801-301cdb34cda1_1600x1136.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>It is commonly used in read-heavy systems like analytics platforms. For example, apart from maintaining separate Product and Orders tables, a single denormalized OrderDetails table can also be created that includes product details alongside order data, reducing the need for joins.</p>
+<h3 id="partitioning"><strong>Partitioning</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#partitioning" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Partitioning divides a large table into smaller, more manageable pieces, improving query performance and scalability.</p>
+<ul>
+<li>
+<p>In horizontal partitioning, we split rows across multiple tables or storage locations based on a key, such as “date” or “region”. For example, an Orders table can be partitioned by year, so a query for orders in 2023 only scans the relevant partition.</p>
+</li>
+<li>
+<p>In vertical partitioning, we split columns into separate tables, keeping frequently accessed columns in one table and less-used columns in another. In a Users table, columns like username and email might be kept in the primary table, while large profile photos are stored in a secondary table.</p>
+</li>
+</ul>
+<h3 id="data-modeling-best-practices"><strong>Data Modeling Best Practices</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#data-modeling-best-practices" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Efficient data modeling ensures the schema supports application performance and scalability. Some useful practices to keep in mind are as follows:</p>
+<ul>
+<li>
+<p>Use the smallest data type that meets requirements. For example, use TINYINT for values ranging from 0-255 instead of INT.</p>
+</li>
+<li>
+<p>Avoid generic types like TEXT or BLOB unless necessary, as they consume more storage and impact performance.</p>
+</li>
+<li>
+<p>Avoid overcomplicated relationships, such as deep hierarchies or excessive foreign keys since they can slow queries.</p>
+</li>
+<li>
+<p>Use surrogate keys (id) for primary keys instead of composite keys for simpler joins</p>
+</li>
+</ul>
+<h2 id="query-optimization"><strong>Query Optimization</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#query-optimization" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Query optimization is an important aspect of improving database performance. It ensures queries execute efficiently, consumes minimal resources, and returns results quickly.</p>
+<p>Some key aspects of query optimization with practical tips and examples are as follows:</p>
+<h3 id="analyzing-execution-plans"><strong>Analyzing Execution Plans</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#analyzing-execution-plans" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Execution plans are detailed representations of how a database engine executes a query. They provide insights into operations like table scans, index usage, joins, and sort operations.</p>
+<p>We can use tools like EXPLAIN in MySQL or EXPLAIN ANALYZE in PostgreSQL to view execution plans.</p>
+<p>See the example below:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>EXPLAIN SELECT * FROM orders WHERE customer_id = 123;</span></span></code></pre></figure>
+<p>The plan might reveal a full table scan if the customer_id column lacks an index.</p>
+<p>A few key indicators to check in the execution plans are as follows:</p>
+<ul>
+<li>
+<p><strong>Full Table Scans</strong>: Indicate missing indexes or poorly designed queries.</p>
+</li>
+<li>
+<p><strong>Index Usage</strong>: Confirms that indexes are being utilized effectively.</p>
+</li>
+<li>
+<p><strong>Join Order and Type</strong>: Highlights whether nested loops or hash joins are used, which can affect performance.</p>
+</li>
+</ul>
+<h3 id="writing-efficient-queries"><strong>Writing Efficient Queries</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#writing-efficient-queries" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Poorly written queries can severely degrade performance. Simple changes in query design can make a significant difference.</p>
+<p>Some basic techniques are as follows:</p>
+<ul>
+<li>
+<p><strong>Avoid SELECT ALL:</strong> Fetching all columns of a table when only a few are needed is a waste of resources. Fetch only the required columns.</p>
+</li>
+<li>
+<p><strong>Filter Early:</strong> Apply filters in the WHERE clause to reduce the data scanned and returned.</p>
+</li>
+<li>
+<p><strong>Using Index Hints:</strong> Index hints force the database to use a specific index, which can be helpful when the query planner does not automatically select the optimal index. See the example below**:**</p>
+</li>
+</ul>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>SELECT * FROM orders USE INDEX (idx_customer_id) WHERE customer_id = 123;</span></span></code></pre></figure>
+<ul>
+<li><strong>Optimize Common Query Patterns:</strong> Aggregate functions like SUM, COUNT, and AVG can be resource-intensive, especially on large datasets. To optimize, use covering indexes to include all columns required for the aggregate operation. Precompute aggregates and store them in summary tables for frequent queries. See the example below:</li>
+</ul>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>CREATE INDEX idx_order_date ON orders(order_date);</span></span>
+<span data-line><span>SELECT COUNT(*) FROM orders WHERE order_date > '2023-01-01';</span></span></code></pre></figure>
+<ul>
+<li><strong>Handling Joins:</strong> Joins can slow down the queries, especially between large tables. It is good to ensure that indexed columns are used for join conditions. Also, use the smallest possible dataset by filtering before joining.</li>
+</ul>
+<h2 id="indexing-techniques-to-improve-performance"><strong>Indexing Techniques to Improve Performance</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#indexing-techniques-to-improve-performance" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Indexes are critical for speeding up database queries by reducing the amount of data scanned.</p>
+<p>However, using the wrong index type or failing to maintain them can negatively impact performance, particularly for write-heavy workloads.</p>
+<p>Let’s understand some key indexing techniques and their performance implications.</p>
+<h3 id="primary-and-secondary-indexes"><strong>Primary and Secondary Indexes</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#primary-and-secondary-indexes" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>A primary index is automatically created on the primary key column(s) of a table. It ensures that each row has a unique identifier and organizes the data in a sorted order.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!qVuc!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fed555574-3418-44c3-903e-48a201226dba_1600x1029.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!qVuc!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fed555574-3418-44c3-903e-48a201226dba_1600x1029.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>See the example below where customer_id has been declared as the primary key:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>CREATE TABLE customers (</span></span>
+<span data-line><span>    customer_id INT PRIMARY KEY,</span></span>
+<span data-line><span>    name VARCHAR(100),</span></span>
+<span data-line><span>    email VARCHAR(100)</span></span>
+<span data-line><span>);</span></span></code></pre></figure>
+<p>Primary indexes improve lookup speed for queries filtering by the primary key. However, they might slow down insertions if the primary key is auto-incremented, as the database must maintain the sorted order.</p>
+<p>A secondary index is created on non-primary columns to speed up searches. Unlike the primary index, it does not dictate the physical storage order.</p>
+<p>See the example below:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>CREATE INDEX idx_name ON customers(email);</span></span></code></pre></figure>
+<p>Secondary indexes improve query performance for non-primary key searches but increase storage overhead and slow down writes due to index updates.</p>
+<p>See the diagram below to understand their application:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!7cXg!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Ffa5eb2e6-544a-4adf-aef0-9e646ae2cab1_1600x864.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!7cXg!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Ffa5eb2e6-544a-4adf-aef0-9e646ae2cab1_1600x864.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h3 id="composite-index"><strong>Composite Index</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#composite-index" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Composite indexes cover multiple columns, allowing queries filtering on one or more of these columns to execute faster. They help optimize queries with multiple filtering conditions.</p>
+<p>See the example below for a composite index:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>CREATE INDEX idx_customer_order ON orders(customer_id, order_date);</span></span></code></pre></figure>
+<p>Composite indexes improve performance for multi-column filters but must be carefully designed based on query patterns, as the order of columns in the index matters. For instance, the above index will not optimize query filtering by only order_date.</p>
+<h3 id="index-maintenance"><strong>Index Maintenance</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#index-maintenance" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Indexes degrade over time due to fragmentation, bloat, and changes in data distribution. Regular maintenance is necessary to ensure optimal performance.</p>
+<p>Some common maintenance tasks should be performed to maintain the indexes:</p>
+<ul>
+<li>
+<p>Rebuilding and reorganizing indexes to remove fragmentation.</p>
+</li>
+<li>
+<p>Unused indexes consume storage and slow down writes and should be removed.</p>
+</li>
+<li>
+<p>Evaluate the efficiency of indexes by checking the cache hit ratio. Low ratios indicate that indexes are not effectively used or the cache size is insufficient.</p>
+</li>
+<li>
+<p>Avoid over-indexing, which increases storage and maintenance costs, and slows down write operations.</p>
+</li>
+<li>
+<p>Database query planners rely on index statistics to make optimization decisions. Regularly update these to reflect data changes.</p>
+</li>
+<li>
+<p>Use database tools or queries to identify how often indexes are used.</p>
+</li>
+</ul>
+<h2 id="concurrency-management-and-lock-handling"><strong>Concurrency Management and Lock Handling</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#concurrency-management-and-lock-handling" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Poor concurrency handling can lead to slow performance, inconsistencies, and even system failures, especially in high-traffic applications like online transaction processing (OLTP) systems.</p>
+<p>Let us look at some key aspects of concurrency management for database performance.</p>
+<h3 id="importance-of-concurrency-management"><strong>Importance of Concurrency Management</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#importance-of-concurrency-management" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>When multiple transactions access the same data concurrently, conflicts can arise, such as:</p>
+<ul>
+<li>
+<p><strong>Lost Updates</strong>: Two transactions update the same record simultaneously, overwriting each other’s changes.</p>
+</li>
+<li>
+<p><strong>Dirty Reads</strong>: A transaction reads uncommitted changes from another, leading to inconsistencies.</p>
+</li>
+<li>
+<p><strong>Deadlocks</strong>: Two or more transactions wait indefinitely for resources locked by the other.</p>
+</li>
+</ul>
+<h3 id="transaction-isolation-levels"><strong>Transaction Isolation Levels</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#transaction-isolation-levels" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Transaction isolation levels define how much a transaction must be isolated from others. Higher isolation ensures consistency but may reduce concurrency and performance.</p>
+<p>Here are the isolation levels from lowest to highest isolation.</p>
+<ul>
+<li>
+<p><strong>Read Uncommitted</strong>: Transactions can read uncommitted changes made by other transactions. This is useful for analytics queries where absolute accuracy isn’t critical. However, there is a risk of dirty reads.</p>
+</li>
+<li>
+<p><strong>Read Committed</strong>: In this isolation level, transactions only read committed changes. This is suitable for most OLTP systems. For example, a banking application prevents viewing partial updates during a transfer.</p>
+</li>
+<li>
+<p><strong>Repeatable Read</strong>: Ensures consistent reads within a transaction but doesn’t prevent phantom reads (new rows matching criteria added by other transactions). This is useful for inventory systems to prevent stock inconsistencies.</p>
+</li>
+<li>
+<p><strong>Serializable</strong>: At the highest isolation level, transactions are executed as if they were serialized. This is suitable for critical financial operations requiring strict consistency. However, it reduces concurrency significantly.</p>
+</li>
+</ul>
+<h3 id="optimistic-vs-pessimistic-locking"><strong>Optimistic vs Pessimistic Locking</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#optimistic-vs-pessimistic-locking" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Pessimistic locking locks a resource for the entire transaction to prevent other transactions from accessing it. She diagram below that shows pessimistic locking in action.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!DMhi!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F4d37c0aa-4f76-4b16-90ec-792bc1151ea0_1600x1111.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!DMhi!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F4d37c0aa-4f76-4b16-90ec-792bc1151ea0_1600x1111.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Pessimistic locking is useful in high-conflict scenarios where data changes are frequent, such as inventory updates. However, it can also lead to contention and reduced concurrency.</p>
+<p>See the example below that shows pessimistic locking.</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>BEGIN TRANSACTION;</span></span>
+<span data-line><span>SELECT * FROM inventory WITH (UPDLOCK) WHERE product_id = 123;</span></span>
+<span data-line><span>UPDATE inventory SET stock = stock - 1 WHERE product_id = 123;</span></span>
+<span data-line><span>COMMIT;</span></span></code></pre></figure>
+<p>Optimistic locking assumes conflicts are rare and doesn’t lock resources. Instead, it validates data integrity before committing.</p>
+<p>See the diagram below that shows optimistic locking in action using version numbers of the entity</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!dq9s!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fd512a099-fae7-4311-861b-db1be230b4f2_1600x1109.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!dq9s!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fd512a099-fae7-4311-861b-db1be230b4f2_1600x1109.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>This type of locking is useful for low-conflict scenarios like user profile updates.</p>
+<p>See the below possible example for optimistic locking</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>BEGIN TRANSACTION;</span></span>
+<span data-line><span>SELECT stock, version FROM inventory WHERE product_id = 123;</span></span>
+<span data-line> </span>
+<span data-line><span>-- Check version matches before updating</span></span>
+<span data-line><span>UPDATE inventory SET stock = stock - 1, version = version + 1</span></span>
+<span data-line><span>WHERE product_id = 123 AND version = 1;</span></span>
+<span data-line><span>COMMIT;</span></span></code></pre></figure>
+<h3 id="connection-pooling"><strong>Connection Pooling</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#connection-pooling" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Connection pooling maintains a pool of database connections that can be reused, reducing the overhead of creating and closing connections for every request.</p>
+<p>The benefits are as follows:</p>
+<ul>
+<li>
+<p>Reduces latency by avoiding frequent connection setup/teardown.</p>
+</li>
+<li>
+<p>Prevents resource exhaustion by limiting the maximum number of active connections.</p>
+</li>
+</ul>
+<h2 id="strategies-for-scaling-databases"><strong>Strategies for Scaling Databases</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#strategies-for-scaling-databases" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Scaling databases is essential as application workloads grow, ensuring they maintain performance and reliability under increased demand.</p>
+<p>Let’s look at the primary scaling approaches for databases in more detail:</p>
+<h3 id="vertical-scaling"><strong>Vertical Scaling</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#vertical-scaling" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Vertical scaling involves upgrading the hardware of a single database server to handle more load. This includes adding more CPU, memory, or storage.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!OxeQ!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F60668ca6-3f43-4ec6-a9c6-e1a9f13a490e_1600x873.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!OxeQ!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F60668ca6-3f43-4ec6-a9c6-e1a9f13a490e_1600x873.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>The basic techniques are as follows:</p>
+<ul>
+<li>
+<p><strong>Increasing CPU and Memory:</strong> Enhances the server’s ability to handle more concurrent connections and complex queries.</p>
+</li>
+<li>
+<p><strong>Upgrading Storage:</strong> Switching to faster SSDs or increasing storage capacity improves I/O performance.</p>
+</li>
+<li>
+<p><strong>Using Larger Instances in Cloud Environments:</strong> For example, moving from an AWS R5 instance to an R6 instance with higher specifications.</p>
+</li>
+</ul>
+<p>The key benefits of vertical scaling are simple management of a single database server and no changes to the application or database design.</p>
+<p>However, vertical scaling also has some limitations such as:</p>
+<ul>
+<li>
+<p><strong>Cost</strong>: Hardware upgrades become increasingly expensive with diminishing returns.</p>
+</li>
+<li>
+<p><strong>Single Point of Failure</strong>: A single server means no failover, increasing downtime risks.</p>
+</li>
+<li>
+<p><strong>Scalability Limitations</strong>: Physical hardware has upper limits, making vertical scaling unsustainable for large workloads.</p>
+</li>
+</ul>
+<h3 id="horizontal-scaling"><strong>Horizontal Scaling</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#horizontal-scaling" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Horizontal scaling involves distributing the database load across multiple servers by adding nodes. This method enhances scalability and fault tolerance.</p>
+<p>The key techniques for horizontal scaling are as follows:</p>
+<h3 id="1---sharding"><strong>1 - Sharding</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1---sharding" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>In this case, we divide the data into smaller, more manageable chunks known as shards and store each shard on a different server.</p>
+<p>See the diagram below that demonstrates the concept of sharding</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!08W7!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F48f12994-f708-494a-a31c-efc65e0fdcd4_1600x1002.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!08W7!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F48f12994-f708-494a-a31c-efc65e0fdcd4_1600x1002.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>This approach is ideal for large datasets accessed independently, such as social media platforms or multi-tenant applications.</p>
+<p>To implement sharding, we follow the following steps:</p>
+<ul>
+<li>
+<p>Identify a sharding key, such as user_id or region.</p>
+</li>
+<li>
+<p>Route queries to the appropriate shard based on the key.</p>
+</li>
+<li>
+<p>Use middleware or custom logic in the application to manage shard locations.</p>
+</li>
+</ul>
+<h3 id="2---replication"><strong>2 - Replication</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2---replication" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Replication involves maintaining multiple copies of the same database, typically with a primary node for writes and secondary nodes for reads.</p>
+<p>See the diagram below to understand how the leader-follower replication works.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!lRz0!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F95eba9ce-4956-414c-8ff4-62796b39ea92_1600x1062.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!lRz0!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F95eba9ce-4956-414c-8ff4-62796b39ea92_1600x1062.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>A basic leader-follower replication involves the leader node handling writes and critical reads and the follower nodes handling most read operations.</p>
+<p>This type of replication is best for read-heavy workloads where read operations significantly outnumber writes.</p>
+<h2 id="summary"><strong>Summary</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#summary" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>In this article, we’ve taken a detailed look at various aspects of database performance along with multiple strategies that help improve performance.</p>
+<p>Let’s summarize our learnings in brief:</p>
+<ul>
+<li>
+<p>The key metrics to evaluate performance are query execution time, throughput, and latency.</p>
+</li>
+<li>
+<p>Elements like item size, dataset size, and consistency requirements influence how well the database performs under different conditions.</p>
+</li>
+<li>
+<p>Tailoring strategies to workload types (write-heavy, read-heavy, mixed, etc.) ensures optimal performance for varying application demands.</p>
+</li>
+<li>
+<p>Balancing normalization and denormalization and following data modeling best practices are the keys to efficient schema design.</p>
+</li>
+<li>
+<p>Analyzing execution plans, writing efficient queries, and leveraging index hints can significantly reduce query execution times and resource usage.</p>
+</li>
+<li>
+<p>Using appropriate indexing strategies (for example, primary, secondary, composite) and maintaining indexes regularly ensures faster query performance and reduced overhead.</p>
+</li>
+<li>
+<p>Transaction isolation levels, deadlock resolution, and efficient locking strategies maintain consistency while enabling high concurrency in multi-user environments.</p>
+</li>
+<li>
+<p>Vertical scaling upgrades hardware, while horizontal scaling strategies like sharding and replication distribute traffic for enhanced scalability and fault tolerance.</p>
+</li>
+</ul></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-136" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#key-metrics-to-evaluate-database-performance" data-for="key-metrics-to-evaluate-database-performance">Key Metrics to Evaluate Database Performance</a></li><li class="depth-1"><a href="#1---query-execution-time" data-for="1---query-execution-time">1 - Query Execution Time</a></li><li class="depth-1"><a href="#2---throughput" data-for="2---throughput">2 - Throughput</a></li><li class="depth-1"><a href="#3---latency" data-for="3---latency">3 - Latency</a></li><li class="depth-1"><a href="#4---resource-utilization" data-for="4---resource-utilization">4 - Resource Utilization</a></li><li class="depth-0"><a href="#factors-affecting-database-performance" data-for="factors-affecting-database-performance">Factors Affecting Database Performance</a></li><li class="depth-1"><a href="#item-size" data-for="item-size">Item Size</a></li><li class="depth-1"><a href="#item-type" data-for="item-type">Item Type</a></li><li class="depth-1"><a href="#dataset-size" data-for="dataset-size">Dataset Size</a></li><li class="depth-1"><a href="#concurrency" data-for="concurrency">Concurrency</a></li><li class="depth-1"><a href="#consistency-expectations" data-for="consistency-expectations">Consistency Expectations</a></li><li class="depth-1"><a href="#geographic-distribution" data-for="geographic-distribution">Geographic Distribution</a></li><li class="depth-1"><a href="#high-availability-ha-expectations" data-for="high-availability-ha-expectations">High Availability (HA) Expectations</a></li><li class="depth-1"><a href="#workload-variability" data-for="workload-variability">Workload Variability</a></li><li class="depth-0"><a href="#impact-of-workload-types-on-database-performance" data-for="impact-of-workload-types-on-database-performance">Impact of Workload Types on Database Performance</a></li><li class="depth-1"><a href="#1---write-heavy-workloads" data-for="1---write-heavy-workloads">1 - Write-Heavy Workloads</a></li><li class="depth-1"><a href="#2---read-heavy-workloads" data-for="2---read-heavy-workloads">2 - Read-Heavy Workloads</a></li><li class="depth-1"><a href="#3---delete-heavy-workloads" data-for="3---delete-heavy-workloads">3 - Delete-Heavy Workloads</a></li><li class="depth-1"><a href="#4---competing-workloads-real-time-vs-batch" data-for="4---competing-workloads-real-time-vs-batch">4 - Competing Workloads (Real-Time vs Batch)</a></li><li class="depth-0"><a href="#optimizing-schema-and-data-design" data-for="optimizing-schema-and-data-design">Optimizing Schema and Data Design</a></li><li class="depth-1"><a href="#normalization-vs-denormalization" data-for="normalization-vs-denormalization">Normalization vs Denormalization</a></li><li class="depth-1"><a href="#partitioning" data-for="partitioning">Partitioning</a></li><li class="depth-1"><a href="#data-modeling-best-practices" data-for="data-modeling-best-practices">Data Modeling Best Practices</a></li><li class="depth-0"><a href="#query-optimization" data-for="query-optimization">Query Optimization</a></li><li class="depth-1"><a href="#analyzing-execution-plans" data-for="analyzing-execution-plans">Analyzing Execution Plans</a></li><li class="depth-1"><a href="#writing-efficient-queries" data-for="writing-efficient-queries">Writing Efficient Queries</a></li><li class="depth-0"><a href="#indexing-techniques-to-improve-performance" data-for="indexing-techniques-to-improve-performance">Indexing Techniques to Improve Performance</a></li><li class="depth-1"><a href="#primary-and-secondary-indexes" data-for="primary-and-secondary-indexes">Primary and Secondary Indexes</a></li><li class="depth-1"><a href="#composite-index" data-for="composite-index">Composite Index</a></li><li class="depth-1"><a href="#index-maintenance" data-for="index-maintenance">Index Maintenance</a></li><li class="depth-0"><a href="#concurrency-management-and-lock-handling" data-for="concurrency-management-and-lock-handling">Concurrency Management and Lock Handling</a></li><li class="depth-1"><a href="#importance-of-concurrency-management" data-for="importance-of-concurrency-management">Importance of Concurrency Management</a></li><li class="depth-1"><a href="#transaction-isolation-levels" data-for="transaction-isolation-levels">Transaction Isolation Levels</a></li><li class="depth-1"><a href="#optimistic-vs-pessimistic-locking" data-for="optimistic-vs-pessimistic-locking">Optimistic vs Pessimistic Locking</a></li><li class="depth-1"><a href="#connection-pooling" data-for="connection-pooling">Connection Pooling</a></li><li class="depth-0"><a href="#strategies-for-scaling-databases" data-for="strategies-for-scaling-databases">Strategies for Scaling Databases</a></li><li class="depth-1"><a href="#vertical-scaling" data-for="vertical-scaling">Vertical Scaling</a></li><li class="depth-1"><a href="#horizontal-scaling" data-for="horizontal-scaling">Horizontal Scaling</a></li><li class="depth-1"><a href="#1---sharding" data-for="1---sharding">1 - Sharding</a></li><li class="depth-1"><a href="#2---replication" data-for="2---replication">2 - Replication</a></li><li class="depth-0"><a href="#summary" data-for="summary">Summary</a></li><li class="overflow-end"></li></ul></div><div class="backlinks"><h3>Backlinks</h3><ul id="list-2" class="overflow"><li><a href="../../Notion-Knowledge/Note" class="internal">Note</a></li><li><a href="../../Notion-Knowledge/Note/SQL-Query-Optimization-—-From-Simple-to-Complex" class="internal">SQL Query Optimization — From Simple to Complex</a></li><li><a href="../../_moc/MOC-Database" class="internal">MOC-Database</a></li><li><a href="../../_moc/MOC-Reading-List" class="internal">MOC-Reading-List</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://dangthobach.github.io/">Back to Portfolio</a></li><li><a href="https://github.com/dangthobach">GitHub</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../postscript.js" type="module" data-persist="true"></script></html>

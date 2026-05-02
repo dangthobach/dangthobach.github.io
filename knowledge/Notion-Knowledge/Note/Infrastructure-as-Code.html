@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>Infrastructure as Code</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="Dang Tho Bach's Knowledge Base"/><meta property="og:title" content="Infrastructure as Code"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="Infrastructure as Code"/><meta name="twitter:description" content="It is difficult to imagine modern businesses operating without a scalable process to provision and manage the infrastructure."/><meta property="og:description" content="It is difficult to imagine modern businesses operating without a scalable process to provision and manage the infrastructure."/><meta property="og:image:alt" content="It is difficult to imagine modern businesses operating without a scalable process to provision and manage the infrastructure."/><meta property="twitter:domain" content="dangthobach.github.io/knowledge"/><meta property="og:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Infrastructure-as-Code"/><meta property="twitter:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Infrastructure-as-Code"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="It is difficult to imagine modern businesses operating without a scalable process to provision and manage the infrastructure."/><meta name="generator" content="Quartz"/><link href="../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiL2hvbWUvcnVubmVyL3dvcmsvZGFuZ3Rob2JhY2guZ2l0aHViLmlvL2Rhbmd0aG9iYWNoLmdpdGh1Yi5pby9xdWFydHovcXVhcnR6L2NvbXBvbmVudHMvc3R5bGVzIiwic291cmNlcyI6WyJtZXJtYWlkLmlubGluZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFHRjtFQUNFOzs7QUFLRjtFQUNFO0VBQ0E7OztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTs7QUFJRjtFQUNFO0VBQ0E7RUFDQSIsInNvdXJjZXNDb250ZW50IjpbIi5leHBhbmQtYnV0dG9uIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbG9hdDogcmlnaHQ7XG4gIHBhZGRpbmc6IDAuNHJlbTtcbiAgbWFyZ2luOiAwLjNyZW07XG4gIHJpZ2h0OiAwOyAvLyBOT1RFOiByaWdodCB3aWxsIGJlIHNldCBpbiBtZXJtYWlkLmlubGluZS50c1xuICBjb2xvcjogdmFyKC0tZ3JheSk7XG4gIGJvcmRlci1jb2xvcjogdmFyKC0tZGFyayk7XG4gIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgYm9yZGVyOiAxcHggc29saWQ7XG4gIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgb3BhY2l0eTogMDtcbiAgdHJhbnNpdGlvbjogMC4ycztcblxuICAmID4gc3ZnIHtcbiAgICBmaWxsOiB2YXIoLS1saWdodCk7XG4gICAgZmlsdGVyOiBjb250cmFzdCgwLjMpO1xuICB9XG5cbiAgJjpob3ZlciB7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIGJvcmRlci1jb2xvcjogdmFyKC0tc2Vjb25kYXJ5KTtcbiAgfVxuXG4gICY6Zm9jdXMge1xuICAgIG91dGxpbmU6IDA7XG4gIH1cbn1cblxucHJlIHtcbiAgJjpob3ZlciA+IC5leHBhbmQtYnV0dG9uIHtcbiAgICBvcGFjaXR5OiAxO1xuICAgIHRyYW5zaXRpb246IDAuMnM7XG4gIH1cbn1cblxuI21lcm1haWQtY29udGFpbmVyIHtcbiAgcG9zaXRpb246IGZpeGVkO1xuICBjb250YWluOiBsYXlvdXQ7XG4gIHotaW5kZXg6IDk5OTtcbiAgbGVmdDogMDtcbiAgdG9wOiAwO1xuICB3aWR0aDogMTAwdnc7XG4gIGhlaWdodDogMTAwdmg7XG4gIG92ZXJmbG93OiBoaWRkZW47XG4gIGRpc3BsYXk6IG5vbmU7XG4gIGJhY2tkcm9wLWZpbHRlcjogYmx1cig0cHgpO1xuICBiYWNrZ3JvdW5kOiByZ2JhKDAsIDAsIDAsIDAuNSk7XG5cbiAgJi5hY3RpdmUge1xuICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgfVxuXG4gICYgPiAjbWVybWFpZC1zcGFjZSB7XG4gICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gICAgYm9yZGVyLXJhZGl1czogNXB4O1xuICAgIHBvc2l0aW9uOiBmaXhlZDtcbiAgICB0b3A6IDUwJTtcbiAgICBsZWZ0OiA1MCU7XG4gICAgdHJhbnNmb3JtOiB0cmFuc2xhdGUoLTUwJSwgLTUwJSk7XG4gICAgaGVpZ2h0OiA4MHZoO1xuICAgIHdpZHRoOiA4MHZ3O1xuICAgIG92ZXJmbG93OiBoaWRkZW47XG5cbiAgICAmID4gLm1lcm1haWQtY29udGVudCB7XG4gICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgICB0cmFuc2Zvcm0tb3JpZ2luOiAwIDA7XG4gICAgICB0cmFuc2l0aW9uOiB0cmFuc2Zvcm0gMC4xcyBlYXNlO1xuICAgICAgb3ZlcmZsb3c6IHZpc2libGU7XG4gICAgICBtaW4taGVpZ2h0OiAyMDBweDtcbiAgICAgIG1pbi13aWR0aDogMjAwcHg7XG5cbiAgICAgIHByZSB7XG4gICAgICAgIG1hcmdpbjogMDtcbiAgICAgICAgYm9yZGVyOiBub25lO1xuICAgICAgfVxuXG4gICAgICBzdmcge1xuICAgICAgICBtYXgtd2lkdGg6IG5vbmU7XG4gICAgICAgIGhlaWdodDogYXV0bztcbiAgICAgIH1cbiAgICB9XG5cbiAgICAmID4gLm1lcm1haWQtY29udHJvbHMge1xuICAgICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgICAgYm90dG9tOiAyMHB4O1xuICAgICAgcmlnaHQ6IDIwcHg7XG4gICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgZ2FwOiA4cHg7XG4gICAgICBwYWRkaW5nOiA4cHg7XG4gICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgYm9yZGVyLXJhZGl1czogNnB4O1xuICAgICAgYm94LXNoYWRvdzogMCAycHggNHB4IHJnYmEoMCwgMCwgMCwgMC4xKTtcbiAgICAgIHotaW5kZXg6IDI7XG5cbiAgICAgIC5tZXJtYWlkLWNvbnRyb2wtYnV0dG9uIHtcbiAgICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgIHdpZHRoOiAzMnB4O1xuICAgICAgICBoZWlnaHQ6IDMycHg7XG4gICAgICAgIHBhZGRpbmc6IDA7XG4gICAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgICAgY29sb3I6IHZhcigtLWRhcmspO1xuICAgICAgICBib3JkZXItcmFkaXVzOiA0cHg7XG4gICAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICAgICAgZm9udC1zaXplOiAxNnB4O1xuICAgICAgICBmb250LWZhbWlseTogdmFyKC0tYm9keUZvbnQpO1xuICAgICAgICB0cmFuc2l0aW9uOiBhbGwgMC4ycyBlYXNlO1xuXG4gICAgICAgICY6aG92ZXIge1xuICAgICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIH1cblxuICAgICAgICAmOmFjdGl2ZSB7XG4gICAgICAgICAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKDFweCk7XG4gICAgICAgIH1cblxuICAgICAgICAvLyBTdHlsZSB0aGUgcmVzZXQgYnV0dG9uIGRpZmZlcmVudGx5XG4gICAgICAgICY6bnRoLWNoaWxkKDIpIHtcbiAgICAgICAgICB3aWR0aDogYXV0bztcbiAgICAgICAgICBwYWRkaW5nOiAwIDEycHg7XG4gICAgICAgICAgZm9udC1zaXplOiAxNHB4O1xuICAgICAgICB9XG4gICAgICB9XG4gICAgfVxuICB9XG59XG4iXX0= */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://dangthobach.github.io/knowledge/index.xml"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Infrastructure-as-Code-og-image.webp"/><meta property="og:image:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Infrastructure-as-Code-og-image.webp"/><meta name="twitter:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Infrastructure-as-Code-og-image.webp"/><meta property="og:image:type" content="image/.webp"/></head><body data-slug="Notion-Knowledge/Note/Infrastructure-as-Code"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../..">Dang Tho Bach's Knowledge Base</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-360"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-360" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/">Notion Knowledge</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/Note/">Note</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>Infrastructure as Code</a></div></nav><h1 class="article-title">Infrastructure as Code</h1><p show-comma="true" class="content-meta"><time datetime="2026-05-02T04:58:37.000Z">May 02, 2026</time><span>16 min read</span></p></div></div><article class="popover-hint"><p>It is difficult to imagine modern businesses operating without a scalable process to provision and manage the infrastructure.</p>
+<p>Scalable infrastructure management is critical for businesses to adapt quickly to fluctuating workloads and user demands without compromising performance or incurring excessive costs. It offers several key benefits from multiple perspectives:</p>
+<ul>
+<li>
+<p><strong>Availability:</strong> Scalable infrastructure management ensures that the application remains up and running at all times. It minimizes downtime and enables continuous service availability by dynamically adjusting resources based on demand.</p>
+</li>
+<li>
+<p><strong>Application Performance:</strong> Scalable infrastructure ensures that application performance is not affected by changes in workload. It allows for the seamless addition or removal of resources to maintain optimal performance levels, even during peak periods.</p>
+</li>
+<li>
+<p><strong>Better Quality of Service:</strong> By enhancing availability and application performance, scalable infrastructure management allows businesses to offer better service quality to their customers. This improved service quality can lead to higher customer satisfaction and loyalty.</p>
+</li>
+<li>
+<p><strong>Cost Efficiency:</strong> Scalable infrastructure management provides opportunities for cost optimization by scaling down resources during idle times.</p>
+</li>
+</ul>
+<p>Modern cloud-based infrastructure is particularly adept at scaling to support millions of users.</p>
+<p>However, while it may seem effortless, managing scalability beyond simple autoscaling groups and load balancers can become complex.</p>
+<p>As the codebase grows due to the involvement of numerous engineers, the potential for mistakes also increases. While minor issues like syntax errors or forgotten comments can be mitigated quickly, more serious mistakes such as leaked security keys, improper storage security settings, or open security groups can have disastrous consequences.</p>
+<p>Therefore, it is crucial to formulate effective ways to manage and provision the infrastructure.</p>
+<p>In this post, we’ll explore the most important ways of scaling the provisioning and management of modern application infrastructure.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!NvEh!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F3a28aee2-6cef-4a3b-8bb2-5ee2d54059ed_1451x1600.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!NvEh!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F3a28aee2-6cef-4a3b-8bb2-5ee2d54059ed_1451x1600.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h2 id="what-is-non-scalable-infrastructure"><strong>What is Non-Scalable Infrastructure?</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#what-is-non-scalable-infrastructure" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Traditionally, infrastructure provisioning and management has been a non-scalable activity.</p>
+<p>Developers often rely on using special scripts and privileges on the server machines to manage the infrastructure of their projects. Also, some non-scalable strategies, such as using git repositories and basic security controls, are essential at any scale to prevent data loss and ensure code integrity.</p>
+<p>However, while some non-scalable methods of managing infrastructure remain popular and useful for single-developer shops and small stacks, the majority are no longer suitable for large-scale operations at the enterprise level.</p>
+<p>These methods often lack the standardization abstraction required for infrastructure management and provisioning at scale. Some examples are as follows:</p>
+<ul>
+<li>
+<p>When building infrastructure, the key is to write readable and maintainable code. While coding from terminals is acceptable and necessary for developer freedom, consistency, and security can be compromised when developers run infrastructure deployments directly from their terminals.</p>
+</li>
+<li>
+<p>Developers need the freedom to manage their environment completely for experimentation and iteration, but this freedom should be limited at the development stage.</p>
+</li>
+<li>
+<p>Terminals should only have access to the repository where the code is committed and not to any further resources. Handing out access keys to cloud environments can create significant security risks, especially when deploying to multiple environments.</p>
+</li>
+</ul>
+<p>Let us now look at some of the most popular strategies to make it easier to scale infrastructure management. Note that many of these strategies can and should be used in conjunction as the application’s requirements evolve.</p>
+<h3 id="containerization"><strong>Containerization</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#containerization" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Containerization is a powerful approach for scaling the infrastructure layer of an application. It is a lightweight form of virtualization that packages an application and its dependencies into a standardized unit called a container.</p>
+<p>Docker is the most popular containerization platform, widely adopted for its simplicity and efficiency.</p>
+<p>Some key concepts to understand Docker are as follows:</p>
+<ul>
+<li>
+<p><strong>Container:</strong> A container is a standalone, executable package that includes everything needed to run a piece of software. This includes the application code, runtime, libraries, and dependencies.</p>
+</li>
+<li>
+<p><strong>Image:</strong> An image serves as a template for creating containers. It contains the application code, runtime, libraries, and dependencies necessary for the application to run.</p>
+</li>
+<li>
+<p><strong>Dockerfile:</strong> A Dockerfile is a script that defines how to build a Docker image. It specifies the base image, copies files, installs dependencies, sets environment variables and defines the command to run the application.</p>
+</li>
+<li>
+<p><strong>Docker Host:</strong> A Docker host is a machine (physical or virtual) that runs the Docker daemon and can execute the Docker containers. The daemon is a background service that manages Docker objects such as images, containers, networks, and volumes.</p>
+</li>
+<li>
+<p><strong>Docker Hub:</strong> Docker Hub is a cloud-based registry for storing and sharing Docker images. It provides a centralized location for managing and distributing images, making collaboration and deployment of applications easy.</p>
+</li>
+</ul>
+<p>The diagram below shows the high-level picture of containerization with Docker.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!dJPs!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F8ece01a8-732d-45be-8420-7bbc21dc1ae4_1600x929.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!dJPs!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F8ece01a8-732d-45be-8420-7bbc21dc1ae4_1600x929.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h3 id="using-docker"><strong>Using Docker</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#using-docker" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Here is a basic Dockerfile for a Node.js web application:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span># Use an official Node.js runtime as the base image</span></span>
+<span data-line><span>FROM node:14</span></span>
+<span data-line> </span>
+<span data-line><span># Set the working directory in the container</span></span>
+<span data-line><span>WORKDIR /usr/src/app</span></span>
+<span data-line> </span>
+<span data-line><span># Copy package.json and package-lock.json</span></span>
+<span data-line><span>COPY package*.json ./</span></span>
+<span data-line> </span>
+<span data-line><span># Install application dependencies</span></span>
+<span data-line><span>RUN npm install</span></span>
+<span data-line> </span>
+<span data-line><span># Copy the rest of the application code</span></span>
+<span data-line><span>COPY . .</span></span>
+<span data-line> </span>
+<span data-line><span># Expose the port the app runs on</span></span>
+<span data-line><span>EXPOSE 3000</span></span>
+<span data-line> </span>
+<span data-line><span># Define the command to run the app</span></span>
+<span data-line><span>CMD [&quot;node&quot;, &quot;app.js&quot;]</span></span></code></pre></figure>
+<p>The Docker image for this file can be built and run using the below commands:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>docker build -t my-nodejs-app</span></span>
+<span data-line><span>docker run -p 3000:3000 my-nodejs-app</span></span></code></pre></figure>
+<h3 id="scaling-with-docker"><strong>Scaling With Docker</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#scaling-with-docker" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Using this Dockerfile, we can easily scale the application:</p>
+<p>For example, running multiple containers of the same image is a matter of executing the below commands. Each container is like an instance of the application.</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>docker run -d -p 3001:3000 my-nodejs-app</span></span>
+<span data-line><span>docker run -d -p 3002:3000 my-nodejs-app</span></span></code></pre></figure>
+<p>A reverse proxy like Nginx can be used to distribute traffic among these instances. Also, it becomes easy to update the application by building a new image version and replacing the running containers.</p>
+<p>This Dockerfile provides a foundation for containerizing a web application, making it easier to deploy, scale, and manage in various environments. The same principles can be applied to other types of applications by adjusting the base image and the image build steps accordingly.</p>
+<h3 id="container-orchestration"><strong>Container Orchestration</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#container-orchestration" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Once the application infrastructure is spread across multiple containers, it becomes tough to manage the lifecycle of all these containers. This is where container orchestration tools become important.</p>
+<p>Kubernetes is one of the most popular container orchestration platforms in the world. It provides several features that significantly contribute to the scalability of the infrastructure provisioning, making it an ideal choice for modern application development.</p>
+<p>Some essential Kubernetes concepts are as follows:</p>
+<ul>
+<li>
+<p><strong>Pod:</strong> The smallest deployable unit in Kubernetes, typically containing one or more containers.</p>
+</li>
+<li>
+<p><strong>Deployment:</strong> Manages a set of identical pods, allowing for easy scaling and updates.</p>
+</li>
+<li>
+<p><strong>Service:</strong> An abstraction layer that defines a logical set of pods and a policy to access them.</p>
+</li>
+<li>
+<p><strong>Volume:</strong> An abstraction that provides persistent storage to pods, allowing data to persist beyond the lifetime of individual containers.</p>
+</li>
+<li>
+<p><strong>Ingress:</strong> Manages external access to services in a cluster.</p>
+</li>
+<li>
+<p><strong>ConfigMap and Secret:</strong> Used for configuration management.</p>
+</li>
+</ul>
+<p>Here’s a quick look at some of the concepts and resources that Kubernetes provides:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!6RFu!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Ff4143b03-7841-4057-aa6b-f7f44849d49a_1498x1600.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!6RFu!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Ff4143b03-7841-4057-aa6b-f7f44849d49a_1498x1600.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>The diagram below shows how developers interact with Kubernetes and what happens behind the scenes.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!63Bs!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fde54ec8a-76b6-4e04-9ebb-fca7c3a5a4f5_1600x909.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!63Bs!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fde54ec8a-76b6-4e04-9ebb-fca7c3a5a4f5_1600x909.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h3 id="scaling-the-infrastructure-with-kubernetes"><strong>Scaling the Infrastructure With Kubernetes</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#scaling-the-infrastructure-with-kubernetes" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Kubernetes can automatically scale the number of pods based on CPU utilization or custom metrics.</p>
+<p>Here’s an example configuration code for a Horizontal Pod Autoscaler.</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>apiVersion: autoscaling/v2beta1</span></span>
+<span data-line><span>kind: HorizontalPodAutoscaler</span></span>
+<span data-line><span>metadata:</span></span>
+<span data-line><span>  name: myapp-hpa</span></span>
+<span data-line><span>spec:</span></span>
+<span data-line><span>  scaleTargetRef:</span></span>
+<span data-line><span>    apiVersion: apps/v1</span></span>
+<span data-line><span>    kind: Deployment</span></span>
+<span data-line><span>    name: myapp</span></span>
+<span data-line><span>  minReplicas: 2</span></span>
+<span data-line><span>  maxReplicas: 10</span></span>
+<span data-line><span>  metrics:</span></span>
+<span data-line><span>  - type: Resource</span></span>
+<span data-line><span>    resource:</span></span>
+<span data-line><span>      name: cpu</span></span>
+<span data-line><span>      targetAverageUtilization: 50</span></span></code></pre></figure>
+<p>On a high level, this HPA configuration ensures that the number of replicas of the myapp deployment is maintained between 2 and 10, scaling up when CPU utilization exceeds 50% and scaling down when it drops below 50%.</p>
+<p>Next, Kubernetes Services automatically provides load balancing for a set of pods. See the example below:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>apiVersion: v1</span></span>
+<span data-line><span>kind: Service</span></span>
+<span data-line><span>metadata:</span></span>
+<span data-line><span>  name: myapp-service</span></span>
+<span data-line><span>spec:</span></span>
+<span data-line><span>  selector:</span></span>
+<span data-line><span>    app: myapp</span></span>
+<span data-line><span>  ports:</span></span>
+<span data-line><span>    - protocol: TCP</span></span>
+<span data-line><span>      port: 80</span></span>
+<span data-line><span>      targetPort: 8080</span></span>
+<span data-line><span>  type: LoadBalancer</span></span></code></pre></figure>
+<p>This Service configuration distributes traffic across all pods labeled with app: myapp, listening on port 80, and forwarding traffic to port 8080 on the pods.</p>
+<p>Kubernetes allows for zero-downtime updates by gradually replacing old pods with new ones. This configuration ensures smooth transitions between version releases.</p>
+<p>Here is an example Deployment YAML with a rolling update strategy:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>apiVersion: apps/v1</span></span>
+<span data-line><span>kind: Deployment</span></span>
+<span data-line><span>metadata:</span></span>
+<span data-line><span>  name: myapp</span></span>
+<span data-line><span>spec:</span></span>
+<span data-line><span>  replicas: 4</span></span>
+<span data-line><span>  selector:</span></span>
+<span data-line><span>    matchLabels:</span></span>
+<span data-line><span>      app: myapp</span></span>
+<span data-line><span>  template:</span></span>
+<span data-line><span>    metadata:</span></span>
+<span data-line><span>      labels:</span></span>
+<span data-line><span>        app: myapp</span></span>
+<span data-line><span>    spec:</span></span>
+<span data-line><span>      containers:</span></span>
+<span data-line><span>      - name: myapp</span></span>
+<span data-line><span>        image: myapp:v2</span></span>
+<span data-line><span>  strategy:</span></span>
+<span data-line><span>    type: RollingUpdate</span></span>
+<span data-line><span>    rollingUpdate:</span></span>
+<span data-line><span>      maxSurge: 1</span></span>
+<span data-line><span>      maxUnavailable: 1</span></span></code></pre></figure>
+<p>Kubernetes automatically restarts failed containers and replaces unresponsive pods. This self-healing behavior is built into Kubernetes and does not require additional configuration. If a pod crashes or becomes unresponsive, Kubernetes will automatically create a new one to replace it based on the desired infrastructure. By using liveness and readiness probes, this restart behavior can be made even more reliable.</p>
+<p>The various features of Kubernetes contribute significantly to the scalability and reliability of applications. Here are some key benefits:</p>
+<ul>
+<li>
+<p><strong>Efficient Resource Utilization:</strong> Autoscaling ensures that resources are used efficiently, scaling up or down based on actual demand.</p>
+</li>
+<li>
+<p><strong>High Availability:</strong> Load balancing and self-healing features ensure the application runs even if individual components fail.</p>
+</li>
+<li>
+<p><strong>Consistent Deployments:</strong> Rolling updates ensure smooth transitions between versions, minimizing downtime and disruptions.</p>
+</li>
+<li>
+<p><strong>Adaptability:</strong> The infrastructure can automatically adapt to changing load patterns, ensuring optimal performance and resource utilization.</p>
+</li>
+</ul>
+<h3 id="infrastructure-as-code"><strong>Infrastructure as Code</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#infrastructure-as-code" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Infrastructure as Code (IaC) is a powerful approach that enables the management and provisioning of infrastructure using code. This method treats infrastructure configuration as code, allowing developers to define the infrastructure in files that can be versioned, tested, and reused.</p>
+<p>The diagram below shows how infrastructure as code works on a high level.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!AB__!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F7ff0b196-4b70-4fa6-8ffa-b25e27058c7b_1600x909.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!AB__!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F7ff0b196-4b70-4fa6-8ffa-b25e27058c7b_1600x909.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>IaC provides several key benefits:</p>
+<ul>
+<li>
+<p><strong>Consistency:</strong> IaC ensures that infrastructure is provisioned consistently across different environments. By defining the infrastructure configuration in code, developers can guarantee that the same setup is applied uniformly, reducing variability and potential errors.</p>
+</li>
+<li>
+<p><strong>Repeatability:</strong> With IaC, developers can easily replicate infrastructure setups. The code-based definition of infrastructure allows for the creation of identical environments, whether for development, testing, staging, or production. This repeatability is crucial for maintaining a consistent and reliable infrastructure.</p>
+</li>
+<li>
+<p><strong>Automation:</strong> IaC reduces manual configuration and errors by automating the provisioning process. By using code to define the infrastructure, developers can leverage tools and scripts to deploy and manage the infrastructure, minimizing the risk of human error.</p>
+</li>
+<li>
+<p><strong>Version Control:</strong> IaC enables tracking changes and rolling back to previous configurations. By storing infrastructure definitions in version control systems like Git, developers can maintain a history of changes, collaborate with team members, and revert to previous versions if needed. This version control capability enhances the reliability and maintainability of the infrastructure.</p>
+</li>
+</ul>
+<p>Several IaC tools are available, which can help scale the infrastructure provisioning activities.</p>
+<p>Let’s look at a few of them in more detail:</p>
+<h3 id="1---terraform"><strong>1 - Terraform</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1---terraform" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Terraform is a popular (formerly open-source) tool that enables the definition and provisioning of infrastructure using a high-level configuration language. This tool is particularly useful for managing and scaling infrastructure components efficiently.</p>
+<p>See the diagram below that explains how Terraform works to provision an AWS EC2 instance.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!ovHG!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fedc26776-63b6-408f-8c9f-4d402ade24fb_1600x970.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!ovHG!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fedc26776-63b6-408f-8c9f-4d402ade24fb_1600x970.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Here’s an example of a configuration file that developers can write to provision an AWS EC2 instance in a particular region:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>provider &quot;aws&quot; {</span></span>
+<span data-line><span>  region = &quot;us-west-2&quot;</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>resource &quot;aws_instance&quot; &quot;example&quot; {</span></span>
+<span data-line><span>  ami           = &quot;ami-0c55b159cbfafe1f0&quot;</span></span>
+<span data-line><span>  instance_type = &quot;t2.micro&quot;</span></span>
+<span data-line> </span>
+<span data-line><span>  tags = {</span></span>
+<span data-line><span>    Name = &quot;ExampleInstance&quot;</span></span>
+<span data-line><span>  }</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>Terraform offers several features that make it an ideal tool for scaling infrastructure:</p>
+<ul>
+<li>
+<p><strong>Easily Create Multiple Instances:</strong> By adjusting the configuration, developers can easily create multiple instances of the same resource. For example, it’s possible to modify the count attribute in the resource block to specify the number of instances to create.</p>
+</li>
+<li>
+<p><strong>Use Modules for Reusable Configurations:</strong> Terraform modules allow developers to define reusable configurations for scaling infrastructure components. Modules encapsulate related resources and variables, making it easier to manage complex infrastructure setups and scale them as needed.</p>
+</li>
+<li>
+<p><strong>Automate Scaling Processes:</strong> Terraform can be integrated with Continuous Integration/Continuous Deployment (CI/CD) pipelines to automate scaling processes based on predefined triggers and conditions.</p>
+</li>
+</ul>
+<h3 id="2---aws-cloudformation"><strong>2 - AWS CloudFormation</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2---aws-cloudformation" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>AWS CloudFormation is a service that provides a common language for describing and provisioning AWS infrastructure resources. This service enables developers to define complex AWS architectures as templates, ensuring consistent and repeatable deployments across different environments.</p>
+<p>To illustrate how AWS CloudFormation works, let’s consider a basic example of creating an S3 bucket:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>Resources:</span></span>
+<span data-line><span>  MyS3Bucket:</span></span>
+<span data-line><span>    Type: &quot;AWS::S3::Bucket&quot;</span></span>
+<span data-line><span>    Properties:</span></span>
+<span data-line><span>      BucketName: &quot;my-example-bucket&quot;</span></span></code></pre></figure>
+<p>AWS CloudFormation offers several features that make it an ideal tool for scaling AWS infrastructure:</p>
+<ul>
+<li>
+<p>AWS CloudFormation allows developers to define complex AWS architectures as templates. These templates can be deployed consistently across different environments.</p>
+</li>
+<li>
+<p>StackSets can be used to manage resources across multiple AWS accounts and regions.</p>
+</li>
+<li>
+<p>AWS CloudFormation can be integrated with AWS Auto Scaling services to automate the scaling of AWS resources.</p>
+</li>
+</ul>
+<h3 id="3---ansible"><strong>3 - Ansible</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3---ansible" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Ansible is an open-source automation tool that can be used for configuration management, application deployment, and task automation. It plays a crucial role in ensuring consistency and scalability across multiple servers.</p>
+<p>See the diagram below to understand how Ansible works on a high level:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!kS65!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F2382eac6-0824-42c8-b7ae-948619e24e75_1600x1456.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!kS65!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F2382eac6-0824-42c8-b7ae-948619e24e75_1600x1456.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Here’s an example code for installing NGINX on a server:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>- hosts: webservers</span></span>
+<span data-line><span>  become: yes</span></span>
+<span data-line><span>  tasks:</span></span>
+<span data-line><span>    - name: Ensure NGINX is installed</span></span>
+<span data-line><span>      apt:</span></span>
+<span data-line><span>        name: nginx</span></span>
+<span data-line><span>        state: present</span></span></code></pre></figure>
+<p>Ansible offers several features that make it an ideal tool for scaling infrastructure:</p>
+<ul>
+<li>
+<p><strong>Automate Configuration:</strong> Ansible automates the configuration of multiple servers, ensuring consistency across all nodes. By defining playbooks that specify the desired configuration, we can ensure that all servers are set up uniformly, reducing the risk of errors and inconsistencies.</p>
+</li>
+<li>
+<p><strong>Easy Scaling:</strong> Ansible makes it easy to scale out by adding new servers to the inventory and applying the same playbooks. This approach allows dynamic addition or removal of servers without manual configuration.</p>
+</li>
+<li>
+<p><strong>Reusable Configurations with Roles:</strong> Ansible roles enable developers to define reusable configurations for scaling infrastructure components.</p>
+</li>
+</ul>
+<h3 id="gitops"><strong>Gitops</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#gitops" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>It is crucial to ensure that developers have the freedom to control their environment to maximize their productivity. However, this freedom should not come at the cost of collaboration and visibility.</p>
+<p>To break down silos and ensure seamless collaboration, GitOps has emerged as a powerful solution.</p>
+<p>GitOps leverages a Git workflow combined with continuous integration and continuous delivery (CI/CD) to automate infrastructure updates. This approach treats a Git repository as the single source of truth for all code and the starting point for deployments.</p>
+<p>See the diagram below to understand the GitOps approach:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!TrMr!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F4888096f-fb5f-4576-a37f-115049b72a76_1600x966.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!TrMr!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F4888096f-fb5f-4576-a37f-115049b72a76_1600x966.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Some key concepts of GitOps are as follows:</p>
+<ul>
+<li>
+<p><strong>Single Source of Truth:</strong> The Git repository serves as the central hub for all code, ensuring everyone works from the same version of the truth. This centralization helps in breaking down silos by providing a unified view of the codebase.</p>
+</li>
+<li>
+<p><strong>Automated Deployments:</strong> Whenever new code is merged into the repository, the CI/CD pipeline automatically implements the changes in the environment. This automation ensures that updates are consistently applied across all environments, reducing manual errors and inconsistencies.</p>
+</li>
+<li>
+<p><strong>Centralized Deployment Mechanisms:</strong> By centralizing the deployment mechanisms within the Git repository, GitOps makes it easier to ensure that everyone can deploy changes when needed, with the right controls and policies in place.</p>
+</li>
+<li>
+<p><strong>Visibility and Transparency:</strong> Requiring all deployed code to be checked into the repository removes silos and provides visibility into what developers are working on.</p>
+</li>
+</ul>
+<h3 id="use-policy-as-code-and-scoring-algorithms"><strong>Use Policy-as-Code and Scoring Algorithms</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#use-policy-as-code-and-scoring-algorithms" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>When scaling infrastructure, it is crucial to ensure that the minimum number of resources are affected in case something goes wrong. Managing thousands of resources can be complex, and a single configuration disaster can lead to prolonged recovery times, often taking hours or even days.</p>
+<p>To mitigate such risks, policy-as-code tools like Open Policy Agent (OPA) and clever scoring algorithms can be employed to score resources based on their importance.</p>
+<p>The diagram below shows a typical workflow for implementing a policy-as-code approach.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!_BUI!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F57c0322a-7170-4681-8722-50bf82d63fcf_1600x1094.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!_BUI!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F57c0322a-7170-4681-8722-50bf82d63fcf_1600x1094.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>OPA allows developers to define policies using its scripting language, Rego, which can be used to score resources based on their criticality.</p>
+<p>Consider an example where resources are scored based on their importance:</p>
+<ul>
+<li>
+<p>EC2 Instance in a 100 EC2 Instance Autoscaling Pool: 1 point</p>
+</li>
+<li>
+<p>Redundant Load Balancer in a Dual LB Setup: 25 points</p>
+</li>
+<li>
+<p>Production Database: 100 points</p>
+</li>
+</ul>
+<p>Using OPA’s Rego language, developers can set a threshold to require manual intervention if the total points exceed a certain value. For example, setting the threshold at a value of 49 points (depending on the point distribution) can ensure that critical resources are not modified without proper authorization.</p>
+<h3 id="using-immutable-infrastructure"><strong>Using Immutable Infrastructure</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#using-immutable-infrastructure" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>When developing and updating infrastructure, there are two primary methods to consider: mutable and immutable infrastructure.</p>
+<p>Traditionally, developers have relied on mutable infrastructure, where updates and modifications are made directly to the live infrastructure. This approach allows for easy adjustments as needed, but it can lead to configuration drift.</p>
+<p>Configuration drift occurs when the actual configuration of the infrastructure deviates from the intended or documented configuration, causing the infrastructure to fall out of spec.</p>
+<p>In contrast, an immutable approach to scaling infrastructure offers a more reliable and secure method. This approach involves creating a similar but separate infrastructure, adjusting it as needed, spinning it up when ready, and then decommissioning the old infrastructure once the new one is live.</p>
+<p>Some key benefits of immutable infrastructure are as follows:</p>
+<ul>
+<li>
+<p>The configuration remains consistent and predictable.</p>
+</li>
+<li>
+<p>Enhances security by reducing the risk of unintended changes.</p>
+</li>
+<li>
+<p>Ensures that each new instance is identical and consistent.</p>
+</li>
+<li>
+<p>If issues arise with the new infrastructure, rolling back to the previous version is straightforward.</p>
+</li>
+</ul>
+<h2 id="summary"><strong>Summary</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#summary" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>In this article, we’ve learned a lot about the need for infrastructure scaling, its benefits, and the various strategies that can be used.</p>
+<p>Let’s summarize the learnings in brief:</p>
+<ul>
+<li>
+<p>Scalable infrastructure provisioning is a critical component of creating infrastructure that is adaptable to fluctuating workloads and user demands.</p>
+</li>
+<li>
+<p>Scalable infrastructure provisioning provides several benefits related to availability, scalability, repeatability, and cost-effectiveness.</p>
+</li>
+<li>
+<p>Multiple strategies (some overlapping) are available for scaling the infrastructure provisioning and management.</p>
+</li>
+<li>
+<p>Containerization is one of the first strategies to make deployments based on code. Docker is one of the most popular ways to containerize the application.</p>
+</li>
+<li>
+<p>Container orchestration becomes a necessity when dealing with multiple containers in an application. This is where container orchestration tools like Kubernetes become important.</p>
+</li>
+<li>
+<p>Infrastructure as Code treats infrastructure configuration as code, allowing developers to define the application infrastructure in files that can be versioned, tested, and reused. Popular tools such as Terraform, AWS CloudFormation, and Ansible can be used.</p>
+</li>
+<li>
+<p>GitOps leverages a Git workflow combined with continuous integration and continuous delivery (CI/CD) to automate infrastructure updates.</p>
+</li>
+<li>
+<p>OPA allows developers to define policies using its scripting language, Rego, which can be used to score resources based on their criticality. This score can be used to control the deployment of infrastructure.</p>
+</li>
+<li>
+<p>An immutable approach to scaling infrastructure offers a more reliable and secure method. This approach involves creating a similar but separate infrastructure, and adjusting it as needed.</p>
+</li>
+</ul></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-156" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#what-is-non-scalable-infrastructure" data-for="what-is-non-scalable-infrastructure">What is Non-Scalable Infrastructure?</a></li><li class="depth-1"><a href="#containerization" data-for="containerization">Containerization</a></li><li class="depth-1"><a href="#using-docker" data-for="using-docker">Using Docker</a></li><li class="depth-1"><a href="#scaling-with-docker" data-for="scaling-with-docker">Scaling With Docker</a></li><li class="depth-1"><a href="#container-orchestration" data-for="container-orchestration">Container Orchestration</a></li><li class="depth-1"><a href="#scaling-the-infrastructure-with-kubernetes" data-for="scaling-the-infrastructure-with-kubernetes">Scaling the Infrastructure With Kubernetes</a></li><li class="depth-1"><a href="#infrastructure-as-code" data-for="infrastructure-as-code">Infrastructure as Code</a></li><li class="depth-1"><a href="#1---terraform" data-for="1---terraform">1 - Terraform</a></li><li class="depth-1"><a href="#2---aws-cloudformation" data-for="2---aws-cloudformation">2 - AWS CloudFormation</a></li><li class="depth-1"><a href="#3---ansible" data-for="3---ansible">3 - Ansible</a></li><li class="depth-1"><a href="#gitops" data-for="gitops">Gitops</a></li><li class="depth-1"><a href="#use-policy-as-code-and-scoring-algorithms" data-for="use-policy-as-code-and-scoring-algorithms">Use Policy-as-Code and Scoring Algorithms</a></li><li class="depth-1"><a href="#using-immutable-infrastructure" data-for="using-immutable-infrastructure">Using Immutable Infrastructure</a></li><li class="depth-0"><a href="#summary" data-for="summary">Summary</a></li><li class="overflow-end"></li></ul></div><div class="backlinks"><h3>Backlinks</h3><ul id="list-2" class="overflow"><li><a href="../../Notion-Knowledge/Note" class="internal">Note</a></li><li><a href="../../_moc/MOC-Reading-List" class="internal">MOC-Reading-List</a></li><li><a href="../../_moc/MOC-Scalability" class="internal">MOC-Scalability</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://dangthobach.github.io/">Back to Portfolio</a></li><li><a href="https://github.com/dangthobach">GitHub</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../postscript.js" type="module" data-persist="true"></script></html>

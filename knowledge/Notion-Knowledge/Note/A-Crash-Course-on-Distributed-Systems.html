@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>A Crash Course on Distributed Systems</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="Dang Tho Bach's Knowledge Base"/><meta property="og:title" content="A Crash Course on Distributed Systems"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="A Crash Course on Distributed Systems"/><meta name="twitter:description" content="A distributed system is a collection of computers, also known as nodes, that collaborate to perform a specific task or provide a service."/><meta property="og:description" content="A distributed system is a collection of computers, also known as nodes, that collaborate to perform a specific task or provide a service."/><meta property="og:image:alt" content="A distributed system is a collection of computers, also known as nodes, that collaborate to perform a specific task or provide a service."/><meta property="twitter:domain" content="dangthobach.github.io/knowledge"/><meta property="og:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Crash-Course-on-Distributed-Systems"/><meta property="twitter:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Crash-Course-on-Distributed-Systems"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="A distributed system is a collection of computers, also known as nodes, that collaborate to perform a specific task or provide a service."/><meta name="generator" content="Quartz"/><link href="../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiL2hvbWUvcnVubmVyL3dvcmsvZGFuZ3Rob2JhY2guZ2l0aHViLmlvL2Rhbmd0aG9iYWNoLmdpdGh1Yi5pby9xdWFydHovcXVhcnR6L2NvbXBvbmVudHMvc3R5bGVzIiwic291cmNlcyI6WyJtZXJtYWlkLmlubGluZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFHRjtFQUNFOzs7QUFLRjtFQUNFO0VBQ0E7OztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTs7QUFJRjtFQUNFO0VBQ0E7RUFDQSIsInNvdXJjZXNDb250ZW50IjpbIi5leHBhbmQtYnV0dG9uIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbG9hdDogcmlnaHQ7XG4gIHBhZGRpbmc6IDAuNHJlbTtcbiAgbWFyZ2luOiAwLjNyZW07XG4gIHJpZ2h0OiAwOyAvLyBOT1RFOiByaWdodCB3aWxsIGJlIHNldCBpbiBtZXJtYWlkLmlubGluZS50c1xuICBjb2xvcjogdmFyKC0tZ3JheSk7XG4gIGJvcmRlci1jb2xvcjogdmFyKC0tZGFyayk7XG4gIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgYm9yZGVyOiAxcHggc29saWQ7XG4gIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgb3BhY2l0eTogMDtcbiAgdHJhbnNpdGlvbjogMC4ycztcblxuICAmID4gc3ZnIHtcbiAgICBmaWxsOiB2YXIoLS1saWdodCk7XG4gICAgZmlsdGVyOiBjb250cmFzdCgwLjMpO1xuICB9XG5cbiAgJjpob3ZlciB7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIGJvcmRlci1jb2xvcjogdmFyKC0tc2Vjb25kYXJ5KTtcbiAgfVxuXG4gICY6Zm9jdXMge1xuICAgIG91dGxpbmU6IDA7XG4gIH1cbn1cblxucHJlIHtcbiAgJjpob3ZlciA+IC5leHBhbmQtYnV0dG9uIHtcbiAgICBvcGFjaXR5OiAxO1xuICAgIHRyYW5zaXRpb246IDAuMnM7XG4gIH1cbn1cblxuI21lcm1haWQtY29udGFpbmVyIHtcbiAgcG9zaXRpb246IGZpeGVkO1xuICBjb250YWluOiBsYXlvdXQ7XG4gIHotaW5kZXg6IDk5OTtcbiAgbGVmdDogMDtcbiAgdG9wOiAwO1xuICB3aWR0aDogMTAwdnc7XG4gIGhlaWdodDogMTAwdmg7XG4gIG92ZXJmbG93OiBoaWRkZW47XG4gIGRpc3BsYXk6IG5vbmU7XG4gIGJhY2tkcm9wLWZpbHRlcjogYmx1cig0cHgpO1xuICBiYWNrZ3JvdW5kOiByZ2JhKDAsIDAsIDAsIDAuNSk7XG5cbiAgJi5hY3RpdmUge1xuICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgfVxuXG4gICYgPiAjbWVybWFpZC1zcGFjZSB7XG4gICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gICAgYm9yZGVyLXJhZGl1czogNXB4O1xuICAgIHBvc2l0aW9uOiBmaXhlZDtcbiAgICB0b3A6IDUwJTtcbiAgICBsZWZ0OiA1MCU7XG4gICAgdHJhbnNmb3JtOiB0cmFuc2xhdGUoLTUwJSwgLTUwJSk7XG4gICAgaGVpZ2h0OiA4MHZoO1xuICAgIHdpZHRoOiA4MHZ3O1xuICAgIG92ZXJmbG93OiBoaWRkZW47XG5cbiAgICAmID4gLm1lcm1haWQtY29udGVudCB7XG4gICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgICB0cmFuc2Zvcm0tb3JpZ2luOiAwIDA7XG4gICAgICB0cmFuc2l0aW9uOiB0cmFuc2Zvcm0gMC4xcyBlYXNlO1xuICAgICAgb3ZlcmZsb3c6IHZpc2libGU7XG4gICAgICBtaW4taGVpZ2h0OiAyMDBweDtcbiAgICAgIG1pbi13aWR0aDogMjAwcHg7XG5cbiAgICAgIHByZSB7XG4gICAgICAgIG1hcmdpbjogMDtcbiAgICAgICAgYm9yZGVyOiBub25lO1xuICAgICAgfVxuXG4gICAgICBzdmcge1xuICAgICAgICBtYXgtd2lkdGg6IG5vbmU7XG4gICAgICAgIGhlaWdodDogYXV0bztcbiAgICAgIH1cbiAgICB9XG5cbiAgICAmID4gLm1lcm1haWQtY29udHJvbHMge1xuICAgICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgICAgYm90dG9tOiAyMHB4O1xuICAgICAgcmlnaHQ6IDIwcHg7XG4gICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgZ2FwOiA4cHg7XG4gICAgICBwYWRkaW5nOiA4cHg7XG4gICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgYm9yZGVyLXJhZGl1czogNnB4O1xuICAgICAgYm94LXNoYWRvdzogMCAycHggNHB4IHJnYmEoMCwgMCwgMCwgMC4xKTtcbiAgICAgIHotaW5kZXg6IDI7XG5cbiAgICAgIC5tZXJtYWlkLWNvbnRyb2wtYnV0dG9uIHtcbiAgICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgIHdpZHRoOiAzMnB4O1xuICAgICAgICBoZWlnaHQ6IDMycHg7XG4gICAgICAgIHBhZGRpbmc6IDA7XG4gICAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgICAgY29sb3I6IHZhcigtLWRhcmspO1xuICAgICAgICBib3JkZXItcmFkaXVzOiA0cHg7XG4gICAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICAgICAgZm9udC1zaXplOiAxNnB4O1xuICAgICAgICBmb250LWZhbWlseTogdmFyKC0tYm9keUZvbnQpO1xuICAgICAgICB0cmFuc2l0aW9uOiBhbGwgMC4ycyBlYXNlO1xuXG4gICAgICAgICY6aG92ZXIge1xuICAgICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIH1cblxuICAgICAgICAmOmFjdGl2ZSB7XG4gICAgICAgICAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKDFweCk7XG4gICAgICAgIH1cblxuICAgICAgICAvLyBTdHlsZSB0aGUgcmVzZXQgYnV0dG9uIGRpZmZlcmVudGx5XG4gICAgICAgICY6bnRoLWNoaWxkKDIpIHtcbiAgICAgICAgICB3aWR0aDogYXV0bztcbiAgICAgICAgICBwYWRkaW5nOiAwIDEycHg7XG4gICAgICAgICAgZm9udC1zaXplOiAxNHB4O1xuICAgICAgICB9XG4gICAgICB9XG4gICAgfVxuICB9XG59XG4iXX0= */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://dangthobach.github.io/knowledge/index.xml"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Crash-Course-on-Distributed-Systems-og-image.webp"/><meta property="og:image:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Crash-Course-on-Distributed-Systems-og-image.webp"/><meta name="twitter:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Crash-Course-on-Distributed-Systems-og-image.webp"/><meta property="og:image:type" content="image/.webp"/></head><body data-slug="Notion-Knowledge/Note/A-Crash-Course-on-Distributed-Systems"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../..">Dang Tho Bach's Knowledge Base</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-247"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-247" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/">Notion Knowledge</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/Note/">Note</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>A Crash Course on Distributed Systems</a></div></nav><h1 class="article-title">A Crash Course on Distributed Systems</h1><p show-comma="true" class="content-meta"><time datetime="2026-05-02T04:58:37.000Z">May 02, 2026</time><span>19 min read</span></p></div></div><article class="popover-hint"><p>A distributed system is a collection of computers, also known as nodes, that collaborate to perform a specific task or provide a service.</p>
+<p>These nodes are physically separate and communicate with each other by passing messages over a network. Distributed systems can span geographical boundaries, enabling them to utilize resources from different locations.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!57_P!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fb145d610-0804-4a50-b74b-bf13cac6fb8f_1600x1005.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!57_P!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fb145d610-0804-4a50-b74b-bf13cac6fb8f_1600x1005.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Distributed systems have several characteristics that distinguish them from traditional centralized systems:</p>
+<ul>
+<li>
+<p>The computers in a distributed system are physically separate and connected via a network. They do not share a memory or a common clock.</p>
+</li>
+<li>
+<p>From an external perspective, a distributed system appears as a single, unified entity to the end user.</p>
+</li>
+<li>
+<p>Distributed systems offer the flexibility to add or remove computers from the system.</p>
+</li>
+<li>
+<p>The nodes in a distributed system need to coordinate and agree with each other to perform actions consistently.</p>
+</li>
+<li>
+<p>Nodes in a distributed system can fail independently, and messages can be lost or delayed over the network.</p>
+</li>
+</ul>
+<p>Distributed systems are ubiquitous in our daily lives. Examples include large web applications like Google Search, online banking systems, multiplayer games, etc. These systems leverage the power of multiple computers working together to provide a seamless and responsive user experience.</p>
+<p>In this post, we’ll explore the benefits and challenges of distributed systems. We will also discuss common approaches and techniques used to address these challenges and ensure the reliable operation of distributed systems.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!_yNp!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F50d6ff61-09a2-493d-84e1-59c2568fd611_2250x2800.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!_yNp!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F50d6ff61-09a2-493d-84e1-59c2568fd611_2250x2800.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<hr/>
+<h2 id="understanding-distributed-systems"><strong>Understanding Distributed Systems</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#understanding-distributed-systems" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>The term “distributed systems” can sometimes confuse developers.</p>
+<p>A couple of common confusions are around decentralized systems and parallel systems.</p>
+<p>Let’s understand the meaning of these terms in the context of a distributed system and how they are similar or different.</p>
+<h3 id="decentralized-systems-vs-distributed-systems"><strong>Decentralized Systems Vs. Distributed Systems</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#decentralized-systems-vs-distributed-systems" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Terms like “Decentralized Systems” and “Distributed Systems” are often used interchangeably, but they have a key difference.</p>
+<p>While both types of systems involve multiple components working together, the decision-making process sets them apart.</p>
+<p>In a decentralized system, which is also a type of distributed system, no single component has complete control over the decision-making process. Instead, each component owns a part of the decision but does not possess the complete information required to make an independent decision.</p>
+<h3 id="parallel-systems-vs-distributed-systems"><strong>Parallel Systems vs Distributed Systems</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#parallel-systems-vs-distributed-systems" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Another term that is closely associated with distributed systems is parallel systems.</p>
+<p>Both distributed and parallel systems aim to scale up computational capabilities, but they achieve this goal using different means.</p>
+<p>In parallel computing, multiple processors within a single machine perform multiple tasks simultaneously. These processors often have access to shared memory, allowing them to exchange data and efficiently coordinate their activities.</p>
+<p>On the other hand, distributed systems are made up of multiple autonomous machines that do not share memory. These machines communicate and coordinate their actions by passing messages over a network. Each machine operates independently, contributing to the overall computation by performing its assigned tasks.</p>
+<h2 id="key-benefits-of-distributed-systems"><strong>Key Benefits of Distributed Systems</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#key-benefits-of-distributed-systems" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>While designing and building distributed systems can be more complex than traditional centralized systems, their benefits make the effort worthwhile.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!bWbU!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F11744c83-b1f6-4540-98c9-e21cd1b7c175_1600x912.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!bWbU!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F11744c83-b1f6-4540-98c9-e21cd1b7c175_1600x912.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Let’s explore some of the key advantages of distributed systems:</p>
+<ul>
+<li>
+<p><strong>Scalability:</strong> Vertical scaling, which involves increasing the hardware resources of a single machine, is often limited by physical constraints. For example, there is a limit to the number of processor cores that can be added to a single machine. In contrast, distributed systems enable horizontal scaling, where additional commodity machines can be added to the system. This allows scaling a system by adding relatively inexpensive hardware.</p>
+</li>
+<li>
+<p><strong>Reliability:</strong> Distributed systems are more resilient to failures compared to centralized systems. Since data is replicated across multiple nodes, the failure of a single node or a subset of nodes does not necessarily bring down the entire system. The remaining nodes can continue to function, albeit at a reduced capacity, ensuring the overall system remains operational.</p>
+</li>
+<li>
+<p><strong>Performance:</strong> Distributed computing often involves breaking down a complex workload into smaller, manageable parts that can be processed simultaneously on multiple machines. This parallel processing capability improves the performance of computationally intensive tasks, such as matrix multiplications or large-scale data processing.</p>
+</li>
+</ul>
+<h2 id="challenges-of-distributed-systems"><strong>Challenges of Distributed Systems</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#challenges-of-distributed-systems" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Distributed systems also pose multiple challenges when it comes to operating them.</p>
+<p>Knowing about these challenges and the techniques to overcome them is the key to taking advantage of distributed systems.</p>
+<p>Let’s explore the main challenges of distributed systems and the techniques to handle them.</p>
+<h3 id="communication"><strong>Communication</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#communication" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>In a distributed system, nodes need to communicate and coordinate with each other over a network to function as a cohesive unit.</p>
+<p>However, this communication is challenging due to the unreliable nature of the underlying network infrastructure.</p>
+<p>The Internet Protocol (IP), which is responsible for delivering packets between nodes, only provides a “best effort” service. This means that the network does not guarantee the reliable delivery of packets.</p>
+<p>Several issues can arise during packet transmission:</p>
+<ul>
+<li>
+<p><strong>Packet Loss:</strong> Packets can be lost or dropped along the way due to network congestion, hardware failures, or other factors.</p>
+</li>
+<li>
+<p><strong>Packet Duplication:</strong> In some cases, packets can be duplicated, resulting in multiple copies of the same packet being delivered to the destination node.</p>
+</li>
+<li>
+<p><strong>Packet Corruption</strong>: Packets can get corrupted during transmission. Corrupted packets may contain invalid or incorrect data, leading to communication errors.</p>
+</li>
+<li>
+<p><strong>Out-of-Order Delivery:</strong> Packets can arrive at the destination node in a different order than they were sent.</p>
+</li>
+</ul>
+<p>Building reliable communication on top of this unreliable foundation is a significant challenge.</p>
+<p>Some key techniques used by distributed systems to handle these issues are as follows:</p>
+<h3 id="1---reliable-communication-with-tcp"><strong>1 - Reliable Communication with TCP</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1---reliable-communication-with-tcp" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The Transmission Control Protocol (TCP) is a fundamental protocol that provides a robust mechanism for ensuring the reliable, in-order delivery of a byte stream between processes, making it a cornerstone of reliable data transmission in distributed systems.</p>
+<p>It employs several key mechanisms to overcome the inherent unreliability of the network:</p>
+<ul>
+<li>
+<p>TCP splits the byte stream into smaller, sequenced packets called segments.</p>
+</li>
+<li>
+<p>It requires the receiver to send an acknowledgment (ACK) to the sender upon receiving the packet.</p>
+</li>
+<li>
+<p>TCP uses checksums to verify the integrity of the transmitted data.</p>
+</li>
+<li>
+<p>TCP implements flow control to prevent the sender from overwhelming the receiver with data.</p>
+</li>
+<li>
+<p>Lastly, TCP employs congestion control mechanisms to adapt to the available network bandwidth.</p>
+</li>
+</ul>
+<p>The diagram below shows the TCP 3-way handshake process that establishes the connection between a client and the server.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!Og4-!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F617e61a6-ca10-4a5d-b426-0cdbec4ba8a1_1600x1370.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!Og4-!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F617e61a6-ca10-4a5d-b426-0cdbec4ba8a1_1600x1370.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h3 id="2---securing-communication-with-tls"><strong>2 - Securing Communication with TLS</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2---securing-communication-with-tls" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>While TCP ensures reliable communication over an unreliable network, it does not address the security aspects of data transmission. This is where the Transport Layer Security (TLS) protocol comes into play.</p>
+<p>TLS is a cryptographic protocol that adds encryption, authentication, and integrity to the communication channel established by TCP.</p>
+<p>TLS uses several mechanisms to secure the communication between the nodes:</p>
+<ul>
+<li>
+<p>TLS uses a combination of asymmetric and symmetric encryption to protect the confidentiality of data.</p>
+</li>
+<li>
+<p>TLS relies on digital certificates to authenticate the identity of the communicating parties.</p>
+</li>
+<li>
+<p>To ensure the integrity of the transmitted data, TLS includes checksums or message authentication codes with each message.</p>
+</li>
+</ul>
+<h3 id="3---service-discovery-with-dns"><strong>3 - Service Discovery with DNS</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3---service-discovery-with-dns" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>In a distributed system, nodes need a mechanism to discover and communicate with each other. This is where the Domain Name System (DNS) comes into play, solving the service discovery problem.</p>
+<p>DNS acts as the “phone book of the internet,” providing a mapping between human-readable domain names and their corresponding IP addresses. It allows nodes to locate and connect to each other using easily memorable names instead of complex numerical IP addresses.</p>
+<p>The diagram below shows the service discovery process between a consumer and a provider.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!r-MB!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F4d5a53ea-78d2-4c79-921f-a5886571d994_1600x981.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!r-MB!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F4d5a53ea-78d2-4c79-921f-a5886571d994_1600x981.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Under the hood, DNS is implemented as a distributed, hierarchical key-value store. It consists of a network of servers that work together to resolve domain names to IP addresses.</p>
+<p>The hierarchical structure of DNS enables efficient and scalable name resolution across the internet.</p>
+<h3 id="coordination"><strong>Coordination</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#coordination" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Coordination between nodes is a critical challenge while building distributed systems.</p>
+<p>Some key coordination-related problems are as follows:</p>
+<ul>
+<li>
+<p><strong>Potential for Failures:</strong> In a distributed system, individual components, such as servers or network devices, can fail at any time. These failures can disrupt the flow of information and lead to inconsistencies if not handled properly.</p>
+</li>
+<li>
+<p><strong>Unreliable Networks:</strong> As seen earlier, distributed systems communicate over networks that are prone to delays, packet loss, and other issues. This makes coordinating the exchange of information reliably a big challenge.</p>
+</li>
+<li>
+<p><strong>Lack of Global Clock:</strong> Since distributed systems lack a global clock, it is difficult to establish a consistent notion of time across all components.</p>
+</li>
+</ul>
+<p>Let’s look at some key techniques used to solve the coordination-related challenges of distributed systems:</p>
+<h3 id="1---failure-detection"><strong>1 - Failure Detection</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1---failure-detection" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>In a distributed environment, it is impossible to definitively distinguish between a failed process and a process that is simply very slow in responding.</p>
+<p>The reason for this ambiguity lies in the fact that network delays, packet loss, or temporary network partitions can cause a process to appear unresponsive, even though it may still be functioning correctly.</p>
+<p>To address this challenge, distributed systems employ failure detectors.</p>
+<p>Failure detectors are components that monitor the status of processes and determine their availability. However, failure detectors must make a tradeoff between detection time and the rate of false positives.</p>
+<p>If a failure detector is configured to detect failures quickly, it may incorrectly classify slow processes as failed, resulting in a higher false positive rate. On the other hand, if the failure detector is configured to be more conservative and allow more time for processes to respond, it may take longer to detect actual failures, leading to a slower detection time.</p>
+<h3 id="2---event-ordering-and-timing"><strong>2 - Event Ordering and Timing</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2---event-ordering-and-timing" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Agreeing on the timing and order of events is a big coordination challenge in distributed systems.</p>
+<p>One of the primary reasons for this challenge is the imperfect nature of physical clocks in distributed systems. Each node in the system has its physical clock, which is typically based on a quartz crystal oscillator. These physical clocks are subject to drift and can gradually diverge from each other over time. Even small variations in clock frequencies can lead to significant discrepancies in the perceived time across nodes.</p>
+<p>Moreover, achieving a total order of events in a distributed system requires coordination among the nodes. In a total order, all nodes agree on the exact sequence of events, regardless of the causal relationships between them.</p>
+<p>To address these challenges, distributed systems often rely on logical clocks and vector clocks to capture the causal ordering of events.</p>
+<ul>
+<li>
+<p><strong>Logical clocks</strong>, such as Lamport timestamps, assign monotonically increasing timestamps to events based on the local clock of each node. These timestamps establish a partial order of events, capturing the “happens-before” relationship between them.</p>
+</li>
+<li>
+<p><strong>Vector clocks</strong>, on the other hand, provide a more comprehensive representation of the causal relationships between events. Each node maintains a vector of logical timestamps, with one entry per node in the system. When an event occurs, the node increments its timestamp and includes the maximum timestamp of all other nodes it has communicated with. By comparing vector clock values, nodes can determine the causal relationships between events and detect potential conflicts or inconsistencies.</p>
+</li>
+</ul>
+<p>The diagram below shows the difference between logical Lamport clocks and vector clocks.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!n-CM!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F89f33fa2-2f59-4649-80af-48afd1e018d9_1435x1600.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!n-CM!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F89f33fa2-2f59-4649-80af-48afd1e018d9_1435x1600.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h3 id="3---leader-election"><strong>3 - Leader Election</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3---leader-election" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>In distributed systems, many coordination tasks, such as holding a lock or committing a transaction, require the presence of a single “leader” process.</p>
+<p>The leader is responsible for managing and coordinating the execution of these tasks.</p>
+<p>Raft is a widely adopted consensus algorithm that addresses the challenge of leader election in a distributed environment. It provides a mechanism for electing a leader among a group of processes, ensuring that there is at most one leader per term.</p>
+<p>The Raft algorithm operates in terms of “terms,” which represent a logical clock or a timeframe in which a leader is elected and serves their role. Each term is assigned a unique, monotonically increasing number.</p>
+<p>One of the key principles of Raft is that a candidate process can only become the leader if its log is up-to-date. In other words, the candidate must have the most recent and complete set of log entries compared to other processes in the system.</p>
+<p>The diagram below shows a mapping of state changes (follower, candidate, and leader) that a node can go through as part of the Raft consensus algorithm.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!uXqU!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F3632b300-04af-428a-a2f6-df39485dbb88_1600x978.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!uXqU!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F3632b300-04af-428a-a2f6-df39485dbb88_1600x978.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h3 id="4---data-replication-and-consistency"><strong>4 - Data Replication and Consistency</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4---data-replication-and-consistency" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Keeping replicated data in sync across multiple nodes is a fundamental coordination challenge in distributed systems.</p>
+<p>Replication is essential for ensuring data availability and fault tolerance, but it introduces the complexity of maintaining consistency among the replicas.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!xmCi!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F05248f3d-cdab-47d5-a8df-54336ba4fe65_1600x980.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!xmCi!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F05248f3d-cdab-47d5-a8df-54336ba4fe65_1600x980.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>The CAP theorem states that in a distributed system, it is impossible to provide consistency, availability, and partition tolerance simultaneously.</p>
+<p>According to the theorem, a distributed system can only provide two of the three guarantees at any given time. In the presence of network partitions, there is a trade-off between consistency and availability. Systems must choose to either maintain strong consistency at the cost of reduced availability or prioritize availability while accepting weaker consistency guarantees.</p>
+<p>Also, distributed systems support multiple consistency models that define the guarantees for read and write operations on replicated data.</p>
+<ul>
+<li>
+<p><strong>Linearizability:</strong> Linearizability is the strongest consistency model. It ensures that each operation appears to take effect instantaneously at some point between its invocation and completion.</p>
+</li>
+<li>
+<p><strong>Sequential Consistency:</strong> Sequential consistency is weaker than linearizability. It guarantees that the result of any execution is the same as if the operations of all processes were executed in some sequential order.</p>
+</li>
+<li>
+<p><strong>Causal consistency:</strong> It ensures that causally related operations (e.g., a write that influences a subsequent read) are seen in the same order by all processes.</p>
+</li>
+<li>
+<p><strong>Eventual Consistency:</strong> This is the weakest consistency model. It guarantees that if no new updates are made to a data item, eventually all reads for that item will return the last updated value.</p>
+</li>
+</ul>
+<h3 id="scalability"><strong>Scalability</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#scalability" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>As discussed earlier, scalability is one of the key benefits of adopting distributed systems. A scalable system can increase its capacity to handle more load by adding resources.</p>
+<p>However, choosing the right scalability patterns is also important.</p>
+<p>Let’s look at a few key patterns for scaling a distributed system.</p>
+<h3 id="1---functional-decomposition"><strong>1 - Functional Decomposition</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1---functional-decomposition" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>An example of functional decomposition is breaking down a monolithic application into smaller, independently deployable services. Each service has its well-defined responsibility and communicates with other services through APIs.</p>
+<p>An API Gateway acts as a single entry point for external clients to interact with microservices. It handles request routing and composition by providing a unified interface to the clients.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!mfPE!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fc52c7ad0-8bb0-4904-b765-79b06066045b_1600x967.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!mfPE!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fc52c7ad0-8bb0-4904-b765-79b06066045b_1600x967.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Another functional decomposition approach is a pattern like CQRS (Command Query Responsibility Segregation).</p>
+<p>CQRS is a pattern that separates the read and write paths of an application.</p>
+<p>This optimizes performance by allowing read and write operations to scale independently. CQRS is often used in conjunction with microservices to enable efficient data retrieval and modification.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!q-Ld!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fe1b71dac-fce2-44f3-9908-b3d240b6f260_1600x1012.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!q-Ld!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fe1b71dac-fce2-44f3-9908-b3d240b6f260_1600x1012.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>The functional decomposition approach also relies on asynchronous messaging as a communication pattern.</p>
+<p>It helps decouple services, enabling resilience and scalability. Services communicate through message queues or publish-subscribe systems, enabling them to process requests at their own pace and prevent overload.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!V11Q!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F6da2a2df-1482-4ae6-9654-8eab52a8f8a6_1600x909.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!V11Q!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F6da2a2df-1482-4ae6-9654-8eab52a8f8a6_1600x909.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h3 id="2---partitioning"><strong>2 - Partitioning</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2---partitioning" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Partitioning is a fundamental technique used in distributed systems to split a large dataset across multiple nodes when it becomes too large to be stored and processed on a single node.</p>
+<p>By distributing the data, partitioning enables horizontal scalability and allows the system to handle increasing data volumes.</p>
+<p>The diagram below shows the concept of data partitioning where the book table is partitioned based on the category field.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!kcA_!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F38b2010a-d0ec-4cff-a87d-a110f45531bf_1600x1002.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!kcA_!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F38b2010a-d0ec-4cff-a87d-a110f45531bf_1600x1002.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>There are several techniques used for partitioning data:</p>
+<ul>
+<li>
+<p><strong>Range Partitioning:</strong> It involves splitting the data based on a specific key range. Each partition is responsible for storing a contiguous range of keys. While this approach enables faster range scans, it can also lead to potential hot spots if certain key ranges receive disproportionate traffic or data.</p>
+</li>
+<li>
+<p><strong>Hash Partitioning:</strong> Hash partitioning distributes data evenly across partitions using a hash function. While hash partitioning ensures a more uniform data distribution, it loses the natural ordering of keys, making range scans less efficient.</p>
+</li>
+<li>
+<p><strong>Rebalancing:</strong> Rebalancing is the process of moving partitions between nodes as the cluster size changes to maintain a balanced distribution of data.</p>
+</li>
+<li>
+<p><strong>Consistent Hashing:</strong> Consistent hashing is a partitioning technique that minimizes data movement when nodes are added or removed from the cluster.</p>
+</li>
+</ul>
+<h3 id="3---duplication"><strong>3 - Duplication</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3---duplication" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Duplication is an important technique used in distributed systems to scale capacity and increase availability by introducing redundancy of components.</p>
+<p>By duplicating servers, data, and other resources, systems can handle higher loads and provide resilience against failures.</p>
+<p>Some key techniques that enable duplication are as follows:</p>
+<ul>
+<li>
+<p><strong>Load Balancing:</strong> Load balancing is the process of distributing incoming requests across a pool of servers to ensure optimal resource utilization. Load balancers use various algorithms to determine which server should handle a particular request. Also, we can implement load balancing at different layers of the network stack such as:</p>
+<ul>
+<li>
+<p>DNS-based load balancing to distribute requests at the DNS level.</p>
+</li>
+<li>
+<p>Layer 4 load balancing to distribute requests based on transport layer information such as IP addresses and port numbers.</p>
+</li>
+<li>
+<p>Layer 7 load balancing to distribute requests based on application-level information, such as HTTP headers, URLs, or session data.</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Server-Side Discovery:</strong> To support dynamic scaling, distributed systems employ server-side discovery. It enables servers to dynamically register themselves with a central registry or discovery service. Health checks are performed to monitor the status of servers and detect failures.</p>
+</li>
+<li>
+<p><strong>Data Replication:</strong> Replication involves creating multiple copies of data across different nodes in a distributed system. There are different replication styles, such as:</p>
+<ul>
+<li>
+<p><strong>Single-leader replication:</strong> One node acts as the leader, handling write operations and critical reads, while other nodes serve as followers.</p>
+</li>
+<li>
+<p><strong>Multi-leader replication:</strong> Multiple nodes can accept write operations, and changes are propagated asynchronously between the leaders.</p>
+</li>
+<li>
+<p><strong>Leaderless replication:</strong> All nodes accept write operations, and consistency is maintained through techniques like quorum consensus.</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>The diagram below shows how a load balancer helps distribute traffic between multiple service instances.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!Aljs!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F7ef1e84b-7f55-4e9f-a531-489318332940_1600x967.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!Aljs!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F7ef1e84b-7f55-4e9f-a531-489318332940_1600x967.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h3 id="resiliency"><strong>Resiliency</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#resiliency" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Resiliency is the ability of a system to continue functioning correctly in the face of failures.</p>
+<p>As distributed systems scale in size and complexity, failures become not just possible but inevitable. Some of the most common causes of failures are as follows:</p>
+<ul>
+<li>
+<p>Hardware failures of servers, storage, and the network.</p>
+</li>
+<li>
+<p>Software bugs and memory leaks.</p>
+</li>
+<li>
+<p>Human errors in configuration and deployment.</p>
+</li>
+<li>
+<p>Cascading failures where a fault in one component triggers faults in others.</p>
+</li>
+<li>
+<p>Unexpected load spikes overwhelm the capacity.</p>
+</li>
+</ul>
+<p>There are two main categories to manage a component’s resiliency within a distributed system.</p>
+<h3 id="1---downstream-resiliency"><strong>1 - Downstream Resiliency</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1---downstream-resiliency" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>When services interact through synchronous request/response communication, it’s important to stop faults from propagating from one component or service to another.</p>
+<p>Key techniques to make this possible are as follows:</p>
+<ul>
+<li>
+<p><strong>Timeouts:</strong> They are used to prevent a service from waiting indefinitely for a response from another service. By setting a reasonable timeout value, the calling service can avoid being blocked for an extended period if the called service is unresponsive. When the timeout occurs, the calling service can take appropriate action, such as returning an error or falling back to a default behavior.</p>
+</li>
+<li>
+<p><strong>Retries with Exponential Backoff:</strong> Retries are a common pattern to handle transient failures, such as temporary network issues. When a request fails, the calling service can retry the request after a certain delay. However, to avoid overwhelming the called service with a flood of retries, exponential backoff is employed. The delay between each retry is increased exponentially, giving the called service time to recover.</p>
+</li>
+<li>
+<p><strong>Circuit Breakers:</strong> Circuit breakers help prevent cascading failures when a service is unhealthy or unresponsive. The circuit breaker acts as an intermediary between the calling service and the called service. It monitors the success and failure of requests. If the failure rate crosses a certain threshold, the circuit breaker trips and rejects subsequent requests. This fail-fast approach prevents the calling service from waiting on a failing service.</p>
+</li>
+</ul>
+<p>The diagram below shows the circuit breaker pattern and the three states of the circuit breaker.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!dCIi!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F17d70ddb-1ff6-46f6-b6fe-21a442f8d270_1600x1334.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!dCIi!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F17d70ddb-1ff6-46f6-b6fe-21a442f8d270_1600x1334.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h3 id="2---upstream-resiliency"><strong>2 - Upstream Resiliency</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2---upstream-resiliency" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Resiliency techniques are relevant even at the level of the service owner. There are multiple strategies to protect a service from being overwhelmed by incoming requests.</p>
+<p>Let’s look at the most important ones:</p>
+<ul>
+<li>
+<p><strong>Load Shedding:</strong> It involves rejecting a portion of the incoming requests when the service is overloaded or experiencing high demand. By selectively dropping requests, the service maintains its responsiveness and prevents a complete breakdown.</p>
+</li>
+<li>
+<p><strong>Rate Limiting and Throttling:</strong> These two techniques are used to ensure fair usage of a service by its clients. Rate limiting sets the maximum number of requests that a client can make within a specific time window. Throttling, on the other hand, involves slowing down the processing of requests when a client exceeds a certain threshold.</p>
+</li>
+<li>
+<p><strong>Bulkheads:</strong> Bulkheads are a resiliency pattern inspired by the compartmentalization technique used in ship design. In the context of services, bulkheads involve isolating different parts of the system to prevent failures in one part from spreading to others.</p>
+</li>
+<li>
+<p><strong>Health Checks with Load Balancer Integration:</strong> Health checks are periodic assessments of a service instance’s health and availability. By regularly monitoring the health of service instances, a load balancer can detect and route traffic away from unhealthy or unresponsive instances.</p>
+</li>
+</ul>
+<h2 id="summary"><strong>Summary</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#summary" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>In this article, we’ve explored distributed systems in great detail. We’ve understood the meaning of distributed systems, their benefits, and the challenges they create for developers.</p>
+<p>Let’s summarize the learnings in brief:</p>
+<ul>
+<li>
+<p>A distributed system is a collection of computers, also known as nodes, that collaborate to perform a specific task or provide a service.</p>
+</li>
+<li>
+<p>In a distributed system, each machine operates independently, contributing to the overall computation by performing its assigned tasks.</p>
+</li>
+<li>
+<p>The key benefits of distributed systems include scalability, reliability, and performance.</p>
+</li>
+<li>
+<p>Distributed systems also pose several challenges around communication, coordination, scalability, and resiliency. However, multiple techniques can be used to solve these challenges.</p>
+</li>
+<li>
+<p>Communication is challenging in distributed systems due to the unreliable nature of the underlying network infrastructure. This is solved by using protocols such as TCP for reliable communication, TLS for secure communication, and DNS for service discovery.</p>
+</li>
+<li>
+<p>Since distributed systems consist of multiple components, coordinating between them is a big challenge. Techniques such as failure detection, event ordering and timing, leader election, and consistency levels help improve coordination within a distributed system.</p>
+</li>
+<li>
+<p>Scalability is a major benefit of the distributed systems. However, it is important to choose the right scaling pattern. Some common patterns include functional decomposition into microservices, data partitioning, and duplication of resources with replication and load balancing.</p>
+</li>
+<li>
+<p>As distributed systems scale, failures become unavoidable and resiliency becomes a significant challenge. Several techniques can be used for downstream resiliency (such as timeouts, retries, and circuit breakers) and upstream resiliency (load shedding, rate limiting, and bulkhead pattern).</p>
+</li>
+</ul></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-105" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#understanding-distributed-systems" data-for="understanding-distributed-systems">Understanding Distributed Systems</a></li><li class="depth-1"><a href="#decentralized-systems-vs-distributed-systems" data-for="decentralized-systems-vs-distributed-systems">Decentralized Systems Vs. Distributed Systems</a></li><li class="depth-1"><a href="#parallel-systems-vs-distributed-systems" data-for="parallel-systems-vs-distributed-systems">Parallel Systems vs Distributed Systems</a></li><li class="depth-0"><a href="#key-benefits-of-distributed-systems" data-for="key-benefits-of-distributed-systems">Key Benefits of Distributed Systems</a></li><li class="depth-0"><a href="#challenges-of-distributed-systems" data-for="challenges-of-distributed-systems">Challenges of Distributed Systems</a></li><li class="depth-1"><a href="#communication" data-for="communication">Communication</a></li><li class="depth-1"><a href="#1---reliable-communication-with-tcp" data-for="1---reliable-communication-with-tcp">1 - Reliable Communication with TCP</a></li><li class="depth-1"><a href="#2---securing-communication-with-tls" data-for="2---securing-communication-with-tls">2 - Securing Communication with TLS</a></li><li class="depth-1"><a href="#3---service-discovery-with-dns" data-for="3---service-discovery-with-dns">3 - Service Discovery with DNS</a></li><li class="depth-1"><a href="#coordination" data-for="coordination">Coordination</a></li><li class="depth-1"><a href="#1---failure-detection" data-for="1---failure-detection">1 - Failure Detection</a></li><li class="depth-1"><a href="#2---event-ordering-and-timing" data-for="2---event-ordering-and-timing">2 - Event Ordering and Timing</a></li><li class="depth-1"><a href="#3---leader-election" data-for="3---leader-election">3 - Leader Election</a></li><li class="depth-1"><a href="#4---data-replication-and-consistency" data-for="4---data-replication-and-consistency">4 - Data Replication and Consistency</a></li><li class="depth-1"><a href="#scalability" data-for="scalability">Scalability</a></li><li class="depth-1"><a href="#1---functional-decomposition" data-for="1---functional-decomposition">1 - Functional Decomposition</a></li><li class="depth-1"><a href="#2---partitioning" data-for="2---partitioning">2 - Partitioning</a></li><li class="depth-1"><a href="#3---duplication" data-for="3---duplication">3 - Duplication</a></li><li class="depth-1"><a href="#resiliency" data-for="resiliency">Resiliency</a></li><li class="depth-1"><a href="#1---downstream-resiliency" data-for="1---downstream-resiliency">1 - Downstream Resiliency</a></li><li class="depth-1"><a href="#2---upstream-resiliency" data-for="2---upstream-resiliency">2 - Upstream Resiliency</a></li><li class="depth-0"><a href="#summary" data-for="summary">Summary</a></li><li class="overflow-end"></li></ul></div><div class="backlinks"><h3>Backlinks</h3><ul id="list-2" class="overflow"><li><a href="../../Notion-Knowledge/Note" class="internal">Note</a></li><li><a href="../../_moc/MOC-Distributed-Systems" class="internal">MOC-Distributed-Systems</a></li><li><a href="../../_moc/MOC-Reading-List" class="internal">MOC-Reading-List</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://dangthobach.github.io/">Back to Portfolio</a></li><li><a href="https://github.com/dangthobach">GitHub</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../postscript.js" type="module" data-persist="true"></script></html>

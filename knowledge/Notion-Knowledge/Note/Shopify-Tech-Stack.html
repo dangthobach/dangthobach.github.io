@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>Shopify Tech Stack</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="Dang Tho Bach's Knowledge Base"/><meta property="og:title" content="Shopify Tech Stack"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="Shopify Tech Stack"/><meta name="twitter:description" content="Note: This article is written in collaboration with the Shopify engineering team."/><meta property="og:description" content="Note: This article is written in collaboration with the Shopify engineering team."/><meta property="og:image:alt" content="Note: This article is written in collaboration with the Shopify engineering team."/><meta property="twitter:domain" content="dangthobach.github.io/knowledge"/><meta property="og:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Shopify-Tech-Stack"/><meta property="twitter:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Shopify-Tech-Stack"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="Note: This article is written in collaboration with the Shopify engineering team."/><meta name="generator" content="Quartz"/><link href="../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiL2hvbWUvcnVubmVyL3dvcmsvZGFuZ3Rob2JhY2guZ2l0aHViLmlvL2Rhbmd0aG9iYWNoLmdpdGh1Yi5pby9xdWFydHovcXVhcnR6L2NvbXBvbmVudHMvc3R5bGVzIiwic291cmNlcyI6WyJtZXJtYWlkLmlubGluZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFHRjtFQUNFOzs7QUFLRjtFQUNFO0VBQ0E7OztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTs7QUFJRjtFQUNFO0VBQ0E7RUFDQSIsInNvdXJjZXNDb250ZW50IjpbIi5leHBhbmQtYnV0dG9uIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbG9hdDogcmlnaHQ7XG4gIHBhZGRpbmc6IDAuNHJlbTtcbiAgbWFyZ2luOiAwLjNyZW07XG4gIHJpZ2h0OiAwOyAvLyBOT1RFOiByaWdodCB3aWxsIGJlIHNldCBpbiBtZXJtYWlkLmlubGluZS50c1xuICBjb2xvcjogdmFyKC0tZ3JheSk7XG4gIGJvcmRlci1jb2xvcjogdmFyKC0tZGFyayk7XG4gIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgYm9yZGVyOiAxcHggc29saWQ7XG4gIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgb3BhY2l0eTogMDtcbiAgdHJhbnNpdGlvbjogMC4ycztcblxuICAmID4gc3ZnIHtcbiAgICBmaWxsOiB2YXIoLS1saWdodCk7XG4gICAgZmlsdGVyOiBjb250cmFzdCgwLjMpO1xuICB9XG5cbiAgJjpob3ZlciB7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIGJvcmRlci1jb2xvcjogdmFyKC0tc2Vjb25kYXJ5KTtcbiAgfVxuXG4gICY6Zm9jdXMge1xuICAgIG91dGxpbmU6IDA7XG4gIH1cbn1cblxucHJlIHtcbiAgJjpob3ZlciA+IC5leHBhbmQtYnV0dG9uIHtcbiAgICBvcGFjaXR5OiAxO1xuICAgIHRyYW5zaXRpb246IDAuMnM7XG4gIH1cbn1cblxuI21lcm1haWQtY29udGFpbmVyIHtcbiAgcG9zaXRpb246IGZpeGVkO1xuICBjb250YWluOiBsYXlvdXQ7XG4gIHotaW5kZXg6IDk5OTtcbiAgbGVmdDogMDtcbiAgdG9wOiAwO1xuICB3aWR0aDogMTAwdnc7XG4gIGhlaWdodDogMTAwdmg7XG4gIG92ZXJmbG93OiBoaWRkZW47XG4gIGRpc3BsYXk6IG5vbmU7XG4gIGJhY2tkcm9wLWZpbHRlcjogYmx1cig0cHgpO1xuICBiYWNrZ3JvdW5kOiByZ2JhKDAsIDAsIDAsIDAuNSk7XG5cbiAgJi5hY3RpdmUge1xuICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgfVxuXG4gICYgPiAjbWVybWFpZC1zcGFjZSB7XG4gICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gICAgYm9yZGVyLXJhZGl1czogNXB4O1xuICAgIHBvc2l0aW9uOiBmaXhlZDtcbiAgICB0b3A6IDUwJTtcbiAgICBsZWZ0OiA1MCU7XG4gICAgdHJhbnNmb3JtOiB0cmFuc2xhdGUoLTUwJSwgLTUwJSk7XG4gICAgaGVpZ2h0OiA4MHZoO1xuICAgIHdpZHRoOiA4MHZ3O1xuICAgIG92ZXJmbG93OiBoaWRkZW47XG5cbiAgICAmID4gLm1lcm1haWQtY29udGVudCB7XG4gICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgICB0cmFuc2Zvcm0tb3JpZ2luOiAwIDA7XG4gICAgICB0cmFuc2l0aW9uOiB0cmFuc2Zvcm0gMC4xcyBlYXNlO1xuICAgICAgb3ZlcmZsb3c6IHZpc2libGU7XG4gICAgICBtaW4taGVpZ2h0OiAyMDBweDtcbiAgICAgIG1pbi13aWR0aDogMjAwcHg7XG5cbiAgICAgIHByZSB7XG4gICAgICAgIG1hcmdpbjogMDtcbiAgICAgICAgYm9yZGVyOiBub25lO1xuICAgICAgfVxuXG4gICAgICBzdmcge1xuICAgICAgICBtYXgtd2lkdGg6IG5vbmU7XG4gICAgICAgIGhlaWdodDogYXV0bztcbiAgICAgIH1cbiAgICB9XG5cbiAgICAmID4gLm1lcm1haWQtY29udHJvbHMge1xuICAgICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgICAgYm90dG9tOiAyMHB4O1xuICAgICAgcmlnaHQ6IDIwcHg7XG4gICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgZ2FwOiA4cHg7XG4gICAgICBwYWRkaW5nOiA4cHg7XG4gICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgYm9yZGVyLXJhZGl1czogNnB4O1xuICAgICAgYm94LXNoYWRvdzogMCAycHggNHB4IHJnYmEoMCwgMCwgMCwgMC4xKTtcbiAgICAgIHotaW5kZXg6IDI7XG5cbiAgICAgIC5tZXJtYWlkLWNvbnRyb2wtYnV0dG9uIHtcbiAgICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgIHdpZHRoOiAzMnB4O1xuICAgICAgICBoZWlnaHQ6IDMycHg7XG4gICAgICAgIHBhZGRpbmc6IDA7XG4gICAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgICAgY29sb3I6IHZhcigtLWRhcmspO1xuICAgICAgICBib3JkZXItcmFkaXVzOiA0cHg7XG4gICAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICAgICAgZm9udC1zaXplOiAxNnB4O1xuICAgICAgICBmb250LWZhbWlseTogdmFyKC0tYm9keUZvbnQpO1xuICAgICAgICB0cmFuc2l0aW9uOiBhbGwgMC4ycyBlYXNlO1xuXG4gICAgICAgICY6aG92ZXIge1xuICAgICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIH1cblxuICAgICAgICAmOmFjdGl2ZSB7XG4gICAgICAgICAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKDFweCk7XG4gICAgICAgIH1cblxuICAgICAgICAvLyBTdHlsZSB0aGUgcmVzZXQgYnV0dG9uIGRpZmZlcmVudGx5XG4gICAgICAgICY6bnRoLWNoaWxkKDIpIHtcbiAgICAgICAgICB3aWR0aDogYXV0bztcbiAgICAgICAgICBwYWRkaW5nOiAwIDEycHg7XG4gICAgICAgICAgZm9udC1zaXplOiAxNHB4O1xuICAgICAgICB9XG4gICAgICB9XG4gICAgfVxuICB9XG59XG4iXX0= */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://dangthobach.github.io/knowledge/index.xml"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Shopify-Tech-Stack-og-image.webp"/><meta property="og:image:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Shopify-Tech-Stack-og-image.webp"/><meta name="twitter:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Shopify-Tech-Stack-og-image.webp"/><meta property="og:image:type" content="image/.webp"/></head><body data-slug="Notion-Knowledge/Note/Shopify-Tech-Stack"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../..">Dang Tho Bach's Knowledge Base</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-398"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-398" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/">Notion Knowledge</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/Note/">Note</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>Shopify Tech Stack</a></div></nav><h1 class="article-title">Shopify Tech Stack</h1><p show-comma="true" class="content-meta"><time datetime="2026-05-02T04:58:37.000Z">May 02, 2026</time><span>14 min read</span></p></div></div><article class="popover-hint"><p><em>Note: This article is written in collaboration with the Shopify engineering team. Special thanks to the Shopify engineering team for sharing details with us about their tech stack and also for reviewing the final article before publication. All credit for the technical details and diagrams shared in this article goes to the Shopify Engineering Team.</em></p>
+<p>Shopify handles scale that would break most systems.</p>
+<p>On a single day (Black Friday 2024), the platform processed 173 billion requests, peaked at 284 million requests per minute, and pushed 12 terabytes of traffic every minute through its edge.</p>
+<p>These numbers aren’t anomalies. They’re sustained targets that Shopify strives to meet. Behind this scale is a stack that looks deceptively simple from the outside: Ruby on Rails, React, MySQL, and Kafka.</p>
+<p>But that simplicity hides sharp architectural decisions, years of refactoring, and thousands of deliberate trade-offs.</p>
+<p>In this article, we map the tech stack powering Shopify from the modular monolith that still runs the business, to the pods that isolate failure domains, to the deployment pipelines that ship hundreds of changes a day. It covers the tools, programming languages, and patterns Shopify uses to stay fast, resilient, and developer-friendly at incredible scale.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!6D09!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fd8f51e20-a3a2-455e-906c-bb0bb7222802_1222x1600.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!6D09!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fd8f51e20-a3a2-455e-906c-bb0bb7222802_1222x1600.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h2 id="shopify-backend-architecture"><strong>Shopify Backend Architecture</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#shopify-backend-architecture" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Shopify’s backend runs on Ruby on Rails. The original codebase, written in the early 2000s, still forms the heart of the system. Rails offers fast development, convention over configuration, and strong patterns for database-backed web applications. Shopify also uses Rust for its systems programming language.</p>
+<p>While most startups eventually rewrite their early frameworks, Shopify doubled down to help ensure Ruby and Rails are 100-year tools that will continue to merit being in their toolchain of choice. Instead of moving on to another framework, Shopify pushed it further. They invested in:</p>
+<ul>
+<li>
+<p><strong>YJIT</strong>, a Just-in-Time compiler for Ruby built on Rust that improves runtime performance without changing developer ergonomics.</p>
+</li>
+<li>
+<p><strong>Sorbet</strong>, a static type checker built specifically for Ruby. Shopify contributed heavily to Sorbet and made it a first-class part of the stack.</p>
+</li>
+<li>
+<p><strong>Rails Engines</strong>, a built-in Rails feature repurposed as a modularity mechanism. Each engine behaves like a mini-application, allowing isolation, ownership, and eventual extraction if needed.</p>
+</li>
+</ul>
+<p>The result is one of the largest and longest-running Rails applications in production.</p>
+<h2 id="frontend-technologies"><strong>Frontend Technologies</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#frontend-technologies" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Shopify’s frontend has gone through multiple architectural shifts, each one reflecting changes in the broader web ecosystem and lessons learned under scale.</p>
+<p>The early days used standard patterns: server-rendered HTML templates, enhanced with jQuery and prototype.js. As frontend complexity grew, Shopify built Batman.js, its single-page application (SPA) framework. It offered reactivity and routing, but like most in-house frameworks, it came with long-term maintenance overhead.</p>
+<p>Eventually, Shopify shifted back to simpler patterns: statically rendered HTML and vanilla JavaScript. However, that also had limits. Once the broader ecosystem matured, particularly around React and TypeScript, the team made a clean move forward.</p>
+<p>Today, the Shopify Admin interface runs on React, React Router by Remix, written in TypeScript, and driven entirely by GraphQL. It follows a strict separation: no business logic in the client, no shared state across views. The Admin is one of Shopify’s biggest apps, built on Remix that behaves as a stateless GraphQL client. Each page fetches exactly the data it needs, when it needs it.</p>
+<p>This discipline enforces consistency across platforms. Mobile apps and web admin screens speak the same language (GraphQL), reducing duplication and misalignment between surfaces.</p>
+<h3 id="mobile-development-with-react-native"><strong>Mobile Development with React Native</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#mobile-development-with-react-native" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Mobile development at Shopify follows a similar philosophy: reuse where possible, specialize where needed.</p>
+<p>Every app now runs on React Native. The goal of using a single framework is to share code, reduce drift between platforms, and improve developer velocity across Android and iOS.</p>
+<p>Shared libraries power common concerns like authentication, error tracking, and performance monitoring. When apps need to drop into native for camera access, payment hardware, or long-running background tasks, they do so through well-defined native modules.</p>
+<p>Shopify teams also built FlashList (a high-performance list component) and contribute directly to React Native ecosystem projects like Skia (for fast 2D rendering), WebGPU (that enables modern GPU APIs and enables general-purpose GPU computation for AI/ML), and Reanimated (for performant animations). In some cases, Shopify engineers co-captain React Native releases.</p>
+<h2 id="programming-languages-and-frameworks"><strong>Programming Languages and Frameworks</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#programming-languages-and-frameworks" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Shopify’s language choices reflect its commitment to developer productivity and operational resilience.</p>
+<ul>
+<li>
+<p><strong>Ruby</strong> remains the backbone of Shopify’s backend. It powers the monolith, the engines, and most of the internal services. Along with Ruby, Shopify also uses <strong>Sorbet</strong>, a static type checker for Ruby, to fill the safety gap traditionally left open in dynamically typed systems. It enables early feedback on interface violations and contract boundaries.</p>
+</li>
+<li>
+<p><strong>Rust and Go</strong> are Shopify’s systems programming languages used in situations where Ruby is less suitable.</p>
+</li>
+<li>
+<p><strong>TypeScript</strong> is a first-class language on the frontend. Paired with React, it provides predictable behavior across the web and mobile surfaces.</p>
+</li>
+<li>
+<p><strong>JavaScript</strong> still appears in shared libraries and older assets, but most modern development favors TypeScript for its tooling and clarity.</p>
+</li>
+<li>
+<p><strong>Remix</strong> is a full-stack web framework used across various aspects of the platform — Shopify Admin Interface, marketing websites, and Hydrogen, Shopify’s headless commerce framework for building custom storefronts.</p>
+</li>
+<li>
+<p><strong>Python</strong> is the default for ML pipelines and analytics.</p>
+</li>
+</ul>
+<h2 id="developer-tooling--open-source-contributions"><strong>Developer Tooling &amp; Open Source Contributions</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#developer-tooling--open-source-contributions" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>A large monolith doesn’t stay healthy without support. Shopify has developed an ecosystem of internal and open-source tools to enforce structure, automate safety checks, and reduce operational toil.</p>
+<ul>
+<li>
+<p><strong>Packwerk</strong> enforces dependency boundaries between components in the monolith. It flags violations early, before they cause architectural drift.</p>
+</li>
+<li>
+<p><strong>Tapioca</strong> automates the generation of Sorbet RBI (Ruby Interface) files, keeping static type definitions in sync with actual code.</p>
+</li>
+<li>
+<p><strong>Bootsnap</strong> improves startup times for Ruby applications by caching expensive computations like YAML parsing and gem loading.</p>
+</li>
+<li>
+<p><strong>Maintenance Tasks</strong> standardize background job execution. They make recurring tasks idempotent, safe to rerun, and easy to observe.</p>
+</li>
+<li>
+<p><strong>Toxiproxy</strong> simulates unreliable network conditions such as latency, dropped packets, or timeouts, allowing services to test their behavior under stress.</p>
+</li>
+<li>
+<p><strong>TruffleRuby</strong> is a high-performance Ruby implementation developed by Oracle. Shopify contributes to this as part of its broader effort to push Ruby further.</p>
+</li>
+<li>
+<p><strong>Semian</strong> is a circuit breaker library for Ruby, protecting critical resources like Redis or MySQL from cascading failures during partial outages.</p>
+</li>
+<li>
+<p><strong>Roast</strong> is a convention-oriented framework for creating structured AI workflows, maintained and used internally by the Augmented Engineering team at Shopify.</p>
+</li>
+</ul>
+<p>A much more exhaustive list of open-source software supported by Shopify is also present <a href="https://shopify.github.io/" class="external">here<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>.</p>
+<h2 id="databases-caching-and-queuing"><strong>Databases, Caching, and Queuing</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#databases-caching-and-queuing" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>There are two main categories here:</p>
+<h3 id="primary-database-mysql"><strong>Primary Database: MySQL</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#primary-database-mysql" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Shopify uses MySQL as its primary relational database, and has done so since the platform’s early days. However, as merchant volume and transactional throughput grew, the limits of a single instance became unavoidable.</p>
+<p>In 2014, Shopify introduced sharding. Each shard holds a partition of the overall data, and merchants are distributed across those shards based on deterministic rules. This works well in commerce, where tenant isolation is natural. One merchant’s orders don’t need to query another merchant’s inventory.</p>
+<p>Over time, Shopify replaced the flat shard model with Pods. A pod is a fully isolated slice of Shopify, containing its own MySQL instance, Redis node, and Memcached cluster. Each pod can run independently, and each one can be deployed in a separate geographic region.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!s8a3!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F16b40a68-c6dc-49b5-a320-fadc10441365_1600x1133.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!s8a3!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F16b40a68-c6dc-49b5-a320-fadc10441365_1600x1133.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>This model solves two problems:</p>
+<ul>
+<li>
+<p>It removes single points of failure. An issue in one pod won’t cascade across the fleet.</p>
+</li>
+<li>
+<p>It allows Shopify to scale horizontally by adding more pods instead of vertically scaling the database.</p>
+</li>
+</ul>
+<p>By pushing isolation to the infrastructure level, Shopify contains failure domains and simplifies operational recovery.</p>
+<h3 id="caching-and-queues"><strong>Caching and Queues</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#caching-and-queues" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Shopify relies on two core systems for caching and asynchronous work: Memcached and Redis.</p>
+<h3 id="memcached"><strong>Memcached</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#memcached" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Memcached functions as the distributed, in-memory key-value store for many use cases. Two main examples are query caching and full/partial page caching. By materializing the results of read-heavy operations, such as product listings and metadata, and other frequently requested content in memory, Memcached delivers single-digit millisecond access time and off-loads a significant percentage of traffic from the primary database cluster. This architecture provides two strategic advantages:</p>
+<ol>
+<li>
+<p>Performance: Data that would normally require multiple disk reads and complex SQL joins is returned directly from memory, cutting average response latency and improving end-user experience during peak load.</p>
+</li>
+<li>
+<p>Scalability and Cost Control: Offloading hot reads to Memcached reduces CPU, I/O, and connection pressure on the relational database, allowing us to defer hardware upgrades and focus database capacity on write-bound and transaction-oriented workloads.</p>
+</li>
+</ol>
+<p>In short, Memcached enables high-throughput, low-latency retrieval of product information and other dynamic content without imposing additional load on the underlying database.</p>
+<h3 id="redis"><strong>Redis</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#redis" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Redis powers queues for background job processing. It supports Shopify’s asynchronous workflows, including webhook delivery, email sends, payment retries, and inventory syncs.</p>
+<p>But Redis wasn’t always scoped cleanly. At one point, all database shards shared a single Redis instance.</p>
+<p>The lesson Shopify took from this incident was clear: never centralize a system that’s supposed to isolate work. Afterward, Redis was restructured to match the MySQL shard model, giving each pod its own Redis node. Since then, the platform has become far more resilient, with most outages being localized to one pod.</p>
+<h2 id="messaging-and-communication-between-services"><strong>Messaging and Communication Between Services</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#messaging-and-communication-between-services" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>There are two main categories of the same:</p>
+<h3 id="eventing--streaming"><strong>Eventing &amp; Streaming</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#eventing--streaming" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Shopify uses Kafka as the backbone for messaging and event distribution. It forms the spine of the platform’s internal communication layer, decoupling producers from consumers, buffering high-volume traffic, and supporting real-time pipelines that feed search, analytics, and business workflows.</p>
+<p>At peak, Kafka at Shopify has handled 66 million messages per second, a throughput level that few systems encounter outside large-scale financial or streaming platforms.</p>
+<p>This messaging layer serves many use cases, including:</p>
+<ul>
+<li>
+<p>Emitting domain events when core objects change (for example, order created, product updated)</p>
+</li>
+<li>
+<p>Driving ML inference workflows with near real-time updates</p>
+</li>
+<li>
+<p>Powering search indexing, inventory tracking, and customer notifications</p>
+</li>
+</ul>
+<p>By relying on Kafka, Shopify avoids tight synchronous coupling between services. Producers don’t wait for consumers. Consumers process at their own pace. And when something goes wrong, like a downstream service crashing, the event stream holds the data until the system recovers.</p>
+<p>That’s a practical way to build resilience into a fast-moving platform.</p>
+<h3 id="api-interfaces"><strong>API Interfaces</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#api-interfaces" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>For synchronous interactions, Shopify services communicate over HTTP, using a mix of REST, GraphQL, and gRPC</p>
+<ul>
+<li>
+<p>REST APIs still power much of the internal communication, especially between older services and support tools.</p>
+</li>
+<li>
+<p>GraphQL is the preferred interface for public-facing clients. It allows precise data queries, reduces over-fetching, and aligns with Shopify’s philosophy of pushing complexity to the server.</p>
+</li>
+<li>
+<p>gRPC is the new standard for internal communication.</p>
+</li>
+</ul>
+<h2 id="a-glimpse-into-the-ml-infrastructure-at-shopify"><strong>A glimpse into the ML Infrastructure at Shopify</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#a-glimpse-into-the-ml-infrastructure-at-shopify" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>The two examples described below represent only a portion of Shopify’s broader, comprehensive ML system.</p>
+<h3 id="real-time-search-with-embeddings"><strong>Real-Time Search with Embeddings</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#real-time-search-with-embeddings" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Shopify’s storefront search doesn’t only rely on traditional keyword matching. It uses semantic search powered by text and image embeddings: vector representations of product metadata and visual features that enable more relevant, contextual search results.</p>
+<p>Source: <a href="https://shopify.engineering/how-shopify-improved-consumer-search-intent-with-real-time-ml" class="external">Shopify Engineering Blog<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!dCKV!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fa872a155-4493-4427-8cd1-bdd505576fd8_1800x921.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!dCKV!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fa872a155-4493-4427-8cd1-bdd505576fd8_1800x921.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>This system runs at production scale. Shopify processes around 2,500 embeddings per second, translating to over 216 million per day.</p>
+<p>Each embedding is generated in near real time and immediately published to downstream consumers who use it to update search indices and personalize results.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!OJSN!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F3cb0c0c8-4377-4616-a1b8-57713dd9a742_1600x1133.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!OJSN!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F3cb0c0c8-4377-4616-a1b8-57713dd9a742_1600x1133.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>The embedding system also performs intelligent deduplication. For example, visually identical images are grouped to avoid unnecessary inference. This optimization alone reduced image embedding memory usage from 104 GB to under 40 GB, freeing up GPU resources and cutting costs across the pipeline.</p>
+<h3 id="data-pipeline-infrastructure"><strong>Data Pipeline Infrastructure</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#data-pipeline-infrastructure" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p><em>Note: The data pipeline infrastructure is currently undergoing changes.</em></p>
+<p>Under the hood, Shopify runs its ML pipelines on a robust cloud platform, with clusters managed efficiently to support our needs.</p>
+<ul>
+<li>
+<p>Streaming inference at scale</p>
+</li>
+<li>
+<p>GPU acceleration</p>
+</li>
+<li>
+<p>Efficient pipeline parallelism</p>
+</li>
+</ul>
+<p>Streaming inference jobs are structured to process embeddings as quickly and cheaply as possible. The pipeline uses a bunch of optimizations to ensure performance remains predictable under load.</p>
+<p>Shopify trades off between latency, throughput, and infrastructure cost. The current configuration strikes that balance carefully:</p>
+<ul>
+<li>
+<p>Embeddings are generated fast enough for near-real-time updates</p>
+</li>
+<li>
+<p>GPU memory is used efficiently</p>
+</li>
+<li>
+<p>Redundant computation is avoided through smart caching and pre-filtering</p>
+</li>
+</ul>
+<p>For offline analytics, Shopify stores embeddings in BigQuery, allowing large-scale querying, trend analysis, and model performance evaluation without affecting live systems.</p>
+<h2 id="devops-cicd--deployment"><strong>DevOps, CI/CD &amp; Deployment</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#devops-cicd--deployment" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>This area can be divided into the following parts:</p>
+<h3 id="kubernetes-based-deployment"><strong>Kubernetes-Based Deployment</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#kubernetes-based-deployment" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Much of Shopify’s infrastructure is deployed on Kubernetes, running on Google Kubernetes Engine (GKE).</p>
+<p>The runtime environment uses containers for packaging applications.</p>
+<p>Before Kubernetes, deployment was managed through Chef, a configuration management tool better suited for static environments. As the platform evolved, so did the need for a more dynamic management control plane.</p>
+<h3 id="cicd-process"><strong>CI/CD Process</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#cicd-process" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p><em>Note: The CI/CD process is currently undergoing changes.</em></p>
+<p>Shopify’s monolith contains over 400,000 unit tests, many of which exercise complex ORM behaviors. Running all of them serially would take hours, maybe days. To stay fast, Shopify relies on Buildkite as its CI orchestrator. Buildkite coordinates test runs across hundreds of parallel workers, slashing feedback time and keeping builds within a 15–20 minute window.</p>
+<p>Once the build passes, Shopify’s internal deployment tools take over and offer visibility into who’s deploying what, and where.</p>
+<p>Source: <a href="https://shopify.engineering/e-commerce-at-scale-inside-shopifys-tech-stack" class="external">Shopify Engineering Blog<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!7GJ5!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F9a49f944-d87e-4bef-8355-da6d591c9db8_1999x1406.heic" class="external"><img src="https://substackcdn.com/image/fetch/$s_!7GJ5!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F9a49f944-d87e-4bef-8355-da6d591c9db8_1999x1406.heic" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Deployments don’t go straight to production. Instead, Shopify uses Graphite’s gt tool for stacking pull requests (PRs) in development, the Graphite Merge Queue for merging, and an in-house release management tool for managing deployments and release cycles. This throttling makes issues easier to trace and minimizes the blast radius when something breaks.</p>
+<p>Notably, Shopify doesn’t rely on staging environments. They do canary deployments and use feature flags to control exposure and fast rollback mechanisms to undo bad changes quickly. If a feature misbehaves, it can be turned off without redeploying the code.</p>
+<h2 id="observability-reliability-and-security"><strong>Observability, Reliability, and Security</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#observability-reliability-and-security" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>This area can be divided into multiple parts, such as:</p>
+<h3 id="observability-infrastructure"><strong>Observability Infrastructure</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#observability-infrastructure" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Incident response isn’t siloed into a single ops team. Shopify uses a lateral escalation model: all engineers share responsibility for uptime, and escalation happens based on domain expertise, not job title. This encourages shared ownership and reduces handoff delays during critical outages. Shopify also has a Resiliency org that helps bring resiliency tooling and efforts across the org, as well as incident management and 24x7 follow-the-sun SRE support.</p>
+<p>For fault tolerance, Shopify leans on two key tools:</p>
+<ul>
+<li>
+<p><strong>Semian</strong>, a circuit breaker library for Ruby, helps protect core services like Redis and MySQL from cascading failures during degradation.</p>
+</li>
+<li>
+<p><strong>Toxiproxy</strong> lets engineers simulate bad network conditions (latency spikes, dropped packets, service flaps) before those issues appear in production. It’s used in test environments to validate resilience assumptions early.</p>
+</li>
+</ul>
+<h3 id="supply-chain--security"><strong>Supply Chain &amp; Security</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#supply-chain--security" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Security isn’t an afterthought in Shopify’s stack, but part of the ecosystem investment. Since the company relies heavily on Ruby, it also works actively to secure the Ruby community at large. Shopify partners with non-profit organizations that oversee Ruby and Rails infrastructure</p>
+<p>The goal isn’t just to secure Shopify’s stack, but to strengthen the foundation shared by thousands of developers who depend on the same tools.</p>
+<h2 id="shopifys-scale"><strong>Shopify’s Scale</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#shopifys-scale" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Shopify’s architecture isn’t theoretical. It’s built to withstand real-world pressure—Black Friday flash sales, celebrity product drops, and continuous developer activity across a global platform. These numbers put that scale in context.</p>
+<ul>
+<li>
+<p>$5 billion in Gross Merchandise Volume (GMV) processed on Black Friday.</p>
+</li>
+<li>
+<p>284 million requests per minute at the edge during peak load.</p>
+</li>
+<li>
+<p>173 billion total requests handled in a single 24-hour period.</p>
+</li>
+<li>
+<p>12 terabytes of traffic egress per minute across Shopify’s edge network.</p>
+</li>
+<li>
+<p>45 million database queries per second at peak read load.</p>
+</li>
+<li>
+<p>7.6 million database writes per second during transactional bursts.</p>
+</li>
+<li>
+<p>66 million Kafka messages per second, sustaining Shopify’s real-time event pipelines.</p>
+</li>
+<li>
+<p>400,000+ unit tests executed in CI on every monolith build.</p>
+</li>
+<li>
+<p>216 million embeddings processed per day through ML inference pipelines.</p>
+</li>
+<li>
+<blockquote>
+<p>99.9% crash-free session rate across React Native mobile apps.</p>
+</blockquote>
+</li>
+<li>
+<p>2.8 million lines of Ruby code in the monolith, with over 500,000 commits in version control.</p>
+</li>
+<li>
+<p>100+ isolated shards.</p>
+</li>
+<li>
+<p>100+ internal Rails apps, maintained alongside the monolith using shared standards.</p>
+</li>
+</ul>
+<p><strong>References</strong>:</p>
+<ul>
+<li>
+<p><a href="https://shopify.engineering/e-commerce-at-scale-inside-shopifys-tech-stack" class="external">Shopify Tech Stack: ECommerce at Scale<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+</li>
+<li>
+<p><a href="https://shopify.engineering/five-years-of-react-native-at-shopify" class="external">Shopify’s 5-year migration over to to React Native<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+</li>
+<li>
+<p><a href="https://shopify.engineering/how-shopify-improved-consumer-search-intent-with-real-time-ml" class="external">AI-powered search features<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+</li>
+<li>
+<p>Open-source <a href="https://shopify.engineering/shopify-open-source-philosophy" class="external">tools that Shopify uses<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+</li>
+<li>
+<p><a href="https://shopify.engineering/shopify-monolith" class="external">Details about our core monolith<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+</li>
+<li>
+<p><a href="https://shopify.github.io/" class="external">Shopify Open Source<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+</li>
+</ul></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-171" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#shopify-backend-architecture" data-for="shopify-backend-architecture">Shopify Backend Architecture</a></li><li class="depth-0"><a href="#frontend-technologies" data-for="frontend-technologies">Frontend Technologies</a></li><li class="depth-1"><a href="#mobile-development-with-react-native" data-for="mobile-development-with-react-native">Mobile Development with React Native</a></li><li class="depth-0"><a href="#programming-languages-and-frameworks" data-for="programming-languages-and-frameworks">Programming Languages and Frameworks</a></li><li class="depth-0"><a href="#developer-tooling--open-source-contributions" data-for="developer-tooling--open-source-contributions">Developer Tooling &amp; Open Source Contributions</a></li><li class="depth-0"><a href="#databases-caching-and-queuing" data-for="databases-caching-and-queuing">Databases, Caching, and Queuing</a></li><li class="depth-1"><a href="#primary-database-mysql" data-for="primary-database-mysql">Primary Database: MySQL</a></li><li class="depth-1"><a href="#caching-and-queues" data-for="caching-and-queues">Caching and Queues</a></li><li class="depth-1"><a href="#memcached" data-for="memcached">Memcached</a></li><li class="depth-1"><a href="#redis" data-for="redis">Redis</a></li><li class="depth-0"><a href="#messaging-and-communication-between-services" data-for="messaging-and-communication-between-services">Messaging and Communication Between Services</a></li><li class="depth-1"><a href="#eventing--streaming" data-for="eventing--streaming">Eventing &amp; Streaming</a></li><li class="depth-1"><a href="#api-interfaces" data-for="api-interfaces">API Interfaces</a></li><li class="depth-0"><a href="#a-glimpse-into-the-ml-infrastructure-at-shopify" data-for="a-glimpse-into-the-ml-infrastructure-at-shopify">A glimpse into the ML Infrastructure at Shopify</a></li><li class="depth-1"><a href="#real-time-search-with-embeddings" data-for="real-time-search-with-embeddings">Real-Time Search with Embeddings</a></li><li class="depth-1"><a href="#data-pipeline-infrastructure" data-for="data-pipeline-infrastructure">Data Pipeline Infrastructure</a></li><li class="depth-0"><a href="#devops-cicd--deployment" data-for="devops-cicd--deployment">DevOps, CI/CD &amp; Deployment</a></li><li class="depth-1"><a href="#kubernetes-based-deployment" data-for="kubernetes-based-deployment">Kubernetes-Based Deployment</a></li><li class="depth-1"><a href="#cicd-process" data-for="cicd-process">CI/CD Process</a></li><li class="depth-0"><a href="#observability-reliability-and-security" data-for="observability-reliability-and-security">Observability, Reliability, and Security</a></li><li class="depth-1"><a href="#observability-infrastructure" data-for="observability-infrastructure">Observability Infrastructure</a></li><li class="depth-1"><a href="#supply-chain--security" data-for="supply-chain--security">Supply Chain &amp; Security</a></li><li class="depth-0"><a href="#shopifys-scale" data-for="shopifys-scale">Shopify’s Scale</a></li><li class="overflow-end"></li></ul></div><div class="backlinks"><h3>Backlinks</h3><ul id="list-2" class="overflow"><li><a href="../../Notion-Knowledge/Note" class="internal">Note</a></li><li><a href="../../_moc/MOC-Case-Studies" class="internal">MOC-Case-Studies</a></li><li><a href="../../_moc/MOC-Reading-List" class="internal">MOC-Reading-List</a></li><li><a href="../../_moc/MOC-Scalability" class="internal">MOC-Scalability</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://dangthobach.github.io/">Back to Portfolio</a></li><li><a href="https://github.com/dangthobach">GitHub</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../postscript.js" type="module" data-persist="true"></script></html>

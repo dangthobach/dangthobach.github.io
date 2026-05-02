@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>How Slack Supports Billions of Daily Messages</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="Dang Tho Bach's Knowledge Base"/><meta property="og:title" content="How Slack Supports Billions of Daily Messages"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="How Slack Supports Billions of Daily Messages"/><meta name="twitter:description" content="Disclaimer: The details in this post have been derived from the articles/videos shared online by the Slack engineering team."/><meta property="og:description" content="Disclaimer: The details in this post have been derived from the articles/videos shared online by the Slack engineering team."/><meta property="og:image:alt" content="Disclaimer: The details in this post have been derived from the articles/videos shared online by the Slack engineering team."/><meta property="twitter:domain" content="dangthobach.github.io/knowledge"/><meta property="og:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/How-Slack-Supports-Billions-of-Daily-Messages"/><meta property="twitter:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/How-Slack-Supports-Billions-of-Daily-Messages"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="Disclaimer: The details in this post have been derived from the articles/videos shared online by the Slack engineering team."/><meta name="generator" content="Quartz"/><link href="../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiL2hvbWUvcnVubmVyL3dvcmsvZGFuZ3Rob2JhY2guZ2l0aHViLmlvL2Rhbmd0aG9iYWNoLmdpdGh1Yi5pby9xdWFydHovcXVhcnR6L2NvbXBvbmVudHMvc3R5bGVzIiwic291cmNlcyI6WyJtZXJtYWlkLmlubGluZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFHRjtFQUNFOzs7QUFLRjtFQUNFO0VBQ0E7OztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTs7QUFJRjtFQUNFO0VBQ0E7RUFDQSIsInNvdXJjZXNDb250ZW50IjpbIi5leHBhbmQtYnV0dG9uIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbG9hdDogcmlnaHQ7XG4gIHBhZGRpbmc6IDAuNHJlbTtcbiAgbWFyZ2luOiAwLjNyZW07XG4gIHJpZ2h0OiAwOyAvLyBOT1RFOiByaWdodCB3aWxsIGJlIHNldCBpbiBtZXJtYWlkLmlubGluZS50c1xuICBjb2xvcjogdmFyKC0tZ3JheSk7XG4gIGJvcmRlci1jb2xvcjogdmFyKC0tZGFyayk7XG4gIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgYm9yZGVyOiAxcHggc29saWQ7XG4gIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgb3BhY2l0eTogMDtcbiAgdHJhbnNpdGlvbjogMC4ycztcblxuICAmID4gc3ZnIHtcbiAgICBmaWxsOiB2YXIoLS1saWdodCk7XG4gICAgZmlsdGVyOiBjb250cmFzdCgwLjMpO1xuICB9XG5cbiAgJjpob3ZlciB7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIGJvcmRlci1jb2xvcjogdmFyKC0tc2Vjb25kYXJ5KTtcbiAgfVxuXG4gICY6Zm9jdXMge1xuICAgIG91dGxpbmU6IDA7XG4gIH1cbn1cblxucHJlIHtcbiAgJjpob3ZlciA+IC5leHBhbmQtYnV0dG9uIHtcbiAgICBvcGFjaXR5OiAxO1xuICAgIHRyYW5zaXRpb246IDAuMnM7XG4gIH1cbn1cblxuI21lcm1haWQtY29udGFpbmVyIHtcbiAgcG9zaXRpb246IGZpeGVkO1xuICBjb250YWluOiBsYXlvdXQ7XG4gIHotaW5kZXg6IDk5OTtcbiAgbGVmdDogMDtcbiAgdG9wOiAwO1xuICB3aWR0aDogMTAwdnc7XG4gIGhlaWdodDogMTAwdmg7XG4gIG92ZXJmbG93OiBoaWRkZW47XG4gIGRpc3BsYXk6IG5vbmU7XG4gIGJhY2tkcm9wLWZpbHRlcjogYmx1cig0cHgpO1xuICBiYWNrZ3JvdW5kOiByZ2JhKDAsIDAsIDAsIDAuNSk7XG5cbiAgJi5hY3RpdmUge1xuICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgfVxuXG4gICYgPiAjbWVybWFpZC1zcGFjZSB7XG4gICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gICAgYm9yZGVyLXJhZGl1czogNXB4O1xuICAgIHBvc2l0aW9uOiBmaXhlZDtcbiAgICB0b3A6IDUwJTtcbiAgICBsZWZ0OiA1MCU7XG4gICAgdHJhbnNmb3JtOiB0cmFuc2xhdGUoLTUwJSwgLTUwJSk7XG4gICAgaGVpZ2h0OiA4MHZoO1xuICAgIHdpZHRoOiA4MHZ3O1xuICAgIG92ZXJmbG93OiBoaWRkZW47XG5cbiAgICAmID4gLm1lcm1haWQtY29udGVudCB7XG4gICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgICB0cmFuc2Zvcm0tb3JpZ2luOiAwIDA7XG4gICAgICB0cmFuc2l0aW9uOiB0cmFuc2Zvcm0gMC4xcyBlYXNlO1xuICAgICAgb3ZlcmZsb3c6IHZpc2libGU7XG4gICAgICBtaW4taGVpZ2h0OiAyMDBweDtcbiAgICAgIG1pbi13aWR0aDogMjAwcHg7XG5cbiAgICAgIHByZSB7XG4gICAgICAgIG1hcmdpbjogMDtcbiAgICAgICAgYm9yZGVyOiBub25lO1xuICAgICAgfVxuXG4gICAgICBzdmcge1xuICAgICAgICBtYXgtd2lkdGg6IG5vbmU7XG4gICAgICAgIGhlaWdodDogYXV0bztcbiAgICAgIH1cbiAgICB9XG5cbiAgICAmID4gLm1lcm1haWQtY29udHJvbHMge1xuICAgICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgICAgYm90dG9tOiAyMHB4O1xuICAgICAgcmlnaHQ6IDIwcHg7XG4gICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgZ2FwOiA4cHg7XG4gICAgICBwYWRkaW5nOiA4cHg7XG4gICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgYm9yZGVyLXJhZGl1czogNnB4O1xuICAgICAgYm94LXNoYWRvdzogMCAycHggNHB4IHJnYmEoMCwgMCwgMCwgMC4xKTtcbiAgICAgIHotaW5kZXg6IDI7XG5cbiAgICAgIC5tZXJtYWlkLWNvbnRyb2wtYnV0dG9uIHtcbiAgICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgIHdpZHRoOiAzMnB4O1xuICAgICAgICBoZWlnaHQ6IDMycHg7XG4gICAgICAgIHBhZGRpbmc6IDA7XG4gICAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgICAgY29sb3I6IHZhcigtLWRhcmspO1xuICAgICAgICBib3JkZXItcmFkaXVzOiA0cHg7XG4gICAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICAgICAgZm9udC1zaXplOiAxNnB4O1xuICAgICAgICBmb250LWZhbWlseTogdmFyKC0tYm9keUZvbnQpO1xuICAgICAgICB0cmFuc2l0aW9uOiBhbGwgMC4ycyBlYXNlO1xuXG4gICAgICAgICY6aG92ZXIge1xuICAgICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIH1cblxuICAgICAgICAmOmFjdGl2ZSB7XG4gICAgICAgICAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKDFweCk7XG4gICAgICAgIH1cblxuICAgICAgICAvLyBTdHlsZSB0aGUgcmVzZXQgYnV0dG9uIGRpZmZlcmVudGx5XG4gICAgICAgICY6bnRoLWNoaWxkKDIpIHtcbiAgICAgICAgICB3aWR0aDogYXV0bztcbiAgICAgICAgICBwYWRkaW5nOiAwIDEycHg7XG4gICAgICAgICAgZm9udC1zaXplOiAxNHB4O1xuICAgICAgICB9XG4gICAgICB9XG4gICAgfVxuICB9XG59XG4iXX0= */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://dangthobach.github.io/knowledge/index.xml"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/How-Slack-Supports-Billions-of-Daily-Messages-og-image.webp"/><meta property="og:image:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/How-Slack-Supports-Billions-of-Daily-Messages-og-image.webp"/><meta name="twitter:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/How-Slack-Supports-Billions-of-Daily-Messages-og-image.webp"/><meta property="og:image:type" content="image/.webp"/></head><body data-slug="Notion-Knowledge/Note/How-Slack-Supports-Billions-of-Daily-Messages"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../..">Dang Tho Bach's Knowledge Base</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-350"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-350" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/">Notion Knowledge</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/Note/">Note</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>How Slack Supports Billions of Daily Messages</a></div></nav><h1 class="article-title">How Slack Supports Billions of Daily Messages</h1><p show-comma="true" class="content-meta"><time datetime="2026-05-02T04:58:37.000Z">May 02, 2026</time><span>13 min read</span></p></div></div><article class="popover-hint"><p><em>Disclaimer: The details in this post have been derived from the articles/videos shared online by the Slack engineering team. All credit for the technical details goes to the Slack Engineering Team. The links to the original articles and videos are present in the references section at the end of the post. We’ve attempted to analyze the details and provide our input about them. If you find any inaccuracies or omissions, please leave a comment, and we will do our best to fix them.</em></p>
+<p>Most people think of Slack as a messaging app. It is technically accurate, but from a systems perspective, it’s more like a real-time, multiplayer collaboration platform with millions of concurrent users, thousands of messages per second, and an architecture that evolved under some unusual constraints.</p>
+<p>At peak weekday hours, Slack maintains over five million simultaneous WebSocket sessions. That’s not just a metric, but a serious architectural challenge. Each session represents a live, long-running connection, often pushing out typing indicators, presence updates, and messages in milliseconds. Delivering this kind of interactivity on a global scale is hard. Doing it reliably with high performance is even harder.</p>
+<p>One interesting trivia is that the team that built Slack was originally building a video game named Glitch: a browser-based MMORPG. While Glitch had a small but passionate audience, it struggled to become financially sustainable. During the development of Glitch, the team created an internal communication tool that would later become Slack. When Glitch shut down, the team recognized the potential of the internal communication tool and began to develop it into a bigger product for business use. The backend for this internal tool became the skeleton of what would become Slack.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!y5WI!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F1560999b-5cc5-449a-94cd-bd7fad6b666b_1600x1048.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!y5WI!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F1560999b-5cc5-449a-94cd-bd7fad6b666b_1600x1048.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>This inheritance shaped Slack’s architecture in two key ways:</p>
+<ul>
+<li>
+<p><strong>Separation of concerns</strong>: Like game servers manage real-time events separately from game logic, Slack splits its architecture early. One service (the “channel server”) handled real-time message propagation. Another (the “web app”) managed business logic, storage, and user auth.</p>
+</li>
+<li>
+<p><strong>Push-first mentality</strong>: Unlike traditional request-response apps, Glitch pushed updates as the state changed. Slack adopted this model wholesale. WebSockets weren’t an optimization—they were the foundation.</p>
+</li>
+</ul>
+<p>This article explores how Slack’s architecture evolved to meet the demands of a system that makes real-time collaboration possible across organizations of 100,000+ people.</p>
+<hr/>
+<h2 id="real-time-code-reviews-powered-by-ai-sponsored"><strong><a href="https://bit.ly/CodeRabbit_051325" class="external">Real-Time Code Reviews Powered by AI (Sponsored)<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#real-time-code-reviews-powered-by-ai-sponsored" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p><a href="https://substackcdn.com/image/fetch/$s_!Nm2k!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F49ea9e90-675f-4107-802a-e273ff8f5d24_2048x1024.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!Nm2k!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F49ea9e90-675f-4107-802a-e273ff8f5d24_2048x1024.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Slack made real-time collaboration seamless for teams. CodeRabbit brings that same spirit to code reviews. It analyzes every PR using context-aware AI that understands your codebase suggesting changes, catching bugs and even asking questions when something looks off. Perfect for fast-moving teams who want quality code reviews without slowing down. Integrated with GitHub, GitLab and it’s like a senior engineer reviewing with you on every commit. Free for Open-source.</p>
+<p><strong><a href="https://bit.ly/CodeRabbit_051325" class="external">Review Smarter with CodeRabbit<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></strong></p>
+<hr/>
+<h2 id="initial-architecture"><strong>Initial Architecture</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#initial-architecture" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Slack’s early architecture was a traditional monolithic backend fused with a purpose-built, real-time message delivery system.</p>
+<p>The monolith, written in Hacklang, handled the application logic. Hacklang (Facebook’s typed dialect of PHP) offered a pragmatic path: move fast with a familiar scripting language, then gradually tighten things with types. For a product iterating quickly, that balance paid off. Slack’s backend handled everything from file permissions to session management to API endpoints.</p>
+<p>But the monolith didn’t touch messages in motion. That job belonged to a real-time message bus: the channel server, written in Java. The channel server pushed updates over long-lived WebSocket connections, broadcast messages to active clients, and arbitrated message order. When two users hit “send” at the same moment, it was the channel server that decided which message came first.</p>
+<p>Here’s how the division looked in terms of functionalities:</p>
+<ul>
+<li>
+<p>Web App (Hacklang)</p>
+<ul>
+<li>
+<p>Auth, permissions, and storage</p>
+</li>
+<li>
+<p>API endpoints and job queuing</p>
+</li>
+<li>
+<p>Session bootstrapping and metadata lookup</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Channel Server (Java)</p>
+<ul>
+<li>
+<p>WebSocket handling</p>
+</li>
+<li>
+<p>Real-time message fan-out</p>
+</li>
+<li>
+<p>Typing indicators, presence blips, and ordering guarantees</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><a href="https://substackcdn.com/image/fetch/$s_!i_si!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F864cb6c8-f8b7-4cab-b43a-cdbf51f43c9e_1600x1045.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!i_si!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F864cb6c8-f8b7-4cab-b43a-cdbf51f43c9e_1600x1045.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>This split worked well when Slack served small teams and development moved fast. But over time, the costs surfaced:</p>
+<ul>
+<li>
+<p>The monolith grew brittle as testing got harder and deployment risk went up.</p>
+</li>
+<li>
+<p>The channel server held state, which complicated recovery and scaling.</p>
+</li>
+<li>
+<p>Dependencies between the two made failures messy. If the web app went down, the channel server couldn’t persist messages, but might still tell users they’d sent them.</p>
+</li>
+</ul>
+<h3 id="the-core-abstraction-persistent-messaging"><strong>The Core Abstraction: Persistent Messaging</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#the-core-abstraction-persistent-messaging" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Messaging apps live or die by trust. When someone sends a message and sees it appear on screen, they expect it to stay there and to show up for everyone else. If that expectation breaks, the product loses credibility fast. In other words, persistence becomes a foundational feature.</p>
+<p>Slack’s design bakes this in from the start. Unlike Internet Relay Chat (IRC), where messages vanish the moment they scroll off-screen, Slack assumes every message matters, even the mundane ones. It doesn’t just aim to display messages in real-time. It aims to record them, index them, and replay them on demand. This shift from ephemeral to durable changes everything.</p>
+<p>IRC treats each message like a radio transmission, whereas Slack treats messages like emails. If the user missed something, they can always scroll up, search later, and re-read at a later date. This shift demands a system that guarantees:</p>
+<ul>
+<li>
+<p>Messages don’t disappear</p>
+</li>
+<li>
+<p>Message order stays consistent</p>
+</li>
+<li>
+<p>What one user sees, every user sees</p>
+</li>
+</ul>
+<p>Slack delivers that through what looks, at first glance, like a simple contract:</p>
+<ul>
+<li>
+<p>When a message shows up in a channel, everyone should see it.</p>
+</li>
+<li>
+<p>When a message appears in the UI, it should be in stable storage.</p>
+</li>
+<li>
+<p>When clients scroll back, they should all see the same history, in the same order.</p>
+</li>
+</ul>
+<p>This is a textbook case of atomic broadcast.</p>
+<h3 id="atomic-broadcast"><strong>Atomic Broadcast</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#atomic-broadcast" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Atomic broadcast is a classic problem in distributed systems. It’s a formal model where multiple nodes (or users) receive the same messages in the same order, and every message comes from someone. It guarantees three core properties:</p>
+<ul>
+<li>
+<p><strong>Validity:</strong> If a user sends a message, it eventually gets delivered.</p>
+</li>
+<li>
+<p><strong>Integrity:</strong> No message appears unless it was sent.</p>
+</li>
+<li>
+<p><strong>Total Order:</strong> All users see messages in the same sequence.</p>
+</li>
+</ul>
+<p>Slack implements a real-world approximation of atomic broadcast because it was essential for their functionality. Imagine a team seeing different sequences of edits, or comments that reference messages that “don’t exist” on someone else’s screen.</p>
+<p>But here’s the twist: in distributed systems, atomic broadcast is as hard as consensus. And consensus, under real-world failure modes, is provably impossible to guarantee. So Slack, like many production systems, takes the pragmatic path. It relaxes constraints, defers work, and recovers from inconsistency instead of trying to prevent it entirely.</p>
+<p>This tension between theoretical impossibility and practical necessity drives many of Slack’s architectural decisions.</p>
+<h2 id="old-vs-new-send-flows"><strong>Old vs New Send Flows</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#old-vs-new-send-flows" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>In real-time apps, low latency is a necessity. When a user hits “send,” the message should appear instantly. Anything slower breaks the illusion of conversation. But making that feel snappy while also guaranteeing that the message is stored, ordered, and replayable? That’s where things get messy.</p>
+<p>Slack’s original message send flow prioritized responsiveness. The architecture puts the channel server (the real-time message bus) at the front of the flow. A message went from the client straight to the channel server, which then:</p>
+<ul>
+<li>
+<p>Broadcast it to all connected clients</p>
+</li>
+<li>
+<p>Sent an acknowledgment back to the sender</p>
+</li>
+<li>
+<p>Later handed it off to the web app for indexing, persistence, and other deferred work</p>
+</li>
+</ul>
+<p>This gave users lightning-fast feedback. However, it also introduced a dangerous window: the server might crash after confirming the message but before persisting it. To the sender, the message looked “sent.” To everyone else, especially after a recovery, it might be gone.</p>
+<p>This flow worked, but it carried risk:</p>
+<ul>
+<li>
+<p>Stateful servers meant complex failover logic and careful coordination.</p>
+</li>
+<li>
+<p>Deferred persistence meant the UI could technically lie about message delivery.</p>
+</li>
+<li>
+<p>Retries and recovery had to reconcile what was shown vs. what was saved.</p>
+</li>
+</ul>
+<p>Slack patched around this with persistent buffers and retry loops. But the complexity was stacking up. The system was fast, but fragile.</p>
+<h3 id="the-web-app-takes-the-lead"><strong>The Web App Takes the Lead</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#the-web-app-takes-the-lead" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>As Slack matured, and as outages and scale pushed the limits, the team reversed the flow.</p>
+<p>In the new send model, the web app comes first:</p>
+<ul>
+<li>
+<p>The client sends the message via HTTP POST to the web app</p>
+</li>
+<li>
+<p>The web app logs the message to the job queue (persistence, indexing, and parsing all happen here)</p>
+</li>
+<li>
+<p>Only then does it invoke the channel server to broadcast the message in real-time</p>
+</li>
+</ul>
+<p><a href="https://substackcdn.com/image/fetch/$s_!16Rk!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F974efba8-a4c1-4b0b-ad4d-8965d57a6697_1600x1069.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!16Rk!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F974efba8-a4c1-4b0b-ad4d-8965d57a6697_1600x1069.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>This change improves several things:</p>
+<ul>
+<li>
+<p><strong>Crash safety:</strong> If anything goes down mid-flow, either the message persists or the client gets a clear failure.</p>
+</li>
+<li>
+<p><strong>Stateless channel servers:</strong> Without needing local buffers or retries, they become easier to scale and maintain.</p>
+</li>
+<li>
+<p><strong>Latency preserved:</strong> Users still see messages immediately, because the real-time broadcast happens fast, even while persistence continues in the background.</p>
+</li>
+</ul>
+<p>And one subtle benefit: the new flow doesn’t require a WebSocket connection to send a message. That’s a big deal for mobile clients responding to notifications, where setting up a full session just to reply was costly.</p>
+<p>The old system showed messages fast, but sometimes dropped them. The new one does more work up front, but makes a stronger promise in terms of persistence.</p>
+<h2 id="session-initialization-and-the-need-for-flannel"><strong>Session Initialization and the Need for Flannel</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#session-initialization-and-the-need-for-flannel" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>For small teams, starting a Slack session looks simple. The client requests some data, connects to a WebSocket, and starts chatting. However, at enterprise scale, that “simple” startup becomes a serious architectural choke point.</p>
+<p>Originally, Slack used a method called RTM Start (Real-Time Messaging Start). When a client initiated a session, the web app assembled a giant JSON payload: user profiles, channel lists, membership maps, unread message counts, and a WebSocket URL. This was meant to be a keyframe: a complete snapshot of the team’s state, so the client could start cold and stay in sync via real-time deltas.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!pFXV!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F8ee2a242-a049-4adf-ada0-85144a21384f_1600x1168.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!pFXV!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F8ee2a242-a049-4adf-ada0-85144a21384f_1600x1168.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>It worked until teams got big.</p>
+<ul>
+<li>
+<p>For small teams (under 100 users), the payload was lightweight.</p>
+</li>
+<li>
+<p>For large organizations (10,000+ users), it ballooned to tens of megabytes.</p>
+</li>
+<li>
+<p>Clients took tens of seconds just to parse the response and build local caches.</p>
+</li>
+<li>
+<p>If a network partition hit, thousands of clients would reconnect at once, slamming the backend with redundant work.</p>
+</li>
+</ul>
+<p>And it got worse:</p>
+<ul>
+<li>
+<p>Payload size grew quadratically with team size. Every user could join every channel, and the web app calculated all of it.</p>
+</li>
+<li>
+<p>All this work happened in a single data center, creating global latency for users in Europe, Asia, or South America.</p>
+</li>
+</ul>
+<p>This wasn’t just slow. It was a vector for cascading failure. One bad deploy or dropped connection could take out Slack’s control plane under its load.</p>
+<h3 id="flannel-cache-the-cold-start"><strong>Flannel: Cache the Cold Start</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#flannel-cache-the-cold-start" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>To fix this, Slack introduced Flannel, a purpose-built microservice that acts as a stateful, geo-distributed cache for session bootstrapping.</p>
+<p>Instead of rebuilding a fresh session snapshot for every client on demand, Flannel does a couple of things differently:</p>
+<ul>
+<li>
+<p>It maintains a pre-warmed in-memory cache of team metadata</p>
+</li>
+<li>
+<p>Listens to WebSocket events to keep that cache up to date, just like a client would</p>
+</li>
+<li>
+<p>It serves session boot data locally, from one of many regional replicas</p>
+</li>
+<li>
+<p>Sits astride the WebSocket connection, terminating it and handling session validation</p>
+</li>
+</ul>
+<p>Here’s what changes in the flow:</p>
+<ul>
+<li>
+<p>A client connects to Flannel and presents its auth token.</p>
+</li>
+<li>
+<p>Flannel verifies the token (delegating to the web app if needed).</p>
+</li>
+<li>
+<p>If the cache is warm, it sends a hello response immediately. No need to hit the origin.</p>
+</li>
+</ul>
+<p><a href="https://substackcdn.com/image/fetch/$s_!k7Av!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F34ca89b4-9568-4675-8eb1-c73395fcb52c_1600x884.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!k7Av!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F34ca89b4-9568-4675-8eb1-c73395fcb52c_1600x884.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>This flips the cost model from compute-heavy startup to cache-heavy reuse. While it’s tempting to think that Flannel adds complexity. But Slack found that at scale, complexity that’s predictable and bounded is better than simplicity that breaks under pressure.</p>
+<h2 id="scaling-considerations-and-trade-offs"><strong>Scaling Considerations and Trade-offs</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#scaling-considerations-and-trade-offs" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Every system seems to work on the whiteboard. The real test comes when it’s live, overloaded, and something fails. At Slack’s scale, maintaining reliable real-time messaging isn’t just about handling more messages per second. It’s also about absorbing failure without breaking user expectations.</p>
+<p>One of the most visible symptoms at scale is message duplication. Sometimes a user sees their message posted twice. It’s not random. It’s a side effect of client retries.</p>
+<p>Here’s how it happens:</p>
+<ul>
+<li>
+<p>A mobile client sends a message.</p>
+</li>
+<li>
+<p>Network flakiness delays the acknowledgment.</p>
+</li>
+<li>
+<p>The client times out and retries.</p>
+</li>
+<li>
+<p>Both messages make it through, or one makes it twice, and now the user wonders what just happened.</p>
+</li>
+</ul>
+<p>To survive this, Slack leans on idempotency. Each message includes a client-generated ID or salt. When the server sees the same message ID again, it knows it’s not a new send. This doesn’t eliminate all duplication, especially across devices, but it contains the damage.</p>
+<p>On the backend, retries and failures get more serious. A message might:</p>
+<ul>
+<li>
+<p>Reach the channel server but fail to persist</p>
+</li>
+<li>
+<p>Persist to the job queue but never push</p>
+</li>
+<li>
+<p>Push to some clients and not others</p>
+</li>
+</ul>
+<p>The system has to detect and recover from all of these without losing messages, breaking order guarantees, and flooding the user with confusing errors.</p>
+<p>This is where queueing architecture matters. Slack uses Kafka for durable message queuing and Redis for in-flight, fast-access job data. Kafka acts as the system’s ledger and Redis provides short-term memory.</p>
+<p>This separation balances:</p>
+<ul>
+<li>
+<p><strong>Durability vs. speed:</strong> Kafka holds the truth; Redis handles the work-in-progress.</p>
+</li>
+<li>
+<p><strong>Retry logic:</strong> Jobs pulled from Kafka can be retried intelligently if processing fails.</p>
+</li>
+<li>
+<p><strong>Concurrency control:</strong> The system avoids processing the same message twice and waiting forever for a stuck job.</p>
+</li>
+</ul>
+<h2 id="conclusion"><strong>Conclusion</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#conclusion" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Slack’s architecture isn’t simple, and that’s by design. The system embraces complexity in the places where precision matters most: real-time messaging, session consistency, and user trust. These are the end-to-end paths where failure is visible, consequences are immediate, and user perception can shift in a heartbeat.</p>
+<p>The architecture reflects a principle that shows up in high-performing systems again and again: push complexity to the edge, keep the core fast and clear. Channel servers, Flannel caches, and job queues each exist to protect a smooth user experience from the messiness of distributed systems, partial failures, and global scale.</p>
+<p>At the same time, the parts of the system that don’t need complexity, like storage coordination or REST API responses, stay lean and conventional.</p>
+<p>Ultimately, no architecture stands still. Every scaling milestone, every user complaint, every edge case pushes the system to adapt. Slack’s evolution from monolith-plus-bus to globally distributed microservices wasn’t planned in a vacuum. It came from running into real limits, then designing around them.</p>
+<p>The lesson isn’t to copy Slack’s architecture. It’s to respect the trade-offs it reveals:</p>
+<ul>
+<li>
+<p>Optimize for latency, but tolerate slowness in the right places.</p>
+</li>
+<li>
+<p>Build around failure, not away from it.</p>
+</li>
+<li>
+<p>Embrace complexity where correctness pays for itself, and fight to simplify the rest.</p>
+</li>
+</ul>
+<p><strong>References:</strong></p>
+<ul>
+<li>
+<p><a href="https://youtu.be/o4f5G9q_9O4?si=PerFODDzQ1JHz0QP" class="external">Scaling Slack: Goto Conference<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+</li>
+<li>
+<p><a href="https://en.wikipedia.org/wiki/Glitch_(video_game)" class="external">Glitch - Wikipedia<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+</li>
+<li>
+<p><a href="https://slack.engineering/flannel-an-application-level-edge-cache-to-make-slack-scale/" class="external">Flannel: An application level edge cache to make Slack scale<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+</li>
+</ul></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-152" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#real-time-code-reviews-powered-by-ai-sponsored" data-for="real-time-code-reviews-powered-by-ai-sponsored">Real-Time Code Reviews Powered by AI (Sponsored)</a></li><li class="depth-0"><a href="#initial-architecture" data-for="initial-architecture">Initial Architecture</a></li><li class="depth-1"><a href="#the-core-abstraction-persistent-messaging" data-for="the-core-abstraction-persistent-messaging">The Core Abstraction: Persistent Messaging</a></li><li class="depth-1"><a href="#atomic-broadcast" data-for="atomic-broadcast">Atomic Broadcast</a></li><li class="depth-0"><a href="#old-vs-new-send-flows" data-for="old-vs-new-send-flows">Old vs New Send Flows</a></li><li class="depth-1"><a href="#the-web-app-takes-the-lead" data-for="the-web-app-takes-the-lead">The Web App Takes the Lead</a></li><li class="depth-0"><a href="#session-initialization-and-the-need-for-flannel" data-for="session-initialization-and-the-need-for-flannel">Session Initialization and the Need for Flannel</a></li><li class="depth-1"><a href="#flannel-cache-the-cold-start" data-for="flannel-cache-the-cold-start">Flannel: Cache the Cold Start</a></li><li class="depth-0"><a href="#scaling-considerations-and-trade-offs" data-for="scaling-considerations-and-trade-offs">Scaling Considerations and Trade-offs</a></li><li class="depth-0"><a href="#conclusion" data-for="conclusion">Conclusion</a></li><li class="overflow-end"></li></ul></div><div class="backlinks"><h3>Backlinks</h3><ul id="list-2" class="overflow"><li><a href="../../Notion-Knowledge/Note" class="internal">Note</a></li><li><a href="../../_moc/MOC-Case-Studies" class="internal">MOC-Case-Studies</a></li><li><a href="../../_moc/MOC-Reading-List" class="internal">MOC-Reading-List</a></li><li><a href="../../_moc/MOC-Scalability" class="internal">MOC-Scalability</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://dangthobach.github.io/">Back to Portfolio</a></li><li><a href="https://github.com/dangthobach">GitHub</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../postscript.js" type="module" data-persist="true"></script></html>

@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>Engineering Trade-offs- Eventual Consistency in Practice</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="Dang Tho Bach's Knowledge Base"/><meta property="og:title" content="Engineering Trade-offs- Eventual Consistency in Practice"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="Engineering Trade-offs- Eventual Consistency in Practice"/><meta name="twitter:description" content="Imagine a ride-sharing app that shows a driver’s location with a few seconds of delay."/><meta property="og:description" content="Imagine a ride-sharing app that shows a driver’s location with a few seconds of delay."/><meta property="og:image:alt" content="Imagine a ride-sharing app that shows a driver’s location with a few seconds of delay."/><meta property="twitter:domain" content="dangthobach.github.io/knowledge"/><meta property="og:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Engineering-Trade-offs--Eventual-Consistency-in-Practice"/><meta property="twitter:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Engineering-Trade-offs--Eventual-Consistency-in-Practice"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="Imagine a ride-sharing app that shows a driver’s location with a few seconds of delay."/><meta name="generator" content="Quartz"/><link href="../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiL2hvbWUvcnVubmVyL3dvcmsvZGFuZ3Rob2JhY2guZ2l0aHViLmlvL2Rhbmd0aG9iYWNoLmdpdGh1Yi5pby9xdWFydHovcXVhcnR6L2NvbXBvbmVudHMvc3R5bGVzIiwic291cmNlcyI6WyJtZXJtYWlkLmlubGluZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFHRjtFQUNFOzs7QUFLRjtFQUNFO0VBQ0E7OztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTs7QUFJRjtFQUNFO0VBQ0E7RUFDQSIsInNvdXJjZXNDb250ZW50IjpbIi5leHBhbmQtYnV0dG9uIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbG9hdDogcmlnaHQ7XG4gIHBhZGRpbmc6IDAuNHJlbTtcbiAgbWFyZ2luOiAwLjNyZW07XG4gIHJpZ2h0OiAwOyAvLyBOT1RFOiByaWdodCB3aWxsIGJlIHNldCBpbiBtZXJtYWlkLmlubGluZS50c1xuICBjb2xvcjogdmFyKC0tZ3JheSk7XG4gIGJvcmRlci1jb2xvcjogdmFyKC0tZGFyayk7XG4gIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgYm9yZGVyOiAxcHggc29saWQ7XG4gIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgb3BhY2l0eTogMDtcbiAgdHJhbnNpdGlvbjogMC4ycztcblxuICAmID4gc3ZnIHtcbiAgICBmaWxsOiB2YXIoLS1saWdodCk7XG4gICAgZmlsdGVyOiBjb250cmFzdCgwLjMpO1xuICB9XG5cbiAgJjpob3ZlciB7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIGJvcmRlci1jb2xvcjogdmFyKC0tc2Vjb25kYXJ5KTtcbiAgfVxuXG4gICY6Zm9jdXMge1xuICAgIG91dGxpbmU6IDA7XG4gIH1cbn1cblxucHJlIHtcbiAgJjpob3ZlciA+IC5leHBhbmQtYnV0dG9uIHtcbiAgICBvcGFjaXR5OiAxO1xuICAgIHRyYW5zaXRpb246IDAuMnM7XG4gIH1cbn1cblxuI21lcm1haWQtY29udGFpbmVyIHtcbiAgcG9zaXRpb246IGZpeGVkO1xuICBjb250YWluOiBsYXlvdXQ7XG4gIHotaW5kZXg6IDk5OTtcbiAgbGVmdDogMDtcbiAgdG9wOiAwO1xuICB3aWR0aDogMTAwdnc7XG4gIGhlaWdodDogMTAwdmg7XG4gIG92ZXJmbG93OiBoaWRkZW47XG4gIGRpc3BsYXk6IG5vbmU7XG4gIGJhY2tkcm9wLWZpbHRlcjogYmx1cig0cHgpO1xuICBiYWNrZ3JvdW5kOiByZ2JhKDAsIDAsIDAsIDAuNSk7XG5cbiAgJi5hY3RpdmUge1xuICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgfVxuXG4gICYgPiAjbWVybWFpZC1zcGFjZSB7XG4gICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gICAgYm9yZGVyLXJhZGl1czogNXB4O1xuICAgIHBvc2l0aW9uOiBmaXhlZDtcbiAgICB0b3A6IDUwJTtcbiAgICBsZWZ0OiA1MCU7XG4gICAgdHJhbnNmb3JtOiB0cmFuc2xhdGUoLTUwJSwgLTUwJSk7XG4gICAgaGVpZ2h0OiA4MHZoO1xuICAgIHdpZHRoOiA4MHZ3O1xuICAgIG92ZXJmbG93OiBoaWRkZW47XG5cbiAgICAmID4gLm1lcm1haWQtY29udGVudCB7XG4gICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgICB0cmFuc2Zvcm0tb3JpZ2luOiAwIDA7XG4gICAgICB0cmFuc2l0aW9uOiB0cmFuc2Zvcm0gMC4xcyBlYXNlO1xuICAgICAgb3ZlcmZsb3c6IHZpc2libGU7XG4gICAgICBtaW4taGVpZ2h0OiAyMDBweDtcbiAgICAgIG1pbi13aWR0aDogMjAwcHg7XG5cbiAgICAgIHByZSB7XG4gICAgICAgIG1hcmdpbjogMDtcbiAgICAgICAgYm9yZGVyOiBub25lO1xuICAgICAgfVxuXG4gICAgICBzdmcge1xuICAgICAgICBtYXgtd2lkdGg6IG5vbmU7XG4gICAgICAgIGhlaWdodDogYXV0bztcbiAgICAgIH1cbiAgICB9XG5cbiAgICAmID4gLm1lcm1haWQtY29udHJvbHMge1xuICAgICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgICAgYm90dG9tOiAyMHB4O1xuICAgICAgcmlnaHQ6IDIwcHg7XG4gICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgZ2FwOiA4cHg7XG4gICAgICBwYWRkaW5nOiA4cHg7XG4gICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgYm9yZGVyLXJhZGl1czogNnB4O1xuICAgICAgYm94LXNoYWRvdzogMCAycHggNHB4IHJnYmEoMCwgMCwgMCwgMC4xKTtcbiAgICAgIHotaW5kZXg6IDI7XG5cbiAgICAgIC5tZXJtYWlkLWNvbnRyb2wtYnV0dG9uIHtcbiAgICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgIHdpZHRoOiAzMnB4O1xuICAgICAgICBoZWlnaHQ6IDMycHg7XG4gICAgICAgIHBhZGRpbmc6IDA7XG4gICAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgICAgY29sb3I6IHZhcigtLWRhcmspO1xuICAgICAgICBib3JkZXItcmFkaXVzOiA0cHg7XG4gICAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICAgICAgZm9udC1zaXplOiAxNnB4O1xuICAgICAgICBmb250LWZhbWlseTogdmFyKC0tYm9keUZvbnQpO1xuICAgICAgICB0cmFuc2l0aW9uOiBhbGwgMC4ycyBlYXNlO1xuXG4gICAgICAgICY6aG92ZXIge1xuICAgICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIH1cblxuICAgICAgICAmOmFjdGl2ZSB7XG4gICAgICAgICAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKDFweCk7XG4gICAgICAgIH1cblxuICAgICAgICAvLyBTdHlsZSB0aGUgcmVzZXQgYnV0dG9uIGRpZmZlcmVudGx5XG4gICAgICAgICY6bnRoLWNoaWxkKDIpIHtcbiAgICAgICAgICB3aWR0aDogYXV0bztcbiAgICAgICAgICBwYWRkaW5nOiAwIDEycHg7XG4gICAgICAgICAgZm9udC1zaXplOiAxNHB4O1xuICAgICAgICB9XG4gICAgICB9XG4gICAgfVxuICB9XG59XG4iXX0= */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://dangthobach.github.io/knowledge/index.xml"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Engineering-Trade-offs--Eventual-Consistency-in-Practice-og-image.webp"/><meta property="og:image:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Engineering-Trade-offs--Eventual-Consistency-in-Practice-og-image.webp"/><meta name="twitter:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Engineering-Trade-offs--Eventual-Consistency-in-Practice-og-image.webp"/><meta property="og:image:type" content="image/.webp"/></head><body data-slug="Notion-Knowledge/Note/Engineering-Trade-offs--Eventual-Consistency-in-Practice"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../..">Dang Tho Bach's Knowledge Base</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-329"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-329" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/">Notion Knowledge</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/Note/">Note</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>Engineering Trade offs  Eventual Consistency in Practice</a></div></nav><h1 class="article-title">Engineering Trade-offs- Eventual Consistency in Practice</h1><p show-comma="true" class="content-meta"><time datetime="2026-05-02T04:58:37.000Z">May 02, 2026</time><span>17 min read</span></p></div></div><article class="popover-hint"><p>Imagine a ride-sharing app that shows a driver’s location with a few seconds of delay. Now, imagine if the entire app refused to show anything until every backend service agreed on the perfect current location. No movement, no updates, just a spinning wheel.</p>
+<p>That’s what would happen if strong consistency were always preferred in a distributed system.</p>
+<p>Modern applications (social feeds, marketplaces, logistics platforms) don’t run on a single database or monolithic backend anymore. They run on event-driven, distributed systems. Services publish and react to events. Data flows asynchronously, and components update independently. This decoupling unlocks flexibility, scalability, and resilience. However, it also means consistency is no longer immediate or guaranteed.</p>
+<p>This is where eventual consistency becomes important.</p>
+<p>Some examples are as follows:</p>
+<ul>
+<li>
+<p>A payment system might mark a transaction as pending until multiple downstream services confirm it.</p>
+</li>
+<li>
+<p>A feed service might render posts while a background job deduplicates or reorders them later.</p>
+</li>
+<li>
+<p>A warehouse system might temporarily oversell a product, then issue a correction as inventory updates sync across regions.</p>
+</li>
+</ul>
+<p>These aren’t bugs but trade-offs.</p>
+<p>Eventual consistency lets each component do its job independently, then reconcile later. It prioritizes availability and responsiveness over immediate agreement.</p>
+<p>This article explores what it means to build with eventual consistency in an event-driven world. It breaks down how to deal with out-of-order events and how to design systems that can handle delays.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!XOHg!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Faa4b4949-70e8-4c9a-902d-70e179513bb2_2250x2624.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!XOHg!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Faa4b4949-70e8-4c9a-902d-70e179513bb2_2250x2624.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h2 id="what-is-eventual-consistency"><strong>What is Eventual Consistency?</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#what-is-eventual-consistency" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Picture a group of friends agreeing on where to meet for dinner over text. One friend suggests a coffee shop, another proposes a restaurant, and a third doesn’t see the messages until later. For a few minutes, everyone believes something different. But given enough time, messages get delivered, responses come in, and the group eventually aligns on a single place. The confusion doesn’t last forever. It just takes a few exchanges to settle.</p>
+<p>That’s eventual consistency in a nutshell.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!td8r!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Ff54a53fd-4921-4f2e-8d97-1d54249e3fac_1992x1216.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!td8r!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Ff54a53fd-4921-4f2e-8d97-1d54249e3fac_1992x1216.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>In distributed systems, eventual consistency means that different parts of the system (databases, caches, services) may hold different views of the data at any given moment. But if no new updates happen, the system guarantees that all parts will eventually converge to the same final state.</p>
+<p>Systems built around eventual consistency do not enforce strict ordering or synchronized updates across nodes. Instead, they tolerate short-term divergence. For example:</p>
+<ul>
+<li>
+<p>A product inventory might show “in stock” on one server and “out of stock” on another for a few seconds.</p>
+</li>
+<li>
+<p>A notification service might send an alert slightly before the related database record fully updates.</p>
+</li>
+</ul>
+<p>As updates propagate asynchronously, the differences resolve. Eventually, every healthy part of the system will reflect the same truth. The key concept to understand here is the window of inconsistency. During this window:</p>
+<ul>
+<li>
+<p>Reads might return stale or partial data.</p>
+</li>
+<li>
+<p>Different services might act on slightly different versions of the data..</p>
+</li>
+<li>
+<p>Clients might observe anomalies like “missing” or “outdated” information.</p>
+</li>
+</ul>
+<p>Understanding this window matters because it shapes how systems behave under real conditions. The wider the window, the greater the chance users will notice inconsistencies. Systems can shrink the window by tuning replication speeds, retry strategies, and consistency protocols, but shrinking it to zero demands strong consistency, and with it, a steep trade-off in availability and latency.</p>
+<p>A few important truths about eventual consistency:</p>
+<ul>
+<li>
+<p>It is not eventual correctness. Systems still need robust conflict resolution and reconciliation logic to ensure the final state makes sense.</p>
+</li>
+<li>
+<p>It does not guarantee order. Events may arrive in different orders at different nodes.</p>
+</li>
+<li>
+<p>It is not laziness. Choosing eventual consistency is an engineering decision based on speed, availability, and resilience trade-offs.</p>
+</li>
+</ul>
+<p>In practice, almost every large-scale, high-availability system leans into eventual consistency somewhere. Shopping carts, messaging apps, and document collaboration tools each allow short-lived inconsistencies because waiting for perfection would destroy usability.</p>
+<h2 id="event-driven-architecture-and-the-role-of-events"><strong>Event-Driven Architecture and the Role of Events</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#event-driven-architecture-and-the-role-of-events" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Every time a user taps a button, places an order, or uploads a photo, something changes inside a system. In traditional designs, the system often tries to immediately update all necessary records, locking resources and coordinating across services in real-time.</p>
+<p>Event-Driven Architecture (EDA) takes a different approach. It treats every meaningful change as an event: a standalone, immutable fact about something that happened.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!rOEC!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F9e68ad65-e891-499b-ba86-50be956e0ce3_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!rOEC!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F9e68ad65-e891-499b-ba86-50be956e0ce3_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Instead of tightly wiring actions together, services publish and react to events asynchronously.</p>
+<p>An event is simply a record: “User A placed Order 123”, “Driver B started Trip 456,” “Photo X was uploaded by User Y.” It captures what happened, not what to do next. This subtle difference changes everything. In an event-driven system:</p>
+<ul>
+<li>
+<p>One service produces an event when its local state changes.</p>
+</li>
+<li>
+<p>Other services consume that event to trigger their updates or workflows.</p>
+</li>
+<li>
+<p>Services communicate by sharing facts, not by commanding each other directly.</p>
+</li>
+</ul>
+<p>This decoupling brings enormous benefits in the following cases:</p>
+<ul>
+<li>
+<p><strong>Scalability:</strong> Producers and consumers scale independently.</p>
+</li>
+<li>
+<p><strong>Resilience:</strong> Failures are contained. If a consumer goes down, it can catch up later.</p>
+</li>
+<li>
+<p><strong>Flexibility:</strong> New consumers can subscribe to old events without needing the producer to change.</p>
+</li>
+</ul>
+<p>A social media platform provides a familiar example. When a user posts a photo:</p>
+<ul>
+<li>
+<p>The upload service emits a “Photo Uploaded” event.</p>
+</li>
+<li>
+<p>The newsfeed service consumes it to insert the post into followers’ timelines.</p>
+</li>
+<li>
+<p>The analytics service tracks the event to update engagement metrics.</p>
+</li>
+<li>
+<p>The notification service alerts friends.</p>
+</li>
+</ul>
+<p>These services don’t call each other directly. They react to a shared event asynchronously, each on its own timeline.</p>
+<p>This loose coupling, however, introduces new challenges. Events can:</p>
+<ul>
+<li>
+<p>Arrive out of order if network delays or retries shuffle delivery.</p>
+</li>
+<li>
+<p>Arrive late if a downstream service processes a backlog.</p>
+</li>
+<li>
+<p>It will be duplicated if a producer retries after a timeout.</p>
+</li>
+<li>
+<p>Disappear if the infrastructure fails without strong guarantees.</p>
+</li>
+</ul>
+<p>Systems built on EDA must plan for these realities.</p>
+<p>Consuming an event is not the same as executing a synchronous API call. Services must account for partial information, deal with inconsistencies, and design for resilience. Since each consumer interprets events independently, coordination across services becomes probabilistic, not absolute. This is where eventual consistency becomes essential. When updates flow through events, temporary inconsistency is inevitable.</p>
+<p>A good event-driven design treats events as the ultimate source of truth: immutable, timestamped, and reliable enough to rebuild state if needed. They also treat event flow as a first-class concern, with storage, monitoring, and failure recovery built in.</p>
+<h2 id="why-strong-consistency-is-hard-in-event-driven-systems"><strong>Why Strong Consistency is Hard in Event-Driven Systems?</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#why-strong-consistency-is-hard-in-event-driven-systems" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Strong consistency, where every read sees the latest write, sounds like a good goal for a system. In a perfect world, systems would behave like tightly managed filing cabinets: open the drawer, and the latest document is always neatly updated.</p>
+<p>Distributed systems don’t live in that world. They live in the real one, full of network delays, service crashes, retries, partitions, and unpredictable failures. Trying to enforce strong consistency in an event-driven architecture means fighting against the nature of distributed computing itself.</p>
+<p>Consider a simple case: a user submits a review for a product. The review service emits an event: “Review Created.” Downstream, the analytics service updates average ratings, and the user profile service logs the user’s contribution count. If one service updates immediately and another lags (or worse, processes events out of order), the system briefly reflects different realities.</p>
+<p>Strong consistency would demand that either all services complete successfully, or none do. In an asynchronous, event-driven world, that’s a tall order. The problem starts with the fallacies of distributed computing:</p>
+<ul>
+<li>
+<p>The network is reliable.</p>
+</li>
+<li>
+<p>Latency is zero.</p>
+</li>
+<li>
+<p>Bandwidth is infinite.</p>
+</li>
+<li>
+<p>The topology doesn’t change.</p>
+</li>
+</ul>
+<p>Each of these assumptions falls apart in practice. Networks lose packets, and services go down. Messages queue up unpredictably. An event that seems “sent” from one service can silently fail to reach another. When systems rely on asynchronous messaging, these uncertainties multiply.</p>
+<p>The CAP theorem formalizes this reality. It states that in any distributed system, it’s impossible to guarantee the following three properties at the same time:</p>
+<ul>
+<li>
+<p><strong>Consistency</strong> (every read sees the latest write)</p>
+</li>
+<li>
+<p><strong>Availability</strong> (every request receives a response, even if not the latest)</p>
+</li>
+<li>
+<p><strong>Partition Tolerance</strong> (the system continues despite network failures)</p>
+</li>
+</ul>
+<p><a href="https://substackcdn.com/image/fetch/$s_!Zmie!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fd67d92b6-bbc8-4ea4-ad81-cdd602e26fcf_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!Zmie!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fd67d92b6-bbc8-4ea4-ad81-cdd602e26fcf_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>When partitions happen, systems must choose between consistency and availability.</p>
+<p>In event-driven architectures, availability almost always wins. Users expect systems to stay responsive even during network hiccups. Waiting for every service to agree before showing any result would stall the system. Instead, systems opt to be available but temporarily inconsistent, trusting that eventual consistency will clean things up later.</p>
+<p>This isn’t to say strong consistency is useless. Some domains (financial transactions, critical state transitions) genuinely require it. But applying it everywhere, especially across loosely coupled, asynchronous services, leads to fragility rather than strength.</p>
+<h2 id="handling-out-of-order-events"><strong>Handling Out-of-Order Events</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#handling-out-of-order-events" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>In distributed systems, out-of-order events are not a rare glitch but an everyday fact.</p>
+<p>Therefore, systems must be designed for messier realities. Left unchecked, out-of-order events can create subtle bugs: updates overwriting each other incorrectly, stale views appearing to users, or invalid state transitions slipping through.</p>
+<p>Some strategies to handle out-of-order events are as follows:</p>
+<h3 id="event-versioning"><strong>Event Versioning</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#event-versioning" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Each event should carry a version or sequence number representing the state it describes.</p>
+<p>When a service processes an event, it compares the incoming version to the current version it holds:</p>
+<ul>
+<li>
+<p>If newer, apply the event.</p>
+</li>
+<li>
+<p>If older, discard or ignore it.</p>
+</li>
+<li>
+<p>If duplicate, treat idempotently.</p>
+</li>
+</ul>
+<p>Without versioning, a late-arriving event could overwrite a later event, undoing progress.</p>
+<p>Systems like DynamoDB and Couchbase often rely on internal versioning (using vector clocks or document revisions) to resolve update conflicts safely.</p>
+<h3 id="idempotent-event-handlers"><strong>Idempotent Event Handlers</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#idempotent-event-handlers" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Idempotency guarantees that processing the same event multiple times produces the same result.</p>
+<p>This principle protects systems when events retry, duplicate, or reorder. Techniques for achieving idempotency include:</p>
+<ul>
+<li>
+<p>Recording processed event IDs to skip duplicates.</p>
+</li>
+<li>
+<p>Structuring updates to be overwrite-safe, not additive (for example, “set order status to SHIPPED” instead of “increment shipment counter”).</p>
+</li>
+<li>
+<p>Using conditional writes or compare-and-swap operations at the storage layer.</p>
+</li>
+</ul>
+<h3 id="reordering-buffers"><strong>Reordering Buffers</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#reordering-buffers" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>When events arrive slightly out of order but with predictable patterns (such as sequential numbering), services can use reordering buffers:</p>
+<ul>
+<li>
+<p>Hold a small window of recent events.</p>
+</li>
+<li>
+<p>Reorder them based on version or timestamp.</p>
+</li>
+<li>
+<p>Process them once the sequence stabilizes.</p>
+</li>
+</ul>
+<p>For example, a messaging app might buffer incoming chat messages for a few seconds before rendering, ensuring that “Hello” appears before “How are you?” even if the packets crossed paths en route.</p>
+<p>The trick is tuning the buffer size and timeout carefully. Too small, and out-of-order events slip through. Too large, and latency balloons unnecessarily.</p>
+<h3 id="state-reconciliation-fixing-inconsistencies-later"><strong>State Reconciliation: Fixing Inconsistencies Later</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#state-reconciliation-fixing-inconsistencies-later" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Sometimes, no buffering or reordering strategy can guarantee a clean state at ingestion time. In these cases, systems build reconciliation jobs that periodically scan, compare, and fix inconsistencies:</p>
+<ul>
+<li>
+<p>Missing shipment updates? Re-sync from event logs.</p>
+</li>
+<li>
+<p>Out-of-sync inventory counts? Recompute aggregates from ground-truth records.</p>
+</li>
+</ul>
+<p>Event sourcing systems like those built on Kafka or EventStore often rely on replayable logs to rebuild the correct state from a messy sequence of events.</p>
+<p>Reconciliation shifts the mindset from “prevent all mistakes” to “detect and fix mistakes quickly.”</p>
+<h2 id="idempotency-and-duplicate-event-handling"><strong>Idempotency and Duplicate Event Handling</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#idempotency-and-duplicate-event-handling" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>In a perfect world, each event would deliver exactly once, arrive on time, and trigger exactly one reaction.</p>
+<p>However, in real systems, retries happen. Messages are duplicated, and services crash mid-process. Handling duplicates is not an edge case.</p>
+<p>This is where idempotency steps in.</p>
+<p>Idempotency means that processing the same event multiple times produces the same result as processing it once. No side effects multiply, no records corrupt, no counters inflate.</p>
+<h3 id="why-duplicates-happen-even-in-reliable-systems"><strong>Why Duplicates Happen Even in “Reliable” Systems?</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#why-duplicates-happen-even-in-reliable-systems" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>No messaging system fully guarantees perfect, exactly-once delivery in all conditions. Common patterns where duplicates sneak in are as follows:</p>
+<ul>
+<li>
+<p>A producer sends an event, but the network acknowledgment fails. It retries, unaware that the original succeeded.</p>
+</li>
+<li>
+<p>A consumer processes an event, but crashes before acknowledging completion. The system re-delivers.</p>
+</li>
+<li>
+<p>A broker like Kafka retries dispatch during leader election or client failover.</p>
+</li>
+</ul>
+<p>Protocols like at-least-once delivery prioritize availability: it’s better to risk duplicates than lose events entirely. The burden shifts to application logic to handle duplicates appropriately.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!iUNd!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F0b64660f-d5b5-4508-b020-c2915c2ea85a_1938x1282.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!iUNd!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F0b64660f-d5b5-4508-b020-c2915c2ea85a_1938x1282.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h3 id="core-strategies-for-achieving-idempotency"><strong>Core Strategies for Achieving Idempotency</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#core-strategies-for-achieving-idempotency" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Some key strategies can be used to achieve idempotency:</p>
+<h3 id="1---event-ids"><strong>1 - Event IDs</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1---event-ids" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Each event should carry a globally unique event ID:</p>
+<ul>
+<li>
+<p>Before processing, a consumer checks whether the event ID has been seen.</p>
+</li>
+<li>
+<p>If yes, it discards or safely no-ops.</p>
+</li>
+<li>
+<p>If no, it processes and records the ID as handled.</p>
+</li>
+</ul>
+<p>This approach forms the backbone of idempotent processing in systems like payment platforms, where recharging a user twice would be catastrophic.</p>
+<p>Key considerations are as follows:</p>
+<ul>
+<li>
+<p>The event ID must be truly unique across retries and failures.</p>
+</li>
+<li>
+<p>The lookup store for processed IDs must be consistent and performant, or risk becoming a bottleneck.</p>
+</li>
+</ul>
+<p><a href="https://substackcdn.com/image/fetch/$s_!RHRD!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F44894f6b-5ca5-46b7-9915-b8d348ead513_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!RHRD!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F44894f6b-5ca5-46b7-9915-b8d348ead513_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h3 id="2---deduplication-caches"><strong>2 - Deduplication Caches</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2---deduplication-caches" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Not every system can afford to track every event ID forever. Deduplication caches offer a middle ground:</p>
+<ul>
+<li>
+<p>Keep recent event IDs in an in-memory store (like Redis) with a time-to-live (TTL).</p>
+</li>
+<li>
+<p>Assume that true duplicates will show up within a reasonable retry window.</p>
+</li>
+</ul>
+<p>This balances correctness against resource cost. Missed rare duplicates outside the cache window are a risk, but an acceptable one for many non-critical systems (for example, analytics pipelines and feed generators).</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!eRq7!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F6b0275b5-1459-43d3-9937-0b78d9b39d6f_1938x1342.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!eRq7!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F6b0275b5-1459-43d3-9937-0b78d9b39d6f_1938x1342.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h3 id="3---natural-idempotency"><strong>3 - Natural Idempotency</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3---natural-idempotency" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Sometimes systems can achieve idempotency <strong>by design</strong>, without tracking event IDs:</p>
+<ul>
+<li>
+<p>Set order status to “SHIPPED” instead of incrementing a shipment counter.</p>
+</li>
+<li>
+<p>Save user profile updates as overwrites rather than applying deltas.</p>
+</li>
+<li>
+<p>Replace entire shopping cart contents, not just append to them.</p>
+</li>
+</ul>
+<p>When actions naturally overwrite state rather than mutating it incrementally, retries have no lasting negative effects.</p>
+<p>This approach shines in document-based stores like DynamoDB, Couchbase, or even S3 object storage.</p>
+<h3 id="4---transactional-writes"><strong>4 - Transactional Writes</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4---transactional-writes" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Databases that support atomic operations can combine “check if event ID exists” and “apply changes” into a single transactional write:</p>
+<ul>
+<li>
+<p>Insert event ID and update state atomically.</p>
+</li>
+<li>
+<p>If the ID already exists, the insert fails, and the state remains unchanged.</p>
+</li>
+</ul>
+<p>This eliminates race conditions and ensures exactly-once behavior inside the database boundary, even if the messaging layer outside remains messy</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!3I6j!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F87114b9b-c1dd-4041-b93f-0b26d6a36232_2592x1656.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!3I6j!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F87114b9b-c1dd-4041-b93f-0b26d6a36232_2592x1656.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h2 id="dead-letter-queues-dlqs"><strong>Dead Letter Queues (DLQs)</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#dead-letter-queues-dlqs" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Every event-driven system eventually runs into a message it cannot process. Some common causes could be:</p>
+<ul>
+<li>
+<p>Malformed payload</p>
+</li>
+<li>
+<p>A dependent service is down.</p>
+</li>
+<li>
+<p>The business logic changes, and older events no longer fit.</p>
+</li>
+</ul>
+<p>When this happens, systems have a choice: either keep retrying forever, risking resource exhaustion and backlog, or isolate the problematic event and move forward. This is the role of a Dead Letter Queue (DLQ).</p>
+<p>A Dead Letter Queue is a secondary queue used to hold events that a system has repeatedly failed to process. It acts as a safety valve, separating poison events from healthy ones to preserve overall system flow.</p>
+<p>Without DLQs, a single bad event can stall entire processing pipelines by retrying endlessly, burning CPU, piling up latencies, and masking real throughput.</p>
+<h3 id="how-dlqs-work"><strong>How DLQs Work</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#how-dlqs-work" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Here’s a step-by-step process:</p>
+<ul>
+<li>
+<p>An event enters a consumer or processor.</p>
+</li>
+<li>
+<p>Processing fails due to invalid data, missing dependencies, or internal errors.</p>
+</li>
+<li>
+<p>The system retries processing, either immediately or after a delay.</p>
+</li>
+<li>
+<p>After a configurable number of retries (or elapsed time), the system gives up.</p>
+</li>
+<li>
+<p>Instead of discarding the event silently, it is moved to the Dead Letter Queue for further inspection.</p>
+</li>
+</ul>
+<p>DLQs preserve valuable information about failed events, such as the payload that caused the failure, the error thrown, and the responsible system.</p>
+<h2 id="common-mistakes-and-anti-patterns-in-eventual-consistency"><strong>Common Mistakes and Anti-Patterns in Eventual Consistency</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#common-mistakes-and-anti-patterns-in-eventual-consistency" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Here are some of the most common traps, and how better designs sidestep them.</p>
+<h3 id="1---over-retrying-without-dead-lettering"><strong>1 - Over-Retrying Without Dead-Lettering</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1---over-retrying-without-dead-lettering" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>One common mistake in event-driven systems is blindly retrying failed events indefinitely without isolating the ones that will never succeed, often called “poison messages.”</p>
+<p>This approach clogs processing queues, blocks healthy events from progressing, and causes latency to spike as the system repeatedly burns resources on the same failures. Over time, these retries flood processing threads, starve legitimate workloads, and degrade overall throughput.</p>
+<p>A better approach is to implement bounded retries with exponential backoff, and redirect persistently failing events into a dead-letter queue (DLQ) after a configured threshold. The DLQ acts as a quarantine area for problematic events, allowing systems to move forward while giving operators the ability to inspect and resolve the underlying issue manually.</p>
+<h3 id="2---tight-coupling"><strong>2 - Tight Coupling</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2---tight-coupling" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Another common pitfall in event-driven architecture is designing services that cannot process events independently, relying instead on immediately invoking other services during event handling.</p>
+<p>This pattern quietly reintroduces tight, synchronous coupling: the very thing event-driven systems are meant to avoid. When one service depends on a downstream call to proceed, the whole chain becomes fragile. A single slowdown or failure propagates upstream, turning isolated hiccups into cascading outages. In the process, the system loses most of the resilience and scalability that event-driven design promises.</p>
+<p>The better alternative is to build services that consume events autonomously. Each service should be able to process an event, update its local state, and move forward without waiting on others. When coordination is truly necessary, use established patterns like the outbox pattern, sagas, or compensating transactions to manage cross-service workflows asynchronously.</p>
+<p>These approaches preserve the independence of each component while still supporting distributed workflows.</p>
+<h3 id="3---assuming-events-always-arrive-in-order"><strong>3 - Assuming Events Always Arrive in Order</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3---assuming-events-always-arrive-in-order" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>A frequent and subtle mistake in event-driven systems is building logic that assumes events will always arrive in the exact order they were produced.</p>
+<p>This assumption rarely holds in real-world distributed environments.</p>
+<p>Robust systems don’t rely on perfect order. Instead, they are designed to tolerate out-of-order events. This means using event versions or timestamps to determine whether a given update should be applied or safely discarded as stale. For cases where ordering matters (such as financial transactions or user state transitions), engineers can introduce reordering buffers or periodic reconciliation jobs to restore correct sequences.</p>
+<h3 id="4---ignoring-idempotency"><strong>4 - Ignoring Idempotency</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4---ignoring-idempotency" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>A critical mistake in event-driven systems is writing event handlers that blindly mutate state, assuming each event will only ever arrive once.</p>
+<p>In practice, duplicates are inevitable.</p>
+<p>Messages get retried, consumers crash mid-processing, and brokers re-deliver during failover. Without safeguards, these retries can wreak havoc: double shipments, duplicate charges, inflated counters, and broken aggregates are all common symptoms of non-idempotent handling.</p>
+<p>The solution is to design every handler to be idempotent from the start. This involves tracking event IDs to detect and skip duplicates, overwriting state instead of incrementing, and using conditional writes or transactions to enforce consistency under concurrent access.</p>
+<p>In event-driven systems, idempotency is a baseline requirement for correctness and resilience in the face of real-world uncertainty.</p>
+<h2 id="summary"><strong>Summary</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#summary" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>In this article, we’ve looked at eventual consistency in event-driven architecture in detail.</p>
+<p>Here are the key learning points in brief:</p>
+<ul>
+<li>
+<p>Eventual consistency is a deliberate design choice that enables distributed systems to remain available and resilient, even when components temporarily disagree.</p>
+</li>
+<li>
+<p>In event-driven systems, eventual consistency means that all services will converge on the same state over time, even if they observe or process events at different moments.</p>
+</li>
+<li>
+<p>Events capture changes in system state and enable loosely coupled services to react asynchronously, but this flexibility comes with the challenge of handling delays, duplicates, and disorder.</p>
+</li>
+<li>
+<p>Strong consistency is difficult to enforce in distributed, asynchronous systems due to inherent network instability, coordination costs, and CAP theorem trade-offs; favoring availability and autonomy is often more practical.</p>
+</li>
+<li>
+<p>Out-of-order events are common due to retries, network delays, and partitioned processing, so systems must use techniques like versioning, timestamps, idempotent handlers, and reordering buffers to maintain correctness.</p>
+</li>
+<li>
+<p>Idempotency is essential in event handling to ensure that duplicate events do not cause side effects or state corruption, and must be baked into handler logic using event IDs, safe updates, and transactional guarantees.</p>
+</li>
+<li>
+<p>Dead-letter queues protect pipelines by isolating unprocessable events after retries fail, allowing healthy traffic to continue and giving operators a window into systemic issues through inspection and alerting.</p>
+</li>
+<li>
+<p>Many failures in event-driven consistency stem from design anti-patterns, such as uncontrolled retries, tight service coupling, assumptions about event order, non-idempotent handlers, and lack of durable storage, which undermine system robustness.</p>
+</li>
+</ul></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-142" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#what-is-eventual-consistency" data-for="what-is-eventual-consistency">What is Eventual Consistency?</a></li><li class="depth-0"><a href="#event-driven-architecture-and-the-role-of-events" data-for="event-driven-architecture-and-the-role-of-events">Event-Driven Architecture and the Role of Events</a></li><li class="depth-0"><a href="#why-strong-consistency-is-hard-in-event-driven-systems" data-for="why-strong-consistency-is-hard-in-event-driven-systems">Why Strong Consistency is Hard in Event-Driven Systems?</a></li><li class="depth-0"><a href="#handling-out-of-order-events" data-for="handling-out-of-order-events">Handling Out-of-Order Events</a></li><li class="depth-1"><a href="#event-versioning" data-for="event-versioning">Event Versioning</a></li><li class="depth-1"><a href="#idempotent-event-handlers" data-for="idempotent-event-handlers">Idempotent Event Handlers</a></li><li class="depth-1"><a href="#reordering-buffers" data-for="reordering-buffers">Reordering Buffers</a></li><li class="depth-1"><a href="#state-reconciliation-fixing-inconsistencies-later" data-for="state-reconciliation-fixing-inconsistencies-later">State Reconciliation: Fixing Inconsistencies Later</a></li><li class="depth-0"><a href="#idempotency-and-duplicate-event-handling" data-for="idempotency-and-duplicate-event-handling">Idempotency and Duplicate Event Handling</a></li><li class="depth-1"><a href="#why-duplicates-happen-even-in-reliable-systems" data-for="why-duplicates-happen-even-in-reliable-systems">Why Duplicates Happen Even in “Reliable” Systems?</a></li><li class="depth-1"><a href="#core-strategies-for-achieving-idempotency" data-for="core-strategies-for-achieving-idempotency">Core Strategies for Achieving Idempotency</a></li><li class="depth-1"><a href="#1---event-ids" data-for="1---event-ids">1 - Event IDs</a></li><li class="depth-1"><a href="#2---deduplication-caches" data-for="2---deduplication-caches">2 - Deduplication Caches</a></li><li class="depth-1"><a href="#3---natural-idempotency" data-for="3---natural-idempotency">3 - Natural Idempotency</a></li><li class="depth-1"><a href="#4---transactional-writes" data-for="4---transactional-writes">4 - Transactional Writes</a></li><li class="depth-0"><a href="#dead-letter-queues-dlqs" data-for="dead-letter-queues-dlqs">Dead Letter Queues (DLQs)</a></li><li class="depth-1"><a href="#how-dlqs-work" data-for="how-dlqs-work">How DLQs Work</a></li><li class="depth-0"><a href="#common-mistakes-and-anti-patterns-in-eventual-consistency" data-for="common-mistakes-and-anti-patterns-in-eventual-consistency">Common Mistakes and Anti-Patterns in Eventual Consistency</a></li><li class="depth-1"><a href="#1---over-retrying-without-dead-lettering" data-for="1---over-retrying-without-dead-lettering">1 - Over-Retrying Without Dead-Lettering</a></li><li class="depth-1"><a href="#2---tight-coupling" data-for="2---tight-coupling">2 - Tight Coupling</a></li><li class="depth-1"><a href="#3---assuming-events-always-arrive-in-order" data-for="3---assuming-events-always-arrive-in-order">3 - Assuming Events Always Arrive in Order</a></li><li class="depth-1"><a href="#4---ignoring-idempotency" data-for="4---ignoring-idempotency">4 - Ignoring Idempotency</a></li><li class="depth-0"><a href="#summary" data-for="summary">Summary</a></li><li class="overflow-end"></li></ul></div><div class="backlinks"><h3>Backlinks</h3><ul id="list-2" class="overflow"><li><a href="../../Notion-Knowledge/Note" class="internal">Note</a></li><li><a href="../../_moc/MOC-Distributed-Systems" class="internal">MOC-Distributed-Systems</a></li><li><a href="../../_moc/MOC-Reading-List" class="internal">MOC-Reading-List</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://dangthobach.github.io/">Back to Portfolio</a></li><li><a href="https://github.com/dangthobach">GitHub</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../postscript.js" type="module" data-persist="true"></script></html>

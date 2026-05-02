@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>PDMS-Architecture-Overview</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="Dang Tho Bach's Knowledge Base"/><meta property="og:title" content="PDMS-Architecture-Overview"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="PDMS-Architecture-Overview"/><meta name="twitter:description" content="🏗️ PDMS Architecture Overview TL;DR: Kiến trúc microservices cho Physical Document Management System tại VPBank."/><meta property="og:description" content="🏗️ PDMS Architecture Overview TL;DR: Kiến trúc microservices cho Physical Document Management System tại VPBank."/><meta property="og:image:alt" content="🏗️ PDMS Architecture Overview TL;DR: Kiến trúc microservices cho Physical Document Management System tại VPBank."/><meta property="twitter:domain" content="dangthobach.github.io/knowledge"/><meta property="og:url" content="https://dangthobach.github.io/knowledge/Microservices-Patterns/PDMS-Architecture-Overview"/><meta property="twitter:url" content="https://dangthobach.github.io/knowledge/Microservices-Patterns/PDMS-Architecture-Overview"/><link rel="icon" href="../static/icon.png"/><meta name="description" content="🏗️ PDMS Architecture Overview TL;DR: Kiến trúc microservices cho Physical Document Management System tại VPBank."/><meta name="generator" content="Quartz"/><link href="../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiL2hvbWUvcnVubmVyL3dvcmsvZGFuZ3Rob2JhY2guZ2l0aHViLmlvL2Rhbmd0aG9iYWNoLmdpdGh1Yi5pby9xdWFydHovcXVhcnR6L2NvbXBvbmVudHMvc3R5bGVzIiwic291cmNlcyI6WyJtZXJtYWlkLmlubGluZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFHRjtFQUNFOzs7QUFLRjtFQUNFO0VBQ0E7OztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTs7QUFJRjtFQUNFO0VBQ0E7RUFDQSIsInNvdXJjZXNDb250ZW50IjpbIi5leHBhbmQtYnV0dG9uIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbG9hdDogcmlnaHQ7XG4gIHBhZGRpbmc6IDAuNHJlbTtcbiAgbWFyZ2luOiAwLjNyZW07XG4gIHJpZ2h0OiAwOyAvLyBOT1RFOiByaWdodCB3aWxsIGJlIHNldCBpbiBtZXJtYWlkLmlubGluZS50c1xuICBjb2xvcjogdmFyKC0tZ3JheSk7XG4gIGJvcmRlci1jb2xvcjogdmFyKC0tZGFyayk7XG4gIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgYm9yZGVyOiAxcHggc29saWQ7XG4gIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgb3BhY2l0eTogMDtcbiAgdHJhbnNpdGlvbjogMC4ycztcblxuICAmID4gc3ZnIHtcbiAgICBmaWxsOiB2YXIoLS1saWdodCk7XG4gICAgZmlsdGVyOiBjb250cmFzdCgwLjMpO1xuICB9XG5cbiAgJjpob3ZlciB7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIGJvcmRlci1jb2xvcjogdmFyKC0tc2Vjb25kYXJ5KTtcbiAgfVxuXG4gICY6Zm9jdXMge1xuICAgIG91dGxpbmU6IDA7XG4gIH1cbn1cblxucHJlIHtcbiAgJjpob3ZlciA+IC5leHBhbmQtYnV0dG9uIHtcbiAgICBvcGFjaXR5OiAxO1xuICAgIHRyYW5zaXRpb246IDAuMnM7XG4gIH1cbn1cblxuI21lcm1haWQtY29udGFpbmVyIHtcbiAgcG9zaXRpb246IGZpeGVkO1xuICBjb250YWluOiBsYXlvdXQ7XG4gIHotaW5kZXg6IDk5OTtcbiAgbGVmdDogMDtcbiAgdG9wOiAwO1xuICB3aWR0aDogMTAwdnc7XG4gIGhlaWdodDogMTAwdmg7XG4gIG92ZXJmbG93OiBoaWRkZW47XG4gIGRpc3BsYXk6IG5vbmU7XG4gIGJhY2tkcm9wLWZpbHRlcjogYmx1cig0cHgpO1xuICBiYWNrZ3JvdW5kOiByZ2JhKDAsIDAsIDAsIDAuNSk7XG5cbiAgJi5hY3RpdmUge1xuICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgfVxuXG4gICYgPiAjbWVybWFpZC1zcGFjZSB7XG4gICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gICAgYm9yZGVyLXJhZGl1czogNXB4O1xuICAgIHBvc2l0aW9uOiBmaXhlZDtcbiAgICB0b3A6IDUwJTtcbiAgICBsZWZ0OiA1MCU7XG4gICAgdHJhbnNmb3JtOiB0cmFuc2xhdGUoLTUwJSwgLTUwJSk7XG4gICAgaGVpZ2h0OiA4MHZoO1xuICAgIHdpZHRoOiA4MHZ3O1xuICAgIG92ZXJmbG93OiBoaWRkZW47XG5cbiAgICAmID4gLm1lcm1haWQtY29udGVudCB7XG4gICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgICB0cmFuc2Zvcm0tb3JpZ2luOiAwIDA7XG4gICAgICB0cmFuc2l0aW9uOiB0cmFuc2Zvcm0gMC4xcyBlYXNlO1xuICAgICAgb3ZlcmZsb3c6IHZpc2libGU7XG4gICAgICBtaW4taGVpZ2h0OiAyMDBweDtcbiAgICAgIG1pbi13aWR0aDogMjAwcHg7XG5cbiAgICAgIHByZSB7XG4gICAgICAgIG1hcmdpbjogMDtcbiAgICAgICAgYm9yZGVyOiBub25lO1xuICAgICAgfVxuXG4gICAgICBzdmcge1xuICAgICAgICBtYXgtd2lkdGg6IG5vbmU7XG4gICAgICAgIGhlaWdodDogYXV0bztcbiAgICAgIH1cbiAgICB9XG5cbiAgICAmID4gLm1lcm1haWQtY29udHJvbHMge1xuICAgICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgICAgYm90dG9tOiAyMHB4O1xuICAgICAgcmlnaHQ6IDIwcHg7XG4gICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgZ2FwOiA4cHg7XG4gICAgICBwYWRkaW5nOiA4cHg7XG4gICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgYm9yZGVyLXJhZGl1czogNnB4O1xuICAgICAgYm94LXNoYWRvdzogMCAycHggNHB4IHJnYmEoMCwgMCwgMCwgMC4xKTtcbiAgICAgIHotaW5kZXg6IDI7XG5cbiAgICAgIC5tZXJtYWlkLWNvbnRyb2wtYnV0dG9uIHtcbiAgICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgIHdpZHRoOiAzMnB4O1xuICAgICAgICBoZWlnaHQ6IDMycHg7XG4gICAgICAgIHBhZGRpbmc6IDA7XG4gICAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgICAgY29sb3I6IHZhcigtLWRhcmspO1xuICAgICAgICBib3JkZXItcmFkaXVzOiA0cHg7XG4gICAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICAgICAgZm9udC1zaXplOiAxNnB4O1xuICAgICAgICBmb250LWZhbWlseTogdmFyKC0tYm9keUZvbnQpO1xuICAgICAgICB0cmFuc2l0aW9uOiBhbGwgMC4ycyBlYXNlO1xuXG4gICAgICAgICY6aG92ZXIge1xuICAgICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIH1cblxuICAgICAgICAmOmFjdGl2ZSB7XG4gICAgICAgICAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKDFweCk7XG4gICAgICAgIH1cblxuICAgICAgICAvLyBTdHlsZSB0aGUgcmVzZXQgYnV0dG9uIGRpZmZlcmVudGx5XG4gICAgICAgICY6bnRoLWNoaWxkKDIpIHtcbiAgICAgICAgICB3aWR0aDogYXV0bztcbiAgICAgICAgICBwYWRkaW5nOiAwIDEycHg7XG4gICAgICAgICAgZm9udC1zaXplOiAxNHB4O1xuICAgICAgICB9XG4gICAgICB9XG4gICAgfVxuICB9XG59XG4iXX0= */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://dangthobach.github.io/knowledge/index.xml"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image" content="https://dangthobach.github.io/knowledge/Microservices-Patterns/PDMS-Architecture-Overview-og-image.webp"/><meta property="og:image:url" content="https://dangthobach.github.io/knowledge/Microservices-Patterns/PDMS-Architecture-Overview-og-image.webp"/><meta name="twitter:image" content="https://dangthobach.github.io/knowledge/Microservices-Patterns/PDMS-Architecture-Overview-og-image.webp"/><meta property="og:image:type" content="image/.webp"/></head><body data-slug="Microservices-Patterns/PDMS-Architecture-Overview"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="..">Dang Tho Bach's Knowledge Base</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-206"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-206" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../Microservices-Patterns/">Microservices Patterns</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>PDMS Architecture Overview</a></div></nav><h1 class="article-title">PDMS-Architecture-Overview</h1><p show-comma="true" class="content-meta"><time datetime="2026-04-15T00:00:00.000Z">Apr 15, 2026</time><span>8 min read</span></p><ul class="tags"><li><a href="../tags/pdms" class="internal tag-link">pdms</a></li><li><a href="../tags/vpbank" class="internal tag-link">vpbank</a></li><li><a href="../tags/architecture" class="internal tag-link">architecture</a></li><li><a href="../tags/microservices" class="internal tag-link">microservices</a></li><li><a href="../tags/system-design" class="internal tag-link">system-design</a></li></ul></div></div><article class="popover-hint"><h1 id="️-pdms-architecture-overview">🏗️ PDMS Architecture Overview<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#️-pdms-architecture-overview" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<blockquote>
+<p><strong>TL;DR:</strong> Kiến trúc microservices cho Physical Document Management System tại VPBank. 7 services chính, phân quyền fine-grained qua IAM service, cross-service data consistency qua Kafka Domain Events (không dùng Debezium CDC), xuất Excel hàng triệu bản ghi qua SAX streaming.</p>
+</blockquote>
+<hr/>
+<h2 id="️-service-map">🗺️ Service Map<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#️-service-map" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><code>portal-service (React SPA)
+        │ HTTPS + JWT (Keycloak)
+        ▼
+gateway-service (Spring Cloud Gateway + Resilience4J)
+        │  forward X-User-Sub (keycloak sub UUID)
+   ┌────┴──────────────────────┬──────────────────┐
+   ▼                           ▼                  ▼
+iam-service              pdms-service        integration-service
+(AuthZ, Dept, Role)      (Core domain)       (Third-party)
+   │                           │
+   │ Kafka domain events        │ Kafka events
+   └──────────┬────────────────┘
+              │
+     ┌────────┴────────┐
+     ▼                 ▼
+warehouse-service   report-service
+(Kho master)        (Báo cáo, Excel)
+</code></pre>
+<p><strong>Databases — hoàn toàn độc lập:</strong></p>
+<ul>
+<li><code>iam_db</code> — PostgreSQL riêng của IAM service</li>
+<li><code>pdms_db</code> — PostgreSQL riêng của PDMS service</li>
+<li><code>warehouse_db</code> — PostgreSQL riêng của Warehouse service</li>
+<li><code>report_db</code> — PostgreSQL riêng của Report service</li>
+<li><code>keycloak_db</code> — Database của Keycloak (external SSO, enterprise-wide, không thuộc PDMS)</li>
+</ul>
+<hr/>
+<h2 id="-service-responsibilities">📦 Service Responsibilities<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-service-responsibilities" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="gateway-service">gateway-service<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#gateway-service" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>Tiếp nhận toàn bộ traffic, route đến service phù hợp</li>
+<li>JWT validation qua Keycloak JWKS endpoint (verify signature only — stateless)</li>
+<li>Resilience4J: Circuit Breaker + TimeLimiter per route</li>
+<li>Rate limiting per user (Redis-backed)</li>
+<li><strong>Header propagation:</strong> chỉ forward <code>X-User-Sub</code> (Keycloak <code>sub</code> UUID) và <code>X-Roles</code> (nếu nhỏ)</li>
+<li><strong>Không forward <code>X-Dept-Id</code></strong> — dept list quá lớn (1000 depts, user có thể có access nhiều dept) và đây là authorization logic thuộc về service, không thuộc gateway</li>
+</ul>
+<blockquote>
+<p><strong>Tại sao không forward dept IDs?</strong> Xem <a href="#gateway--t%E1%BA%A1i-sao-kh%C3%B4ng-forward-dept-ids" class="internal alias">Gateway — Tại sao không forward dept IDs</a></p>
+</blockquote>
+<h3 id="iam-service">iam-service<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#iam-service" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li><strong>Single source of truth</strong> cho phân quyền toàn hệ thống PDMS</li>
+<li>Mapping <code>keycloak_sub</code> (UUID) → internal <code>user_id</code> + permission data</li>
+<li>Entity chính: <code>user</code> (keycloak mapping), <code>department</code>, <code>role</code>, <code>team</code>, <code>permission</code>, <code>user_dept_access</code>, <code>user_kho_access</code>, <code>kho_snapshot</code></li>
+<li><code>kho_snapshot</code> là bản copy từ warehouse-service (sync qua Kafka)</li>
+<li>Publish Kafka events khi permission thay đổi: <code>iam.permission-changed</code></li>
+<li>Expose API: <code>/authz/permissions/{keycloakSub}</code> (batch load toàn bộ permission)</li>
+</ul>
+<h3 id="pdms-service">pdms-service<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#pdms-service" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>Domain core: <code>case_pdm</code>, <code>de_nghi_ban_giao</code>, <code>muon_tra</code>, <code>thung</code>, <code>tap</code>, <code>gia_han</code></li>
+<li>Cần <code>department</code>, <code>kho</code>, <code>team</code> để filter data + kiểm tra phân quyền</li>
+<li>Authorization strategy: <strong>local <code>authz_local</code> table</strong> được sync từ IAM qua Kafka events</li>
+<li>Không dùng Debezium/CDC — IAM service chủ động publish khi có thay đổi</li>
+<li>Permission check khi write → query <code>authz_local</code> table (luôn fresh nhờ event-driven)</li>
+<li>Transactional Outbox pattern cho mọi domain event ra Kafka</li>
+</ul>
+<h3 id="warehouse-service">warehouse-service<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#warehouse-service" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>Quản lý kho vật lý (địa điểm, sức chứa, trạng thái)</li>
+<li>Database riêng <code>warehouse_db</code>, không share với IAM</li>
+<li>Publish <code>warehouse.kho-changed</code> khi có thay đổi kho</li>
+<li>IAM service consume event, cập nhật <code>kho_snapshot</code> trong <code>iam_db</code></li>
+</ul>
+<h3 id="report-service">report-service<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#report-service" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>Subscribe Kafka events từ pdms-service, build read model local trong <code>report_db</code></li>
+<li>Xuất Excel hàng triệu bản ghi qua Apache POI SAX streaming</li>
+<li>Filter theo phân quyền: query <code>authz_local</code> table (cũng được sync từ IAM events)</li>
+<li>Streaming response qua <code>StreamingResponseBody</code> + keyset pagination</li>
+</ul>
+<h3 id="integration-service">integration-service<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#integration-service" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>Outbound integration với third-party (CoreBanking, DMS external)</li>
+<li>Adapter pattern, retry + DLQ qua Kafka</li>
+</ul>
+<h3 id="portal-service">portal-service<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#portal-service" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>React SPA, giao tiếp duy nhất qua gateway-service</li>
+<li>Login qua Keycloak SSO → nhận JWT → mọi request kèm Bearer token</li>
+<li>Gateway validate JWT, forward <code>X-User-Sub</code> xuống services</li>
+</ul>
+<hr/>
+<h2 id="-keycloak--external-sso">🔑 Keycloak — External SSO<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-keycloak--external-sso" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Keycloak là hệ thống <strong>enterprise-wide</strong>, dùng chung cho nhiều app, có database riêng hoàn toàn tách biệt khỏi PDMS.</p>
+<pre><code>┌─────────────────────────────────────────────────┐
+│  Enterprise Keycloak (external)                  │
+│  keycloak_db — database riêng                    │
+│  Quản lý: users, credentials, sessions, realms  │
+│  Không thuộc PDMS — nhiều app khác cũng dùng    │
+└──────────────────┬──────────────────────────────┘
+                   │ JWKS endpoint (public keys)
+                   │ OIDC discovery
+                   ▼
+          gateway-service
+          (verify JWT signature — stateless)
+                   │
+                   │ X-User-Sub: &quot;a1b2c3d4-...&quot; (Keycloak UUID)
+                   ▼
+          iam-service
+          (lookup internal user by keycloak_sub)
+          iam_db.users: { keycloak_sub, internal_user_id, ... }
+</code></pre>
+<p><strong>IAM service là bridge giữa Keycloak identity và PDMS authorization:</strong></p>
+<ul>
+<li>Keycloak cấp JWT với <code>sub</code> (UUID) + basic roles</li>
+<li>IAM service giữ mapping <code>keycloak_sub → internal_user_id → dept/kho/team permissions</code></li>
+<li>Services downstream dùng <code>keycloak_sub</code> làm lookup key vào <code>authz_local</code> table</li>
+</ul>
+<hr/>
+<h2 id="-gateway--tại-sao-không-forward-dept-ids">🔐 Gateway — Tại sao không forward dept IDs<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-gateway--tại-sao-không-forward-dept-ids" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="vấn-đề-với-x-dept-id-header">Vấn đề với X-Dept-Id header<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#vấn-đề-với-x-dept-id-header" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>Scenario: User quản lý 150 departments trong 1000 dept system
+→ Header value: &quot;10,23,45,67,89,102,...&quot; (150 IDs)
+→ HTTP header size: ~1KB — về mặt kỹ thuật ok
+→ Nhưng sai về mặt thiết kế:
+</code></pre>
+<p><strong>3 lý do không forward dept IDs từ gateway:</strong></p>
+<ol>
+<li>
+<p><strong>Gateway không có ngữ nghĩa authorization</strong> — Gateway không biết dept nào applicable cho resource nào. Một request <code>GET /de-nghi?khoId=5</code> — gateway không biết đây cần check dept hay kho. Đó là logic của service.</p>
+</li>
+<li>
+<p><strong>Stale data risk</strong> — JWT được issue lúc login, có thể TTL 15 phút đến 1 giờ. Nếu permission bị revoke trong thời gian đó, header vẫn chứa dept cũ → security gap.</p>
+</li>
+<li>
+<p><strong>Coupling gateway với IAM schema</strong> — Mỗi khi thay đổi permission model (thêm resource type mới), gateway cần update. Vi phạm single responsibility.</p>
+</li>
+</ol>
+<p><strong>Giải pháp đúng:</strong></p>
+<pre><code>Gateway chỉ forward:
+  X-User-Sub: &quot;a1b2c3d4-uuid&quot;     ← Keycloak subject (immutable)
+  X-Token-Exp: &quot;1713000000&quot;       ← Token expiry (optional, debugging)
+
+Services tự resolve permission:
+  authz_local table (event-driven sync từ IAM)
+  → SELECT dept_id FROM authz_local.user_dept_access
+    WHERE user_sub = 'a1b2c3d4-uuid' AND is_active = true
+  → join với business data → filter kết quả
+</code></pre>
+<hr/>
+<h2 id="-authorization-architecture">🔐 Authorization Architecture<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-authorization-architecture" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="dept-split--1000-departments">Dept split — 1000 departments<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#dept-split--1000-departments" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>iam_db.department (1000 records):
+  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
+  │ ~800 SHARED     │  │ ~100 CHUNG_TU   │  │ ~100 TSDB       │
+  │ Dùng chung cả   │  │ Riêng Chứng từ  │  │ Riêng TSDB +    │
+  │ PDMS + TSDB     │  │ (PDMS domain)   │  │ Warehouse       │
+  └─────────────────┘  └─────────────────┘  └─────────────────┘
+
+Filter trong PDMS query:
+  dept_type IN ('SHARED', 'CHUNG_TU')
+
+Filter trong TSDB/Warehouse query:
+  dept_type IN ('SHARED', 'TSDB')
+</code></pre>
+<h3 id="luồng-xác-thực--phân-quyền-corrected">Luồng xác thực + phân quyền (corrected)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#luồng-xác-thực--phân-quyền-corrected" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>1. User login → Keycloak → JWT { sub: &quot;uuid&quot;, roles: [&quot;PDMS_MAKER&quot;] }
+2. Client gửi request kèm Bearer token
+3. Gateway:
+   a. Verify JWT signature (Keycloak JWKS) — stateless, không call Keycloak
+   b. Extract sub, forward X-User-Sub: &quot;uuid&quot;
+   c. Route đến service
+4. PDMS Service nhận request:
+   a. keycloakSub = header[&quot;X-User-Sub&quot;]
+   b. Query authz_local (local table, no network):
+      SELECT dept_id FROM authz_local.user_dept_access
+      WHERE user_sub = :keycloakSub AND is_active = true
+        AND dept_type IN ('SHARED', 'CHUNG_TU')
+   c. JOIN với business data → filtered result
+</code></pre>
+<hr/>
+<h2 id="-cross-service-authz-sync--lựa-chọn-tối-ưu-cho-pdms">🔄 Cross-Service AuthZ Sync — Lựa chọn tối ưu cho PDMS<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-cross-service-authz-sync--lựa-chọn-tối-ưu-cho-pdms" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<blockquote>
+<p>Chi tiết phân tích tại <a href="../Microservices-Patterns/PDMS-AuthZ-Sync-Strategy-Comparison" class="internal" data-slug="Microservices-Patterns/PDMS-AuthZ-Sync-Strategy-Comparison">PDMS-AuthZ-Sync-Strategy-Comparison</a></p>
+</blockquote>
+<p>PDMS không dùng Debezium CDC. Lý do và lựa chọn thay thế:</p>
+<h3 id="strategy-được-chọn-kafka-domain-events-không-cần-debezium">Strategy được chọn: Kafka Domain Events (không cần Debezium)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#strategy-được-chọn-kafka-domain-events-không-cần-debezium" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>IAM Service:
+  Khi permission thay đổi (admin gán dept cho user):
+  → BEGIN TRANSACTION:
+      UPDATE user_dept_access SET ...
+      INSERT INTO outbox { event_type: 'USER_DEPT_ACCESS_CHANGED', payload: {...} }
+     COMMIT
+  → Outbox publisher → Kafka: iam.permission-changed
+
+PDMS Service:
+  @KafkaListener(&quot;iam.permission-changed&quot;)
+  → UPSERT authz_local.user_dept_access
+
+Initial sync khi deploy:
+  IAM expose: GET /internal/authz/bulk-export
+  → PDMS gọi 1 lần khi startup để populate authz_local
+</code></pre>
+<p><strong>Tại sao không Debezium:</strong></p>
+<ul>
+<li>Không cần Kafka Connect cluster</li>
+<li>IAM service kiểm soát event format (không expose raw DB schema)</li>
+<li>Đơn giản hơn để maintain và debug</li>
+</ul>
+<hr/>
+<h2 id="-data-flow">🔄 Data Flow<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-data-flow" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="1-write-flow">1. Write flow<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-write-flow" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>Client → Gateway (verify JWT, forward X-User-Sub)
+       → PDMS Service:
+           keycloakSub = header[&quot;X-User-Sub&quot;]
+           allowedDepts = SELECT dept_id FROM authz_local WHERE user_sub = keycloakSub
+           → Check deptId ∈ allowedDepts → 403 nếu không
+           → Business logic
+           → BEGIN TX: INSERT de_nghi + INSERT outbox COMMIT
+           → Outbox publisher → Kafka: pdms.de-nghi-created
+</code></pre>
+<h3 id="2-readfilter-flow">2. Read/filter flow<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-readfilter-flow" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>Client → Gateway → PDMS Service:
+  SELECT dn.* FROM pdms.de_nghi dn
+  JOIN authz_local.user_dept_access r
+       ON r.dept_id = dn.dept_id
+       AND r.user_sub = :keycloakSub
+       AND r.is_active = true
+       AND r.dept_type IN ('SHARED', 'CHUNG_TU')
+  WHERE dn.status = 'ACTIVE'
+  -- local JOIN, zero network call
+</code></pre>
+<h3 id="3-export-excel">3. Export Excel<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-export-excel" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>Client → Report Service:
+  → Keyset cursor pagination + local authz JOIN
+  → SXSSFWorkbook streaming (window 100 rows)
+  → HTTP chunked response
+  Heap: ~50-100MB để export 10M rows
+</code></pre>
+<h3 id="4-authz-sync-flow">4. Authz sync flow<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-authz-sync-flow" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>IAM Service → Kafka: iam.permission-changed
+  → PDMS Service consumer: UPSERT authz_local
+  → Report Service consumer: UPSERT authz_local
+
+IAM Service → Kafka: warehouse.kho-changed (từ Warehouse)
+  → IAM consumer: UPDATE kho_snapshot
+  → IAM → Kafka: iam.kho-snapshot-changed
+  → PDMS/Report consumer: UPSERT authz_local.kho
+</code></pre>
+<hr/>
+<h2 id="-performance">⚡ Performance<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-performance" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="cross-service-authz-local-join-strategy">Cross-service authz: local JOIN strategy<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#cross-service-authz-local-join-strategy" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="java" data-theme="github-light github-dark"><code data-language="java" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// PDMS Service — bulk query với local authz JOIN</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">@</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Query</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">nativeQuery</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> true</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">value</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;&quot;&quot;</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">    SELECT dn.*</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">    FROM pdms.de_nghi dn</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">    WHERE EXISTS (</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">        SELECT 1 FROM authz_local.user_dept_access r</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">        WHERE r.dept_id = dn.dept_id</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">          AND r.user_sub = :keycloakSub</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">          AND r.is_active = true</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">          AND r.dept_type IN ('SHARED', 'CHUNG_TU')</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">    )</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">    AND dn.status = :status</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">    AND dn.id > :lastId</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">    ORDER BY dn.id ASC</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">    LIMIT :pageSize</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">    &quot;&quot;&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">List</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&lt;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">DeNghi</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">></span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> findNextPage</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    @</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Param</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;keycloakSub&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) String keycloakSub,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    @</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Param</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;status&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) String status,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    @</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Param</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;lastId&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) Long lastId,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    @</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Param</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;pageSize&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> pageSize</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span></code></pre></figure>
+<h3 id="export-excel--memory-safe">Export Excel — memory-safe<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#export-excel--memory-safe" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="java" data-theme="github-light github-dark"><code data-language="java" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">StreamingResponseBody body </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> outputStream </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-></span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    try</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (SXSSFWorkbook wb </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> new</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> SXSSFWorkbook</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">100</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)) {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        Sheet sheet </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> wb.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">createSheet</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;Báo cáo&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        Long lastId </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0L</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        List&lt;</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ReportRow</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">> batch;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        do</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            batch </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> reportRepository.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">findNextPage</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(keycloakSub, filter, lastId, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">5000</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            batch.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">forEach</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(row </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-></span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> writeRow</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(sheet, row));</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            lastId </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> batch.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">isEmpty</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">() </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">?</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> null</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> :</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> batch.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">getLast</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">().</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">getId</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">();</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            ((SXSSFSheet) sheet).</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">flushRows</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">100</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        } </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">while</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (lastId </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">!=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> null</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        wb.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">write</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(outputStream);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">};</span></span></code></pre></figure>
+<hr/>
+<h2 id="-links">🔗 Links<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-links" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<ul>
+<li><a href="../Microservices-Patterns/PDMS-AuthZ-Sync-Strategy-Comparison" class="internal" data-slug="Microservices-Patterns/PDMS-AuthZ-Sync-Strategy-Comparison">PDMS-AuthZ-Sync-Strategy-Comparison</a> — So sánh 4 strategy sync authz (CDC vs Kafka Events vs Scheduled Pull vs Permission Token)</li>
+<li><a href="../Microservices-Patterns/PDMS-Workflow-Optimal-Communication" class="internal" data-slug="Microservices-Patterns/PDMS-Workflow-Optimal-Communication">PDMS-Workflow-Optimal-Communication</a> — Workflow chi tiết 5 luồng chính</li>
+<li><a href="../Microservices-Patterns/PDMS-AuthZ-Fine-Grained-Design" class="internal" data-slug="Microservices-Patterns/PDMS-AuthZ-Fine-Grained-Design">PDMS-AuthZ-Fine-Grained-Design</a> — IAM schema, permission model</li>
+<li><a href="../Microservices-Patterns/Cross-Service-Join-AuthZ-Fine-Grained-Filter" class="internal" data-slug="Microservices-Patterns/Cross-Service-Join-AuthZ-Fine-Grained-Filter">Cross-Service-Join-AuthZ-Fine-Grained-Filter</a> — 5 pattern lý thuyết</li>
+<li><a href="../Microservices-Patterns/Transactional-Outbox" class="internal" data-slug="Microservices-Patterns/Transactional-Outbox">Transactional-Outbox</a> — at-least-once Kafka delivery</li>
+<li><a href="../_moc/MOC-PDMS" class="internal" data-slug="_moc/MOC-PDMS">MOC-PDMS</a> — project hub</li>
+</ul></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-86" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#️-pdms-architecture-overview" data-for="️-pdms-architecture-overview">🏗️ PDMS Architecture Overview</a></li><li class="depth-1"><a href="#️-service-map" data-for="️-service-map">🗺️ Service Map</a></li><li class="depth-1"><a href="#-service-responsibilities" data-for="-service-responsibilities">📦 Service Responsibilities</a></li><li class="depth-2"><a href="#gateway-service" data-for="gateway-service">gateway-service</a></li><li class="depth-2"><a href="#iam-service" data-for="iam-service">iam-service</a></li><li class="depth-2"><a href="#pdms-service" data-for="pdms-service">pdms-service</a></li><li class="depth-2"><a href="#warehouse-service" data-for="warehouse-service">warehouse-service</a></li><li class="depth-2"><a href="#report-service" data-for="report-service">report-service</a></li><li class="depth-2"><a href="#integration-service" data-for="integration-service">integration-service</a></li><li class="depth-2"><a href="#portal-service" data-for="portal-service">portal-service</a></li><li class="depth-1"><a href="#-keycloak--external-sso" data-for="-keycloak--external-sso">🔑 Keycloak — External SSO</a></li><li class="depth-1"><a href="#-gateway--tại-sao-không-forward-dept-ids" data-for="-gateway--tại-sao-không-forward-dept-ids">🔐 Gateway — Tại sao không forward dept IDs</a></li><li class="depth-2"><a href="#vấn-đề-với-x-dept-id-header" data-for="vấn-đề-với-x-dept-id-header">Vấn đề với X-Dept-Id header</a></li><li class="depth-1"><a href="#-authorization-architecture" data-for="-authorization-architecture">🔐 Authorization Architecture</a></li><li class="depth-2"><a href="#dept-split--1000-departments" data-for="dept-split--1000-departments">Dept split — 1000 departments</a></li><li class="depth-2"><a href="#luồng-xác-thực--phân-quyền-corrected" data-for="luồng-xác-thực--phân-quyền-corrected">Luồng xác thực + phân quyền (corrected)</a></li><li class="depth-1"><a href="#-cross-service-authz-sync--lựa-chọn-tối-ưu-cho-pdms" data-for="-cross-service-authz-sync--lựa-chọn-tối-ưu-cho-pdms">🔄 Cross-Service AuthZ Sync — Lựa chọn tối ưu cho PDMS</a></li><li class="depth-2"><a href="#strategy-được-chọn-kafka-domain-events-không-cần-debezium" data-for="strategy-được-chọn-kafka-domain-events-không-cần-debezium">Strategy được chọn: Kafka Domain Events (không cần Debezium)</a></li><li class="depth-1"><a href="#-data-flow" data-for="-data-flow">🔄 Data Flow</a></li><li class="depth-2"><a href="#1-write-flow" data-for="1-write-flow">1. Write flow</a></li><li class="depth-2"><a href="#2-readfilter-flow" data-for="2-readfilter-flow">2. Read/filter flow</a></li><li class="depth-2"><a href="#3-export-excel" data-for="3-export-excel">3. Export Excel</a></li><li class="depth-2"><a href="#4-authz-sync-flow" data-for="4-authz-sync-flow">4. Authz sync flow</a></li><li class="depth-1"><a href="#-performance" data-for="-performance">⚡ Performance</a></li><li class="depth-2"><a href="#cross-service-authz-local-join-strategy" data-for="cross-service-authz-local-join-strategy">Cross-service authz: local JOIN strategy</a></li><li class="depth-2"><a href="#export-excel--memory-safe" data-for="export-excel--memory-safe">Export Excel — memory-safe</a></li><li class="depth-1"><a href="#-links" data-for="-links">🔗 Links</a></li><li class="overflow-end"></li></ul></div><div class="backlinks"><h3>Backlinks</h3><ul id="list-2" class="overflow"><li><a href="../Microservices-Patterns/BPMN-CMMN-DMN-Enterprise-Process-Modeling" class="internal">BPMN-CMMN-DMN-Enterprise-Process-Modeling</a></li><li><a href="../Microservices-Patterns/PDMS-AuthZ-Fine-Grained-Design" class="internal">PDMS-AuthZ-Fine-Grained-Design</a></li><li><a href="../Microservices-Patterns/PDMS-AuthZ-Sync-Strategy-Comparison" class="internal">PDMS-AuthZ-Sync-Strategy-Comparison</a></li><li><a href="../Microservices-Patterns/PDMS-IAM-Multi-Domain-Design" class="internal">PDMS-IAM-Multi-Domain-Design</a></li><li><a href="../Microservices-Patterns/PDMS-Workflow-Optimal-Communication" class="internal">PDMS-Workflow-Optimal-Communication</a></li><li><a href="../_moc/MOC-PDMS" class="internal">MOC-PDMS</a></li><li><a href="../concepts/ddd-strategic" class="internal">ddd-strategic</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://dangthobach.github.io/">Back to Portfolio</a></li><li><a href="https://github.com/dangthobach">GitHub</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../postscript.js" type="module" data-persist="true"></script></html>

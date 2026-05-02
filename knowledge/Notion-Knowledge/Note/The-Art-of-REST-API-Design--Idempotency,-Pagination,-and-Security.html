@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>The Art of REST API Design- Idempotency, Pagination, and Security</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="Dang Tho Bach's Knowledge Base"/><meta property="og:title" content="The Art of REST API Design- Idempotency, Pagination, and Security"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="The Art of REST API Design- Idempotency, Pagination, and Security"/><meta name="twitter:description" content="APIs are the front doors to most systems. They expose functionality, enable integrations, and define how teams, services, and users interact."/><meta property="og:description" content="APIs are the front doors to most systems. They expose functionality, enable integrations, and define how teams, services, and users interact."/><meta property="og:image:alt" content="APIs are the front doors to most systems. They expose functionality, enable integrations, and define how teams, services, and users interact."/><meta property="twitter:domain" content="dangthobach.github.io/knowledge"/><meta property="og:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/The-Art-of-REST-API-Design--Idempotency,-Pagination,-and-Security"/><meta property="twitter:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/The-Art-of-REST-API-Design--Idempotency,-Pagination,-and-Security"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="APIs are the front doors to most systems. They expose functionality, enable integrations, and define how teams, services, and users interact."/><meta name="generator" content="Quartz"/><link href="../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiL2hvbWUvcnVubmVyL3dvcmsvZGFuZ3Rob2JhY2guZ2l0aHViLmlvL2Rhbmd0aG9iYWNoLmdpdGh1Yi5pby9xdWFydHovcXVhcnR6L2NvbXBvbmVudHMvc3R5bGVzIiwic291cmNlcyI6WyJtZXJtYWlkLmlubGluZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFHRjtFQUNFOzs7QUFLRjtFQUNFO0VBQ0E7OztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTs7QUFJRjtFQUNFO0VBQ0E7RUFDQSIsInNvdXJjZXNDb250ZW50IjpbIi5leHBhbmQtYnV0dG9uIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbG9hdDogcmlnaHQ7XG4gIHBhZGRpbmc6IDAuNHJlbTtcbiAgbWFyZ2luOiAwLjNyZW07XG4gIHJpZ2h0OiAwOyAvLyBOT1RFOiByaWdodCB3aWxsIGJlIHNldCBpbiBtZXJtYWlkLmlubGluZS50c1xuICBjb2xvcjogdmFyKC0tZ3JheSk7XG4gIGJvcmRlci1jb2xvcjogdmFyKC0tZGFyayk7XG4gIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgYm9yZGVyOiAxcHggc29saWQ7XG4gIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgb3BhY2l0eTogMDtcbiAgdHJhbnNpdGlvbjogMC4ycztcblxuICAmID4gc3ZnIHtcbiAgICBmaWxsOiB2YXIoLS1saWdodCk7XG4gICAgZmlsdGVyOiBjb250cmFzdCgwLjMpO1xuICB9XG5cbiAgJjpob3ZlciB7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIGJvcmRlci1jb2xvcjogdmFyKC0tc2Vjb25kYXJ5KTtcbiAgfVxuXG4gICY6Zm9jdXMge1xuICAgIG91dGxpbmU6IDA7XG4gIH1cbn1cblxucHJlIHtcbiAgJjpob3ZlciA+IC5leHBhbmQtYnV0dG9uIHtcbiAgICBvcGFjaXR5OiAxO1xuICAgIHRyYW5zaXRpb246IDAuMnM7XG4gIH1cbn1cblxuI21lcm1haWQtY29udGFpbmVyIHtcbiAgcG9zaXRpb246IGZpeGVkO1xuICBjb250YWluOiBsYXlvdXQ7XG4gIHotaW5kZXg6IDk5OTtcbiAgbGVmdDogMDtcbiAgdG9wOiAwO1xuICB3aWR0aDogMTAwdnc7XG4gIGhlaWdodDogMTAwdmg7XG4gIG92ZXJmbG93OiBoaWRkZW47XG4gIGRpc3BsYXk6IG5vbmU7XG4gIGJhY2tkcm9wLWZpbHRlcjogYmx1cig0cHgpO1xuICBiYWNrZ3JvdW5kOiByZ2JhKDAsIDAsIDAsIDAuNSk7XG5cbiAgJi5hY3RpdmUge1xuICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgfVxuXG4gICYgPiAjbWVybWFpZC1zcGFjZSB7XG4gICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gICAgYm9yZGVyLXJhZGl1czogNXB4O1xuICAgIHBvc2l0aW9uOiBmaXhlZDtcbiAgICB0b3A6IDUwJTtcbiAgICBsZWZ0OiA1MCU7XG4gICAgdHJhbnNmb3JtOiB0cmFuc2xhdGUoLTUwJSwgLTUwJSk7XG4gICAgaGVpZ2h0OiA4MHZoO1xuICAgIHdpZHRoOiA4MHZ3O1xuICAgIG92ZXJmbG93OiBoaWRkZW47XG5cbiAgICAmID4gLm1lcm1haWQtY29udGVudCB7XG4gICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgICB0cmFuc2Zvcm0tb3JpZ2luOiAwIDA7XG4gICAgICB0cmFuc2l0aW9uOiB0cmFuc2Zvcm0gMC4xcyBlYXNlO1xuICAgICAgb3ZlcmZsb3c6IHZpc2libGU7XG4gICAgICBtaW4taGVpZ2h0OiAyMDBweDtcbiAgICAgIG1pbi13aWR0aDogMjAwcHg7XG5cbiAgICAgIHByZSB7XG4gICAgICAgIG1hcmdpbjogMDtcbiAgICAgICAgYm9yZGVyOiBub25lO1xuICAgICAgfVxuXG4gICAgICBzdmcge1xuICAgICAgICBtYXgtd2lkdGg6IG5vbmU7XG4gICAgICAgIGhlaWdodDogYXV0bztcbiAgICAgIH1cbiAgICB9XG5cbiAgICAmID4gLm1lcm1haWQtY29udHJvbHMge1xuICAgICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgICAgYm90dG9tOiAyMHB4O1xuICAgICAgcmlnaHQ6IDIwcHg7XG4gICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgZ2FwOiA4cHg7XG4gICAgICBwYWRkaW5nOiA4cHg7XG4gICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgYm9yZGVyLXJhZGl1czogNnB4O1xuICAgICAgYm94LXNoYWRvdzogMCAycHggNHB4IHJnYmEoMCwgMCwgMCwgMC4xKTtcbiAgICAgIHotaW5kZXg6IDI7XG5cbiAgICAgIC5tZXJtYWlkLWNvbnRyb2wtYnV0dG9uIHtcbiAgICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgIHdpZHRoOiAzMnB4O1xuICAgICAgICBoZWlnaHQ6IDMycHg7XG4gICAgICAgIHBhZGRpbmc6IDA7XG4gICAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgICAgY29sb3I6IHZhcigtLWRhcmspO1xuICAgICAgICBib3JkZXItcmFkaXVzOiA0cHg7XG4gICAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICAgICAgZm9udC1zaXplOiAxNnB4O1xuICAgICAgICBmb250LWZhbWlseTogdmFyKC0tYm9keUZvbnQpO1xuICAgICAgICB0cmFuc2l0aW9uOiBhbGwgMC4ycyBlYXNlO1xuXG4gICAgICAgICY6aG92ZXIge1xuICAgICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIH1cblxuICAgICAgICAmOmFjdGl2ZSB7XG4gICAgICAgICAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKDFweCk7XG4gICAgICAgIH1cblxuICAgICAgICAvLyBTdHlsZSB0aGUgcmVzZXQgYnV0dG9uIGRpZmZlcmVudGx5XG4gICAgICAgICY6bnRoLWNoaWxkKDIpIHtcbiAgICAgICAgICB3aWR0aDogYXV0bztcbiAgICAgICAgICBwYWRkaW5nOiAwIDEycHg7XG4gICAgICAgICAgZm9udC1zaXplOiAxNHB4O1xuICAgICAgICB9XG4gICAgICB9XG4gICAgfVxuICB9XG59XG4iXX0= */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://dangthobach.github.io/knowledge/index.xml"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/The-Art-of-REST-API-Design--Idempotency,-Pagination,-and-Security-og-image.webp"/><meta property="og:image:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/The-Art-of-REST-API-Design--Idempotency,-Pagination,-and-Security-og-image.webp"/><meta name="twitter:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/The-Art-of-REST-API-Design--Idempotency,-Pagination,-and-Security-og-image.webp"/><meta property="og:image:type" content="image/.webp"/></head><body data-slug="Notion-Knowledge/Note/The-Art-of-REST-API-Design--Idempotency,-Pagination,-and-Security"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../..">Dang Tho Bach's Knowledge Base</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-406"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-406" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/">Notion Knowledge</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/Note/">Note</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>The Art of REST API Design  Idempotency, Pagination, and Security</a></div></nav><h1 class="article-title">The Art of REST API Design- Idempotency, Pagination, and Security</h1><p show-comma="true" class="content-meta"><time datetime="2026-05-02T04:58:37.000Z">May 02, 2026</time><span>17 min read</span></p></div></div><article class="popover-hint"><p>APIs are the front doors to most systems.</p>
+<p>They expose functionality, enable integrations, and define how teams, services, and users interact. But while it’s easy to get an API working, it’s much harder to design one that survives change, handles failure gracefully, and remains a joy to work with six months later.</p>
+<p>Poorly designed APIs don’t just annoy consumers. They slow teams down, leak data, cause outages, and break integrations. One inconsistent response structure can turn into dozens of custom client parsers. One missing idempotency check can result in duplicate charges. One weak authorization path can cause a security breach.</p>
+<p>Well-designed APIs, on the other hand, create leverage and help the team do more. Some defining features are as follows:</p>
+<ul>
+<li>
+<p>They act as contracts, not just access points.</p>
+</li>
+<li>
+<p>They scale with usage.</p>
+</li>
+<li>
+<p>They reduce surprises for the developers and other stakeholders.</p>
+</li>
+<li>
+<p>And they are reliable, internally and externally.</p>
+</li>
+</ul>
+<p>Most of the pain in API systems doesn’t come from the initial development. It comes from evolving them: adding new fields without breaking old clients, handling retries without state duplication, and syncing data between systems without losing events.</p>
+<p>A good API design is defensive and anticipates growth, chances of misuse, and failures. It understands that integration points are long-lived and every decision has an impact down the line.</p>
+<p>In this article, we explore the core principles and techniques of good API Design that make APIs dependable, usable, and secure. While our focus will primarily be on REST APIs, we will also explore some concepts related to gRPC APIs to have a slightly more holistic view.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!HDP0!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F1fe69fe9-1e79-45b8-abc3-1d5ce8af280c_2250x2624.heic" class="external"><img src="https://substackcdn.com/image/fetch/$s_!HDP0!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F1fe69fe9-1e79-45b8-abc3-1d5ce8af280c_2250x2624.heic" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h2 id="principles-of-good-api-design"><strong>Principles of Good API Design</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#principles-of-good-api-design" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>When an API becomes clever, returning different response shapes, mutating state on a GET, or encoding meaning through inconsistent naming, it turns from a contract into a puzzle.</p>
+<p>A well-designed API should not be a puzzle. They should behave predictably, use consistent structures, and make few assumptions about clients.</p>
+<p>Therefore, good API design prioritizes clarity above all else. It anticipates scale, change, and human error. The most reliable systems often stem from the most unremarkable APIs because those APIs gave clients no sudden surprises.</p>
+<p>Let’s look at a few principles of good API Design.</p>
+<h3 id="consistency-reduces-friction"><strong>Consistency Reduces Friction</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#consistency-reduces-friction" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Uniformity across endpoints simplifies development. When resource naming follows clear conventions and response formats adhere to a shared structure, teams can reuse client code and debugging tools.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!tvKN!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fa21f6408-7e70-47dc-8fb1-9ca877b04452_2190x1210.heic" class="external"><img src="https://substackcdn.com/image/fetch/$s_!tvKN!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fa21f6408-7e70-47dc-8fb1-9ca877b04452_2190x1210.heic" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Inconsistent APIs, on the other hand, introduce silent traps. For example, consider an API that returns dates as ISO strings in some endpoints and Unix timestamps in others. Or one where error responses sometimes use error codes and other times return raw strings. Each exception forces a workaround, and those workarounds accumulate into brittle integrations.</p>
+<h3 id="nouns-represent-resources-not-actions"><strong>Nouns Represent Resources, Not Actions</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#nouns-represent-resources-not-actions" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>REST works best when endpoints map to domain concepts (orders, users, or payments) rather than commands.</p>
+<p>For example, the endpoint “POST /users” conveys intent more clearly than POST /createUser, which blends transport semantics with business logic.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!prmg!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F3605e817-3083-4fbe-9faa-bc626cfb497a_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!prmg!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F3605e817-3083-4fbe-9faa-bc626cfb497a_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Resource-oriented URLs also support logical nesting (/users/123/orders) and permission modeling. Overusing verbs in paths leads to RPC-style design, where endpoints behave more like remote procedures. This breaks standard tooling, limits caching options, and makes the API harder to evolve.</p>
+<h3 id="method-semantics-guide-expectations"><strong>Method Semantics Guide Expectations</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#method-semantics-guide-expectations" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>HTTP methods carry distinct semantics that shape how clients, proxies, and infrastructure behave:</p>
+<ul>
+<li>
+<p>GET retrieves resources without side effects. It is safe and cacheable.</p>
+</li>
+<li>
+<p>POST creates new resources. It is not idempotent by default.</p>
+</li>
+<li>
+<p>PUT replaces resources and guarantees idempotency.</p>
+</li>
+<li>
+<p>PATCH applies partial updates.</p>
+</li>
+<li>
+<p>DELETE removes resources and expects idempotency.</p>
+</li>
+</ul>
+<p>Violating these conventions often leads to indirect failures. A GET that triggers writes breaks caching. A retry on POST without safeguards creates duplicate records. APIs that align with method semantics integrate more reliably with tooling and infrastructure.</p>
+<h3 id="idempotency-protects-against-retries"><strong>Idempotency Protects Against Retries</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#idempotency-protects-against-retries" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Clients retry requests when connections drop or timeouts occur. Without safeguards, those retries can create duplicate orders, inconsistent states, or unintended charges.</p>
+<p>Idempotency solves this. Systems use idempotency keys (typically passed in headers) to detect repeated requests and return the original result. This pattern works especially well for operations tied to money, provisioning, or resource creation.</p>
+<p>Skipping idempotency during API design leads to state drift and operational pain during outages.</p>
+<h3 id="versioning-for-sustainable-change"><strong>Versioning for Sustainable Change</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#versioning-for-sustainable-change" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Every API evolves. Fields change, validation rules tighten, and new features arrive. Without versioning, even small shifts risk breaking clients.</p>
+<p>URI versioning (/v1/users) offers the clearest and most discoverable path. Alternatives like query parameter-based, header-based, or media-type versioning provide cleaner URLs but increase tooling complexity and debugging costs.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!XmaW!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F3790c444-1177-4e25-8b5c-5b138b1471b4_1640x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!XmaW!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F3790c444-1177-4e25-8b5c-5b138b1471b4_1640x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Whichever strategy is used, versioning works best when applied early and managed intentionally. Versioning doesn’t allow teams to make careless changes, but it enables controlled evolution.</p>
+<h3 id="protocol-choice-rest-versus-grpc"><strong>Protocol Choice (REST versus gRPC)</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#protocol-choice-rest-versus-grpc" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The choice of protocol matters while building APIs. Often, the choice comes between REST and gRPC.</p>
+<p>REST provides human-readable interfaces, broad compatibility, and tooling support. It suits public APIs, mobile clients, and browser integrations.</p>
+<p>gRPC offers better performance, schema enforcement, and bi-directional streaming. Built on HTTP/2 and Protobuf, it fits internal service communication where latency and structure matter more than accessibility.</p>
+<p>Some systems adopt both: REST externally and gRPC internally. This hybrid approach allows each protocol to do what it does best.</p>
+<h3 id="predictable-responses-simplify-integration"><strong>Predictable Responses Simplify Integration</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#predictable-responses-simplify-integration" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Clients benefit from uniform response structures. A consistent format that involves wrapping successful results in a data object and failures in an error block allows shared parsers, better observability, and more stable error handling. Using the appropriate error codes is also important.</p>
+<p>The diagram below shows the common REST API Error Codes.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!oDaC!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F4ca1a725-34f6-4afb-bbb6-e4e7b50c9630_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!oDaC!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F4ca1a725-34f6-4afb-bbb6-e4e7b50c9630_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Without consistency, client logic branches across endpoints. Some responses return plain values, others embed metadata, and a few use nested fields for no clear reason. Over time, this inconsistency spreads across logging, testing, and monitoring layers.</p>
+<p>Standardized response shapes act as a contract, making things far more convenient.</p>
+<h3 id="schema-first-design-prevents-drift"><strong>Schema-First Design Prevents Drift</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#schema-first-design-prevents-drift" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Schema-first design reduces ambiguity. Using OpenAPI (for REST) or Protobuf (for gRPC) enforces the structure, supports contract validation, and enables code generation. Schemas also serve as documentation, a source of truth, and a gatekeeper for change.</p>
+<p>Teams that start with schemas catch problems earlier. It has a few important advantages:</p>
+<ul>
+<li>
+<p>Contract diffs reveal breaking changes.</p>
+</li>
+<li>
+<p>Consumers align more easily.</p>
+</li>
+<li>
+<p>Automated tests validate assumptions before runtime.</p>
+</li>
+</ul>
+<p>APIs without schemas tend to drift. Fields change silently, and documents lag behind the actual behavior. This results in breaking integrations.</p>
+<h2 id="understanding-idempotency"><strong>Understanding Idempotency</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#understanding-idempotency" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Let’s understand what happens when API design doesn’t accommodate idempotency.</p>
+<p>At some point, a client times out mid-request (such as when placing an order or making a payment). The user clicks “Confirm” again, and a retry is triggered automatically. The system receives the same request twice. Without idempotency safeguards, it processes both, resulting in scenarios like duplicate orders, double payments, and conflicting states.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!SvJr!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F4a13c240-d294-4c7b-820d-73853baf4b69_1242x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!SvJr!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F4a13c240-d294-4c7b-820d-73853baf4b69_1242x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>This scenario isn’t rare. It’s quite normal in distributed systems. The only way to make retry logic safe is to make the server operations idempotent.</p>
+<h3 id="what-makes-an-operation-idempotent"><strong>What Makes an Operation Idempotent?</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#what-makes-an-operation-idempotent" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>An operation is idempotent when multiple identical calls produce the same result as one call. This doesn’t mean the server does nothing on a retry. It means the outcome doesn’t change after the first successful execution.</p>
+<p>For example:</p>
+<ul>
+<li>
+<p>Deleting the same resource twice with DELETE /users/123 results in success both times.</p>
+</li>
+<li>
+<p>Sending the same payment request twice should either process once or return the result of the original attempt, not charge twice.</p>
+</li>
+</ul>
+<p>Idempotency protects critical operations from being replayed unintentionally.</p>
+<h3 id="method-semantics-where-idempotency-is-expected"><strong>Method Semantics: Where Idempotency is Expected</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#method-semantics-where-idempotency-is-expected" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>HTTP defines which methods should be idempotent:</p>
+<ul>
+<li>
+<p>GET and HEAD are safe and idempotent by nature. They retrieve metadata without modifying the state.</p>
+</li>
+<li>
+<p>PUT and DELETE are defined as idempotent. Calling them multiple times results in the same resource state.</p>
+</li>
+<li>
+<p>POST is not idempotent by default, but that’s exactly where most systems need extra care. Also, PATCH is not generally considered idempotent.</p>
+</li>
+</ul>
+<p>Critical POST endpoints, like those that trigger payments, account creations, or provisioning, must enforce idempotency explicitly.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!bFEQ!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F152de884-1970-4b8e-8a60-ad90306cf882_1574x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!bFEQ!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F152de884-1970-4b8e-8a60-ad90306cf882_1574x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h3 id="when-to-enforce-idempotency"><strong>When to Enforce Idempotency?</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#when-to-enforce-idempotency" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Idempotency adds complexity. It’s generally unnecessary for endpoints that don’t trigger significant side effects or financial transactions.</p>
+<p>But in the following cases, skipping it can become a liability:</p>
+<ul>
+<li>
+<p><strong>Financial operations</strong> (for example, payment processing, refund issuance)</p>
+</li>
+<li>
+<p><strong>Provisioning</strong> (for example, VM creation, account registration)</p>
+</li>
+<li>
+<p><strong>Webhook receivers</strong> (where retries are often automatic)</p>
+</li>
+<li>
+<p><strong>Critical workflows</strong> (like order submission or subscription setup)</p>
+</li>
+</ul>
+<p>Without idempotency in these flows, retries become a source of risk rather than resilience.</p>
+<h3 id="idempotency-implementation"><strong>Idempotency Implementation</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#idempotency-implementation" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Most systems enforce idempotency by requiring clients to include an idempotency key: a unique string that identifies the logical operation, not the HTTP request.</p>
+<p>Some common characteristics across various implementations are as follows:</p>
+<ul>
+<li>
+<p>Sent as a header (for example, Idempotency-Key: abc123).</p>
+</li>
+<li>
+<p>Scoped to a resource or endpoint.</p>
+</li>
+<li>
+<p>Stored server-side, often with a TTL.</p>
+</li>
+<li>
+<p>Return the original result if the same key is received again.</p>
+</li>
+</ul>
+<p>This pattern allows safe retries without repeating the underlying operation. Stripe and other payment APIs popularised this approach, especially in POST requests.</p>
+<p>A typical implementation pattern works as follows:</p>
+<ul>
+<li>
+<p>The client sends a POST request with a unique idempotency key.</p>
+</li>
+<li>
+<p>The server checks storage (cache, DB, Redis) for an existing result tied to that key.</p>
+</li>
+<li>
+<p>If found, it returns the original response, skipping execution.</p>
+</li>
+<li>
+<p>If not found, the server performs the operation, stores the result keyed by the idempotency token, and returns the response.</p>
+</li>
+<li>
+<p>Optionally, the key expires after a timeout window.</p>
+</li>
+</ul>
+<p>See the diagram below for a possible implementation to support idempotency:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!RYGa!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F1b49806e-811e-4c01-b238-122c1149896b_2156x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!RYGa!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F1b49806e-811e-4c01-b238-122c1149896b_2156x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>This flow ensures exactly-once effects, even if the request is received multiple times.</p>
+<p>Storing idempotency tokens isn’t trivial at scale. Some design decisions include:</p>
+<ul>
+<li>
+<p><strong>Where to store the token</strong>: Redis offers low latency, whereas relational DBs offer durability.</p>
+</li>
+<li>
+<p><strong>How long to keep it</strong>: Long enough to cover retries and short enough to avoid a bloated state.</p>
+</li>
+<li>
+<p><strong>What to store</strong>: Store the complete response or a canonical representation of the request result.</p>
+</li>
+</ul>
+<p>Also, collisions must be handled carefully. If the same key arrives with a different payload, the server must reject it with a clear error to avoid ambiguity.</p>
+<h3 id="trade-offs-and-limitations"><strong>Trade-offs and Limitations</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#trade-offs-and-limitations" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Some trade-offs and limitations that should be considered while implementing idempotency are as follows:</p>
+<ul>
+<li>
+<p>Enabling idempotency adds infrastructure overhead.</p>
+</li>
+<li>
+<p>Token storage requires write coordination.</p>
+</li>
+<li>
+<p>Stateless services must integrate temporary persistence.</p>
+</li>
+<li>
+<p>Edge caches complicate validation, and badly implemented logic can return stale or incorrect data.</p>
+</li>
+</ul>
+<p>However, failing to implement idempotency where needed can lead to duplicate charges, resource over-provisioning, corrupted system state, and tense debugging sessions. In systems where retries are likely and side effects are expensive, the trade-off favors idempotency.</p>
+<h3 id="grpc-and-idempotency"><strong>gRPC and Idempotency</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#grpc-and-idempotency" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>One thing to note is that gRPC doesn’t provide built-in idempotency semantics like HTTP methods. Engineers must enforce idempotency by:</p>
+<ul>
+<li>
+<p>Embedding request IDs in the message.</p>
+</li>
+<li>
+<p>Server-side deduplication logic.</p>
+</li>
+<li>
+<p>Handling retries at the client layer with caution.</p>
+</li>
+</ul>
+<p>This puts more responsibility on application developers, especially in systems using retries or streaming.</p>
+<h2 id="pagination-techniques"><strong>Pagination Techniques</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#pagination-techniques" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Most modern systems expose lists of things: orders, comments, users, and transactions. The expectation is simple: fetch a page, scroll, and load the next.</p>
+<p>But under the hood, list endpoints face a difficult problem: how to paginate large or fast-changing datasets without breaking performance, consistency, or user experience.</p>
+<p>Without pagination or with inefficient pagination, the list endpoints become dangerous. Large datasets can cause:</p>
+<ul>
+<li>
+<p><strong>Performance bottlenecks:</strong> Full-table scans slow down systems.</p>
+</li>
+<li>
+<p><strong>Payload bloat:</strong> Transferring thousands of items strains networks and clients.</p>
+</li>
+<li>
+<p><strong>Unstable queries:</strong> As data changes between requests, results shift unpredictably.</p>
+</li>
+</ul>
+<p>In other words, a poor pagination approach leads to missing data, duplicate records, degraded performance, or failed syncs. Pagination limits the scope of a request. It makes results manageable, consistent (within reason), and friendly to systems under load.</p>
+<p>Reliable pagination starts with choosing the right strategy for the workload. Here are a few we can choose from:</p>
+<h3 id="offset-based-pagination"><strong>Offset-Based Pagination</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#offset-based-pagination" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Offset-based pagination uses query parameters like ?limit=20&amp;offset=40. It works by skipping a certain number of rows and returning the next batch.</p>
+<p>It works well because it is easy to implement with SQL using the LIMIT and OFFSET keywords. It also makes things predictable for UI scroll and paging controls.</p>
+<p>See the diagram below:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!wJKt!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fba947881-19d2-479b-9837-4cde375e34a0_1722x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!wJKt!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fba947881-19d2-479b-9837-4cde375e34a0_1722x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>However, offset-based pagination breaks down when dealing with fast-changing data. Inserts or deletes between pages cause record shifts or duplicates. High offset values result in full table scans, harming performance.</p>
+<p>To summarize, offset pagination is fine for dashboards, admin panels, and stable lists. It falls apart in real-time feeds or distributed sync systems.</p>
+<h3 id="cursor-based-pagination"><strong>Cursor-Based Pagination</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#cursor-based-pagination" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Cursor-based pagination avoids offsets entirely. Instead, it uses a cursor, usually a unique field like created_at or id, to fetch the next page relative to the last record received. For example, see the parameter ?limit=20&amp;after=1679212341, where the cursor is a timestamp or ID.</p>
+<p>This approach is more stable under inserts or deletes and avoids expensive offset scans. Cursor-based pagination is easy to resume from the last seen time and plays well with time-ordered data.</p>
+<p>See the diagram below:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!jUoQ!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F8b242db5-5c8c-4d9f-b42f-45e93970cd7d_1722x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!jUoQ!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F8b242db5-5c8c-4d9f-b42f-45e93970cd7d_1722x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>The main challenge is that this approach requires unique, ordered fields (such as auto-incremented or timestamp-based). Clients must store the last cursor to paginate reliably.</p>
+<p>This approach is ideal for activity feeds, mobile apps, and event logs.</p>
+<h3 id="keyset-pagination"><strong>Keyset Pagination</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#keyset-pagination" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Keyset pagination is a refined form of cursor pagination that uses indexed fields to create efficient WHERE clauses. For example:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>SELECT * FROM posts</span></span>
+<span data-line><span>WHERE created_at &lt; '2023-03-24T15:00:00Z'</span></span>
+<span data-line><span>ORDER BY created_at DESC</span></span>
+<span data-line><span>LIMIT 20;</span></span></code></pre></figure>
+<p>It performs well on large datasets and avoids skipping rows. For feeds and APIs optimized for scrolling, this is a worthwhile trade.</p>
+<h3 id="design-choices-for-pagination"><strong>Design Choices for Pagination</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#design-choices-for-pagination" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Regardless of strategy, paginated APIs work better with consistent metadata. Good pagination responses often include:</p>
+<ul>
+<li>
+<p>items: The current page of results</p>
+</li>
+<li>
+<p>has_next: A boolean indicator of more data</p>
+</li>
+<li>
+<p>next_cursor or next_token: Continuation pointer</p>
+</li>
+<li>
+<p>total_count: Optional, useful for UI, but expensive to compute on large datasets</p>
+</li>
+</ul>
+<p>Some systems avoid total_count entirely due to performance concerns. Others compute it asynchronously and return approximate values.</p>
+<h3 id="pagination-in-grpc"><strong>Pagination in gRPC</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#pagination-in-grpc" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>gRPC is different in the way that it doesn’t support query parameters like REST. Instead, pagination is modeled via request and response messages:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>message ListRequest {</span></span>
+<span data-line><span>  int32 limit = 1;</span></span>
+<span data-line><span>  string page_token = 2;</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>message ListResponse {</span></span>
+<span data-line><span>  repeated Item items = 1;</span></span>
+<span data-line><span>  string next_page_token = 2;</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>This structure maps cleanly to token-based pagination. Clients store the token from the last response and pass it on in the next request. Since gRPC supports streaming, pagination can also be avoided entirely when full datasets are streamed incrementally.</p>
+<h2 id="api-security-considerations"><strong>API Security Considerations</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#api-security-considerations" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>An API operates in an adversarial environment and is often the most exposed surface in a system. They deal in raw access to data, logic, and permissions. When misconfigured, they can hand over more than intended to attackers, bots, or careless clients.</p>
+<p>Security failures rarely look dramatic at first. They often appear quietly, such as a forgotten debug endpoint without auth, a public S3 bucket serving private files, a token that never expires, and so on.</p>
+<p>These flaws rarely show up in staging and often surface in production. Ultimately, these issues compound and eventually result in a breach.</p>
+<p>Strong API security starts with the mindset that anything exposed will be probed by automation, curiosity, or intent. It isn’t optional, but a foundational aspect of API Design.</p>
+<h3 id="authentication-vs-authorization"><strong>Authentication vs Authorization</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#authentication-vs-authorization" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Security failures often start with the boundary between authentication and authorization. Here’s what the two terms mean:</p>
+<ul>
+<li>
+<p><strong>Authentication answers:</strong> Is this caller who they claim to be?</p>
+</li>
+<li>
+<p><strong>Authorization answers:</strong> Can this caller access this specific resource, in this specific way?</p>
+</li>
+</ul>
+<p>Systems that authenticate correctly but authorize loosely often expose internal APIs, leak unrelated user data, or permit the elevation of privilege.</p>
+<p>Token validation alone isn’t enough. A valid token doesn’t mean the request is safe. It only proves the caller’s identity, not that the action is allowed. Mistakes here often involve:</p>
+<ul>
+<li>
+<p>Reusing admin tokens across systems.</p>
+</li>
+<li>
+<p>Skipping resource-level checks.</p>
+</li>
+<li>
+<p>Over-scoping tokens (for example, “read-write-admin” instead of “read:user:123”).</p>
+</li>
+</ul>
+<p>Each request must be scoped to what the caller is explicitly allowed to do.</p>
+<h3 id="token-types-jwt-oauth2-and-api-keys"><strong>Token Types: JWT, OAuth2, and API Keys</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#token-types-jwt-oauth2-and-api-keys" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>APIs rely on a few standard methods to authenticate requests:</p>
+<ul>
+<li>
+<p><strong>API Keys</strong>: Simple shared secrets. Easy to implement but hard to scope or revoke. Suitable for internal systems or read-only integrations.</p>
+</li>
+<li>
+<p><strong>JWTs (JSON Web Tokens)</strong>: Self-contained credentials with claims. Efficient and stateless, but prone to misuse if validation isn’t strict.</p>
+</li>
+<li>
+<p><strong>OAuth2</strong>: A delegation protocol that lets users or services authorize limited access. Common in third-party integrations and public APIs.</p>
+</li>
+</ul>
+<p>See the diagram below that shows the structure of a JWT.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!XD2R!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Ff0d76263-a2e8-4ec0-8ef0-756a73e44868_1722x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!XD2R!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Ff0d76263-a2e8-4ec0-8ef0-756a73e44868_1722x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Each method carries trade-offs in revocability, scope, storage, and complexity.</p>
+<p>JWTs shine in performance but expire poorly. OAuth offers granularity but increases implementation overhead. API keys are convenient, but often over-grant access.</p>
+<h3 id="rate-limiting-and-abuse-protection"><strong>Rate Limiting and Abuse Protection</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#rate-limiting-and-abuse-protection" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Even valid clients can behave badly, intentionally or otherwise. APIs must protect themselves from credential stuffing, data scraping, and denial of service attacks.</p>
+<p>Rate limiting and throttling prevent these. They work by:</p>
+<ul>
+<li>
+<p>Capping request volume per client/IP/token.</p>
+</li>
+<li>
+<p>Applying different thresholds for public vs internal clients.</p>
+</li>
+<li>
+<p>Tracking requests over time windows (for example, 1000 requests per hour).</p>
+</li>
+</ul>
+<p>Tools like Nginx, Envoy, or API gateways can help enforce these policies.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!R388!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F1e07f76e-c3e5-4ccd-9c9a-d072cbed283a_2008x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!R388!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F1e07f76e-c3e5-4ccd-9c9a-d072cbed283a_2008x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h3 id="input-validation"><strong>Input Validation</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#input-validation" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Input validation is the first line of defense for an API.</p>
+<p>Anything it receives from the outside (IDs, filters, search queries, or payloads) must be treated as untrusted. Failing to validate input can lead to SQL injection, script injection, path traversal, type mismatches, and crashes.</p>
+<p>Validation happens in layers such as:</p>
+<ul>
+<li>
+<p><strong>Transport-level</strong>: Reject malformed JSON and oversized payloads.</p>
+</li>
+<li>
+<p><strong>Schema-level</strong>: Enforce field presence, types, and formats (for example, using OpenAPI schemas)</p>
+</li>
+<li>
+<p><strong>Business logic</strong>: Apply domain-specific rules (for example, “cannot transfer money to self”)</p>
+</li>
+</ul>
+<h3 id="error-handling-should-not-reveal-everything"><strong>Error Handling Should Not Reveal Everything</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#error-handling-should-not-reveal-everything" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Error messages should help developers, not attackers. Detailed stack traces, SQL fragments, or internal identifiers in errors provide unnecessary insight.</p>
+<p>Some examples of oversharing are as follows:</p>
+<ul>
+<li>
+<p>Error: SELECT * FROM users WHERE id = ‘abc’::uuid failed</p>
+</li>
+<li>
+<p>NullReferenceException at AuthService.Authenticate</p>
+</li>
+</ul>
+<p>Instead, APIs should use standard codes (400, 401, 403, 500) and return minimal, actionable messages. Log full errors internally, not in client responses. The less said externally, the harder it becomes to probe for weak spots.</p>
+<h3 id="https-and-tls"><strong>HTTPS and TLS</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#https-and-tls" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Every API must use HTTPS. Without it, credentials can leak over the wire, session hijacking becomes trivial, and request data becomes visible to intermediaries.</p>
+<p>Beyond TLS basics, security-conscious systems also:</p>
+<ul>
+<li>
+<p>Enforce HSTS (HTTP Strict Transport Security).</p>
+</li>
+<li>
+<p>Pin certificates where appropriate.</p>
+</li>
+<li>
+<p>Redirect all plaintext traffic automatically.</p>
+</li>
+</ul>
+<p>APIs built for production environments encrypt everything in transit. Anything less is a critical vulnerability.</p>
+<h2 id="summary"><strong>Summary</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#summary" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>In this article, we have looked at API design principles and techniques in detail with a special focus on REST. We’ve also looked at some ideas concerning gRPC to have a more holistic view.</p>
+<p>Let’s summarize the key learning points in brief:</p>
+<ul>
+<li>
+<p>Well-designed APIs behave consistently, fail predictably, and grow without friction.</p>
+</li>
+<li>
+<p>Consistent naming, structure, and method usage for APIs reduces mental overhead and simplifies client logic.</p>
+</li>
+<li>
+<p>Resource-oriented paths and proper use of HTTP verbs help APIs align with expectations and standard tools.</p>
+</li>
+<li>
+<p>Schema-first API design prevents drift, enables contract testing, and improves collaboration across teams.</p>
+</li>
+<li>
+<p>Most security and reliability issues surface during retries, failures, or edge-case usage, not on the happy path.</p>
+</li>
+<li>
+<p>Idempotency ensures safe retries by making repeated requests to produce the same result, especially for POST operations.</p>
+</li>
+<li>
+<p>Idempotency keys allow clients to safely deduplicate operations with side effects.</p>
+</li>
+<li>
+<p>APIs should support pagination to prevent performance bottlenecks and payload bloat. Some common pagination strategies are offset-based, cursor-based, and keyset-based.</p>
+</li>
+<li>
+<p>Authentication identifies the caller, but authorization must be enforced per action and resource to avoid privilege leaks.</p>
+</li>
+<li>
+<p>JWTs, OAuth2, and API keys offer different trade-offs in complexity, scope, and revocation.</p>
+</li>
+<li>
+<p>Rate limiting protects APIs from abuse and must be tailored by client type and action sensitivity.</p>
+</li>
+<li>
+<p>Input validation defends against malformed or malicious data across transport, schema, and business logic layers.</p>
+</li>
+<li>
+<p>HTTPS is mandatory for all production APIs, along with the enforcement of TLS best practices.</p>
+</li>
+<li>
+<p>Long-term API stability comes from designing for change, not just launch-day correctness.</p>
+</li>
+</ul></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-175" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#principles-of-good-api-design" data-for="principles-of-good-api-design">Principles of Good API Design</a></li><li class="depth-1"><a href="#consistency-reduces-friction" data-for="consistency-reduces-friction">Consistency Reduces Friction</a></li><li class="depth-1"><a href="#nouns-represent-resources-not-actions" data-for="nouns-represent-resources-not-actions">Nouns Represent Resources, Not Actions</a></li><li class="depth-1"><a href="#method-semantics-guide-expectations" data-for="method-semantics-guide-expectations">Method Semantics Guide Expectations</a></li><li class="depth-1"><a href="#idempotency-protects-against-retries" data-for="idempotency-protects-against-retries">Idempotency Protects Against Retries</a></li><li class="depth-1"><a href="#versioning-for-sustainable-change" data-for="versioning-for-sustainable-change">Versioning for Sustainable Change</a></li><li class="depth-1"><a href="#protocol-choice-rest-versus-grpc" data-for="protocol-choice-rest-versus-grpc">Protocol Choice (REST versus gRPC)</a></li><li class="depth-1"><a href="#predictable-responses-simplify-integration" data-for="predictable-responses-simplify-integration">Predictable Responses Simplify Integration</a></li><li class="depth-1"><a href="#schema-first-design-prevents-drift" data-for="schema-first-design-prevents-drift">Schema-First Design Prevents Drift</a></li><li class="depth-0"><a href="#understanding-idempotency" data-for="understanding-idempotency">Understanding Idempotency</a></li><li class="depth-1"><a href="#what-makes-an-operation-idempotent" data-for="what-makes-an-operation-idempotent">What Makes an Operation Idempotent?</a></li><li class="depth-1"><a href="#method-semantics-where-idempotency-is-expected" data-for="method-semantics-where-idempotency-is-expected">Method Semantics: Where Idempotency is Expected</a></li><li class="depth-1"><a href="#when-to-enforce-idempotency" data-for="when-to-enforce-idempotency">When to Enforce Idempotency?</a></li><li class="depth-1"><a href="#idempotency-implementation" data-for="idempotency-implementation">Idempotency Implementation</a></li><li class="depth-1"><a href="#trade-offs-and-limitations" data-for="trade-offs-and-limitations">Trade-offs and Limitations</a></li><li class="depth-1"><a href="#grpc-and-idempotency" data-for="grpc-and-idempotency">gRPC and Idempotency</a></li><li class="depth-0"><a href="#pagination-techniques" data-for="pagination-techniques">Pagination Techniques</a></li><li class="depth-1"><a href="#offset-based-pagination" data-for="offset-based-pagination">Offset-Based Pagination</a></li><li class="depth-1"><a href="#cursor-based-pagination" data-for="cursor-based-pagination">Cursor-Based Pagination</a></li><li class="depth-1"><a href="#keyset-pagination" data-for="keyset-pagination">Keyset Pagination</a></li><li class="depth-1"><a href="#design-choices-for-pagination" data-for="design-choices-for-pagination">Design Choices for Pagination</a></li><li class="depth-1"><a href="#pagination-in-grpc" data-for="pagination-in-grpc">Pagination in gRPC</a></li><li class="depth-0"><a href="#api-security-considerations" data-for="api-security-considerations">API Security Considerations</a></li><li class="depth-1"><a href="#authentication-vs-authorization" data-for="authentication-vs-authorization">Authentication vs Authorization</a></li><li class="depth-1"><a href="#token-types-jwt-oauth2-and-api-keys" data-for="token-types-jwt-oauth2-and-api-keys">Token Types: JWT, OAuth2, and API Keys</a></li><li class="depth-1"><a href="#rate-limiting-and-abuse-protection" data-for="rate-limiting-and-abuse-protection">Rate Limiting and Abuse Protection</a></li><li class="depth-1"><a href="#input-validation" data-for="input-validation">Input Validation</a></li><li class="depth-1"><a href="#error-handling-should-not-reveal-everything" data-for="error-handling-should-not-reveal-everything">Error Handling Should Not Reveal Everything</a></li><li class="depth-1"><a href="#https-and-tls" data-for="https-and-tls">HTTPS and TLS</a></li><li class="depth-0"><a href="#summary" data-for="summary">Summary</a></li><li class="overflow-end"></li></ul></div><div class="backlinks"><h3>Backlinks</h3><ul id="list-2" class="overflow"><li><a href="../../Notion-Knowledge/Note" class="internal">Note</a></li><li><a href="../../_moc/MOC-API-Design" class="internal">MOC-API-Design</a></li><li><a href="../../_moc/MOC-Reading-List" class="internal">MOC-Reading-List</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://dangthobach.github.io/">Back to Portfolio</a></li><li><a href="https://github.com/dangthobach">GitHub</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../postscript.js" type="module" data-persist="true"></script></html>

@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>Kafka-Troubleshooting-and-Tips</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="Dang Tho Bach's Knowledge Base"/><meta property="og:title" content="Kafka-Troubleshooting-and-Tips"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="Kafka-Troubleshooting-and-Tips"/><meta name="twitter:description" content="🔥 Kafka — Troubleshooting, Errors &amp; Tips Mục tiêu: Catalog đầy đủ các lỗi, sự cố thường gặp khi triển khai Kafka production, kèm nguyên nhân gốc rễ, cách chẩn đoán nhanh và fix."/><meta property="og:description" content="🔥 Kafka — Troubleshooting, Errors &amp; Tips Mục tiêu: Catalog đầy đủ các lỗi, sự cố thường gặp khi triển khai Kafka production, kèm nguyên nhân gốc rễ, cách chẩn đoán nhanh và fix."/><meta property="og:image:alt" content="🔥 Kafka — Troubleshooting, Errors &amp; Tips Mục tiêu: Catalog đầy đủ các lỗi, sự cố thường gặp khi triển khai Kafka production, kèm nguyên nhân gốc rễ, cách chẩn đoán nhanh và fix."/><meta property="twitter:domain" content="dangthobach.github.io/knowledge"/><meta property="og:url" content="https://dangthobach.github.io/knowledge/Microservices-Patterns/Kafka-Troubleshooting-and-Tips"/><meta property="twitter:url" content="https://dangthobach.github.io/knowledge/Microservices-Patterns/Kafka-Troubleshooting-and-Tips"/><link rel="icon" href="../static/icon.png"/><meta name="description" content="🔥 Kafka — Troubleshooting, Errors &amp; Tips Mục tiêu: Catalog đầy đủ các lỗi, sự cố thường gặp khi triển khai Kafka production, kèm nguyên nhân gốc rễ, cách chẩn đoán nhanh và fix."/><meta name="generator" content="Quartz"/><link href="../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiL2hvbWUvcnVubmVyL3dvcmsvZGFuZ3Rob2JhY2guZ2l0aHViLmlvL2Rhbmd0aG9iYWNoLmdpdGh1Yi5pby9xdWFydHovcXVhcnR6L2NvbXBvbmVudHMvc3R5bGVzIiwic291cmNlcyI6WyJtZXJtYWlkLmlubGluZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFHRjtFQUNFOzs7QUFLRjtFQUNFO0VBQ0E7OztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTs7QUFJRjtFQUNFO0VBQ0E7RUFDQSIsInNvdXJjZXNDb250ZW50IjpbIi5leHBhbmQtYnV0dG9uIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbG9hdDogcmlnaHQ7XG4gIHBhZGRpbmc6IDAuNHJlbTtcbiAgbWFyZ2luOiAwLjNyZW07XG4gIHJpZ2h0OiAwOyAvLyBOT1RFOiByaWdodCB3aWxsIGJlIHNldCBpbiBtZXJtYWlkLmlubGluZS50c1xuICBjb2xvcjogdmFyKC0tZ3JheSk7XG4gIGJvcmRlci1jb2xvcjogdmFyKC0tZGFyayk7XG4gIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgYm9yZGVyOiAxcHggc29saWQ7XG4gIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgb3BhY2l0eTogMDtcbiAgdHJhbnNpdGlvbjogMC4ycztcblxuICAmID4gc3ZnIHtcbiAgICBmaWxsOiB2YXIoLS1saWdodCk7XG4gICAgZmlsdGVyOiBjb250cmFzdCgwLjMpO1xuICB9XG5cbiAgJjpob3ZlciB7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIGJvcmRlci1jb2xvcjogdmFyKC0tc2Vjb25kYXJ5KTtcbiAgfVxuXG4gICY6Zm9jdXMge1xuICAgIG91dGxpbmU6IDA7XG4gIH1cbn1cblxucHJlIHtcbiAgJjpob3ZlciA+IC5leHBhbmQtYnV0dG9uIHtcbiAgICBvcGFjaXR5OiAxO1xuICAgIHRyYW5zaXRpb246IDAuMnM7XG4gIH1cbn1cblxuI21lcm1haWQtY29udGFpbmVyIHtcbiAgcG9zaXRpb246IGZpeGVkO1xuICBjb250YWluOiBsYXlvdXQ7XG4gIHotaW5kZXg6IDk5OTtcbiAgbGVmdDogMDtcbiAgdG9wOiAwO1xuICB3aWR0aDogMTAwdnc7XG4gIGhlaWdodDogMTAwdmg7XG4gIG92ZXJmbG93OiBoaWRkZW47XG4gIGRpc3BsYXk6IG5vbmU7XG4gIGJhY2tkcm9wLWZpbHRlcjogYmx1cig0cHgpO1xuICBiYWNrZ3JvdW5kOiByZ2JhKDAsIDAsIDAsIDAuNSk7XG5cbiAgJi5hY3RpdmUge1xuICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgfVxuXG4gICYgPiAjbWVybWFpZC1zcGFjZSB7XG4gICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gICAgYm9yZGVyLXJhZGl1czogNXB4O1xuICAgIHBvc2l0aW9uOiBmaXhlZDtcbiAgICB0b3A6IDUwJTtcbiAgICBsZWZ0OiA1MCU7XG4gICAgdHJhbnNmb3JtOiB0cmFuc2xhdGUoLTUwJSwgLTUwJSk7XG4gICAgaGVpZ2h0OiA4MHZoO1xuICAgIHdpZHRoOiA4MHZ3O1xuICAgIG92ZXJmbG93OiBoaWRkZW47XG5cbiAgICAmID4gLm1lcm1haWQtY29udGVudCB7XG4gICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgICB0cmFuc2Zvcm0tb3JpZ2luOiAwIDA7XG4gICAgICB0cmFuc2l0aW9uOiB0cmFuc2Zvcm0gMC4xcyBlYXNlO1xuICAgICAgb3ZlcmZsb3c6IHZpc2libGU7XG4gICAgICBtaW4taGVpZ2h0OiAyMDBweDtcbiAgICAgIG1pbi13aWR0aDogMjAwcHg7XG5cbiAgICAgIHByZSB7XG4gICAgICAgIG1hcmdpbjogMDtcbiAgICAgICAgYm9yZGVyOiBub25lO1xuICAgICAgfVxuXG4gICAgICBzdmcge1xuICAgICAgICBtYXgtd2lkdGg6IG5vbmU7XG4gICAgICAgIGhlaWdodDogYXV0bztcbiAgICAgIH1cbiAgICB9XG5cbiAgICAmID4gLm1lcm1haWQtY29udHJvbHMge1xuICAgICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgICAgYm90dG9tOiAyMHB4O1xuICAgICAgcmlnaHQ6IDIwcHg7XG4gICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgZ2FwOiA4cHg7XG4gICAgICBwYWRkaW5nOiA4cHg7XG4gICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgYm9yZGVyLXJhZGl1czogNnB4O1xuICAgICAgYm94LXNoYWRvdzogMCAycHggNHB4IHJnYmEoMCwgMCwgMCwgMC4xKTtcbiAgICAgIHotaW5kZXg6IDI7XG5cbiAgICAgIC5tZXJtYWlkLWNvbnRyb2wtYnV0dG9uIHtcbiAgICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgIHdpZHRoOiAzMnB4O1xuICAgICAgICBoZWlnaHQ6IDMycHg7XG4gICAgICAgIHBhZGRpbmc6IDA7XG4gICAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgICAgY29sb3I6IHZhcigtLWRhcmspO1xuICAgICAgICBib3JkZXItcmFkaXVzOiA0cHg7XG4gICAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICAgICAgZm9udC1zaXplOiAxNnB4O1xuICAgICAgICBmb250LWZhbWlseTogdmFyKC0tYm9keUZvbnQpO1xuICAgICAgICB0cmFuc2l0aW9uOiBhbGwgMC4ycyBlYXNlO1xuXG4gICAgICAgICY6aG92ZXIge1xuICAgICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIH1cblxuICAgICAgICAmOmFjdGl2ZSB7XG4gICAgICAgICAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKDFweCk7XG4gICAgICAgIH1cblxuICAgICAgICAvLyBTdHlsZSB0aGUgcmVzZXQgYnV0dG9uIGRpZmZlcmVudGx5XG4gICAgICAgICY6bnRoLWNoaWxkKDIpIHtcbiAgICAgICAgICB3aWR0aDogYXV0bztcbiAgICAgICAgICBwYWRkaW5nOiAwIDEycHg7XG4gICAgICAgICAgZm9udC1zaXplOiAxNHB4O1xuICAgICAgICB9XG4gICAgICB9XG4gICAgfVxuICB9XG59XG4iXX0= */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://dangthobach.github.io/knowledge/index.xml"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image" content="https://dangthobach.github.io/knowledge/Microservices-Patterns/Kafka-Troubleshooting-and-Tips-og-image.webp"/><meta property="og:image:url" content="https://dangthobach.github.io/knowledge/Microservices-Patterns/Kafka-Troubleshooting-and-Tips-og-image.webp"/><meta name="twitter:image" content="https://dangthobach.github.io/knowledge/Microservices-Patterns/Kafka-Troubleshooting-and-Tips-og-image.webp"/><meta property="og:image:type" content="image/.webp"/></head><body data-slug="Microservices-Patterns/Kafka-Troubleshooting-and-Tips"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="..">Dang Tho Bach's Knowledge Base</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-200"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-200" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../Microservices-Patterns/">Microservices Patterns</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>Kafka Troubleshooting and Tips</a></div></nav><h1 class="article-title">Kafka-Troubleshooting-and-Tips</h1><p show-comma="true" class="content-meta"><time datetime="2026-05-02T04:58:37.000Z">May 02, 2026</time><span>15 min read</span></p><ul class="tags"><li><a href="../tags/kafka" class="internal tag-link">kafka</a></li><li><a href="../tags/troubleshooting" class="internal tag-link">troubleshooting</a></li><li><a href="../tags/exceptions" class="internal tag-link">exceptions</a></li><li><a href="../tags/production" class="internal tag-link">production</a></li><li><a href="../tags/tips" class="internal tag-link">tips</a></li><li><a href="../tags/spring-boot" class="internal tag-link">spring-boot</a></li><li><a href="../tags/microservices" class="internal tag-link">microservices</a></li><li><a href="../tags/vpbank-pdms" class="internal tag-link">vpbank-pdms</a></li></ul></div></div><article class="popover-hint"><h1 id="-kafka--troubleshooting-errors--tips">🔥 Kafka — Troubleshooting, Errors &amp; Tips<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-kafka--troubleshooting-errors--tips" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<blockquote>
+<p><strong>Mục tiêu:</strong> Catalog đầy đủ các lỗi, sự cố thường gặp khi triển khai Kafka production, kèm nguyên nhân gốc rễ, cách chẩn đoán nhanh và fix. Đây là phần <strong>bổ sung</strong> cho <a href="../Microservices-Patterns/Kafka-Configuration-Deep-Dive" class="internal" data-slug="Microservices-Patterns/Kafka-Configuration-Deep-Dive">Kafka-Configuration-Deep-Dive</a>.</p>
+</blockquote>
+<hr/>
+<h2 id="️-big-picture-vòng-đời-một-message--điểm-lỗi">🗺️ Big Picture: Vòng đời một Message &amp; Điểm lỗi<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#️-big-picture-vòng-đời-một-message--điểm-lỗi" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    subgraph Producer Side\n        APP[\&quot;Application\\nCode\&quot;] -->|send()| ACC[\&quot;RecordAccumulator\\n(buffer)\&quot;]\n        ACC -->|batch full / linger.ms| SENDER[\&quot;I/O Sender\\nThread\&quot;]\n        SENDER -->|TCP| BROKER\n    end\n\n    subgraph Kafka Cluster\n        BROKER[\&quot;Leader\\nBroker\&quot;] -->|replicate| F1[\&quot;Follower 1\&quot;]\n        BROKER -->|replicate| F2[\&quot;Follower 2\&quot;]\n        BROKER -.->|ISR ACK| SENDER\n    end\n\n    subgraph Consumer Side\n        BROKER -->|fetch| POLL[\&quot;poll()\\nConsumer Thread\&quot;]\n        POLL -->|process| BIZ[\&quot;Business\\nLogic\&quot;]\n        BIZ -->|ack/commit| OT[\&quot;__consumer_offsets\&quot;]\n    end\n\n    style APP fill:#4CAF50,color:#fff\n    style BROKER fill:#2196F3,color:#fff\n    style OT fill:#FF9800,color:#fff&quot;">flowchart LR
+    subgraph Producer Side
+        APP[&quot;Application\nCode&quot;] -->|send()| ACC[&quot;RecordAccumulator\n(buffer)&quot;]
+        ACC -->|batch full / linger.ms| SENDER[&quot;I/O Sender\nThread&quot;]
+        SENDER -->|TCP| BROKER
+    end
+
+    subgraph Kafka Cluster
+        BROKER[&quot;Leader\nBroker&quot;] -->|replicate| F1[&quot;Follower 1&quot;]
+        BROKER -->|replicate| F2[&quot;Follower 2&quot;]
+        BROKER -.->|ISR ACK| SENDER
+    end
+
+    subgraph Consumer Side
+        BROKER -->|fetch| POLL[&quot;poll()\nConsumer Thread&quot;]
+        POLL -->|process| BIZ[&quot;Business\nLogic&quot;]
+        BIZ -->|ack/commit| OT[&quot;__consumer_offsets&quot;]
+    end
+
+    style APP fill:#4CAF50,color:#fff
+    style BROKER fill:#2196F3,color:#fff
+    style OT fill:#FF9800,color:#fff
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<blockquote>
+<p><strong>Lỗi xảy ra ở mọi điểm</strong> — buffer, network, broker, replication, consumer processing, offset commit.
+Mỗi section dưới đây tương ứng với một vùng lỗi.</p>
+</blockquote>
+<hr/>
+<h2 id="-section-1--producer-exceptions-catalog">❌ SECTION 1 — Producer Exceptions Catalog<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-section-1--producer-exceptions-catalog" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="11--timeoutexception-producer">1.1 — <code>TimeoutException</code> (Producer)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#11--timeoutexception-producer" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>org.apache.kafka.common.errors.TimeoutException:
+  Expiring 5 record(s) for orders-0: 30001 ms has passed since batch creation
+</code></pre>
+<p><strong>Nguyên nhân &amp; Chẩn đoán:</strong></p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    ERR[\&quot;TimeoutException\\n(Producer)\&quot;] --> Q1{Buffer đầy?}\n    Q1 -->|Yes: buffer.memory exhausted| FIX1[\&quot;Tăng buffer.memory\\nHoặc tăng max.block.ms\\nHoặc scale producer instances\&quot;]\n    Q1 -->|No| Q2{Broker không phản hồi?}\n    Q2 -->|Yes| Q3{Network issue?}\n    Q3 -->|Yes| FIX2[\&quot;Kiểm tra firewall\\nKiểm tra broker health\\nKiểm tra request.timeout.ms\&quot;]\n    Q3 -->|No: broker quá tải| FIX3[\&quot;Giảm batch rate\\nTăng số partitions\\nKiểm tra broker CPU/disk I/O\&quot;]\n    Q2 -->|No: delivery.timeout.ms quá thấp| FIX4[\&quot;Tăng delivery.timeout.ms\\n(default 120s)\\nPhải > request.timeout.ms + linger.ms\&quot;]&quot;">flowchart TD
+    ERR[&quot;TimeoutException\n(Producer)&quot;] --> Q1{Buffer đầy?}
+    Q1 -->|Yes: buffer.memory exhausted| FIX1[&quot;Tăng buffer.memory\nHoặc tăng max.block.ms\nHoặc scale producer instances&quot;]
+    Q1 -->|No| Q2{Broker không phản hồi?}
+    Q2 -->|Yes| Q3{Network issue?}
+    Q3 -->|Yes| FIX2[&quot;Kiểm tra firewall\nKiểm tra broker health\nKiểm tra request.timeout.ms&quot;]
+    Q3 -->|No: broker quá tải| FIX3[&quot;Giảm batch rate\nTăng số partitions\nKiểm tra broker CPU/disk I/O&quot;]
+    Q2 -->|No: delivery.timeout.ms quá thấp| FIX4[&quot;Tăng delivery.timeout.ms\n(default 120s)\nPhải > request.timeout.ms + linger.ms&quot;]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Config liên quan</th><th>Giá trị hay gặp sự cố</th><th>Fix</th></tr></thead><tbody><tr><td><code>delivery.timeout.ms</code></td><td>Quá thấp (&lt; 30s)</td><td>Tăng lên 120000ms</td></tr><tr><td><code>request.timeout.ms</code></td><td>Quá thấp</td><td>Phải &lt; <code>delivery.timeout.ms</code></td></tr><tr><td><code>buffer.memory</code></td><td>32MB (default) không đủ</td><td>Tăng lên 64-128MB</td></tr><tr><td><code>max.block.ms</code></td><td>60s rồi throw</td><td>Tăng nếu burst traffic cao</td></tr></tbody></table></div>
+<hr/>
+<h3 id="12--notenoughreplicasexception">1.2 — <code>NotEnoughReplicasException</code><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#12--notenoughreplicasexception" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>org.apache.kafka.common.errors.NotEnoughReplicasException:
+  The size of the current ISR Set(1) is insufficient to satisfy the min.isr requirement of 2 for partition orders-0
+</code></pre>
+<p><strong>Nguyên nhân:</strong></p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;sequenceDiagram\n    participant P as Producer (acks=all)\n    participant L as Leader Broker\n    participant F1 as Follower 1 ❌ DOWN\n    participant F2 as Follower 2 ❌ LAG\n\n    P->>L: Send message\n    L->>L: Write to log\n    L->>F1: Replicate → TIMEOUT (broker down)\n    L->>F2: Replicate → TIMEOUT (too slow, kicked from ISR)\n    Note over L: ISR = {Leader only} = 1 replica\n    Note over L: min.insync.replicas = 2\n    L-->>P: ❌ NotEnoughReplicasException&quot;">sequenceDiagram
+    participant P as Producer (acks=all)
+    participant L as Leader Broker
+    participant F1 as Follower 1 ❌ DOWN
+    participant F2 as Follower 2 ❌ LAG
+
+    P->>L: Send message
+    L->>L: Write to log
+    L->>F1: Replicate → TIMEOUT (broker down)
+    L->>F2: Replicate → TIMEOUT (too slow, kicked from ISR)
+    Note over L: ISR = {Leader only} = 1 replica
+    Note over L: min.insync.replicas = 2
+    L-->>P: ❌ NotEnoughReplicasException
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p><strong>Fix:</strong></p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Kiểm tra ISR hiện tại</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">kafka-topics.sh</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --describe</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --topic</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> orders</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --bootstrap-server</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> kafka1:9092</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Output cần xem:</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Topic: orders  Partition: 0  Leader: 1  Replicas: 1,2,3  Isr: 1</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># → ISR chỉ còn broker 1 → vấn đề!</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Kiểm tra broker nào down</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">kafka-broker-api-versions.sh</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --bootstrap-server</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> kafka2:9092</span></span></code></pre></figure>
+<p><strong>Giải pháp ngắn hạn (emergency):</strong></p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Tạm thời giảm min.insync.replicas (KHÔNG khuyến nghị production lâu dài)</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">kafka-configs.sh</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --alter</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --entity-type</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> topics</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --entity-name</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> orders</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --add-config</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> min.insync.replicas=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --bootstrap-server</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> kafka1:9092</span></span></code></pre></figure>
+<hr/>
+<h3 id="13--recordtoolargeexception">1.3 — <code>RecordTooLargeException</code><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#13--recordtoolargeexception" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>org.apache.kafka.common.errors.RecordTooLargeException:
+  The message is 2097152 bytes when serialized which is larger than 1048576, the max allowed message size.
+</code></pre>
+<p><strong>Flow chẩn đoán:</strong></p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    ERR[\&quot;RecordTooLargeException\&quot;] --> CHK1[\&quot;Kiểm tra message size\\nthực tế (bytes)\&quot;]\n    CHK1 --> CHK2{\&quot;> max.message.bytes?\&quot;}\n    CHK2 -->|Yes| FIX[\&quot;Tăng ĐỒNG BỘ 3 nơi:\n    1. Broker: message.max.bytes\n    2. Topic: max.message.bytes  \n    3. Consumer: fetch.max.bytes\n    max.partition.fetch.bytes\&quot;]\n    CHK2 -->|No| CHK3{\&quot;Compression\\nbị tắt?\&quot;}\n    CHK3 -->|Yes| FIX2[\&quot;Bật compression.type=lz4\\nGiảm kích thước thực\&quot;]\n    CHK3 -->|No| FIX3[\&quot;Xem xét chunking message\\nhoặc dùng Claim Check pattern\\n(lưu payload S3/MinIO)\&quot;]&quot;">flowchart LR
+    ERR[&quot;RecordTooLargeException&quot;] --> CHK1[&quot;Kiểm tra message size\nthực tế (bytes)&quot;]
+    CHK1 --> CHK2{&quot;> max.message.bytes?&quot;}
+    CHK2 -->|Yes| FIX[&quot;Tăng ĐỒNG BỘ 3 nơi:
+    1. Broker: message.max.bytes
+    2. Topic: max.message.bytes  
+    3. Consumer: fetch.max.bytes
+    max.partition.fetch.bytes&quot;]
+    CHK2 -->|No| CHK3{&quot;Compression\nbị tắt?&quot;}
+    CHK3 -->|Yes| FIX2[&quot;Bật compression.type=lz4\nGiảm kích thước thực&quot;]
+    CHK3 -->|No| FIX3[&quot;Xem xét chunking message\nhoặc dùng Claim Check pattern\n(lưu payload S3/MinIO)&quot;]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p><strong>Fix đồng bộ (quan trọng — phải update cả 3 chỗ):</strong></p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># 1. Broker level</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">echo</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;message.max.bytes=5242880&quot;</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> >></span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> server.properties</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">  # 5MB</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># 2. Topic level</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">kafka-configs.sh</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --alter</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --entity-type</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> topics</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --entity-name</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> orders</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --add-config</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> max.message.bytes=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">5242880</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --bootstrap-server</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> kafka1:9092</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># 3. Consumer side (application.yml)</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">spring.kafka.consumer.properties.fetch.max.bytes</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">=5242880</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">spring.kafka.consumer.properties.max.partition.fetch.bytes</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">=5242880</span></span></code></pre></figure>
+<hr/>
+<h3 id="14--producerfencedexception">1.4 — <code>ProducerFencedException</code><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#14--producerfencedexception" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>org.apache.kafka.common.errors.ProducerFencedException:
+  There is a newer producer with the same transactionalId: pdms-tx-producer-1
+</code></pre>
+<p><strong>Nguyên nhân:</strong> Hai producer cùng <code>transactional.id</code> chạy đồng thời. Kafka dùng <strong>epoch</strong> để fence producer cũ.</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;sequenceDiagram\n    participant P1 as Producer (epoch=1)\\n[OLD instance]\n    participant P2 as Producer (epoch=2)\\n[NEW instance - restarted]\n    participant TC as Transaction Coordinator\n\n    P2->>TC: initTransactions() with same transactionalId\n    TC->>TC: Increment epoch → epoch=2\n    TC-->>P2: PID + epoch=2\n\n    P1->>TC: send() with epoch=1\n    TC-->>P1: ❌ ProducerFencedException\\n(epoch 1 &lt; current epoch 2)&quot;">sequenceDiagram
+    participant P1 as Producer (epoch=1)\n[OLD instance]
+    participant P2 as Producer (epoch=2)\n[NEW instance - restarted]
+    participant TC as Transaction Coordinator
+
+    P2->>TC: initTransactions() with same transactionalId
+    TC->>TC: Increment epoch → epoch=2
+    TC-->>P2: PID + epoch=2
+
+    P1->>TC: send() with epoch=1
+    TC-->>P1: ❌ ProducerFencedException\n(epoch 1 &lt; current epoch 2)
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p><strong>Fix:</strong></p>
+<ul>
+<li>Đảm bảo mỗi instance có <code>transactional.id</code> <strong>unique</strong> (append hostname/pod-id)</li>
+<li>Tắt instance cũ trước khi start instance mới</li>
+<li>Trong K8s: dùng StatefulSet với stable pod names</li>
+</ul>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="java" data-theme="github-light github-dark"><code data-language="java" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// Cấu hình transactional.id unique per pod</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">@</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Value</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;${HOSTNAME:default}&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">private</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> String hostname;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">props.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">put</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(ProducerConfig.TRANSACTIONAL_ID_CONFIG, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;pdms-tx-&quot;</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> +</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> hostname);</span></span></code></pre></figure>
+<hr/>
+<h3 id="15--serializationexception-producer">1.5 — <code>SerializationException</code> (Producer)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#15--serializationexception-producer" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>org.apache.kafka.common.errors.SerializationException:
+  Error serializing Avro message
+</code></pre>
+<p><strong>Nguyên nhân thường gặp:</strong></p>
+<ul>
+<li>Schema không tương thích giữa producer và Schema Registry</li>
+<li>Object có circular reference khi dùng Jackson JSON serializer</li>
+<li>Null field không có <code>@JsonInclude(NON_NULL)</code></li>
+</ul>
+<p><strong>Fix nhanh:</strong></p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="java" data-theme="github-light github-dark"><code data-language="java" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// Thêm vào JsonSerializer config</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">props.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">put</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(JsonSerializer.ADD_TYPE_INFO_HEADERS, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">false</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// Hoặc custom ObjectMapper</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">@</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Bean</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">public</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> ObjectMapper </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">kafkaObjectMapper</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">() {</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    return</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> new</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> ObjectMapper</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">()</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">configure</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(SerializationFeature.FAIL_ON_EMPTY_BEANS, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">false</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">setSerializationInclusion</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(JsonInclude.Include.NON_NULL);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></figure>
+<hr/>
+<h2 id="-section-2--consumer-exceptions-catalog">❌ SECTION 2 — Consumer Exceptions Catalog<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-section-2--consumer-exceptions-catalog" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="21--commitfailedexception">2.1 — <code>CommitFailedException</code><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#21--commitfailedexception" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>org.apache.kafka.clients.consumer.CommitFailedException:
+  Commit cannot be completed since the group has already rebalanced and assigned the partitions
+  to another member. This means that the time between subsequent calls to poll() was longer
+  than the configured max.poll.interval.ms, which typically implies that the poll loop is
+  spending too much time message processing.
+</code></pre>
+<p><strong>Đây là lỗi phổ biến nhất trong production!</strong></p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;sequenceDiagram\n    participant C as Consumer\n    participant GC as Group Coordinator\n\n    C->>GC: poll() → receive 500 records\n    Note over C: Processing takes 6 minutes...\n    GC->>GC: max.poll.interval.ms (5min) exceeded!\n    GC->>GC: Remove consumer from group\n    GC->>GC: Rebalance → assign partitions to others\n    C->>GC: commitSync() after processing done\n    GC-->>C: ❌ CommitFailedException\\n(you're no longer in the group!)&quot;">sequenceDiagram
+    participant C as Consumer
+    participant GC as Group Coordinator
+
+    C->>GC: poll() → receive 500 records
+    Note over C: Processing takes 6 minutes...
+    GC->>GC: max.poll.interval.ms (5min) exceeded!
+    GC->>GC: Remove consumer from group
+    GC->>GC: Rebalance → assign partitions to others
+    C->>GC: commitSync() after processing done
+    GC-->>C: ❌ CommitFailedException\n(you're no longer in the group!)
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p><strong>Fix theo thứ tự ưu tiên:</strong></p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="yaml" data-theme="github-light github-dark"><code data-language="yaml" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Option 1: Giảm records per poll (ưu tiên nhất)</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">max.poll.records</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">50</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">  # từ 500 xuống 50</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Option 2: Tăng poll interval</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">max.poll.interval.ms</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">600000</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">  # 10 phút</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Option 3: Xử lý async (advanced)</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># → Tách processing thread pool, commit từ thread chính</span></span></code></pre></figure>
+<hr/>
+<h3 id="22--unknown_member_id--illegal_generation">2.2 — <code>UNKNOWN_MEMBER_ID</code> / <code>ILLEGAL_GENERATION</code><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#22--unknown_member_id--illegal_generation" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>Offset commit failed on partition orders-0 at offset 1523:
+  The coordinator is not aware of this member.
+</code></pre>
+<p><strong>Nguyên nhân:</strong> Consumer bị kick khỏi group (do timeout) rồi cố gắng commit offset.</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    TRIGGER[\&quot;Consumer bị kick khỏi group\&quot;] --> CAUSE1[\&quot;max.poll.interval.ms exceeded\&quot;]\n    TRIGGER --> CAUSE2[\&quot;session.timeout.ms không nhận heartbeat\&quot;]\n    TRIGGER --> CAUSE3[\&quot;Network partition tạm thời\&quot;]\n    \n    CAUSE1 --> FIX[\&quot;Xem fix CommitFailedException\\n(section 2.1)\&quot;]\n    CAUSE2 --> FIX2[\&quot;Kiểm tra GC pause\\nKiểm tra network latency\\nTăng session.timeout.ms\&quot;]\n    CAUSE3 --> FIX3[\&quot;Consumer tự rejoin group\\nKafka tự handle — không cần action\\nNhưng cần alert nếu thường xuyên\&quot;]&quot;">flowchart TD
+    TRIGGER[&quot;Consumer bị kick khỏi group&quot;] --> CAUSE1[&quot;max.poll.interval.ms exceeded&quot;]
+    TRIGGER --> CAUSE2[&quot;session.timeout.ms không nhận heartbeat&quot;]
+    TRIGGER --> CAUSE3[&quot;Network partition tạm thời&quot;]
+    
+    CAUSE1 --> FIX[&quot;Xem fix CommitFailedException\n(section 2.1)&quot;]
+    CAUSE2 --> FIX2[&quot;Kiểm tra GC pause\nKiểm tra network latency\nTăng session.timeout.ms&quot;]
+    CAUSE3 --> FIX3[&quot;Consumer tự rejoin group\nKafka tự handle — không cần action\nNhưng cần alert nếu thường xuyên&quot;]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<hr/>
+<h3 id="23--wakeupexception">2.3 — <code>WakeupException</code><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#23--wakeupexception" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>org.apache.kafka.common.errors.WakeupException
+</code></pre>
+<p><strong>Không phải lỗi</strong> — đây là signal để consumer shutdown gracefully. Tuy nhiên nếu xuất hiện unexpected:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="java" data-theme="github-light github-dark"><code data-language="java" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// Pattern shutdown đúng cách</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">Runtime.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">getRuntime</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">().</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">addShutdownHook</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">new</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> Thread</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(() </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-></span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    consumer.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">wakeup</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">();  </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// Trigger WakeupException trong poll()</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}));</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">try</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    while</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">true</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        ConsumerRecords&lt;</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">String</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">String</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">> records </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> consumer.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">poll</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(Duration.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">ofSeconds</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">));</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">        process</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(records);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">} </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">catch</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (WakeupException </span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">e</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) {</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">    // Expected on shutdown — không log as error</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    log.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">info</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;Consumer shutdown requested&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">} </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">finally</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    consumer.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">commitSync</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">();</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    consumer.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">close</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">();</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></figure>
+<hr/>
+<h3 id="24--deserializationexception-consumer">2.4 — <code>DeserializationException</code> (Consumer)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#24--deserializationexception-consumer" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>org.springframework.kafka.listener.ListenerExecutionFailedException:
+  org.springframework.kafka.support.serializer.DeserializationException:
+  failed to deserialize
+</code></pre>
+<p><strong>Nguyên nhân thường gặp:</strong></p>
+<ul>
+<li>Schema thay đổi không backward compatible (thêm required field)</li>
+<li>Producer gửi format khác (plain String vs JSON)</li>
+<li>Encoding issue (UTF-8 vs ISO-8859-1)</li>
+</ul>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    MSG[\&quot;Message từ Broker\&quot;] --> DESER[\&quot;JsonDeserializer\&quot;]\n    DESER -->|Schema mismatch| ERR[\&quot;DeserializationException\&quot;]\n    ERR --> Q1{Có DLQ config?}\n    Q1 -->|Yes| DLQ[\&quot;→ orders.DLT\\n(Dead Letter Topic)\&quot;]\n    Q1 -->|No| STOP[\&quot;❌ Consumer STOP\\nBlockage!\&quot;]\n    DLQ --> ALERT[\&quot;Alert + Manual review\&quot;]&quot;">flowchart LR
+    MSG[&quot;Message từ Broker&quot;] --> DESER[&quot;JsonDeserializer&quot;]
+    DESER -->|Schema mismatch| ERR[&quot;DeserializationException&quot;]
+    ERR --> Q1{Có DLQ config?}
+    Q1 -->|Yes| DLQ[&quot;→ orders.DLT\n(Dead Letter Topic)&quot;]
+    Q1 -->|No| STOP[&quot;❌ Consumer STOP\nBlockage!&quot;]
+    DLQ --> ALERT[&quot;Alert + Manual review&quot;]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p><strong>Fix quan trọng: luôn config error handler:</strong></p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="java" data-theme="github-light github-dark"><code data-language="java" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">@</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Bean</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">public</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> DefaultErrorHandler </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">errorHandler</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(KafkaOperations</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&lt;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">String, Object</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">></span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> ops) {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    DeadLetterPublishingRecoverer recoverer </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> new</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> DeadLetterPublishingRecoverer</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(ops);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    DefaultErrorHandler handler </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> new</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> DefaultErrorHandler</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(recoverer,</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        new</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> FixedBackOff</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1000L</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">3</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">));</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    </span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">    // Không retry DeserializationException (poison pill)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    handler.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">addNotRetryableExceptions</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(DeserializationException.class);</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    return</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> handler;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></figure>
+<hr/>
+<h2 id="-section-3--production-incidents--runbooks">🔥 SECTION 3 — Production Incidents &amp; Runbooks<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-section-3--production-incidents--runbooks" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="31--consumer-lag-tăng-đột-biến">3.1 — Consumer Lag Tăng Đột Biến<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#31--consumer-lag-tăng-đột-biến" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    ALERT[\&quot;🚨 Alert: Consumer lag > threshold\&quot;] --> CHK1[\&quot;kafka-consumer-groups.sh\\n--describe --group my-group\&quot;]\n    CHK1 --> Q1{Lag tăng đều hay burst?}\n    \n    Q1 -->|Tăng đều - throughput không đủ| PATH1[\&quot;Consumer không xử lý kịp\&quot;]\n    PATH1 --> P1A{\&quot;Số consumer\\n&lt; số partitions?\&quot;}\n    P1A -->|Yes| FIX1A[\&quot;Scale up consumers\\nThêm instances\&quot;]\n    P1A -->|No| FIX1B[\&quot;Tối ưu processing logic\\nDùng async/batch processing\\nKiểm tra downstream DB slow\&quot;]\n\n    Q1 -->|Burst rồi recover| PATH2[\&quot;Temporary spike\&quot;]\n    PATH2 --> P2A{Rebalance xảy ra?}\n    P2A -->|Yes| FIX2[\&quot;Xem section 3.2\\nRebalance Storm\&quot;]\n    P2A -->|No| FIX2B[\&quot;Normal traffic spike\\nXem xét scale consumer\&quot;]\n\n    Q1 -->|Lag chỉ 1 partition| PATH3[\&quot;Partition-specific issue\&quot;]\n    PATH3 --> FIX3[\&quot;Kiểm tra partition leader\\nKiểm tra broker health\\nKiểm tra message size bất thường\&quot;]&quot;">flowchart TD
+    ALERT[&quot;🚨 Alert: Consumer lag > threshold&quot;] --> CHK1[&quot;kafka-consumer-groups.sh\n--describe --group my-group&quot;]
+    CHK1 --> Q1{Lag tăng đều hay burst?}
+    
+    Q1 -->|Tăng đều - throughput không đủ| PATH1[&quot;Consumer không xử lý kịp&quot;]
+    PATH1 --> P1A{&quot;Số consumer\n&lt; số partitions?&quot;}
+    P1A -->|Yes| FIX1A[&quot;Scale up consumers\nThêm instances&quot;]
+    P1A -->|No| FIX1B[&quot;Tối ưu processing logic\nDùng async/batch processing\nKiểm tra downstream DB slow&quot;]
+
+    Q1 -->|Burst rồi recover| PATH2[&quot;Temporary spike&quot;]
+    PATH2 --> P2A{Rebalance xảy ra?}
+    P2A -->|Yes| FIX2[&quot;Xem section 3.2\nRebalance Storm&quot;]
+    P2A -->|No| FIX2B[&quot;Normal traffic spike\nXem xét scale consumer&quot;]
+
+    Q1 -->|Lag chỉ 1 partition| PATH3[&quot;Partition-specific issue&quot;]
+    PATH3 --> FIX3[&quot;Kiểm tra partition leader\nKiểm tra broker health\nKiểm tra message size bất thường&quot;]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p><strong>Lệnh chẩn đoán nhanh:</strong></p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># 1. Xem lag hiện tại</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">kafka-consumer-groups.sh</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --bootstrap-server</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> kafka1:9092</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --group</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> order-processor</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --describe</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Output:</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># GROUP          TOPIC   PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG  CONSUMER-ID</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># order-proc     orders  0          1000            5000            4000 consumer-1</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># 2. Xem lag theo thời gian (cần Kafka JMX hoặc monitoring)</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Metric: kafka.consumer:type=consumer-fetch-manager-metrics,client-id=*,topic=*,partition=*,attribute=records-lag</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># 3. Xem throughput thực tế</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">kafka-consumer-groups.sh</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> ...</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --describe</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> |</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> awk</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> '{print $6}'</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> |</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> grep</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -v</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> LAG</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> |</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> sort</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -n</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> |</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> tail</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -5</span></span></code></pre></figure>
+<hr/>
+<h3 id="32--rebalance-storm">3.2 — Rebalance Storm<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#32--rebalance-storm" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p><strong>Triệu chứng:</strong> Consumer logs đầy <code>Rebalance triggered</code>, lag tăng vọt, throughput giảm về 0 theo chu kỳ.</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;sequenceDiagram\n    participant C1 as Consumer 1\n    participant C2 as Consumer 2\n    participant GC as Group Coordinator\n\n    C1->>GC: poll() takes too long (slow DB call)\n    GC->>GC: max.poll.interval.ms exceeded\n    GC->>C2: REBALANCE: reassign all partitions\n    Note over C1,C2: 🔄 Rebalance #1 (30s downtime)\n    C1->>GC: Rejoin group (fixed poll)\n    GC->>C2: REBALANCE: reassign again\n    Note over C1,C2: 🔄 Rebalance #2 (another 30s)\n    Note over C1,C2: ♾️ Loop nếu không fix root cause&quot;">sequenceDiagram
+    participant C1 as Consumer 1
+    participant C2 as Consumer 2
+    participant GC as Group Coordinator
+
+    C1->>GC: poll() takes too long (slow DB call)
+    GC->>GC: max.poll.interval.ms exceeded
+    GC->>C2: REBALANCE: reassign all partitions
+    Note over C1,C2: 🔄 Rebalance #1 (30s downtime)
+    C1->>GC: Rejoin group (fixed poll)
+    GC->>C2: REBALANCE: reassign again
+    Note over C1,C2: 🔄 Rebalance #2 (another 30s)
+    Note over C1,C2: ♾️ Loop nếu không fix root cause
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p><strong>Nguyên nhân chính:</strong></p>
+<ol>
+<li>Processing quá chậm → <code>max.poll.interval.ms</code> exceeded</li>
+<li>GC pause (Stop-The-World) làm heartbeat bị delay</li>
+<li>Consumer restart/deploy liên tục</li>
+<li>Network instability</li>
+</ol>
+<p><strong>Fix:</strong></p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="yaml" data-theme="github-light github-dark"><code data-language="yaml" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Ngắn hạn</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">max.poll.records</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">10</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">           # Giảm mạnh để xử lý nhanh hơn</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">max.poll.interval.ms</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">900000</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">   # 15 phút</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">session.timeout.ms</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">60000</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Dài hạn - dùng Static Membership (Kafka 2.3+)</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">group.instance.id</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">consumer-${HOSTNAME}</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">  # Mỗi consumer có ID cố định</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># → Rebalance chỉ trigger sau session.timeout, không phải mỗi lần restart!</span></span></code></pre></figure>
+<p><strong>Static Membership giải thích:</strong></p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;sequenceDiagram\n    participant C as Consumer (group.instance.id=pod-1)\n    participant GC as Group Coordinator\n\n    Note over C: Pod restart (deploy)\n    C->>GC: JoinGroup với instance.id=pod-1\n    GC->>GC: Nhận ra instance.id quen biết\n    GC-->>C: ✅ Assign lại partitions cũ ngay\\nKHÔNG trigger full rebalance\n    Note over C,GC: Zero-downtime rebalance!&quot;">sequenceDiagram
+    participant C as Consumer (group.instance.id=pod-1)
+    participant GC as Group Coordinator
+
+    Note over C: Pod restart (deploy)
+    C->>GC: JoinGroup với instance.id=pod-1
+    GC->>GC: Nhận ra instance.id quen biết
+    GC-->>C: ✅ Assign lại partitions cũ ngay\nKHÔNG trigger full rebalance
+    Note over C,GC: Zero-downtime rebalance!
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<hr/>
+<h3 id="33--isr-shrink--under-replicated-partitions">3.3 — ISR Shrink / Under-Replicated Partitions<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#33--isr-shrink--under-replicated-partitions" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p><strong>Triệu chứng:</strong> JMX alert <code>UnderReplicatedPartitions > 0</code></p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    ALERT[\&quot;🚨 UnderReplicatedPartitions > 0\&quot;] --> CHK1[\&quot;kafka-topics.sh --describe\\nTìm partition có ISR &lt; RF\&quot;]\n    CHK1 --> Q1{Follower nào bị kick khỏi ISR?}\n    Q1 --> CHK2[\&quot;Kiểm tra broker bị kick:\\nkafka-log-dirs.sh --describe\&quot;]\n    CHK2 --> Q2{Broker còn alive?}\n    Q2 -->|No - broker down| FIX1[\&quot;Restart broker\\nKiểm tra disk space\\nKiểm tra OOM\&quot;]\n    Q2 -->|Yes - nhưng lag| Q3{Nguyên nhân lag?}\n    Q3 -->|Disk I/O slow| FIX2[\&quot;Kiểm tra disk utilization\\nDi chuyển log dir sang SSD\\nTăng num.replica.fetchers\&quot;]\n    Q3 -->|Network bottleneck| FIX3[\&quot;Kiểm tra bandwidth\\nTăng replica.fetch.max.bytes\&quot;]\n    Q3 -->|Broker overloaded| FIX4[\&quot;Rebalance partitions\\nkafka-reassign-partitions.sh\&quot;]&quot;">flowchart TD
+    ALERT[&quot;🚨 UnderReplicatedPartitions > 0&quot;] --> CHK1[&quot;kafka-topics.sh --describe\nTìm partition có ISR &lt; RF&quot;]
+    CHK1 --> Q1{Follower nào bị kick khỏi ISR?}
+    Q1 --> CHK2[&quot;Kiểm tra broker bị kick:\nkafka-log-dirs.sh --describe&quot;]
+    CHK2 --> Q2{Broker còn alive?}
+    Q2 -->|No - broker down| FIX1[&quot;Restart broker\nKiểm tra disk space\nKiểm tra OOM&quot;]
+    Q2 -->|Yes - nhưng lag| Q3{Nguyên nhân lag?}
+    Q3 -->|Disk I/O slow| FIX2[&quot;Kiểm tra disk utilization\nDi chuyển log dir sang SSD\nTăng num.replica.fetchers&quot;]
+    Q3 -->|Network bottleneck| FIX3[&quot;Kiểm tra bandwidth\nTăng replica.fetch.max.bytes&quot;]
+    Q3 -->|Broker overloaded| FIX4[&quot;Rebalance partitions\nkafka-reassign-partitions.sh&quot;]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Kiểm tra ISR</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">kafka-topics.sh</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --describe</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --bootstrap-server</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> kafka1:9092</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">  |</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> grep</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -E</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;Isr:.*[^,]{1,}&quot;</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> |</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> awk</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> '{if ($9 != $7) print $0}'</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># → In ra các partition có ISR != Replicas</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Kiểm tra replica lag</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">kafka-replica-verification.sh</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --broker-list</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> kafka1:9092,kafka2:9092,kafka3:9092</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --topic-white-list</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> orders</span></span></code></pre></figure>
+<hr/>
+<h3 id="34--broker-disk-full">3.4 — Broker Disk Full<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#34--broker-disk-full" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p><strong>Đây là incident nguy hiểm nhất — broker có thể crash hoàn toàn.</strong></p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    DISK[\&quot;Disk > 85% full\&quot;] --> EFFECT1[\&quot;Write performance giảm mạnh\&quot;]\n    DISK --> EFFECT2[\&quot;Log segment cleanup chậm\&quot;]\n    DISK --> EFFECT3[\&quot;🚨 Disk 100% → Broker CRASH\&quot;]\n    \n    EFFECT3 --> ACTION1[\&quot;Tăng disk (ưu tiên nhất)\&quot;]\n    EFFECT3 --> ACTION2[\&quot;Giảm retention ngay lập tức\&quot;]\n    EFFECT3 --> ACTION3[\&quot;Xoá old segments thủ công\\n(cẩn thận!)\&quot;]&quot;">flowchart LR
+    DISK[&quot;Disk > 85% full&quot;] --> EFFECT1[&quot;Write performance giảm mạnh&quot;]
+    DISK --> EFFECT2[&quot;Log segment cleanup chậm&quot;]
+    DISK --> EFFECT3[&quot;🚨 Disk 100% → Broker CRASH&quot;]
+    
+    EFFECT3 --> ACTION1[&quot;Tăng disk (ưu tiên nhất)&quot;]
+    EFFECT3 --> ACTION2[&quot;Giảm retention ngay lập tức&quot;]
+    EFFECT3 --> ACTION3[&quot;Xoá old segments thủ công\n(cẩn thận!)&quot;]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p><strong>Response khi disk > 90%:</strong></p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># 1. Kiểm tra disk usage per topic</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">kafka-log-dirs.sh</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --bootstrap-server</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> kafka1:9092</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --topic-list</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> orders,user-events</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --describe</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> |</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> python3</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -c</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">import sys, json</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">data = json.load(sys.stdin)</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">for broker in data['brokers']:</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">    for log in broker['logDirs']:</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">        for part in log['partitions']:</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">            print(f</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">\&quot;</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">{part['partition']}: {part['size'] / 1024 / 1024:.1f} MB</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">\&quot;</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">)</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># 2. Giảm retention ngay (emergency)</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">kafka-configs.sh</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --alter</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --entity-type</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> topics</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --entity-name</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> big-topic</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --add-config</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> retention.ms=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">3600000</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \ </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"> # Chỉ giữ 1 giờ</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">  --bootstrap-server</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> kafka1:9092</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># 3. Force cleanup</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">kafka-configs.sh</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --alter</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --entity-type</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> topics</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --entity-name</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> big-topic</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --add-config</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> file.delete.delay.ms=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1000</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --bootstrap-server</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> kafka1:9092</span></span></code></pre></figure>
+<hr/>
+<h3 id="35--message-ordering-bị-phá-vỡ">3.5 — Message Ordering Bị Phá Vỡ<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#35--message-ordering-bị-phá-vỡ" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p><strong>Triệu chứng:</strong> Business logic nhận event không theo thứ tự mong đợi.</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    ROOT[\&quot;Ordering bị phá vỡ\&quot;] --> C1[\&quot;Messages cùng key\\nnhưng khác partition?\&quot;]\n    ROOT --> C2[\&quot;Retry producer gây\\nout-of-order?\&quot;]\n    ROOT --> C3[\&quot;Multiple consumers\\nxử lý song song?\&quot;]\n    \n    C1 -->|Kiểm tra partitioner| FIX1[\&quot;Đảm bảo dùng\\nDefaultPartitioner với key\\nKhông random partition\&quot;]\n    \n    C2 -->|enable.idempotence=false| FIX2[\&quot;Bật enable.idempotence=true\\nHoặc max.in.flight=1\&quot;]\n    \n    C3 -->|Concurrency > 1| FIX3[\&quot;Dùng 1 thread per partition\\nHoặc implement sequence number\\nTrong message để re-order\&quot;]&quot;">flowchart TD
+    ROOT[&quot;Ordering bị phá vỡ&quot;] --> C1[&quot;Messages cùng key\nnhưng khác partition?&quot;]
+    ROOT --> C2[&quot;Retry producer gây\nout-of-order?&quot;]
+    ROOT --> C3[&quot;Multiple consumers\nxử lý song song?&quot;]
+    
+    C1 -->|Kiểm tra partitioner| FIX1[&quot;Đảm bảo dùng\nDefaultPartitioner với key\nKhông random partition&quot;]
+    
+    C2 -->|enable.idempotence=false| FIX2[&quot;Bật enable.idempotence=true\nHoặc max.in.flight=1&quot;]
+    
+    C3 -->|Concurrency > 1| FIX3[&quot;Dùng 1 thread per partition\nHoặc implement sequence number\nTrong message để re-order&quot;]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<hr/>
+<h2 id="-section-4--tips--tricks">💡 SECTION 4 — Tips &amp; Tricks<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-section-4--tips--tricks" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="41--poison-pill-detection--handling">4.1 — Poison Pill Detection &amp; Handling<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#41--poison-pill-detection--handling" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p><strong>Poison pill</strong> = message không thể xử lý được, gây infinite retry loop.</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    MSG[\&quot;Poison Pill Message\&quot;] --> CONSUME[\&quot;Consumer poll()\&quot;]\n    CONSUME --> PROC[\&quot;process() → Exception\&quot;]\n    PROC -->|retry 1| PROC\n    PROC -->|retry 2| PROC\n    PROC -->|retry 3| DLT[\&quot;→ Dead Letter Topic\&quot;]\n    DLT --> ALERT[\&quot;Alert + Manual inspect\&quot;]\n    \n    style MSG fill:#f44336,color:#fff\n    style DLT fill:#FF9800,color:#fff&quot;">flowchart LR
+    MSG[&quot;Poison Pill Message&quot;] --> CONSUME[&quot;Consumer poll()&quot;]
+    CONSUME --> PROC[&quot;process() → Exception&quot;]
+    PROC -->|retry 1| PROC
+    PROC -->|retry 2| PROC
+    PROC -->|retry 3| DLT[&quot;→ Dead Letter Topic&quot;]
+    DLT --> ALERT[&quot;Alert + Manual inspect&quot;]
+    
+    style MSG fill:#f44336,color:#fff
+    style DLT fill:#FF9800,color:#fff
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="java" data-theme="github-light github-dark"><code data-language="java" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">@</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Bean</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">public</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> DefaultErrorHandler </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">poisonPillHandler</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(KafkaOperations</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&lt;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">String, Object</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">></span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> ops) {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    DeadLetterPublishingRecoverer recoverer </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> new</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> DeadLetterPublishingRecoverer</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(ops,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        (record, ex) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-></span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">            // Thêm exception info vào DLT message headers</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            log.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">error</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;Sending to DLT: topic={}, offset={}, exception={}&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">                record.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">topic</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(), record.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">offset</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(), ex.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">getClass</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">().</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">getSimpleName</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">());</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">            return</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> new</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> TopicPartition</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(record.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">topic</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">() </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">+</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;.DLT&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, record.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">partition</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">());</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        });</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    ExponentialBackOffWithMaxRetries backOff </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> new</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> ExponentialBackOffWithMaxRetries</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">3</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    backOff.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">setInitialInterval</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1000</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    backOff.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">setMultiplier</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">2.0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    backOff.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">setMaxInterval</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">10000</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    DefaultErrorHandler handler </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> new</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> DefaultErrorHandler</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(recoverer, backOff);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    </span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">    // Lỗi này không retry — đẩy thẳng DLT</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    handler.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">addNotRetryableExceptions</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        DeserializationException.class,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        MessageConversionException.class,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        MethodArgumentResolutionException.class</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    );</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    return</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> handler;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></figure>
+<hr/>
+<h3 id="42--consumer-lag-monitoring-với-alert">4.2 — Consumer Lag Monitoring với Alert<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#42--consumer-lag-monitoring-với-alert" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="java" data-theme="github-light github-dark"><code data-language="java" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// LagMonitorScheduler.java</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">@</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Scheduled</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">fixedDelayString</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;60000&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">public</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> void</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> checkConsumerLag</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">() {</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    try</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (AdminClient adminClient </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> AdminClient.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">create</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(kafkaProps)) {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        Map&lt;</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">TopicPartition</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">OffsetAndMetadata</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">> committed </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            adminClient.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">listConsumerGroupOffsets</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;order-processor&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">                .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">partitionsToOffsetAndMetadata</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">().</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">get</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">();</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        Map&lt;</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">TopicPartition</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Long</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">> endOffsets </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            adminClient.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">listOffsets</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">                committed.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">keySet</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">().</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">stream</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">()</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">                    .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">collect</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(Collectors.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">toMap</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(tp </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-></span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> tp, tp </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-></span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> OffsetSpec.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">latest</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">()))</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            ).</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">all</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">().</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">get</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">()</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">entrySet</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">().</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">stream</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">()</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">collect</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(Collectors.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">toMap</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(Map.Entry</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">getKey, e </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-></span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> e.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">getValue</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">().</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">offset</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">()));</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        for</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (Map.Entry&lt;</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">TopicPartition</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">OffsetAndMetadata</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">> entry </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">:</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> committed.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">entrySet</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">()) {</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">            long</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> lag </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> endOffsets.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">get</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(entry.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">getKey</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">()) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> entry.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">getValue</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">().</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">offset</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">();</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            meterRegistry.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">gauge</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;kafka.consumer.lag&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">                Tags.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">of</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;topic&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, entry.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">getKey</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">().</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">topic</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(),</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">                        &quot;partition&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, String.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">valueOf</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(entry.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">getKey</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">().</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">partition</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">())),</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">                lag);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            </span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">            if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (lag </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">></span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 10_000</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) {  </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// Threshold cho PDMS</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">                alertService.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">send</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;High consumer lag: &quot;</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> +</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> entry.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">getKey</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">() </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">+</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot; = &quot;</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> +</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> lag);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></figure>
+<hr/>
+<h3 id="43--idempotent-consumer-pattern">4.3 — Idempotent Consumer Pattern<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#43--idempotent-consumer-pattern" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Kafka đảm bảo at-least-once → consumer cần tự xử lý duplicate.</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;sequenceDiagram\n    participant K as Kafka\n    participant C as Consumer\n    participant DB as Database\n\n    K->>C: Deliver message (offset=100, eventId=abc-123)\n    C->>DB: INSERT INTO processed_events(event_id) VALUES('abc-123')\n    Note over DB: ✅ New event\n    C->>DB: UPDATE orders SET status='PAID'\n    C->>K: commitOffset(100)\n\n    Note over K,C: Network issue → consumer restart\n    K->>C: Re-deliver same message (offset=100, eventId=abc-123)\n    C->>DB: INSERT INTO processed_events(event_id) VALUES('abc-123')\n    Note over DB: ❌ DUPLICATE KEY → caught!\n    C->>K: commitOffset(100)  -- skip processing, just commit&quot;">sequenceDiagram
+    participant K as Kafka
+    participant C as Consumer
+    participant DB as Database
+
+    K->>C: Deliver message (offset=100, eventId=abc-123)
+    C->>DB: INSERT INTO processed_events(event_id) VALUES('abc-123')
+    Note over DB: ✅ New event
+    C->>DB: UPDATE orders SET status='PAID'
+    C->>K: commitOffset(100)
+
+    Note over K,C: Network issue → consumer restart
+    K->>C: Re-deliver same message (offset=100, eventId=abc-123)
+    C->>DB: INSERT INTO processed_events(event_id) VALUES('abc-123')
+    Note over DB: ❌ DUPLICATE KEY → caught!
+    C->>K: commitOffset(100)  -- skip processing, just commit
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="java" data-theme="github-light github-dark"><code data-language="java" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">@</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Transactional</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">public</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> void</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> processOrder</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(OrderEvent event) {</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">    // Idempotency check</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (processedEventRepository.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">existsByEventId</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(event.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">getEventId</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">())) {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        log.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">debug</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;Duplicate event skipped: {}&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, event.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">getEventId</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">());</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        return</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    </span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">    // Process</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    orderService.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">markAsPaid</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(event.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">getOrderId</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">());</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    </span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">    // Mark as processed</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    processedEventRepository.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">save</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">new</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> ProcessedEvent</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(event.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">getEventId</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">()));</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></figure>
+<hr/>
+<h3 id="44--kafka-cli-cheat-sheet">4.4 — Kafka CLI Cheat Sheet<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#44--kafka-cli-cheat-sheet" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># === TOPICS ===</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># List all topics</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">kafka-topics.sh</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --list</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --bootstrap-server</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> kafka1:9092</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Describe topic (partitions, replicas, ISR)</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">kafka-topics.sh</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --describe</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --topic</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> orders</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --bootstrap-server</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> kafka1:9092</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Tạo topic</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">kafka-topics.sh</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --create</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --topic</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> orders</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --partitions</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 6</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --replication-factor</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 3</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --bootstrap-server</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> kafka1:9092</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Thay đổi số partitions (chỉ tăng, không giảm được)</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">kafka-topics.sh</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --alter</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --topic</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> orders</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --partitions</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 12</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --bootstrap-server</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> kafka1:9092</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Xoá topic</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">kafka-topics.sh</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --delete</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --topic</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> old-topic</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --bootstrap-server</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> kafka1:9092</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># === CONSUMER GROUPS ===</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># List consumer groups</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">kafka-consumer-groups.sh</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --list</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --bootstrap-server</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> kafka1:9092</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Describe lag</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">kafka-consumer-groups.sh</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --describe</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --group</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> order-processor</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --bootstrap-server</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> kafka1:9092</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Reset offset về earliest (cần stop consumer trước)</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">kafka-consumer-groups.sh</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --reset-offsets</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --group</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> order-processor</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --topic</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> orders</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --to-earliest</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --execute</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --bootstrap-server</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> kafka1:9092</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Reset về specific timestamp</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">kafka-consumer-groups.sh</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --reset-offsets</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --group</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> order-processor</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --topic</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> orders</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --to-datetime</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> 2025-01-01T00:00:00.000</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --execute</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --bootstrap-server</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> kafka1:9092</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># === MESSAGES ===</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Read messages từ topic (debug)</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">kafka-console-consumer.sh</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --bootstrap-server</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> kafka1:9092</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --topic</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> orders</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --from-beginning</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --max-messages</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 10</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --property</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> print.key=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">true</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --property</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> print.offset=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">true</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Produce test message</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">kafka-console-producer.sh</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --bootstrap-server</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> kafka1:9092</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --topic</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> orders</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --property</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;key.separator=:&quot;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --property</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;parse.key=true&quot;</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># → Input: order-123:{&quot;status&quot;:&quot;PAID&quot;}</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># === CONFIGS ===</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Xem config của topic</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">kafka-configs.sh</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --describe</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --entity-type</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> topics</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --entity-name</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> orders</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --bootstrap-server</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> kafka1:9092</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Xem config của broker</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">kafka-configs.sh</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --describe</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --entity-type</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> brokers</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --entity-name</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 1</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --bootstrap-server</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> kafka1:9092</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># === PERFORMANCE ===</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Producer performance test</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">kafka-producer-perf-test.sh</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --topic</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> perf-test</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --num-records</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 1000000</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --record-size</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 1024</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --throughput</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 50000</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --producer-props</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> bootstrap.servers=kafka1:9092</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> acks=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> compression.type=lz4</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Consumer performance test</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">kafka-consumer-perf-test.sh</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --topic</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> perf-test</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --messages</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 1000000</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --bootstrap-server</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> kafka1:9092</span></span></code></pre></figure>
+<hr/>
+<h3 id="45--graceful-consumer-shutdown-spring">4.5 — Graceful Consumer Shutdown (Spring)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#45--graceful-consumer-shutdown-spring" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="java" data-theme="github-light github-dark"><code data-language="java" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">@</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Component</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">public</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> class</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> GracefulShutdownListener</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> implements</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> ApplicationListener</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">&lt;</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ContextClosingEvent</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">> {</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    @</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Autowired</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    private</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> KafkaListenerEndpointRegistry registry;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    @</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Override</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    public</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> void</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> onApplicationEvent</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(ContextClosingEvent </span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">event</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) {</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">        // 1. Stop nhận messages mới</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        registry.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">getListenerContainers</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">().</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">forEach</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(container </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-></span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            container.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">stop</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">();</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            log.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">info</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;Stopped kafka listener: {}&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, container.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">getListenerId</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">());</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        });</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">        // 2. Chờ đang-xử lý hoàn tất (timeout 30s)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        registry.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">getListenerContainers</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">().</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">forEach</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(container </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-></span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">            try</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">                ((AbstractMessageListenerContainer</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&lt;?</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">?></span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) container)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">                    .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">waitWhileRunning</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(Duration.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">ofSeconds</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">30</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">));</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            } </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">catch</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (InterruptedException </span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">e</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">                Thread.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">currentThread</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">().</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">interrupt</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">();</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        });</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        log.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">info</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;All Kafka consumers stopped gracefully&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></figure>
+<hr/>
+<h3 id="46--schema-evolution-best-practices">4.6 — Schema Evolution Best Practices<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#46--schema-evolution-best-practices" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    V1[\&quot;Message v1\\n{orderId, amount}\&quot;] --> V2[\&quot;Message v2\\n{orderId, amount,\\ncurrency (optional)}\&quot;]\n    V2 --> V3[\&quot;Message v3\\n{orderId, amount,\\ncurrency,\\ntimestamp (optional)}\&quot;]\n\n    V1 -.->|❌ Breaking| BAD[\&quot;Message v1 BAD\\n{orderId} // removed amount\\n{totalAmount} // renamed\&quot;]\n\n    style V1 fill:#4CAF50,color:#fff\n    style V2 fill:#4CAF50,color:#fff\n    style V3 fill:#4CAF50,color:#fff\n    style BAD fill:#f44336,color:#fff&quot;">flowchart LR
+    V1[&quot;Message v1\n{orderId, amount}&quot;] --> V2[&quot;Message v2\n{orderId, amount,\ncurrency (optional)}&quot;]
+    V2 --> V3[&quot;Message v3\n{orderId, amount,\ncurrency,\ntimestamp (optional)}&quot;]
+
+    V1 -.->|❌ Breaking| BAD[&quot;Message v1 BAD\n{orderId} // removed amount\n{totalAmount} // renamed&quot;]
+
+    style V1 fill:#4CAF50,color:#fff
+    style V2 fill:#4CAF50,color:#fff
+    style V3 fill:#4CAF50,color:#fff
+    style BAD fill:#f44336,color:#fff
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p><strong>Rules:</strong></p>
+<ol>
+<li>✅ Chỉ <strong>thêm</strong> field mới, <strong>không xoá</strong> field cũ</li>
+<li>✅ Field mới phải có <strong>default value</strong> hoặc <strong>nullable</strong></li>
+<li>✅ Không <strong>đổi tên</strong> field (thêm field tên mới, deprecate field cũ)</li>
+<li>✅ Không thay đổi <strong>kiểu dữ liệu</strong> field</li>
+<li>✅ Bump version trong header của message: <code>{&quot;version&quot;: 2, &quot;orderId&quot;: &quot;...&quot;}</code></li>
+</ol>
+<hr/>
+<h3 id="47--kafka-trong-docker-compose-local-dev">4.7 — Kafka trong Docker Compose (Local Dev)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#47--kafka-trong-docker-compose-local-dev" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="yaml" data-theme="github-light github-dark"><code data-language="yaml" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># docker-compose.yml — Local development setup</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">version</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">'3.8'</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">services</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">  kafka</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">    image</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">confluentinc/cp-kafka:7.6.0</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">    ports</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">      - </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;9092:9092&quot;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">      - </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;9101:9101&quot;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">  # JMX</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">    environment</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">      # KRaft mode (không cần ZooKeeper!)</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">      KAFKA_NODE_ID</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT'</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">      KAFKA_ADVERTISED_LISTENERS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">'PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092'</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">      KAFKA_PROCESS_ROLES</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">'broker,controller'</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">      KAFKA_CONTROLLER_QUORUM_VOTERS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">'1@kafka:29093'</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">      KAFKA_LISTENERS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">'PLAINTEXT://kafka:29092,CONTROLLER://kafka:29093,PLAINTEXT_HOST://0.0.0.0:9092'</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">      KAFKA_INTER_BROKER_LISTENER_NAME</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">'PLAINTEXT'</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">      KAFKA_CONTROLLER_LISTENER_NAMES</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">'CONTROLLER'</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">      KAFKA_AUTO_CREATE_TOPICS_ENABLE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">'true'</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">      CLUSTER_ID</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">'MkU3OEVBNTcwNTJENDM2Qk'</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">    volumes</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">      - </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">kafka-data:/var/lib/kafka/data</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">  kafka-ui</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">    image</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">provectuslabs/kafka-ui:latest</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">    ports</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">      - </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;8080:8080&quot;</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">    environment</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">      KAFKA_CLUSTERS_0_NAME</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">local</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">kafka:29092</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">    depends_on</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">      - </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">kafka</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">volumes</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">  kafka-data</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span></code></pre></figure>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Khởi động</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">docker</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> compose</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> up</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -d</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Kafka UI: http://localhost:8080</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Bootstrap server cho app: localhost:9092</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Tạo topic nhanh</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">docker</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> exec</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -it</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> kafka-kafka-1</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">  kafka-topics.sh</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --create</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --topic</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> orders</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --partitions</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 3</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --replication-factor</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 1</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --bootstrap-server</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> localhost:9092</span></span></code></pre></figure>
+<hr/>
+<h2 id="-section-5--health-check--readiness-probe">🏥 SECTION 5 — Health Check &amp; Readiness Probe<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-section-5--health-check--readiness-probe" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="java" data-theme="github-light github-dark"><code data-language="java" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// KafkaHealthIndicator.java — Custom health check</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">@</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Component</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">public</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> class</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> KafkaHealthIndicator</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> implements</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> HealthIndicator</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    @</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Autowired</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    private</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> KafkaAdmin kafkaAdmin;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    @</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Override</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    public</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> Health </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">health</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">() {</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        try</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">            try</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (AdminClient client </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> AdminClient.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">create</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(kafkaAdmin.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">getConfigurationProperties</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">())) {</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">                // Kiểm tra kết nối đến cluster</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">                DescribeClusterResult cluster </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> client.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">describeCluster</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">();</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">                Collection&lt;</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Node</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">> nodes </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> cluster.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">nodes</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">().</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">get</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">5</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, TimeUnit.SECONDS);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">                </span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">                if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (nodes.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">isEmpty</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">()) {</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">                    return</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> Health.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">down</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">().</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">withDetail</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;error&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;No brokers available&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">).</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">build</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">();</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">                }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">                </span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">                return</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> Health.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">up</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">()</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">                    .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">withDetail</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;brokerCount&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, nodes.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">size</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">())</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">                    .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">withDetail</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;clusterId&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, cluster.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">clusterId</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">().</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">get</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">())</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">                    .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">build</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">();</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        } </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">catch</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (Exception </span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">e</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) {</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">            return</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> Health.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">down</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(e).</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">build</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">();</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></figure>
+<hr/>
+<h2 id="-related-notes">🔗 Related Notes<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-related-notes" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<ul>
+<li><a href="../Microservices-Patterns/Kafka-Configuration-Deep-Dive" class="internal" data-slug="Microservices-Patterns/Kafka-Configuration-Deep-Dive">Kafka-Configuration-Deep-Dive</a> — Cấu hình chi tiết Producer/Consumer/Broker</li>
+<li><a href="../Microservices-Patterns/Transactional-Outbox" class="internal" data-slug="Microservices-Patterns/Transactional-Outbox">Transactional-Outbox</a> — Kết hợp Kafka + DB transaction safely</li>
+<li><a href="../Microservices-Patterns/CQRS-Materialized-View" class="internal" data-slug="Microservices-Patterns/CQRS-Materialized-View">CQRS-Materialized-View</a> — Kafka Streams cho read-side</li>
+<li><a href="../Cross-Service-AuthZ-Patterns" class="internal" data-slug="Cross-Service-AuthZ-Patterns">Cross-Service-AuthZ-Patterns</a> — Permission token qua Kafka invalidation</li>
+</ul>
+<hr/>
+<h2 id="-quick-diagnostic-matrix">📊 Quick Diagnostic Matrix<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-quick-diagnostic-matrix" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Triệu chứng</th><th>Kiểm tra đầu tiên</th><th>Lệnh chẩn đoán</th></tr></thead><tbody><tr><td>Producer TimeoutException</td><td><code>buffer.memory</code>, broker health</td><td><code>kafka-broker-api-versions.sh</code></td></tr><tr><td>Consumer lag tăng liên tục</td><td>Consumer count vs partitions</td><td><code>kafka-consumer-groups.sh --describe</code></td></tr><tr><td>Rebalance liên tục</td><td><code>max.poll.interval.ms</code>, GC pause</td><td>Consumer logs, JVM GC logs</td></tr><tr><td>Under-replicated partitions</td><td>Broker disk, network</td><td><code>kafka-topics.sh --describe</code></td></tr><tr><td>Message duplicate</td><td>Idempotency logic</td><td>Kiểm tra <code>enable.idempotence</code></td></tr><tr><td>Message lost</td><td><code>acks</code>, <code>min.insync.replicas</code></td><td>Topic config review</td></tr><tr><td>Out-of-order messages</td><td>Key-based partitioning</td><td><code>kafka-dump-log.sh</code></td></tr><tr><td>Disk full</td><td>Retention config</td><td><code>kafka-log-dirs.sh</code></td></tr></tbody></table></div>
+<hr/>
+<p><em>Tags: <a href=".././tags/kafka" class="tag-link internal alias" data-slug="tags/kafka">kafka</a> <a href=".././tags/troubleshooting" class="tag-link internal alias" data-slug="tags/troubleshooting">troubleshooting</a> <a href=".././tags/exceptions" class="tag-link internal alias" data-slug="tags/exceptions">exceptions</a> <a href=".././tags/production" class="tag-link internal alias" data-slug="tags/production">production</a> <a href=".././tags/tips" class="tag-link internal alias" data-slug="tags/tips">tips</a> <a href=".././tags/spring-boot" class="tag-link internal alias" data-slug="tags/spring-boot">spring-boot</a> <a href=".././tags/microservices" class="tag-link internal alias" data-slug="tags/microservices">microservices</a> <a href=".././tags/vpbank-pdms" class="tag-link internal alias" data-slug="tags/vpbank-pdms">vpbank-pdms</a></em></p></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-83" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#-kafka--troubleshooting-errors--tips" data-for="-kafka--troubleshooting-errors--tips">🔥 Kafka — Troubleshooting, Errors &amp; Tips</a></li><li class="depth-1"><a href="#️-big-picture-vòng-đời-một-message--điểm-lỗi" data-for="️-big-picture-vòng-đời-một-message--điểm-lỗi">🗺️ Big Picture: Vòng đời một Message &amp; Điểm lỗi</a></li><li class="depth-1"><a href="#-section-1--producer-exceptions-catalog" data-for="-section-1--producer-exceptions-catalog">❌ SECTION 1 — Producer Exceptions Catalog</a></li><li class="depth-2"><a href="#11--timeoutexception-producer" data-for="11--timeoutexception-producer">1.1 — TimeoutException (Producer)</a></li><li class="depth-2"><a href="#12--notenoughreplicasexception" data-for="12--notenoughreplicasexception">1.2 — NotEnoughReplicasException</a></li><li class="depth-2"><a href="#13--recordtoolargeexception" data-for="13--recordtoolargeexception">1.3 — RecordTooLargeException</a></li><li class="depth-2"><a href="#14--producerfencedexception" data-for="14--producerfencedexception">1.4 — ProducerFencedException</a></li><li class="depth-2"><a href="#15--serializationexception-producer" data-for="15--serializationexception-producer">1.5 — SerializationException (Producer)</a></li><li class="depth-1"><a href="#-section-2--consumer-exceptions-catalog" data-for="-section-2--consumer-exceptions-catalog">❌ SECTION 2 — Consumer Exceptions Catalog</a></li><li class="depth-2"><a href="#21--commitfailedexception" data-for="21--commitfailedexception">2.1 — CommitFailedException</a></li><li class="depth-2"><a href="#22--unknown_member_id--illegal_generation" data-for="22--unknown_member_id--illegal_generation">2.2 — UNKNOWN_MEMBER_ID / ILLEGAL_GENERATION</a></li><li class="depth-2"><a href="#23--wakeupexception" data-for="23--wakeupexception">2.3 — WakeupException</a></li><li class="depth-2"><a href="#24--deserializationexception-consumer" data-for="24--deserializationexception-consumer">2.4 — DeserializationException (Consumer)</a></li><li class="depth-1"><a href="#-section-3--production-incidents--runbooks" data-for="-section-3--production-incidents--runbooks">🔥 SECTION 3 — Production Incidents &amp; Runbooks</a></li><li class="depth-2"><a href="#31--consumer-lag-tăng-đột-biến" data-for="31--consumer-lag-tăng-đột-biến">3.1 — Consumer Lag Tăng Đột Biến</a></li><li class="depth-2"><a href="#32--rebalance-storm" data-for="32--rebalance-storm">3.2 — Rebalance Storm</a></li><li class="depth-2"><a href="#33--isr-shrink--under-replicated-partitions" data-for="33--isr-shrink--under-replicated-partitions">3.3 — ISR Shrink / Under-Replicated Partitions</a></li><li class="depth-2"><a href="#34--broker-disk-full" data-for="34--broker-disk-full">3.4 — Broker Disk Full</a></li><li class="depth-2"><a href="#35--message-ordering-bị-phá-vỡ" data-for="35--message-ordering-bị-phá-vỡ">3.5 — Message Ordering Bị Phá Vỡ</a></li><li class="depth-1"><a href="#-section-4--tips--tricks" data-for="-section-4--tips--tricks">💡 SECTION 4 — Tips &amp; Tricks</a></li><li class="depth-2"><a href="#41--poison-pill-detection--handling" data-for="41--poison-pill-detection--handling">4.1 — Poison Pill Detection &amp; Handling</a></li><li class="depth-2"><a href="#42--consumer-lag-monitoring-với-alert" data-for="42--consumer-lag-monitoring-với-alert">4.2 — Consumer Lag Monitoring với Alert</a></li><li class="depth-2"><a href="#43--idempotent-consumer-pattern" data-for="43--idempotent-consumer-pattern">4.3 — Idempotent Consumer Pattern</a></li><li class="depth-2"><a href="#44--kafka-cli-cheat-sheet" data-for="44--kafka-cli-cheat-sheet">4.4 — Kafka CLI Cheat Sheet</a></li><li class="depth-2"><a href="#45--graceful-consumer-shutdown-spring" data-for="45--graceful-consumer-shutdown-spring">4.5 — Graceful Consumer Shutdown (Spring)</a></li><li class="depth-2"><a href="#46--schema-evolution-best-practices" data-for="46--schema-evolution-best-practices">4.6 — Schema Evolution Best Practices</a></li><li class="depth-2"><a href="#47--kafka-trong-docker-compose-local-dev" data-for="47--kafka-trong-docker-compose-local-dev">4.7 — Kafka trong Docker Compose (Local Dev)</a></li><li class="depth-1"><a href="#-section-5--health-check--readiness-probe" data-for="-section-5--health-check--readiness-probe">🏥 SECTION 5 — Health Check &amp; Readiness Probe</a></li><li class="depth-1"><a href="#-related-notes" data-for="-related-notes">🔗 Related Notes</a></li><li class="depth-1"><a href="#-quick-diagnostic-matrix" data-for="-quick-diagnostic-matrix">📊 Quick Diagnostic Matrix</a></li><li class="overflow-end"></li></ul></div><div class="backlinks"><h3>Backlinks</h3><ul id="list-2" class="overflow"><li><a href="../Microservices-Patterns/Kafka-Configuration-Deep-Dive" class="internal">Kafka-Configuration-Deep-Dive</a></li><li><a href="../Microservices-Patterns/Kafka-Partition-and-Offset-Internals" class="internal">Kafka-Partition-and-Offset-Internals</a></li><li><a href="../Microservices-Patterns/RabbitMQ-Troubleshooting-and-Tips" class="internal">RabbitMQ-Troubleshooting-and-Tips</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://dangthobach.github.io/">Back to Portfolio</a></li><li><a href="https://github.com/dangthobach">GitHub</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../postscript.js" type="module" data-persist="true"></script></html>

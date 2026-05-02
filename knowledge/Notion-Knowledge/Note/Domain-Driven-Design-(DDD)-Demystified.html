@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>Domain-Driven Design (DDD) Demystified</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="Dang Tho Bach's Knowledge Base"/><meta property="og:title" content="Domain-Driven Design (DDD) Demystified"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="Domain-Driven Design (DDD) Demystified"/><meta name="twitter:description" content="Most software doesn’t break because of syntax errors or flawed if-else logic."/><meta property="og:description" content="Most software doesn’t break because of syntax errors or flawed if-else logic."/><meta property="og:image:alt" content="Most software doesn’t break because of syntax errors or flawed if-else logic."/><meta property="twitter:domain" content="dangthobach.github.io/knowledge"/><meta property="og:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Domain-Driven-Design-(DDD)-Demystified"/><meta property="twitter:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Domain-Driven-Design-(DDD)-Demystified"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="Most software doesn’t break because of syntax errors or flawed if-else logic."/><meta name="generator" content="Quartz"/><link href="../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiL2hvbWUvcnVubmVyL3dvcmsvZGFuZ3Rob2JhY2guZ2l0aHViLmlvL2Rhbmd0aG9iYWNoLmdpdGh1Yi5pby9xdWFydHovcXVhcnR6L2NvbXBvbmVudHMvc3R5bGVzIiwic291cmNlcyI6WyJtZXJtYWlkLmlubGluZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFHRjtFQUNFOzs7QUFLRjtFQUNFO0VBQ0E7OztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTs7QUFJRjtFQUNFO0VBQ0E7RUFDQSIsInNvdXJjZXNDb250ZW50IjpbIi5leHBhbmQtYnV0dG9uIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbG9hdDogcmlnaHQ7XG4gIHBhZGRpbmc6IDAuNHJlbTtcbiAgbWFyZ2luOiAwLjNyZW07XG4gIHJpZ2h0OiAwOyAvLyBOT1RFOiByaWdodCB3aWxsIGJlIHNldCBpbiBtZXJtYWlkLmlubGluZS50c1xuICBjb2xvcjogdmFyKC0tZ3JheSk7XG4gIGJvcmRlci1jb2xvcjogdmFyKC0tZGFyayk7XG4gIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgYm9yZGVyOiAxcHggc29saWQ7XG4gIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgb3BhY2l0eTogMDtcbiAgdHJhbnNpdGlvbjogMC4ycztcblxuICAmID4gc3ZnIHtcbiAgICBmaWxsOiB2YXIoLS1saWdodCk7XG4gICAgZmlsdGVyOiBjb250cmFzdCgwLjMpO1xuICB9XG5cbiAgJjpob3ZlciB7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIGJvcmRlci1jb2xvcjogdmFyKC0tc2Vjb25kYXJ5KTtcbiAgfVxuXG4gICY6Zm9jdXMge1xuICAgIG91dGxpbmU6IDA7XG4gIH1cbn1cblxucHJlIHtcbiAgJjpob3ZlciA+IC5leHBhbmQtYnV0dG9uIHtcbiAgICBvcGFjaXR5OiAxO1xuICAgIHRyYW5zaXRpb246IDAuMnM7XG4gIH1cbn1cblxuI21lcm1haWQtY29udGFpbmVyIHtcbiAgcG9zaXRpb246IGZpeGVkO1xuICBjb250YWluOiBsYXlvdXQ7XG4gIHotaW5kZXg6IDk5OTtcbiAgbGVmdDogMDtcbiAgdG9wOiAwO1xuICB3aWR0aDogMTAwdnc7XG4gIGhlaWdodDogMTAwdmg7XG4gIG92ZXJmbG93OiBoaWRkZW47XG4gIGRpc3BsYXk6IG5vbmU7XG4gIGJhY2tkcm9wLWZpbHRlcjogYmx1cig0cHgpO1xuICBiYWNrZ3JvdW5kOiByZ2JhKDAsIDAsIDAsIDAuNSk7XG5cbiAgJi5hY3RpdmUge1xuICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgfVxuXG4gICYgPiAjbWVybWFpZC1zcGFjZSB7XG4gICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gICAgYm9yZGVyLXJhZGl1czogNXB4O1xuICAgIHBvc2l0aW9uOiBmaXhlZDtcbiAgICB0b3A6IDUwJTtcbiAgICBsZWZ0OiA1MCU7XG4gICAgdHJhbnNmb3JtOiB0cmFuc2xhdGUoLTUwJSwgLTUwJSk7XG4gICAgaGVpZ2h0OiA4MHZoO1xuICAgIHdpZHRoOiA4MHZ3O1xuICAgIG92ZXJmbG93OiBoaWRkZW47XG5cbiAgICAmID4gLm1lcm1haWQtY29udGVudCB7XG4gICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgICB0cmFuc2Zvcm0tb3JpZ2luOiAwIDA7XG4gICAgICB0cmFuc2l0aW9uOiB0cmFuc2Zvcm0gMC4xcyBlYXNlO1xuICAgICAgb3ZlcmZsb3c6IHZpc2libGU7XG4gICAgICBtaW4taGVpZ2h0OiAyMDBweDtcbiAgICAgIG1pbi13aWR0aDogMjAwcHg7XG5cbiAgICAgIHByZSB7XG4gICAgICAgIG1hcmdpbjogMDtcbiAgICAgICAgYm9yZGVyOiBub25lO1xuICAgICAgfVxuXG4gICAgICBzdmcge1xuICAgICAgICBtYXgtd2lkdGg6IG5vbmU7XG4gICAgICAgIGhlaWdodDogYXV0bztcbiAgICAgIH1cbiAgICB9XG5cbiAgICAmID4gLm1lcm1haWQtY29udHJvbHMge1xuICAgICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgICAgYm90dG9tOiAyMHB4O1xuICAgICAgcmlnaHQ6IDIwcHg7XG4gICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgZ2FwOiA4cHg7XG4gICAgICBwYWRkaW5nOiA4cHg7XG4gICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgYm9yZGVyLXJhZGl1czogNnB4O1xuICAgICAgYm94LXNoYWRvdzogMCAycHggNHB4IHJnYmEoMCwgMCwgMCwgMC4xKTtcbiAgICAgIHotaW5kZXg6IDI7XG5cbiAgICAgIC5tZXJtYWlkLWNvbnRyb2wtYnV0dG9uIHtcbiAgICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgIHdpZHRoOiAzMnB4O1xuICAgICAgICBoZWlnaHQ6IDMycHg7XG4gICAgICAgIHBhZGRpbmc6IDA7XG4gICAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgICAgY29sb3I6IHZhcigtLWRhcmspO1xuICAgICAgICBib3JkZXItcmFkaXVzOiA0cHg7XG4gICAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICAgICAgZm9udC1zaXplOiAxNnB4O1xuICAgICAgICBmb250LWZhbWlseTogdmFyKC0tYm9keUZvbnQpO1xuICAgICAgICB0cmFuc2l0aW9uOiBhbGwgMC4ycyBlYXNlO1xuXG4gICAgICAgICY6aG92ZXIge1xuICAgICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIH1cblxuICAgICAgICAmOmFjdGl2ZSB7XG4gICAgICAgICAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKDFweCk7XG4gICAgICAgIH1cblxuICAgICAgICAvLyBTdHlsZSB0aGUgcmVzZXQgYnV0dG9uIGRpZmZlcmVudGx5XG4gICAgICAgICY6bnRoLWNoaWxkKDIpIHtcbiAgICAgICAgICB3aWR0aDogYXV0bztcbiAgICAgICAgICBwYWRkaW5nOiAwIDEycHg7XG4gICAgICAgICAgZm9udC1zaXplOiAxNHB4O1xuICAgICAgICB9XG4gICAgICB9XG4gICAgfVxuICB9XG59XG4iXX0= */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://dangthobach.github.io/knowledge/index.xml"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Domain-Driven-Design-(DDD)-Demystified-og-image.webp"/><meta property="og:image:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Domain-Driven-Design-(DDD)-Demystified-og-image.webp"/><meta name="twitter:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Domain-Driven-Design-(DDD)-Demystified-og-image.webp"/><meta property="og:image:type" content="image/.webp"/></head><body data-slug="Notion-Knowledge/Note/Domain-Driven-Design-(DDD)-Demystified"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../..">Dang Tho Bach's Knowledge Base</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-321"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-321" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/">Notion Knowledge</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/Note/">Note</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>Domain Driven Design (DDD) Demystified</a></div></nav><h1 class="article-title">Domain-Driven Design (DDD) Demystified</h1><p show-comma="true" class="content-meta"><time datetime="2026-05-02T04:58:37.000Z">May 02, 2026</time><span>22 min read</span></p></div></div><article class="popover-hint"><p>Most software doesn’t break because of syntax errors or flawed if-else logic.</p>
+<p>It breaks because teams lose alignment with the business problem they’re supposed to solve. Systems become tangled with technical assumptions that age poorly. Features get implemented without proper design considerations. And over time, every new requirement creates more issues that keep piling up.</p>
+<p>Often, this isn’t a tooling problem. It’s a modeling problem.</p>
+<p>Domain-Driven Design (DDD) tries to tackle this problem head-on. At its core, DDD is a way of designing software that keeps the business domain, not the database schema or the latest framework, at the center of decision-making. It insists that engineers collaborate deeply with domain experts during the project lifecycle, not just to gather requirements once and vanish into Jira tickets. It gives teams the vocabulary, patterns, and boundaries to model complex systems without getting buried in accidental complexity.</p>
+<p>Of course, DDD is not a silver bullet. It doesn’t generate code, and it won’t magically fix a legacy monolith. But it does offer something more valuable in the long run: clarity around what the system is supposed to do and where it’s allowed to change.</p>
+<p>This approach becomes especially valuable when:</p>
+<ul>
+<li>
+<p>The domain is non-trivial and keeps evolving. Think finance, healthcare, logistics, or giant marketplaces.</p>
+</li>
+<li>
+<p>Multiple teams are working on overlapping parts of the system.</p>
+</li>
+<li>
+<p>Code needs to reflect real-world behavior, not abstract technical constructs.</p>
+</li>
+</ul>
+<p>DDD doesn’t care whether the architecture is monolithic or microservice-based. What it does care about is whether the model reflects the real-world rules and language of the domain, and whether that model can evolve safely as the domain changes.</p>
+<p>In this article, we explore the core ideas of DDD (such as Bounded Contexts, Aggregates, and Ubiquitous Language) and walk through how they work together in practice.  We will also look at how DDD fits into real-world systems, where it shines, and where it can fall flat.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!iCvg!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F292f3b60-c96a-4d5e-962b-408cef38750c_2250x2862.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!iCvg!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F292f3b60-c96a-4d5e-962b-408cef38750c_2250x2862.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h2 id="what-is-domain-driven-design"><strong>What is Domain Driven Design?</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#what-is-domain-driven-design" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Domain-Driven Design isn’t a framework. It doesn’t ship with starter templates or ready-made components.</p>
+<p>Instead, it’s a way of thinking about how to build software that aligns tightly with the business problems it’s supposed to solve. In other words, the concern revolves around the domain: the real-world logic, rules, constraints, and language that shape what the system does.</p>
+<p>The “design” part isn’t about wireframes or UI. It’s about shaping the core model of the system so that it reflects the mental model of domain experts or the people who understand the problem space best. The goal is simple, even if the execution isn’t: design the software’s structure to match the domain’s structure.</p>
+<p>Eric Evans, who first formalized DDD in his 2003 book, framed it like this: the heart of software isn’t infrastructure or code reuse. It’s the domain model. And that model has to be carefully distilled, refined, and protected as the system grows.</p>
+<p>In practice, DDD focuses on three essential outcomes:</p>
+<ul>
+<li>
+<p>Deep alignment between developers and domain experts. The system only behaves correctly when everyone agrees on what “correct” means. That shared understanding has to show up in both conversation and code.</p>
+</li>
+<li>
+<p>Clean separation of concerns. The business rules that define how the system should behave must be isolated from glue code, infrastructure, or delivery details. They deserve to live in a space of their own.</p>
+</li>
+<li>
+<p>Explicit boundaries around different parts of the domain. Not everything fits into one giant model. Different areas of the system often follow different rules, workflows, and terms. DDD makes those differences explicit and enforces them with clear edges.</p>
+</li>
+</ul>
+<p>This doesn’t mean DDD is only for large teams or enterprise-scale projects.</p>
+<p>Even a small codebase can benefit from separating concerns, using precise language, and avoiding conceptual soup. However, the real power of DDD shows up when complexity starts to spiral and when business logic gets layered, workflows cross team lines, and every change has a high impact.</p>
+<p>Let’s now understand some key concepts that shape DDD.</p>
+<h2 id="bounded-contexts"><strong>Bounded Contexts</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#bounded-contexts" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Every large system eventually turns into a semantic battleground. One team says “Customer,” and they mean a paying subscriber. Another team uses “Customer” to describe anyone with a profile, even if they’ve never spent a single dollar. Both are technically right. However, both are dangerously wrong in the wrong context.</p>
+<p>This is where Bounded Contexts help.</p>
+<p>A Bounded Context defines where a specific domain model applies and where it doesn’t. It’s a semantic boundary (not just a code module or service) where terms, rules, and logic are guaranteed to make sense within that space, and only within that space. Outside of it, all bets are off.</p>
+<p>The diagram below shows the concept of bounded contexts in DDD.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!zMSv!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fc73af28e-bdbf-46c2-b6be-a049c2925992_1938x1266.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!zMSv!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fc73af28e-bdbf-46c2-b6be-a049c2925992_1938x1266.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>The mistake most teams make is assuming that a single, unified model will scale across the entire system. It won’t. As complexity grows, the business itself fractures into distinct subdomains, each with its language, processes, and quirks. Trying to stretch one model across all of them leads to tangled abstractions, leaky assumptions, and endless edge cases.</p>
+<p>Instead, DDD treats each subdomain as its bounded context:</p>
+<ul>
+<li>
+<p>In a payments context, an “Invoice” might be immutable and tied to tax rules.</p>
+</li>
+<li>
+<p>In a customer support context, that same “Invoice” might be editable, cancellable, and used mostly for tracking communication history.</p>
+</li>
+<li>
+<p>In a CRM context, “Customer” means a potential lead. In billing, it means someone who’s signed a contract.</p>
+</li>
+</ul>
+<p>Each of these models can (and should) evolve independently, as long as their integration points are clearly defined.</p>
+<h3 id="how-to-spot-a-bounded-context"><strong>How to Spot a Bounded Context?</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#how-to-spot-a-bounded-context" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Bounded contexts often emerge naturally from:</p>
+<ul>
+<li>
+<p><strong>Team boundaries:</strong>  Different teams own different workflows or products.</p>
+</li>
+<li>
+<p><strong>Inconsistent definitions:</strong>  The same term means different things in different places.</p>
+</li>
+<li>
+<p><strong>Integration friction:</strong> APIs that require translation layers or mapping logic.</p>
+</li>
+<li>
+<p>I<strong>ndependent release cycles:</strong> Parts of the system change at different speeds.</p>
+</li>
+</ul>
+<p>The goal isn’t to slice the system into microservices. That’s an implementation detail. The real goal is to draw lines around specific meaning. For example, “within the context, these rules apply, and we don’t let external assumptions leak in.”</p>
+<h3 id="context-maps"><strong>Context Maps</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#context-maps" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Once bounded contexts are identified, the next question is: how do they talk to each other?</p>
+<p>Enter the Context Map. This is a high-level diagram or model that shows the relationships between contexts: how they integrate, which one depends on which, and what patterns govern those interactions.</p>
+<p>Some common integration patterns are as follows:</p>
+<ul>
+<li>
+<p><strong>Shared Kernel:</strong> Two contexts share a subset of the model explicitly.</p>
+</li>
+<li>
+<p><strong>Customer/Supplier:</strong> One context depends heavily on another’s model, often upstream/downstream.</p>
+</li>
+<li>
+<p><strong>Anti-Corruption Layer (ACL):</strong> One context protects its model by translating data from another, preventing outside assumptions from contaminating its logic.</p>
+</li>
+</ul>
+<p><a href="https://substackcdn.com/image/fetch/$s_!8TUU!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fc949846d-6dc7-4247-8f07-53a41d1ddb9c_1938x842.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!8TUU!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fc949846d-6dc7-4247-8f07-53a41d1ddb9c_1938x842.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!Frgq!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F1a79a113-e4a4-42af-84d1-a7c68c319e4d_1938x842.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!Frgq!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F1a79a113-e4a4-42af-84d1-a7c68c319e4d_1938x842.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>The relationships between bounded contexts help teams negotiate boundaries, define APIs, and prevent one model’s decisions from cascading through the whole system.</p>
+<h2 id="ubiquitous-language"><strong>Ubiquitous Language</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#ubiquitous-language" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Code doesn’t live in a vacuum. It lives in meetings, whiteboards, Slack threads, and late-night production postmortems. And too often, the language in those places doesn’t match what’s in the code. The business talks about “clients,” the codebase refers to “users,” and the database table says “accounts.” Everyone nods along until a bug slips through because the system didn’t behave the way the business expected.</p>
+<p>That gap is where confusion grows. And that’s exactly what Ubiquitous Language is designed to close.</p>
+<p>Ubiquitous Language means using a shared vocabulary across the team (consisting of domain experts, developers, testers, analysts) so that conversations about the system use the same terms as the code.</p>
+<p>It’s not just naming variables better. It’s about creating a living language that reflects how the domain actually works, and then baking that language directly into the model.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!Tjhy!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F83978e98-2642-4e69-9dc2-9d450da193a5_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!Tjhy!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F83978e98-2642-4e69-9dc2-9d450da193a5_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>When Ubiquitous Language shows up in code, it looks like:</p>
+<ul>
+<li>
+<p>Class names that match business concepts: Booking, Invoice, Shipment</p>
+</li>
+<li>
+<p>Methods that reflect domain actions: cancel(), reschedule(), approve()</p>
+</li>
+<li>
+<p>Events that describe business facts: OrderPlaced, InventoryDepleted, AccountSuspended</p>
+</li>
+</ul>
+<p>This language is the model, and it evolves alongside the domain. As the business discovers new rules, refines terminology, or discards outdated ideas, the language in the code should shift to match.</p>
+<h3 id="why-this-matters"><strong>Why This Matters?</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#why-this-matters" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>A consistent, shared language does more than make the codebase easier to read. It creates alignment between mental models:</p>
+<ul>
+<li>
+<p>Developers understand what the business actually means when it says “settle an invoice.”</p>
+</li>
+<li>
+<p>Product managers can walk through code reviews and see terms they recognize.</p>
+</li>
+<li>
+<p>New engineers ramp up faster because the domain model is transparent, not buried in technical abstraction.</p>
+</li>
+</ul>
+<p>When the language drifts (such as when “client” in the spec becomes CustomerDTO in the code, and “user” in the UI), it creates cracks in understanding. Those cracks widen over time, until developers don’t feel confident changing anything without fear of side effects.</p>
+<h3 id="this-isnt-just-about-naming"><strong>This Isn’t Just About Naming</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#this-isnt-just-about-naming" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>It’s tempting to treat ubiquitous language as a naming convention. However, it’s a collaborative process between developers and domain experts and involves asking questions like:</p>
+<ul>
+<li>
+<p>What’s the difference between a “draft order” and a “pending order”?</p>
+</li>
+<li>
+<p>When does a “reservation” become a “booking”?</p>
+</li>
+<li>
+<p>Is a “shipment” a container or the act of delivery?</p>
+</li>
+</ul>
+<p>Ubiquitous language fails when it’s imposed in a top-down manner and is inconsistent across contexts. Language evolves, and it’s a mistake to treat ubiquitous language as static.</p>
+<h2 id="aggregates"><strong>Aggregates</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#aggregates" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>It’s tempting to treat a domain model like a relational schema where everything is linked to everything else. However, in real systems, that approach breaks down fast. Change one thing, and ten others break. Load one entity, and the system tries to hydrate several related objects. Transactions get bloated, consistency gets fragile, and performance takes a nosedive.</p>
+<p>Aggregates fix that, not by eliminating relationships, but by containing them.</p>
+<p>An Aggregate is a consistency boundary inside a bounded context. It’s a cluster of related domain objects that are treated as a single unit when making changes. Each Aggregate has one root entity, and all modifications flow through it. Anything outside the Aggregate can only reference it by the root’s identifier.</p>
+<h3 id="why-aggregates-matter"><strong>Why Aggregates Matter?</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#why-aggregates-matter" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Aggregates give developers a way to:</p>
+<ul>
+<li>
+<p><strong>Protect invariants:</strong> Rules like “a booking can’t be confirmed without payment” or “an order total must match its line items” live safely within the Aggregate, enforced transactionally.</p>
+</li>
+<li>
+<p><strong>Control transactions:</strong> Only the root handles commands that mutate state. That keeps the transaction scope tight and avoids inconsistent partial updates.</p>
+</li>
+<li>
+<p><strong>Simplify reasoning:</strong> With well-designed Aggregates, it’s possible to look at a single unit and understand what’s allowed, what’s not, and what side effects will occur.</p>
+</li>
+</ul>
+<p>Take an e-commerce domain:</p>
+<ul>
+<li>
+<p>An Order Aggregate might contain LineItems, ShippingDetails, and BillingInfo.</p>
+</li>
+<li>
+<p>The Order is the root. No other service or class is allowed to directly manipulate LineItems. They have to go through Order.addItem() or Order.removeItem().</p>
+</li>
+<li>
+<p>If the business rule is “an order cannot be shipped until it’s paid,” that logic belongs inside the Order Aggregate, not scattered across services or UI layers.</p>
+</li>
+</ul>
+<p>See the diagram below for an example of Aggregate:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!P7oz!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F03fadbae-6717-4ba5-b444-63109d2a6b90_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!P7oz!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F03fadbae-6717-4ba5-b444-63109d2a6b90_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h3 id="trade-offs-and-design-pressure"><strong>Trade-offs and Design Pressure</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#trade-offs-and-design-pressure" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Aggregates work best when they are small, focused, and autonomous.</p>
+<p>But it’s easy to over-model and create massive Aggregates that try to represent everything. That leads to a few problems:</p>
+<ul>
+<li>
+<p>Lock contention in databases occurs when too many updates happen inside one big transactional boundary.</p>
+</li>
+<li>
+<p>Slower performance when an Aggregate takes too long to load or save.</p>
+</li>
+<li>
+<p>Tight coupling between unrelated concepts that happen to be connected.</p>
+</li>
+</ul>
+<p>Instead, model Aggregates around consistency needs, not just relationships. If two entities don’t need to be updated in the same transaction to maintain business correctness, they probably belong in separate Aggregates.</p>
+<p>Some helpful points to keep in mind are as follows:</p>
+<ul>
+<li>
+<p>Design Aggregates so they can be loaded and saved quickly.</p>
+</li>
+<li>
+<p>Keep invariants inside the Aggregate boundary.</p>
+</li>
+<li>
+<p>Use domain events to communicate between Aggregates when eventual consistency is acceptable.</p>
+</li>
+</ul>
+<h2 id="entities-and-value-objects"><strong>Entities and Value Objects</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#entities-and-value-objects" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Not everything in a system deserves an identity.</p>
+<p>Some things need to be tracked across time: orders, users, shipments. Others are meaningful only because of their properties: an address, a monetary amount, a date range. Confusing the two leads to models that are bloated, fragile, and harder to reason about than they should be.</p>
+<p>DDD draws a clean line here: Entities have identity. Value Objects have meaning.</p>
+<h3 id="entities-things-that-persist-and-evolve"><strong>Entities: Things That Persist and Evolve</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#entities-things-that-persist-and-evolve" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>An Entity is anything that needs a consistent identity over time, even if its attributes change. A User might change their email, update their password, or move across countries. But it’s still the same user. The identity, often represented by a unique ID or primary key, is what matters.</p>
+<p>Some defining characteristics of entities are as follows:</p>
+<ul>
+<li>
+<p>They have lifecycles and they get created, updated, archived, and deleted.</p>
+</li>
+<li>
+<p>They are often referenced elsewhere in the system.</p>
+</li>
+<li>
+<p>May contain other objects (including Value Objects), but acts as the gatekeeper for changes.</p>
+</li>
+</ul>
+<p>In real-world systems, Entities typically include:</p>
+<ul>
+<li>
+<p>Concepts like Customer, Order, Invoice, Product</p>
+</li>
+<li>
+<p>Any object that needs to be audited, tracked, or referenced across contexts</p>
+</li>
+</ul>
+<p>The key trait of entities is persistence of identity, not just persistence in storage.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!aTNT!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fdfe9e7fd-78d2-40a4-be9f-4ddf6784be8e_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!aTNT!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fdfe9e7fd-78d2-40a4-be9f-4ddf6784be8e_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h3 id="value-objects-defined-by-their-attributes"><strong>Value Objects: Defined by Their Attributes</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#value-objects-defined-by-their-attributes" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>A Value Object, on the other hand, is immutable and disposable. It’s meaningful because of what it is, not who it is. A Money object with amount and currency is a perfect example. If two Money(100, USD) objects exist, they’re effectively the same. There’s no reason to track them separately.</p>
+<p>Some defining characteristics of Value Objects are as follows:</p>
+<ul>
+<li>
+<p>They are immutable. Once created, they never change.</p>
+</li>
+<li>
+<p>Have no unique identity. Two instances with the same values are interchangeable.</p>
+</li>
+<li>
+<p>Can be freely created, copied, or discarded.</p>
+</li>
+<li>
+<p>Works well for modeling measurements, coordinates, settings, or concepts like DateRange, Address, Email, or PhoneNumber.</p>
+</li>
+</ul>
+<p>Immutability isn’t just a purity thing. It prevents accidental mutation and simplifies debugging. There’s no “what state was this in yesterday” with a Value Object. It either exists in the current shape, or it doesn’t.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!Ro3Z!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fddb88f1e-589c-44c2-af3d-1c6e7db92610_1938x1312.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!Ro3Z!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fddb88f1e-589c-44c2-af3d-1c6e7db92610_1938x1312.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h3 id="common-pitfalls"><strong>Common Pitfalls</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#common-pitfalls" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Getting this distinction between entities and value objects right makes models leaner, more expressive, and easier to maintain. Some common pitfalls are as follows:</p>
+<ul>
+<li>
+<p><strong>Over-identification</strong>: Giving everything an ID “just in case” leads to object inflation and broken encapsulation.</p>
+</li>
+<li>
+<p><strong>Shared mutable Value Objects</strong>: Passing a mutable Address around multiple Aggregates almost guarantees future data integrity issues.</p>
+</li>
+<li>
+<p><strong>Entity bloat</strong>: Putting every related concept into one Entity, instead of modeling Values cleanly, leads to giant objects that are hard to test and reason about.</p>
+</li>
+</ul>
+<h2 id="domain-events"><strong>Domain Events</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#domain-events" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Most systems don’t fail because a service went down. They fail because something important happened and nobody noticed. Here are a few examples:</p>
+<ul>
+<li>
+<p>A customer made a purchase, but the shipping service wasn’t updated.</p>
+</li>
+<li>
+<p>A payment failed, but the order stayed in limbo.</p>
+</li>
+<li>
+<p>A user upgraded their plan, but the feature flags didn’t flip.</p>
+</li>
+</ul>
+<p>These aren’t infrastructure failures. They’re coordination failures. The domain changed, and the rest of the system doesn’t know about it.</p>
+<p>This is what Domain Events solve.</p>
+<p>A Domain Event captures a meaningful business occurrence, something that already happened, in the past tense, and matters to other parts of the system. It’s not a command, it’s not a notification, and it’s not about infrastructure. It’s about documenting facts that emerge from domain behavior.</p>
+<p>Domain Events give systems a way to react without coupling. Instead of hardcoding service A to call service B when something happens, emit an event: “OrderPlaced.” Now, any service that cares about this event (such as billing, inventory, marketing) can subscribe and take action based on their business rules.</p>
+<h3 id="what-makes-a-domain-event"><strong>What Makes a Domain Event?</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#what-makes-a-domain-event" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Not every event is a Domain Event. A log line like “Retrying connection to Redis” or “Email queued” doesn’t qualify. A real Domain Event should:</p>
+<ul>
+<li>
+<p>Reflect a business-level change: For example, PaymentReceived, ShipmentDelayed, UserVerified.</p>
+</li>
+<li>
+<p>Be named in the past tense: it already happened, and the system can’t undo it.</p>
+</li>
+<li>
+<p>Be raised by the domain model, not by infrastructure or glue code.</p>
+</li>
+<li>
+<p>Often results from a state change in an Aggregate.</p>
+</li>
+</ul>
+<p>These events live inside the model, not at the edge of the system. They emerge naturally from behaviors: placing an order, canceling a reservation, or confirming a booking.</p>
+<h3 id="designing-for-change"><strong>Designing for Change</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#designing-for-change" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Domain Events make it easier to extend functionality without touching existing code.</p>
+<p>Let’s say we want to trigger a follow-up email when a user completes onboarding. There is no need to make a change to the registration service. Just subscribe to the UserOnboarded event.</p>
+<p>But there are trade-offs:</p>
+<ul>
+<li>
+<p>Order and timing aren’t guaranteed in distributed systems.</p>
+</li>
+<li>
+<p>Failures in consumers shouldn’t affect the producer. Resilience patterns are essential.</p>
+</li>
+<li>
+<p>Schema evolution must be managed carefully. Once events are in the wild, changing their shape becomes risky.</p>
+</li>
+</ul>
+<h2 id="repositories"><strong>Repositories</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#repositories" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Every domain model needs data to do anything useful. But it also needs protection from ORMs, from databases, from HTTP layers, and from anything else that doesn’t belong in core business logic. Without that protection, the model gets polluted. Entities start carrying annotations from persistence libraries. Value Objects get shaped to match table schemas. Aggregates leak getters and setters just to satisfy some repository API.</p>
+<p>Repositories exist to prevent that.</p>
+<p>A Repository provides a collection-like interface to Aggregate Roots, abstracting how they’re loaded, saved, and queried. It’s not just about CRUD. It’s about keeping the domain model clean and free from infrastructure concerns, so it can evolve based on business needs, not database limitations.</p>
+<p>In plain terms, the domain says, “I need this Order to apply a discount.” The Repository’s job is to deliver that Order Aggregate in a way that lets the domain do its work, without exposing how the data got there.</p>
+<p>Repositories should:</p>
+<ul>
+<li>
+<p>Only operate on Aggregate Roots. Never return partial trees or internal entities.</p>
+</li>
+<li>
+<p>Reflect Ubiquitous Language. Use domain terms for queries, not technical jargon.</p>
+</li>
+<li>
+<p>Shield the domain from persistence details. The domain layer shouldn’t know if it’s backed by SQL, Mongo, or an API call.</p>
+</li>
+</ul>
+<h3 id="what-repositories-are-not"><strong>What Repositories Are Not?</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#what-repositories-are-not" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Here are a few points to keep in mind about repositories:</p>
+<ul>
+<li>
+<p>They’re not generic “data access layers.” A GenericRepository<t> sounds DRY, but it erases domain meaning and encourages CRUD thinking.</t></p>
+</li>
+<li>
+<p>They’re not infrastructure dumping grounds. Cramming query builders, caching, and retry logic into the same class turns Repositories into god objects.</p>
+</li>
+<li>
+<p>They’re not services. They don’t orchestrate use cases. They supply Aggregates so that use cases can run business logic.</p>
+</li>
+</ul>
+<p>Repositories work well when they are thin, focused, and language-aligned. But they can get messy when:</p>
+<ul>
+<li>
+<p>The Aggregate is too large and slow to load.</p>
+</li>
+<li>
+<p>The persistence model diverges from the domain model.</p>
+</li>
+<li>
+<p>Query requirements become complex and don’t fit neatly into Aggregate access patterns.</p>
+</li>
+</ul>
+<p>In those cases, it’s better to introduce query-side models for reporting and keep Repositories dedicated to use-case execution.</p>
+<h2 id="when-and-when-not-to-use-ddd"><strong>When and When Not to Use DDD?</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#when-and-when-not-to-use-ddd" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>DDD isn’t a default setting. It’s not the architectural equivalent of “use version control” or “write unit tests.” It’s a powerful approach that solves a specific kind of problem, and when those problems aren’t present, DDD can turn into overdesign.</p>
+<p>The trick isn’t deciding whether DDD is good. The trick is knowing when it’s necessary and when it’s not.</p>
+<p>Domain-Driven Design pays off when the domain has depth, ambiguity, and change:</p>
+<ul>
+<li>
+<p><strong>Depth:</strong> The business logic is layered, nuanced, and can’t be captured with simple CRUD operations. Think configurable pricing engines, policy evaluations, or claims processing.</p>
+</li>
+<li>
+<p><strong>Ambiguity:</strong> Different parts of the system define the same concepts differently. Sales and support talk about “customer” in different ways. Finance and operations don’t agree on what “cancel” means. DDD brings clarity through bounded contexts and ubiquitous language.</p>
+</li>
+<li>
+<p><strong>Change:</strong> The business rules evolve frequently. New features, edge cases, regulations, or product pivots require the model to adapt without crumbling.</p>
+</li>
+</ul>
+<p>Not every system needs this level of modeling rigor. Some domains are simple and stay simple. For example:</p>
+<ul>
+<li>
+<p>A content management UI with basic user roles and document uploads.</p>
+</li>
+<li>
+<p>An internal admin dashboard backed by a single CRUD-style database.</p>
+</li>
+<li>
+<p>A data ingestion pipeline with minimal business rules.</p>
+</li>
+<li>
+<p>A one-off automation tool built around external API calls.</p>
+</li>
+</ul>
+<p>In these cases, adding aggregates, domain events, and context maps can feel like overkill. The model gets heavier, not clearer. Teams spend more time designing abstractions than shipping features.</p>
+<h2 id="common-pitfalls-with-ddd"><strong>Common Pitfalls with DDD</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#common-pitfalls-with-ddd" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>DDD looks deceptively elegant on paper. Bounded contexts, ubiquitous language, and aggregates make sense in a workshop or when diagrammed on a whiteboard. But once real deadlines, legacy constraints, and team dynamics come into play, things often go sideways.</p>
+<p>Not because DDD is flawed, but because it’s easy to misapply the principles without fully understanding the trade-offs. Here’s where things usually break.</p>
+<h3 id="1---treating-ddd-like-an-architecture-pattern"><strong>1 - Treating DDD Like an Architecture Pattern</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1---treating-ddd-like-an-architecture-pattern" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>DDD is not a layered architecture. It’s not a microservices template. It’s a modeling discipline, a way to reason about complexity in systems where business rules are critical. But teams often reach for DDD like it’s a new design pattern. That leads to models packed with terminology, but no real meaning.</p>
+<p>Some symptoms for this behavior are as follows:</p>
+<ul>
+<li>
+<p>“We created aggregates for everything” (even when no business invariants existed).</p>
+</li>
+<li>
+<p>“We split into microservices because DDD says Bounded Contexts = microservices.”</p>
+</li>
+<li>
+<p>“We implemented event sourcing and CQRS because it’s part of DDD, right?”</p>
+</li>
+</ul>
+<p>DDD doesn’t prescribe infrastructure. It starts with understanding the domain deeply. Everything else flows from that.</p>
+<h3 id="2---overengineering-in-simple-domains"><strong>2 - Overengineering in Simple Domains</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2---overengineering-in-simple-domains" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Not every application needs aggregates, value objects, or even entities. If a feature is CRUD with no domain rules, DDD might be overkill.</p>
+<p>The trap is that teams apply DDD wholesale across the codebase, instead of focusing efforts on the parts of the system that carry complexity. This results in slower delivery, frustrated developers, and a bloated model that explains nothing better than a simple script would have.</p>
+<h3 id="3---misunderstanding-bounded-contexts"><strong>3 - Misunderstanding Bounded Contexts</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3---misunderstanding-bounded-contexts" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The term sounds architectural, but it’s conceptual. Bounded Contexts are about semantic boundaries, not technical layers. Teams often confuse them with microservices, modules, or even deployment units.</p>
+<p>A Bounded Context doesn’t mean “split this code into a new repo.” It means: within this boundary, terms, models, and rules are consistent. Outside of it, they’re not.</p>
+<h3 id="4---forgetting-ubiquitous-language"><strong>4 - Forgetting Ubiquitous Language</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4---forgetting-ubiquitous-language" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>DDD loses its impact when teams stop evolving the language. If engineers use different terms than the business, or the model drifts into generic abstractions (DataModel, Manager, Handler), then the heart of DDD is already gone.</p>
+<p>A healthy Ubiquitous Language lives in:</p>
+<ul>
+<li>
+<p>Class and method names</p>
+</li>
+<li>
+<p>Diagrams and discussions</p>
+</li>
+<li>
+<p>Pull requests and tests</p>
+</li>
+<li>
+<p>Product specs and conversations with domain experts</p>
+</li>
+</ul>
+<p>When language stops reflecting reality, the model stops reflecting the domain.</p>
+<h3 id="5---ignoring-the-domain"><strong>5 - Ignoring the Domain</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5---ignoring-the-domain" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>This might sound obvious, but it’s common: teams say they’re doing DDD while barely engaging with the domain.</p>
+<p>Some symptoms of this behavior are:</p>
+<ul>
+<li>
+<p>No involvement from business stakeholders or subject matter experts</p>
+</li>
+<li>
+<p>Domain rules are encoded in spreadsheets, not in code</p>
+</li>
+<li>
+<p>Developers building models based on assumptions or technical guesswork</p>
+</li>
+</ul>
+<p>Without real collaboration, the “domain model” gets disconnected from how the business works.</p>
+<h3 id="6---using-events-to-bypass-design"><strong>6 - Using Events to Bypass Design</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#6---using-events-to-bypass-design" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Domain Events are powerful, but they’re not a license to skip modeling. Firing off dozens of events from everywhere in the system without understanding what’s happening leads to chaos, not clarity.</p>
+<p>Events should emerge from well-modeled behavior. They should reflect facts that matter to the domain, not just system noise or glue logic.</p>
+<h3 id="7---building-ddd-frameworks"><strong>7 - Building “DDD Frameworks”</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#7---building-ddd-frameworks" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Trying to abstract DDD into a reusable “domain engine” or general-purpose framework usually backfires. DDD isn’t about generic tooling. It’s about tailoring models to a specific domain.</p>
+<p>The moment things get abstracted too far, the domain gets blurry and the rules lose their sharp edges.</p>
+<h2 id="ddd-and-microservices-related-but-not-the-same-thing"><strong>DDD and Microservices: Related But Not the Same Thing</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#ddd-and-microservices-related-but-not-the-same-thing" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>At some point during the last few years, DDD got swept up in the microservices hype cycle. It’s easy to see why. Both promote modularity, autonomy, and clear boundaries. But treating them as the same thing creates more confusion than clarity. DDD is not about microservices. And microservices don’t require DDD to be effective.</p>
+<p>What DDD brings to the table is semantic structure. Microservices bring deployment independence. They’re orthogonal concerns.</p>
+<p>One deals with what the system means. The other deals with how the system runs. Conflating them leads to bad outcomes: tiny services with meaningless models, oversized aggregates stuffed into REST endpoints, and teams who split their codebase into multiple repos before defining a single bounded context.</p>
+<h3 id="ddd-can-inform-microservices-boundaries"><strong>DDD Can Inform Microservices Boundaries</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#ddd-can-inform-microservices-boundaries" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>When done well, DDD provides the map for microservice design. Bounded Contexts can define the edges of services. Ubiquitous Language ensures the model inside each service aligns with the domain it supports. Context Maps can describe integration patterns: how services talk, who depends on whom, and how teams collaborate or stay isolated.</p>
+<p>But notice the order: DDD first, microservices second. Otherwise, the architecture outruns the model.</p>
+<p>Startups and growing teams often benefit from using DDD inside a modular monolith: multiple bounded contexts in one deployable unit. That allows fast development while still maintaining clean separation. If and when operational scale demands it, those contexts can split out into services along the same lines.</p>
+<h2 id="summary"><strong>Summary</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#summary" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>In this article, we’ve looked at Domain Driven Design in detail, along with its role in modern system design and architecture.</p>
+<p>Some key learning points are as follows:</p>
+<ul>
+<li>
+<p>Most systems fail not because of bad code, but because the software drifts away from what the business needs. DDD keeps them aligned.</p>
+</li>
+<li>
+<p>DDD is a way to model software around domain logic through collaboration and language, not just technical abstraction.</p>
+</li>
+<li>
+<p>Bounded Contexts define where a domain model applies, preventing semantic confusion and isolating complexity.</p>
+</li>
+<li>
+<p>Ubiquitous Language ensures that everyone speaks the same language in code and conversation, reducing miscommunication and errors.</p>
+</li>
+<li>
+<p>Aggregates protect business invariants by grouping domain objects under a single root and defining clear consistency boundaries.</p>
+</li>
+<li>
+<p>Entities model identity over time, while Value Objects represent concepts through structure and immutability. Knowing the difference keeps the model clean.</p>
+</li>
+<li>
+<p>Domain Events capture meaningful business facts, enabling decoupled systems to react without tight integration.</p>
+</li>
+<li>
+<p>Repositories abstract data access for Aggregates, keeping persistence concerns out of the domain model.</p>
+</li>
+<li>
+<p>DDD thrives in domains with rich, evolving rules like finance, logistics, and multi-team SaaS platforms.</p>
+</li>
+<li>
+<p>DDD is overkill for simple, static systems. Use it when the domain complexity justifies the modeling effort.</p>
+</li>
+<li>
+<p>Common pitfalls include overengineering, misusing terminology, skipping domain collaboration, and applying DDD as a technical checklist.</p>
+</li>
+<li>
+<p>DDD and microservices are not the same. Use DDD to define meaningful boundaries, then decide if services should follow.</p>
+</li>
+</ul></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-140" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#what-is-domain-driven-design" data-for="what-is-domain-driven-design">What is Domain Driven Design?</a></li><li class="depth-0"><a href="#bounded-contexts" data-for="bounded-contexts">Bounded Contexts</a></li><li class="depth-1"><a href="#how-to-spot-a-bounded-context" data-for="how-to-spot-a-bounded-context">How to Spot a Bounded Context?</a></li><li class="depth-1"><a href="#context-maps" data-for="context-maps">Context Maps</a></li><li class="depth-0"><a href="#ubiquitous-language" data-for="ubiquitous-language">Ubiquitous Language</a></li><li class="depth-1"><a href="#why-this-matters" data-for="why-this-matters">Why This Matters?</a></li><li class="depth-1"><a href="#this-isnt-just-about-naming" data-for="this-isnt-just-about-naming">This Isn’t Just About Naming</a></li><li class="depth-0"><a href="#aggregates" data-for="aggregates">Aggregates</a></li><li class="depth-1"><a href="#why-aggregates-matter" data-for="why-aggregates-matter">Why Aggregates Matter?</a></li><li class="depth-1"><a href="#trade-offs-and-design-pressure" data-for="trade-offs-and-design-pressure">Trade-offs and Design Pressure</a></li><li class="depth-0"><a href="#entities-and-value-objects" data-for="entities-and-value-objects">Entities and Value Objects</a></li><li class="depth-1"><a href="#entities-things-that-persist-and-evolve" data-for="entities-things-that-persist-and-evolve">Entities: Things That Persist and Evolve</a></li><li class="depth-1"><a href="#value-objects-defined-by-their-attributes" data-for="value-objects-defined-by-their-attributes">Value Objects: Defined by Their Attributes</a></li><li class="depth-1"><a href="#common-pitfalls" data-for="common-pitfalls">Common Pitfalls</a></li><li class="depth-0"><a href="#domain-events" data-for="domain-events">Domain Events</a></li><li class="depth-1"><a href="#what-makes-a-domain-event" data-for="what-makes-a-domain-event">What Makes a Domain Event?</a></li><li class="depth-1"><a href="#designing-for-change" data-for="designing-for-change">Designing for Change</a></li><li class="depth-0"><a href="#repositories" data-for="repositories">Repositories</a></li><li class="depth-1"><a href="#what-repositories-are-not" data-for="what-repositories-are-not">What Repositories Are Not?</a></li><li class="depth-0"><a href="#when-and-when-not-to-use-ddd" data-for="when-and-when-not-to-use-ddd">When and When Not to Use DDD?</a></li><li class="depth-0"><a href="#common-pitfalls-with-ddd" data-for="common-pitfalls-with-ddd">Common Pitfalls with DDD</a></li><li class="depth-1"><a href="#1---treating-ddd-like-an-architecture-pattern" data-for="1---treating-ddd-like-an-architecture-pattern">1 - Treating DDD Like an Architecture Pattern</a></li><li class="depth-1"><a href="#2---overengineering-in-simple-domains" data-for="2---overengineering-in-simple-domains">2 - Overengineering in Simple Domains</a></li><li class="depth-1"><a href="#3---misunderstanding-bounded-contexts" data-for="3---misunderstanding-bounded-contexts">3 - Misunderstanding Bounded Contexts</a></li><li class="depth-1"><a href="#4---forgetting-ubiquitous-language" data-for="4---forgetting-ubiquitous-language">4 - Forgetting Ubiquitous Language</a></li><li class="depth-1"><a href="#5---ignoring-the-domain" data-for="5---ignoring-the-domain">5 - Ignoring the Domain</a></li><li class="depth-1"><a href="#6---using-events-to-bypass-design" data-for="6---using-events-to-bypass-design">6 - Using Events to Bypass Design</a></li><li class="depth-1"><a href="#7---building-ddd-frameworks" data-for="7---building-ddd-frameworks">7 - Building “DDD Frameworks”</a></li><li class="depth-0"><a href="#ddd-and-microservices-related-but-not-the-same-thing" data-for="ddd-and-microservices-related-but-not-the-same-thing">DDD and Microservices: Related But Not the Same Thing</a></li><li class="depth-1"><a href="#ddd-can-inform-microservices-boundaries" data-for="ddd-can-inform-microservices-boundaries">DDD Can Inform Microservices Boundaries</a></li><li class="depth-0"><a href="#summary" data-for="summary">Summary</a></li><li class="overflow-end"></li></ul></div><div class="backlinks"><h3>Backlinks</h3><ul id="list-2" class="overflow"><li><a href="../../Notion-Knowledge/Note" class="internal">Note</a></li><li><a href="../../_moc/MOC-Reading-List" class="internal">MOC-Reading-List</a></li><li><a href="../../_moc/MOC-System-Design" class="internal">MOC-System-Design</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://dangthobach.github.io/">Back to Portfolio</a></li><li><a href="https://github.com/dangthobach">GitHub</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../postscript.js" type="module" data-persist="true"></script></html>

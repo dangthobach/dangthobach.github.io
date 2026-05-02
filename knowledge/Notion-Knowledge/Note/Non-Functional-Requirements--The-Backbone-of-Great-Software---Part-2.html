@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>Non-Functional Requirements- The Backbone of Great Software - Part 2</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="Dang Tho Bach's Knowledge Base"/><meta property="og:title" content="Non-Functional Requirements- The Backbone of Great Software - Part 2"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="Non-Functional Requirements- The Backbone of Great Software - Part 2"/><meta name="twitter:description" content="Non-functional requirements (NFRs) are as critical as functional requirements because they define a system’s qualities and operational parameters."/><meta property="og:description" content="Non-functional requirements (NFRs) are as critical as functional requirements because they define a system’s qualities and operational parameters."/><meta property="og:image:alt" content="Non-functional requirements (NFRs) are as critical as functional requirements because they define a system’s qualities and operational parameters."/><meta property="twitter:domain" content="dangthobach.github.io/knowledge"/><meta property="og:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Non-Functional-Requirements--The-Backbone-of-Great-Software---Part-2"/><meta property="twitter:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Non-Functional-Requirements--The-Backbone-of-Great-Software---Part-2"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="Non-functional requirements (NFRs) are as critical as functional requirements because they define a system’s qualities and operational parameters."/><meta name="generator" content="Quartz"/><link href="../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiL2hvbWUvcnVubmVyL3dvcmsvZGFuZ3Rob2JhY2guZ2l0aHViLmlvL2Rhbmd0aG9iYWNoLmdpdGh1Yi5pby9xdWFydHovcXVhcnR6L2NvbXBvbmVudHMvc3R5bGVzIiwic291cmNlcyI6WyJtZXJtYWlkLmlubGluZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFHRjtFQUNFOzs7QUFLRjtFQUNFO0VBQ0E7OztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTs7QUFJRjtFQUNFO0VBQ0E7RUFDQSIsInNvdXJjZXNDb250ZW50IjpbIi5leHBhbmQtYnV0dG9uIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbG9hdDogcmlnaHQ7XG4gIHBhZGRpbmc6IDAuNHJlbTtcbiAgbWFyZ2luOiAwLjNyZW07XG4gIHJpZ2h0OiAwOyAvLyBOT1RFOiByaWdodCB3aWxsIGJlIHNldCBpbiBtZXJtYWlkLmlubGluZS50c1xuICBjb2xvcjogdmFyKC0tZ3JheSk7XG4gIGJvcmRlci1jb2xvcjogdmFyKC0tZGFyayk7XG4gIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgYm9yZGVyOiAxcHggc29saWQ7XG4gIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgb3BhY2l0eTogMDtcbiAgdHJhbnNpdGlvbjogMC4ycztcblxuICAmID4gc3ZnIHtcbiAgICBmaWxsOiB2YXIoLS1saWdodCk7XG4gICAgZmlsdGVyOiBjb250cmFzdCgwLjMpO1xuICB9XG5cbiAgJjpob3ZlciB7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIGJvcmRlci1jb2xvcjogdmFyKC0tc2Vjb25kYXJ5KTtcbiAgfVxuXG4gICY6Zm9jdXMge1xuICAgIG91dGxpbmU6IDA7XG4gIH1cbn1cblxucHJlIHtcbiAgJjpob3ZlciA+IC5leHBhbmQtYnV0dG9uIHtcbiAgICBvcGFjaXR5OiAxO1xuICAgIHRyYW5zaXRpb246IDAuMnM7XG4gIH1cbn1cblxuI21lcm1haWQtY29udGFpbmVyIHtcbiAgcG9zaXRpb246IGZpeGVkO1xuICBjb250YWluOiBsYXlvdXQ7XG4gIHotaW5kZXg6IDk5OTtcbiAgbGVmdDogMDtcbiAgdG9wOiAwO1xuICB3aWR0aDogMTAwdnc7XG4gIGhlaWdodDogMTAwdmg7XG4gIG92ZXJmbG93OiBoaWRkZW47XG4gIGRpc3BsYXk6IG5vbmU7XG4gIGJhY2tkcm9wLWZpbHRlcjogYmx1cig0cHgpO1xuICBiYWNrZ3JvdW5kOiByZ2JhKDAsIDAsIDAsIDAuNSk7XG5cbiAgJi5hY3RpdmUge1xuICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgfVxuXG4gICYgPiAjbWVybWFpZC1zcGFjZSB7XG4gICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gICAgYm9yZGVyLXJhZGl1czogNXB4O1xuICAgIHBvc2l0aW9uOiBmaXhlZDtcbiAgICB0b3A6IDUwJTtcbiAgICBsZWZ0OiA1MCU7XG4gICAgdHJhbnNmb3JtOiB0cmFuc2xhdGUoLTUwJSwgLTUwJSk7XG4gICAgaGVpZ2h0OiA4MHZoO1xuICAgIHdpZHRoOiA4MHZ3O1xuICAgIG92ZXJmbG93OiBoaWRkZW47XG5cbiAgICAmID4gLm1lcm1haWQtY29udGVudCB7XG4gICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgICB0cmFuc2Zvcm0tb3JpZ2luOiAwIDA7XG4gICAgICB0cmFuc2l0aW9uOiB0cmFuc2Zvcm0gMC4xcyBlYXNlO1xuICAgICAgb3ZlcmZsb3c6IHZpc2libGU7XG4gICAgICBtaW4taGVpZ2h0OiAyMDBweDtcbiAgICAgIG1pbi13aWR0aDogMjAwcHg7XG5cbiAgICAgIHByZSB7XG4gICAgICAgIG1hcmdpbjogMDtcbiAgICAgICAgYm9yZGVyOiBub25lO1xuICAgICAgfVxuXG4gICAgICBzdmcge1xuICAgICAgICBtYXgtd2lkdGg6IG5vbmU7XG4gICAgICAgIGhlaWdodDogYXV0bztcbiAgICAgIH1cbiAgICB9XG5cbiAgICAmID4gLm1lcm1haWQtY29udHJvbHMge1xuICAgICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgICAgYm90dG9tOiAyMHB4O1xuICAgICAgcmlnaHQ6IDIwcHg7XG4gICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgZ2FwOiA4cHg7XG4gICAgICBwYWRkaW5nOiA4cHg7XG4gICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgYm9yZGVyLXJhZGl1czogNnB4O1xuICAgICAgYm94LXNoYWRvdzogMCAycHggNHB4IHJnYmEoMCwgMCwgMCwgMC4xKTtcbiAgICAgIHotaW5kZXg6IDI7XG5cbiAgICAgIC5tZXJtYWlkLWNvbnRyb2wtYnV0dG9uIHtcbiAgICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgIHdpZHRoOiAzMnB4O1xuICAgICAgICBoZWlnaHQ6IDMycHg7XG4gICAgICAgIHBhZGRpbmc6IDA7XG4gICAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgICAgY29sb3I6IHZhcigtLWRhcmspO1xuICAgICAgICBib3JkZXItcmFkaXVzOiA0cHg7XG4gICAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICAgICAgZm9udC1zaXplOiAxNnB4O1xuICAgICAgICBmb250LWZhbWlseTogdmFyKC0tYm9keUZvbnQpO1xuICAgICAgICB0cmFuc2l0aW9uOiBhbGwgMC4ycyBlYXNlO1xuXG4gICAgICAgICY6aG92ZXIge1xuICAgICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIH1cblxuICAgICAgICAmOmFjdGl2ZSB7XG4gICAgICAgICAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKDFweCk7XG4gICAgICAgIH1cblxuICAgICAgICAvLyBTdHlsZSB0aGUgcmVzZXQgYnV0dG9uIGRpZmZlcmVudGx5XG4gICAgICAgICY6bnRoLWNoaWxkKDIpIHtcbiAgICAgICAgICB3aWR0aDogYXV0bztcbiAgICAgICAgICBwYWRkaW5nOiAwIDEycHg7XG4gICAgICAgICAgZm9udC1zaXplOiAxNHB4O1xuICAgICAgICB9XG4gICAgICB9XG4gICAgfVxuICB9XG59XG4iXX0= */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://dangthobach.github.io/knowledge/index.xml"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Non-Functional-Requirements--The-Backbone-of-Great-Software---Part-2-og-image.webp"/><meta property="og:image:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Non-Functional-Requirements--The-Backbone-of-Great-Software---Part-2-og-image.webp"/><meta name="twitter:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Non-Functional-Requirements--The-Backbone-of-Great-Software---Part-2-og-image.webp"/><meta property="og:image:type" content="image/.webp"/></head><body data-slug="Notion-Knowledge/Note/Non-Functional-Requirements--The-Backbone-of-Great-Software---Part-2"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../..">Dang Tho Bach's Knowledge Base</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-386"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-386" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/">Notion Knowledge</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/Note/">Note</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>Non Functional Requirements  The Backbone of Great Software   Part 2</a></div></nav><h1 class="article-title">Non-Functional Requirements- The Backbone of Great Software - Part 2</h1><p show-comma="true" class="content-meta"><time datetime="2026-05-02T04:58:37.000Z">May 02, 2026</time><span>24 min read</span></p></div></div><article class="popover-hint"><p>Non-functional requirements (NFRs) are as critical as functional requirements because they define a system’s qualities and operational parameters.</p>
+<p>Functional requirements specify what a software product should do (for example, “users must be able to log in”). However, non-functional requirements define how well it must accomplish these tasks under real-world conditions (for example, “the login process should respond within two seconds under peak load” or “all user credentials must be encrypted and stored securely”).</p>
+<p>Together, functional and non-functional requirements create a foundation for building great software systems.</p>
+<p>In Part 1 of this topic, we also looked at trade-offs in non-functional requirements and the architectural impact of these requirements. Some key learning points from Part 1 were as follows:</p>
+<ul>
+<li>
+<p>Non-functional requirements determine a system’s performance in areas such as scalability, response time, performance, security, etc., ensuring it meets quality standards and user expectations beyond mere functionality.</p>
+</li>
+<li>
+<p>Functional requirements focus on what the system should do, while non-functional requirements define how well it operates under real-world conditions.</p>
+</li>
+<li>
+<p>Optimizing one NFR (for example, performance) can negatively impact others (for example, maintainability), requiring a balanced approach based on project goals and constraints.</p>
+</li>
+<li>
+<p>Non-functional needs (like scalability and availability) heavily influence architecture choice. For example, choosing microservices for high availability or plugin-based designs for modifiability.</p>
+</li>
+</ul>
+<p>In this article (Part 2), we’ll go further and look at some of the most important NFRs that should be considered while building systems.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!1L6J!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F369facba-0136-4687-b794-bc58e3139f5c_2250x2752.heic" class="external"><img src="https://substackcdn.com/image/fetch/$s_!1L6J!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F369facba-0136-4687-b794-bc58e3139f5c_2250x2752.heic" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h2 id="key-nfrs-to-consider"><strong>Key NFRs to Consider</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#key-nfrs-to-consider" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Some key non-functional requirements that should be considered while designing an application are as follows:</p>
+<h3 id="response-timelatency"><strong>Response Time/Latency</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#response-timelatency" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Response time (often referred to as latency) is the interval between a user action (like, clicking a button or making an API request) and the system’s corresponding response (such as rendering the next page or returning data).</p>
+<p>See the diagram below:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!aqsr!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fd97be48c-61fc-4043-9d2a-3df9bf41f4f5_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!aqsr!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fd97be48c-61fc-4043-9d2a-3df9bf41f4f5_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>In simpler terms, it’s how long the user or client has to wait for the system to process a request and deliver a result.</p>
+<p>Some key metrics to measure latency are as follows:</p>
+<ul>
+<li>
+<p><strong>Average Response Time (Mean):</strong> The average time taken for the system to respond to a request, calculated by summing all response times and dividing by the number of requests. This is useful for getting a general sense of system performance but can be misleading if there are extreme outliers.</p>
+</li>
+<li>
+<p><strong>95th or 99th Percentile Response Times:</strong> Measures the response time that 95% or 99% of requests are completed within, highlighting worst-case performance scenarios. It helps identify outliers and peak load conditions that impact a small but critical subset of users.</p>
+</li>
+<li>
+<p><strong>Time to First Byte (TTFB):</strong> The time between a client’s request and when it receives the first byte of the response from the server. This metric is critical for web applications as it reflects server processing time and network latency, impacting perceived speed and SEO rankings.</p>
+</li>
+</ul>
+<p>The factors that have a major impact on the latency of a system are as follows:</p>
+<ul>
+<li>
+<p><strong>Network Overhead:</strong> Busy networks introduce packet delays and possible retransmissions due to dropped packets.</p>
+</li>
+<li>
+<p><strong>Physical Distance:</strong> Data traveling across large geographical distances encounters higher round-trip times.</p>
+</li>
+<li>
+<p><strong>Protocol Overhead:</strong> Encryption or secure protocols like TLS add extra steps to handshake and data encoding/decoding.</p>
+</li>
+<li>
+<p><strong>Application Logic:</strong> Complex calculations or large loops increase CPU usage, leading to a slower response. Handling many simultaneous requests can also result in thread contention or queueing delays.</p>
+</li>
+<li>
+<p><strong>Query Complexity:</strong> Poorly optimized queries or missing indexes can slow down data retrieval and increase latency.</p>
+</li>
+<li>
+<p><strong>Database Locks:</strong> Concurrent writes or updates on the same rows/tables can lead to blocking or deadlocks.</p>
+</li>
+<li>
+<p><strong>Multiple Service Calls:</strong> Multiple internal service calls (in a microservices architecture) can accumulate latencies. Also, if the system depends on external services, their response times can add up.</p>
+</li>
+</ul>
+<h3 id="throughput"><strong>Throughput</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#throughput" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Throughput refers to the number of transactions, requests, or operations a system processes within a given period (such as requests per second, database transactions per minute, etc).</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!JIva!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F9a021d80-675a-4aa8-86c4-b1846a8fe75b_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!JIva!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F9a021d80-675a-4aa8-86c4-b1846a8fe75b_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>For example, if an API processes 5,000 requests per second, that’s its throughput under current conditions.</p>
+<p>Key metrics to measure throughput are as follows:</p>
+<ul>
+<li>
+<p><strong>Requests per second (RPS)</strong>: The number of requests an API or server handles per second.</p>
+</li>
+<li>
+<p><strong>Transactions per second (TPS)</strong>: Common in databases and financial systems.</p>
+</li>
+<li>
+<p><strong>Queries per second (QPS)</strong>: Used to measure the database’s ability to handle read/write queries.</p>
+</li>
+<li>
+<p><strong>Bandwidth utilization</strong>: Measures how much network capacity is being used.</p>
+</li>
+</ul>
+<p>Throughput measures system capacity, not individual request speed.</p>
+<p>Low response time does not always mean high throughput. If a system processes requests quickly but cannot handle many at once (due to CPU, memory, or database constraints), throughput will still be low. Typically, a high-throughput system is designed to handle many concurrent users while maintaining acceptable response times.</p>
+<p>Some potential bottlenecks to throughput are as follows:</p>
+<ul>
+<li>
+<p><strong>CPU</strong> <strong>and</strong> <strong>Memory</strong> <strong>Constraints:</strong> If the server’s CPU usage reaches 100%, it cannot efficiently process additional requests. For example, a high-traffic e-commerce site may experience a surge in users, maxing out its servers and reducing throughput.</p>
+</li>
+<li>
+<p><strong>Database Performance</strong>: Slow queries, excessive locking, or unoptimized indexes can limit database transaction throughput. For example, a system that handles payments experiences deadlocks when too many transactions try to update the same account balance.</p>
+</li>
+<li>
+<p><strong>I/O Bottlenecks (Disk and Network):</strong> Writing to disk can become a bottleneck if the disk is slow.</p>
+</li>
+<li>
+<p><strong>Concurrency Limitations:</strong> Thread pools, connection pools, or backend services may have limits that throttle the number of simultaneous requests.</p>
+</li>
+<li>
+<p><strong>Rate Limits and Throttling:</strong> Many external services impose request limits to prevent abuse. For example, a weather API may allow only 1K requests per minute, capping how many users the app can serve simultaneously.</p>
+</li>
+</ul>
+<h3 id="resource-utilization"><strong>Resource Utilization</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#resource-utilization" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Resource utilization refers to how effectively a system employs its available hardware and infrastructure, specifically CPU, memory, input/output (I/O), and network bandwidth.</p>
+<p>When utilization levels are balanced, the system can perform tasks efficiently without over-provisioning (wasting resources) or under-provisioning (causing bottlenecks). In cloud or virtualized environments, efficient utilization translates to lower operational costs (where we pay for fewer or smaller instances) and better performance.</p>
+<p>At the same time, it supports scalability because an optimally utilized system can expand or contract its resources without significant overhead.</p>
+<p>Poor resource utilization can degrade system performance and availability in multiple ways.</p>
+<ul>
+<li>
+<p>For instance, if CPU usage is consistently at 100%, applications may slow to a crawl or become unresponsive.</p>
+</li>
+<li>
+<p>With insufficient memory, critical processes might be forced into swap space, leading to significant slowdowns or crashes.</p>
+</li>
+<li>
+<p>If I/O operations are slow (for example, due to a saturated disk or storage network), requests pile up, increasing response times.</p>
+</li>
+<li>
+<p>Likewise, network bandwidth constraints can choke data transfers, especially in microservices architectures or data-heavy applications, causing timeouts and failed requests.</p>
+</li>
+</ul>
+<p>In all such scenarios, end users experience longer wait times, decreased reliability, and possibly complete service outages. This underscores why effective resource utilization is so critical for modern software systems.</p>
+<h3 id="scalability"><strong>Scalability</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#scalability" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Scalability is a system’s ability to handle increasing workloads without sacrificing performance or reliability.</p>
+<p>It ensures that as user demands grow, whether in the number of requests, data volume, or transaction rates, the system can expand capacity in a controlled and cost-effective manner.</p>
+<p>The diagram below shows how the scalability of two systems can be compared.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!54iY!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F15edda60-b253-4a41-bbbf-fc93a99e0c7d_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!54iY!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F15edda60-b253-4a41-bbbf-fc93a99e0c7d_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>There are two main types of scaling approaches available to developers:</p>
+<ul>
+<li>
+<p><strong>Horizontal Scaling (Scale Out):</strong> This involves adding more machines or nodes to distribute the workload across multiple instances. For example, using auto-scaling groups in cloud environments and splitting large datasets across multiple databases (shards), each handling a portion of the overall load.</p>
+</li>
+<li>
+<p><strong>Vertical Scaling (Scale Up):</strong> This involves increasing the power of an existing machine by adding more CPU, memory, or storage. For example, migrating from a small VM instance to a larger one with additional cores and RAM.</p>
+</li>
+</ul>
+<p>With horizontal scaling, we can continuously add capacity. This is often more fault-tolerant because the failure of one node doesn’t bring down the entire system. However, it may introduce orchestration complexities and increased network overhead.</p>
+<p>On the other hand, vertical scaling is straightforward to implement and existing applications may need minimal reconfiguration. However, it has an upper limit in terms of hardware constraints and can become expensive when major upgrades are required.</p>
+<h3 id="capacity"><strong>Capacity</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#capacity" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Capacity refers to the maximum volume of work a system can process before its performance or reliability starts to decline. This could be measured using parameters like concurrent users, transactions, or data storage.</p>
+<p>Once a system surpasses this limit, latency may spike, throughput may drop, and users can experience timeouts or errors.</p>
+<p>This makes capacity planning a significant activity for the following reasons:</p>
+<ul>
+<li>
+<p><strong>Prevent Service Outages:</strong> A system that exceeds its capacity can crash or become unusably slow, leading to lost revenue and damaged user trust.</p>
+</li>
+<li>
+<p><strong>Ensure Smooth User Experience:</strong> Users expect consistent response times and reliability. Adequate capacity keeps the application performant under both normal and peak loads.</p>
+</li>
+<li>
+<p><strong>Optimizing Costs:</strong> Over-provisioning wastes resources, while under-provisioning hurts performance. Capacity planning aims for a balance between performance needs and budget constraints.</p>
+</li>
+<li>
+<p><strong>Support Scalability:</strong> By understanding capacity thresholds, teams can design scalable architectures using techniques like auto-scaling, clustering, or caching.</p>
+</li>
+</ul>
+<p>But how can one estimate and plan for capacity?</p>
+<p>A few tips are as follows:</p>
+<ul>
+<li>
+<p>Examine typical usage, peak periods (for example., holiday sales), and business cycles (daily, weekly, and monthly). Use metrics like average requests per second, peak concurrent users, or daily transaction volume to determine typical loads.</p>
+</li>
+<li>
+<p>Simulate user traffic that steadily increases until the system shows signs of stress.</p>
+</li>
+<li>
+<p>Look at past traffic spikes, sales periods, or seasonal fluctuations. Estimate future demand by extrapolating growth rates and overlaying known business events such as new feature launches and marketing campaigns.</p>
+</li>
+</ul>
+<h3 id="availability"><strong>Availability</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#availability" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Availability measures how often a system is operational and accessible to users over a given period.</p>
+<p>In practical terms, a highly available system has minimal downtime even under unexpected failures or maintenance windows. Moreover, such a system quickly recovers if an outage occurs. Reliability ties closely to availability, focusing on the system’s ability to perform its intended functions without errors over time.</p>
+<p>Increasing availability by even a fraction of a percent can significantly reduce downtime, but costs and complexity. Availability is often expressed as a percentage per year, translating to a specific amount of downtime.</p>
+<p>Common targets include:</p>
+<ul>
+<li>
+<p><strong>99.9% (“Three Nines”)</strong></p>
+<ul>
+<li>
+<p><strong>Downtime:</strong> ~8.76 hours of unavailability per year</p>
+</li>
+<li>
+<p><strong>Usage:</strong> Generally acceptable for many web applications or internal enterprise systems</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>99.99% (“Four Nines”)</strong></p>
+<ul>
+<li>
+<p><strong>Downtime:</strong> ~52.6 minutes per year</p>
+</li>
+<li>
+<p><strong>Usage:</strong> Often targeted by mission-critical services, e-commerce platforms, and financial applications</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>99.999% (“Five Nines”)</strong></p>
+<ul>
+<li>
+<p><strong>Downtime:</strong> ~5.26 minutes per year</p>
+</li>
+<li>
+<p><strong>Usage:</strong> High-stakes scenarios, such as emergency response systems or large-scale financial transaction processors.</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>The table below shows the various availability percentages and their downtime figures:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!NAqV!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F4dfda870-a38e-490e-8b6c-e174f2083476_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!NAqV!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F4dfda870-a38e-490e-8b6c-e174f2083476_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Apart from specific architectural patterns, improving availability depends a lot on monitoring and implementing auto-failover mechanisms. Some basic tips are as follows:</p>
+<ul>
+<li>
+<p>Track CPU, memory, disk usage, and response times using tools like Prometheus, Grafana, or CloudWatch.</p>
+</li>
+<li>
+<p>Periodically verify service endpoints to detect early signs of failure. Kubernetes or similar platforms can restart containers or shift workloads to healthy nodes when something fails, minimizing downtime.</p>
+</li>
+<li>
+<p>Automated notifications (email, SMS, Slack) inform on-call teams about anomalies or outages.</p>
+</li>
+<li>
+<p>Automatically route requests away from unhealthy nodes or data centers.</p>
+</li>
+</ul>
+<h3 id="resiliency-and-fault-tolerance"><strong>Resiliency and Fault Tolerance</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#resiliency-and-fault-tolerance" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Resiliency refers to a system’s ability to recover after encountering an error or unexpected condition whether it is a server crash, network disruption, or data center outage. A resilient system may temporarily degrade in performance or disable certain features when components fail, but it will eventually bounce back to normal operation.</p>
+<p>In contrast, fault tolerance focuses on the system’s ability to function even as components fail, ideally without noticeable downtime or service degradation.</p>
+<p>In other words, resiliency focuses on recovering after failures, while fault tolerance aims to continue operating seamlessly despite failures. Both concepts help ensure a robust, user-friendly experience, but take different approaches to dealing with failures.</p>
+<p>In distributed systems, failures are inevitable, whether it is because of a slow network link, a crashed process, or a corrupted data center. Adopting a mindset of “everything fails, all the time” encourages developers to consider what happens when a service, database shard, or external API becomes unavailable. For instance:</p>
+<ul>
+<li>
+<p>If a recommendation service goes down, the system might serve fallback suggestions or simply hide that section instead of blocking the entire user experience.</p>
+</li>
+<li>
+<p>When a primary database is unreachable, read from a replica or cached data store to maintain partial functionality.</p>
+</li>
+<li>
+<p>Prevent the calling service from waiting indefinitely and triggering a chain reaction of failures.</p>
+</li>
+</ul>
+<p>Companies invest a lot in making their systems resilient and fault-tolerant.</p>
+<p>For example, Netflix popularized resiliency engineering with a tool called Chaos Monkey, which randomly terminates instances within their production environment. By doing so, teams learn which services or components are not designed to handle unexpected shutdowns. Also, regular chaos experiments ensure new features and deployments remain resilient.</p>
+<h3 id="disaster-recovery"><strong>Disaster Recovery</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#disaster-recovery" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Disaster recovery (DR) refers to the strategies and processes an organization uses to restore critical systems and data after a catastrophic event such as hardware failures, natural disasters, or cyberattacks. Its primary goal is to minimize downtime and data loss, ensuring business continuity.</p>
+<p>Two key metrics drive DR planning:</p>
+<ul>
+<li>
+<p><strong>Recovery Time Objective (RTO):</strong> The maximum acceptable time a system or service can be offline after a disaster. For example, if the RTO is 4 hours, the organization must fully restore operations within 4 hours of a major outage. A shorter RTO demands more sophisticated recovery solutions (such as automated failover), potentially increasing costs and complexity.</p>
+</li>
+<li>
+<p><strong>Recovery Point Objective (RPO):</strong> The maximum acceptable amount of data loss measured in time. If the RPO is 1 hour, we must be able to recover all data up to at least 1 hour before the disaster occurs. Tighter RPOs require more frequent or real-time data replication, impacting storage, bandwidth, and infrastructure choices.</p>
+</li>
+</ul>
+<h2 id="durability"><strong>Durability</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#durability" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Durability refers to the guarantee that once data has been committed or saved, it will remain accessible and intact even if the system experiences crashes, power outages, or other failures.</p>
+<p>In transactional systems (for example, databases), durability ensures that successfully completed transactions will not be “rolled back” or lost. In simpler terms, once the system confirms that the data is stored, it should be permanent and recoverable under normal failure conditions.</p>
+<p>The diagram below shows the concept of durability in databases.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!Jdrk!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F60e2a859-fb82-4bde-b0c5-223b963b05ef_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!Jdrk!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F60e2a859-fb82-4bde-b0c5-223b963b05ef_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Some common strategies to ensure durability are as follows:</p>
+<ul>
+<li>
+<p><strong>Replication:</strong> Storing multiple copies of the same data across different servers or data centers. Even if one node or location fails, a replica can serve the latest data. In a multi-master replication setup, each node keeps a near-real-time copy of the data, so no single point of failure exists.</p>
+</li>
+<li>
+<p><strong>Write-Ahead Logging:</strong> Before changing the main data files, the system writes the intended changes to a log or journal. If the system fails mid-operation, it can use this log to “replay” or roll back changes to maintain consistency.</p>
+</li>
+<li>
+<p><strong>Snapshotting:</strong> This involves periodically capturing the entire state of a database or storage system at a point in time. It allows recovery to a known consistent state, especially if corruption or accidental deletion is discovered later.</p>
+</li>
+</ul>
+<p>Consistency also plays a role in durability. In strongly consistent systems, every read operation reflects the most recent write, ensuring data appears the same across all nodes at all times. This typically enhances perceived durability. Once data is written, it’s quickly replicated and visible everywhere.</p>
+<p>On the other hand, in eventual consistency scenarios, writes propagate over time. Different replicas might see different data until they converge, creating brief windows where data could be lost or overwritten if a node fails before synchronizing. In an eventually consistent system, there may be short-lived data “gaps” where not all replicas have the latest data. A crash during that gap can cause the newest data to be lost unless proper safeguards are in place.</p>
+<h3 id="consistency"><strong>Consistency</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#consistency" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Consistency in distributed systems refers to how data is kept synchronized across multiple nodes or replicas, ensuring that reads reflect the most recent writes under specific rules.</p>
+<p>There are two types of consistency models:</p>
+<ul>
+<li>
+<p><strong>Strong Consistency:</strong> After a write operation completes, any subsequent read operation (to any node in the system) will return the latest updated value. This approach is important for financial transactions, inventory management, or any domain requiring immediate, consistent data for correctness. Traditional relational databases often strive for strong consistency.</p>
+</li>
+<li>
+<p><strong>Eventual Consistency:</strong> Updates propagate over time. Different replicas may temporarily see different states, but given enough time (assuming no new writes), all replicas converge to the same state. It is often used in social media feeds, content caches, or analytics platforms where stale data for a short period is acceptable in exchange for higher availability and scalability. Many NoSQL systems like Amazon DynamoDB, and he Cassandra adopt an eventually consistent model by default.</p>
+</li>
+</ul>
+<p><a href="https://substackcdn.com/image/fetch/$s_!zzdj!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F7a681e83-925a-423f-8b23-2194d9fbc784_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!zzdj!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F7a681e83-925a-423f-8b23-2194d9fbc784_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Depending on the application’s needs (strict correctness or high scalability) developers can choose different consistency models.</p>
+<p>Eric Brewer’s CAP theorem states that in the presence of a network partition, a distributed system must choose between consistency and availability. It cannot fully guarantee both.</p>
+<p>The diagram below shows a pictorial representation of the CAP theorem:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!RlnB!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F9e728d2a-54c8-4109-bc38-00954851c869_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!RlnB!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F9e728d2a-54c8-4109-bc38-00954851c869_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Since network partitions are inevitable in distributed systems, developers often need to pick trade-offs such as:</p>
+<ul>
+<li>
+<p><strong>CP Systems:</strong> Choose Consistency and Partition Tolerance over availability. The system may reject requests during a partition if it cannot maintain consistency.</p>
+</li>
+<li>
+<p><strong>AP Systems:</strong> Choose Availability and Partition Tolerance over strict consistency. The system remains operational but may serve slightly stale reads during partitions.</p>
+</li>
+</ul>
+<h3 id="modularity"><strong>Modularity</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#modularity" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Modularity is a design principle that involves breaking a large codebase into smaller, self-contained units (modules or components).</p>
+<p>It benefits large codebases in multiple ways:</p>
+<ul>
+<li>
+<p><strong>Easier Maintenance and Updates:</strong> Each module handles a well-defined responsibility, reducing the chance of unexpected side effects when modifying a particular feature. This means that a module can be upgraded, refactored, or replaced without having to change the entire system.</p>
+</li>
+<li>
+<p><strong>Reduced Coupling:</strong> Minimizing the number of shared dependencies or global states prevents changes in one module from breaking another. Each module can be unit-tested with minimal mocking of external components.</p>
+</li>
+</ul>
+<p><a href="https://substackcdn.com/image/fetch/$s_!o_Jw!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F558963c7-4b91-48d9-a3cd-b5ef731e4d96_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!o_Jw!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F558963c7-4b91-48d9-a3cd-b5ef731e4d96_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>However, greater modularity can also have downsides:</p>
+<ul>
+<li>
+<p><strong>Deployment Complexity</strong>: Managing multiple modules or services often requires more sophisticated CI/CD pipelines, container orchestration, and monitoring.</p>
+</li>
+<li>
+<p><strong>Network Latency</strong>: In a service-based environment, inter-service calls can add round-trip overhead and potential points of failure.</p>
+</li>
+<li>
+<p><strong>Versioning and Compatibility</strong>: Ensuring all modules stay compatible can be challenging, especially if they share interfaces or APIs.</p>
+</li>
+<li>
+<p><strong>Skill Requirements</strong>: Developers, DevOps, and QA teams must understand distributed systems, orchestration tools, and advanced testing strategies.</p>
+</li>
+</ul>
+<p>Some common architectural styles that embrace the concept of modularity are as follows:</p>
+<ul>
+<li>
+<p><strong>Microservices Architecture:</strong> Each microservice is a standalone component, typically deployed and scaled independently.</p>
+</li>
+<li>
+<p><strong>Plugin-Based Systems:</strong> The core application provides a framework for loading plugins, each delivering a discrete feature or extension.</p>
+</li>
+<li>
+<p><strong>Layered Architecture:</strong> Divides the system into layers (for example, presentation, business logic, data access). Each layer is responsible for a specific aspect of the application</p>
+</li>
+</ul>
+<h3 id="testability"><strong>Testability</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#testability" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Testability refers to how easily and efficiently a software system’s functionality and behavior can be validated through testing. The testing process can be manual or automatic.</p>
+<p>A highly testable system typically has clear boundaries between components, minimal dependencies, and well-defined interfaces, making it straightforward to isolate, observe, and verify individual parts. In other words, modularity is a desirable property to improve the system’s testability.</p>
+<p>Design decisions can greatly affect testability.</p>
+<p>For example, dependency injection (DI) is a great way to improve testability. Rather than creating dependencies internally, a class or module receives the objects it depends on from an external source (such as a DI framework or a factory). This makes it easy to substitute real dependencies with mocks or stubs during testing.</p>
+<p>Second, building the system with a clear separation of concerns enhances testability. Independent components are simpler to unit-test, as each module performs a focused set of tasks and relies on well-defined interfaces.</p>
+<p>Lastly, loose coupling and high cohesion improve testability. Components should have minimal knowledge of each other and handle closely related functionality within themselves. This decreases the risk that changes in one part of the system will break tests elsewhere, making the system more predictable to test.</p>
+<p>Some best practices for testing are as follows:</p>
+<ul>
+<li>
+<p><strong>Unit Testing:</strong> Focuses on verifying the smallest pieces of functionality in isolation (methods, classes, or modules). The idea is to keep tests fast and deterministic.</p>
+</li>
+<li>
+<p><strong>Integration Testing:</strong> Ensures modules or services work together correctly. The goal is to test interactions between critical components in a test environment that mirrors production where possible.</p>
+</li>
+<li>
+<p><strong>System Testing (End-to-End):</strong> This involves validating the entire application flow and user scenarios from start to finish. The idea is to test real user paths, including error handling and edge cases.</p>
+</li>
+</ul>
+<h3 id="code-quality"><strong>Code Quality</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#code-quality" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Code quality encompasses how well-written, understandable, and maintainable a software codebase is.</p>
+<p>High-quality code generally has a clear structure, follows industry or organizational standards, is free from obvious defects, and is easy to modify as requirements evolve. Ensuring strong code quality pays dividends over a project’s life, impacting performance, reliability, and overall development costs.</p>
+<p>There are some key aspects of code quality that developers can keep in mind:</p>
+<ul>
+<li>
+<p><strong>Readability:</strong> This is an indicator of how easily a new or existing team member can read and comprehend the code. Readability can be improved by using meaningful variable and function names (for example, calculateTotalPrice instead of calc). Other ways are keeping methods and classes concise to reduce cognitive load.</p>
+</li>
+<li>
+<p><strong>Maintainability:</strong> This indicates the ease with which code can be updated or extended without breaking existing functionality. Developers should aim for a single responsibility within classes or modules and organize code into logical packages or folders.</p>
+</li>
+<li>
+<p><strong>Coding Standards:</strong> Code quality also depends on following coding standards such as a prescribed set of style guides, naming conventions, and best practices. The uniformity in naming and formatting makes cross-team collaboration smoother.</p>
+</li>
+</ul>
+<p><a href="https://substackcdn.com/image/fetch/$s_!HapM!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F980e125f-10e1-4426-95ff-48a96ca2955a_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!HapM!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F980e125f-10e1-4426-95ff-48a96ca2955a_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h3 id="configurability"><strong>Configurability</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#configurability" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Configuration encompasses the various settings (for example, database connection strings, API keys, and feature flags) that determine how software behaves in different environments such as development, testing, staging, or production.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!0pKa!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F3aec4e7b-af82-444f-817e-af3c82589e5e_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!0pKa!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F3aec4e7b-af82-444f-817e-af3c82589e5e_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>By separating configuration from code, teams can change behavior without rebuilding or redeploying the entire application.</p>
+<p>Some benefits of keeping configuration separate are as follows:</p>
+<ul>
+<li>
+<p><strong>Deployment Flexibility:</strong> Storing environment-specific details in code forces a new release for each environment change (for example, switching from a test to a production database). Automated pipelines can reduce manual intervention by injecting environment values (like API endpoints or logging levels) at deployment time.</p>
+</li>
+<li>
+<p><strong>Easier Maintenance:</strong> Keeping settings in a centralized configuration store or file helps teams quickly audit and modify them. Developers don’t have to search through code for environment details, minimizing the chance of inadvertently pushing secrets or production credentials to version control.</p>
+</li>
+<li>
+<p><strong>Environment-Specific Settings:</strong> Test environments might log extensively for debugging, while production logs are throttled to conserve resources. Certain features can be turned on or off depending on the environment or user segment without altering the code.</p>
+</li>
+</ul>
+<p>Some examples of tools and frameworks that help improve a system’s configurability are environment variables, configuration files, feature toggles, and external configuration management services such as Hashicorp Vault, Consul, or Kubernetes ConfigMaps.</p>
+<h3 id="security"><strong>Security</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#security" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Security as a non-functional requirement ensures that a system’s data and operations are adequately protected from unauthorized access, tampering, or disclosure.</p>
+<p>Security isn’t a one-time activity. It requires ongoing patching, monitoring, testing, and compliance reviews. It involves multiple facets ranging from authentication and authorization to data confidentiality, integrity, and auditability.</p>
+<p>Some key security considerations to keep in mind are as follows:</p>
+<ul>
+<li>
+<p><strong>Authentication:</strong> Verifying the identity of a user or system (for example, username/password, multi-factor authentication, etc).</p>
+</li>
+<li>
+<p><strong>Authorization:</strong> Controlling what authenticated users or systems can do (role-based or attribute-based access).</p>
+</li>
+<li>
+<p><strong>Confidentiality:</strong> Ensuring that data is accessible only to authorized entities.</p>
+</li>
+<li>
+<p><strong>Integrity:</strong> Protecting data from being tampered with or altered by unauthorized parties.</p>
+</li>
+<li>
+<p><strong>Auditing and Logging:</strong> Recording security-relevant actions to detect or investigate unauthorized activity.</p>
+</li>
+</ul>
+<p>Security considerations often need to be balanced with performance and usability.</p>
+<p>Encryption, multi-factor authentication, and high volumes of logging can add latency or resource utilization. Also, stringent password policies or complicated multi-factor flows can frustrate end-users.</p>
+<p>Some industries (such as finance, and healthcare) prioritize strict security due to regulatory or reputational risks. Other sectors might lean towards ease of use, with the caveat that user data still needs robust protection.</p>
+<h3 id="usability"><strong>Usability</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#usability" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Usability describes how effectively, efficiently, and satisfactorily users can interact with a software system to achieve their goals.</p>
+<p>Though it doesn’t outline specific functional behaviors (for example, “the application must allow the user to submit a form”), it significantly affects whether the user experience is pleasant, productive, and accessible. Hence, usability is classified as a non-functional requirement. It specifies how the system should behave from a user-experience standpoint, rather than what features it provides.</p>
+<p>Developers employ usability heuristics, user testing, and A/B experiments to improve usability. A usable product reduces support costs, increases user satisfaction, and builds positive brand perception.</p>
+<p>Key factors to consider while understanding usability are as follows:</p>
+<ul>
+<li>
+<p><strong>Intuitiveness:</strong> This is the degree to which users can perform tasks without extensive instruction or trial-and-error. For example, a navigation menu labeled clearly with standard terminology is easier to figure out than one with cryptic icons or jargon.</p>
+</li>
+<li>
+<p><strong>Accessibility:</strong> This ensures that the software can be used by people with disabilities (visual, auditory, motor, or cognitive). For example, adhering to WCAG (Web Content Accessibility Guidelines) to provide text alternatives for images, enable keyboard navigation, and support screen readers.</p>
+</li>
+<li>
+<p><strong>Ease of Learning</strong>: It is an indicator of how quickly new users can understand and become proficient in the system’s workflows.</p>
+</li>
+</ul>
+<h3 id="interoperability"><strong>Interoperability</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#interoperability" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Interoperability is the capacity of a software system to exchange data or functionality with other systems, APIs, or services, regardless of underlying platforms or protocols.</p>
+<p>By adhering to common standards and designing for compatibility, developers ensure smoother integrations, minimize rework, and ultimately deliver a more cohesive user experience across different technologies.</p>
+<p>Interoperability is important for modern systems due to the following reasons:</p>
+<ul>
+<li>
+<p><strong>Smooth Data Exchange:</strong> Systems that speak a common language (like RESTful JSON, SOAP XML) can share information without custom, error-prone transformations.</p>
+</li>
+<li>
+<p><strong>Reduced Integration Costs:</strong> Following established standards (like OAuth for authentication and OpenAPI for service definitions) eliminates the need for custom solutions each time a new integration is required. Consistent interfaces streamline onboarding for new partners or third-party developers.</p>
+</li>
+<li>
+<p><strong>Future-Proofing:</strong> Systems designed with forward and backward compatibility can evolve without breaking existing integrations. This is especially critical for long-lived platforms (such as government systems or large enterprises) where upgrades can be costly or disruptive.</p>
+</li>
+</ul>
+<p>Some techniques to improve interoperability are as follows:</p>
+<ul>
+<li>
+<p><strong>Build APIs with Versioning:</strong> Include a version number in the REST endpoint (for example., /v1/users, /v2/users) to roll out new features without breaking existing consumers.</p>
+</li>
+<li>
+<p><strong>Adopt Standard Protocols and Formats:</strong> Using widely recognized approaches (for example, JSON, XML, OAuth) makes integration approachable for external stakeholders.</p>
+</li>
+<li>
+<p><strong>Document Deprecation Policies:</strong> Announce deprecation, offer a migration path, and set a reasonable timeline before final removal.</p>
+</li>
+<li>
+<p><strong>Validate and Test Integrations:</strong> Maintain integration test environments and sandbox APIs so partners can test changes before hitting production.</p>
+</li>
+<li>
+<p><strong>Monitoring:</strong> Track usage patterns to see if older endpoints remain heavily used so that deprecation can be managed without disruption.</p>
+</li>
+</ul>
+<h2 id="summary"><strong>Summary</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#summary" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>In this article, we’ve looked at various non-functional requirements in great detail and how we can measure them or improve upon them.</p>
+<p>Some key learning points are as follows:</p>
+<ul>
+<li>
+<p>Response time or latency is the interval between a user action (like clicking a button or making an API request) and the system’s corresponding response (such as rendering the next page or returning data).</p>
+</li>
+<li>
+<p>Throughput represents how many operations a system handles per time unit. Bottlenecks (CPU, database, I/O) must be identified and optimized for high-volume performance.</p>
+</li>
+<li>
+<p>Efficient use of CPU, memory, I/O, and bandwidth drives cost savings and predictable performance, while poor utilization can lead to slowdowns or outages.</p>
+</li>
+<li>
+<p>Horizontal scaling (scale out) adds more machines and vertical scaling (scale up) adds more power. Both can meet growing demands but involve trade-offs in complexity and cost.</p>
+</li>
+<li>
+<p>Capacity is the maximum load a system can handle before performance degrades. Planning for capacity ensures smooth user experiences during traffic spikes.</p>
+</li>
+<li>
+<p>Availability is often expressed as “nines” (99.9%, 99.99%, etc.) and dictates redundancy, monitoring, and failover strategies to minimize downtime.</p>
+</li>
+<li>
+<p>Resiliency and fault tolerance emphasize recovery and continued operation despite failures. Patterns like circuit breakers and bulkheads help systems degrade gracefully instead of collapsing.</p>
+</li>
+<li>
+<p>Recoverability sets how fast a system must be restored.</p>
+</li>
+<li>
+<p>Durability ensures committed data remains persistent even after crashes or power losses, relying on replication, journaling, and snapshotting.</p>
+</li>
+<li>
+<p>Strong consistency guarantees immediate alignment of data across nodes. On the other hand, eventual consistency prioritizes availability and scalability but accepts temporary data discrepancies.</p>
+</li>
+<li>
+<p>Modularity is about breaking systems into self-contained components lowering complexity, enhancing maintainability, and facilitating independent testing and updates.</p>
+</li>
+<li>
+<p>Testability involves designing with loose coupling and dependency injection makes systems easier to test.</p>
+</li>
+<li>
+<p>Readable, standardized, and well-structured code reduces bugs, improves long-term performance, and prevents costly technical debt.</p>
+</li>
+<li>
+<p>Storing environment-specific settings externally (such as environment variables) enables flexible, reliable deployments, and mitigates security risks.</p>
+</li>
+<li>
+<p>Security covers authentication, authorization, confidentiality, integrity, and auditing. A secure design balances performance, usability, and regulatory compliance.</p>
+</li>
+<li>
+<p>Usability addresses intuitiveness, accessibility, and ease of learning. Even small UI improvements can greatly boost user satisfaction.</p>
+</li>
+<li>
+<p>Interoperability and compatibility ensure seamless communication and data exchange across systems or services, leveraging standards (REST, SOAP, OAuth) and versioning to prevent breaking changes.</p>
+</li>
+</ul></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-167" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#key-nfrs-to-consider" data-for="key-nfrs-to-consider">Key NFRs to Consider</a></li><li class="depth-1"><a href="#response-timelatency" data-for="response-timelatency">Response Time/Latency</a></li><li class="depth-1"><a href="#throughput" data-for="throughput">Throughput</a></li><li class="depth-1"><a href="#resource-utilization" data-for="resource-utilization">Resource Utilization</a></li><li class="depth-1"><a href="#scalability" data-for="scalability">Scalability</a></li><li class="depth-1"><a href="#capacity" data-for="capacity">Capacity</a></li><li class="depth-1"><a href="#availability" data-for="availability">Availability</a></li><li class="depth-1"><a href="#resiliency-and-fault-tolerance" data-for="resiliency-and-fault-tolerance">Resiliency and Fault Tolerance</a></li><li class="depth-1"><a href="#disaster-recovery" data-for="disaster-recovery">Disaster Recovery</a></li><li class="depth-0"><a href="#durability" data-for="durability">Durability</a></li><li class="depth-1"><a href="#consistency" data-for="consistency">Consistency</a></li><li class="depth-1"><a href="#modularity" data-for="modularity">Modularity</a></li><li class="depth-1"><a href="#testability" data-for="testability">Testability</a></li><li class="depth-1"><a href="#code-quality" data-for="code-quality">Code Quality</a></li><li class="depth-1"><a href="#configurability" data-for="configurability">Configurability</a></li><li class="depth-1"><a href="#security" data-for="security">Security</a></li><li class="depth-1"><a href="#usability" data-for="usability">Usability</a></li><li class="depth-1"><a href="#interoperability" data-for="interoperability">Interoperability</a></li><li class="depth-0"><a href="#summary" data-for="summary">Summary</a></li><li class="overflow-end"></li></ul></div><div class="backlinks"><h3>Backlinks</h3><ul id="list-2" class="overflow"><li><a href="../../Notion-Knowledge/Note" class="internal">Note</a></li><li><a href="../../_moc/MOC-Reading-List" class="internal">MOC-Reading-List</a></li><li><a href="../../_moc/MOC-Scalability" class="internal">MOC-Scalability</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://dangthobach.github.io/">Back to Portfolio</a></li><li><a href="https://github.com/dangthobach">GitHub</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../postscript.js" type="module" data-persist="true"></script></html>

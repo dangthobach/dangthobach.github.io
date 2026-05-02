@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>Kafka-Configuration-Deep-Dive</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="Dang Tho Bach's Knowledge Base"/><meta property="og:title" content="Kafka-Configuration-Deep-Dive"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="Kafka-Configuration-Deep-Dive"/><meta name="twitter:description" content="⚡ Apache Kafka — Deep Dive Configuration Guide Mục tiêu: Hiểu toàn bộ cấu hình Kafka từ broker đến producer/consumer, áp dụng thực tế trong Spring Boot và Rust (rdkafka)."/><meta property="og:description" content="⚡ Apache Kafka — Deep Dive Configuration Guide Mục tiêu: Hiểu toàn bộ cấu hình Kafka từ broker đến producer/consumer, áp dụng thực tế trong Spring Boot và Rust (rdkafka)."/><meta property="og:image:alt" content="⚡ Apache Kafka — Deep Dive Configuration Guide Mục tiêu: Hiểu toàn bộ cấu hình Kafka từ broker đến producer/consumer, áp dụng thực tế trong Spring Boot và Rust (rdkafka)."/><meta property="twitter:domain" content="dangthobach.github.io/knowledge"/><meta property="og:url" content="https://dangthobach.github.io/knowledge/Microservices-Patterns/Kafka-Configuration-Deep-Dive"/><meta property="twitter:url" content="https://dangthobach.github.io/knowledge/Microservices-Patterns/Kafka-Configuration-Deep-Dive"/><link rel="icon" href="../static/icon.png"/><meta name="description" content="⚡ Apache Kafka — Deep Dive Configuration Guide Mục tiêu: Hiểu toàn bộ cấu hình Kafka từ broker đến producer/consumer, áp dụng thực tế trong Spring Boot và Rust (rdkafka)."/><meta name="generator" content="Quartz"/><link href="../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiL2hvbWUvcnVubmVyL3dvcmsvZGFuZ3Rob2JhY2guZ2l0aHViLmlvL2Rhbmd0aG9iYWNoLmdpdGh1Yi5pby9xdWFydHovcXVhcnR6L2NvbXBvbmVudHMvc3R5bGVzIiwic291cmNlcyI6WyJtZXJtYWlkLmlubGluZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFHRjtFQUNFOzs7QUFLRjtFQUNFO0VBQ0E7OztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTs7QUFJRjtFQUNFO0VBQ0E7RUFDQSIsInNvdXJjZXNDb250ZW50IjpbIi5leHBhbmQtYnV0dG9uIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbG9hdDogcmlnaHQ7XG4gIHBhZGRpbmc6IDAuNHJlbTtcbiAgbWFyZ2luOiAwLjNyZW07XG4gIHJpZ2h0OiAwOyAvLyBOT1RFOiByaWdodCB3aWxsIGJlIHNldCBpbiBtZXJtYWlkLmlubGluZS50c1xuICBjb2xvcjogdmFyKC0tZ3JheSk7XG4gIGJvcmRlci1jb2xvcjogdmFyKC0tZGFyayk7XG4gIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgYm9yZGVyOiAxcHggc29saWQ7XG4gIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgb3BhY2l0eTogMDtcbiAgdHJhbnNpdGlvbjogMC4ycztcblxuICAmID4gc3ZnIHtcbiAgICBmaWxsOiB2YXIoLS1saWdodCk7XG4gICAgZmlsdGVyOiBjb250cmFzdCgwLjMpO1xuICB9XG5cbiAgJjpob3ZlciB7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIGJvcmRlci1jb2xvcjogdmFyKC0tc2Vjb25kYXJ5KTtcbiAgfVxuXG4gICY6Zm9jdXMge1xuICAgIG91dGxpbmU6IDA7XG4gIH1cbn1cblxucHJlIHtcbiAgJjpob3ZlciA+IC5leHBhbmQtYnV0dG9uIHtcbiAgICBvcGFjaXR5OiAxO1xuICAgIHRyYW5zaXRpb246IDAuMnM7XG4gIH1cbn1cblxuI21lcm1haWQtY29udGFpbmVyIHtcbiAgcG9zaXRpb246IGZpeGVkO1xuICBjb250YWluOiBsYXlvdXQ7XG4gIHotaW5kZXg6IDk5OTtcbiAgbGVmdDogMDtcbiAgdG9wOiAwO1xuICB3aWR0aDogMTAwdnc7XG4gIGhlaWdodDogMTAwdmg7XG4gIG92ZXJmbG93OiBoaWRkZW47XG4gIGRpc3BsYXk6IG5vbmU7XG4gIGJhY2tkcm9wLWZpbHRlcjogYmx1cig0cHgpO1xuICBiYWNrZ3JvdW5kOiByZ2JhKDAsIDAsIDAsIDAuNSk7XG5cbiAgJi5hY3RpdmUge1xuICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgfVxuXG4gICYgPiAjbWVybWFpZC1zcGFjZSB7XG4gICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gICAgYm9yZGVyLXJhZGl1czogNXB4O1xuICAgIHBvc2l0aW9uOiBmaXhlZDtcbiAgICB0b3A6IDUwJTtcbiAgICBsZWZ0OiA1MCU7XG4gICAgdHJhbnNmb3JtOiB0cmFuc2xhdGUoLTUwJSwgLTUwJSk7XG4gICAgaGVpZ2h0OiA4MHZoO1xuICAgIHdpZHRoOiA4MHZ3O1xuICAgIG92ZXJmbG93OiBoaWRkZW47XG5cbiAgICAmID4gLm1lcm1haWQtY29udGVudCB7XG4gICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgICB0cmFuc2Zvcm0tb3JpZ2luOiAwIDA7XG4gICAgICB0cmFuc2l0aW9uOiB0cmFuc2Zvcm0gMC4xcyBlYXNlO1xuICAgICAgb3ZlcmZsb3c6IHZpc2libGU7XG4gICAgICBtaW4taGVpZ2h0OiAyMDBweDtcbiAgICAgIG1pbi13aWR0aDogMjAwcHg7XG5cbiAgICAgIHByZSB7XG4gICAgICAgIG1hcmdpbjogMDtcbiAgICAgICAgYm9yZGVyOiBub25lO1xuICAgICAgfVxuXG4gICAgICBzdmcge1xuICAgICAgICBtYXgtd2lkdGg6IG5vbmU7XG4gICAgICAgIGhlaWdodDogYXV0bztcbiAgICAgIH1cbiAgICB9XG5cbiAgICAmID4gLm1lcm1haWQtY29udHJvbHMge1xuICAgICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgICAgYm90dG9tOiAyMHB4O1xuICAgICAgcmlnaHQ6IDIwcHg7XG4gICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgZ2FwOiA4cHg7XG4gICAgICBwYWRkaW5nOiA4cHg7XG4gICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgYm9yZGVyLXJhZGl1czogNnB4O1xuICAgICAgYm94LXNoYWRvdzogMCAycHggNHB4IHJnYmEoMCwgMCwgMCwgMC4xKTtcbiAgICAgIHotaW5kZXg6IDI7XG5cbiAgICAgIC5tZXJtYWlkLWNvbnRyb2wtYnV0dG9uIHtcbiAgICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgIHdpZHRoOiAzMnB4O1xuICAgICAgICBoZWlnaHQ6IDMycHg7XG4gICAgICAgIHBhZGRpbmc6IDA7XG4gICAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgICAgY29sb3I6IHZhcigtLWRhcmspO1xuICAgICAgICBib3JkZXItcmFkaXVzOiA0cHg7XG4gICAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICAgICAgZm9udC1zaXplOiAxNnB4O1xuICAgICAgICBmb250LWZhbWlseTogdmFyKC0tYm9keUZvbnQpO1xuICAgICAgICB0cmFuc2l0aW9uOiBhbGwgMC4ycyBlYXNlO1xuXG4gICAgICAgICY6aG92ZXIge1xuICAgICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIH1cblxuICAgICAgICAmOmFjdGl2ZSB7XG4gICAgICAgICAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKDFweCk7XG4gICAgICAgIH1cblxuICAgICAgICAvLyBTdHlsZSB0aGUgcmVzZXQgYnV0dG9uIGRpZmZlcmVudGx5XG4gICAgICAgICY6bnRoLWNoaWxkKDIpIHtcbiAgICAgICAgICB3aWR0aDogYXV0bztcbiAgICAgICAgICBwYWRkaW5nOiAwIDEycHg7XG4gICAgICAgICAgZm9udC1zaXplOiAxNHB4O1xuICAgICAgICB9XG4gICAgICB9XG4gICAgfVxuICB9XG59XG4iXX0= */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://dangthobach.github.io/knowledge/index.xml"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image" content="https://dangthobach.github.io/knowledge/Microservices-Patterns/Kafka-Configuration-Deep-Dive-og-image.webp"/><meta property="og:image:url" content="https://dangthobach.github.io/knowledge/Microservices-Patterns/Kafka-Configuration-Deep-Dive-og-image.webp"/><meta name="twitter:image" content="https://dangthobach.github.io/knowledge/Microservices-Patterns/Kafka-Configuration-Deep-Dive-og-image.webp"/><meta property="og:image:type" content="image/.webp"/></head><body data-slug="Microservices-Patterns/Kafka-Configuration-Deep-Dive"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="..">Dang Tho Bach's Knowledge Base</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-196"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-196" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../Microservices-Patterns/">Microservices Patterns</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>Kafka Configuration Deep Dive</a></div></nav><h1 class="article-title">Kafka-Configuration-Deep-Dive</h1><p show-comma="true" class="content-meta"><time datetime="2026-05-02T04:58:37.000Z">May 02, 2026</time><span>19 min read</span></p><ul class="tags"><li><a href="../tags/kafka" class="internal tag-link">kafka</a></li><li><a href="../tags/messaging" class="internal tag-link">messaging</a></li><li><a href="../tags/configuration" class="internal tag-link">configuration</a></li><li><a href="../tags/spring-boot" class="internal tag-link">spring-boot</a></li><li><a href="../tags/rust" class="internal tag-link">rust</a></li><li><a href="../tags/microservices" class="internal tag-link">microservices</a></li><li><a href="../tags/vpbank-pdms" class="internal tag-link">vpbank-pdms</a></li></ul></div></div><article class="popover-hint"><h1 id="-apache-kafka--deep-dive-configuration-guide">⚡ Apache Kafka — Deep Dive Configuration Guide<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-apache-kafka--deep-dive-configuration-guide" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<blockquote>
+<p><strong>Mục tiêu:</strong> Hiểu toàn bộ cấu hình Kafka từ broker đến producer/consumer, áp dụng thực tế trong Spring Boot và Rust (rdkafka). Mỗi config đều có giải thích cơ chế hoạt động bên trong.</p>
+</blockquote>
+<hr/>
+<h2 id="️-kafka-architecture-overview">🗺️ Kafka Architecture Overview<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#️-kafka-architecture-overview" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;graph TB\n    subgraph Producers\n        P1[Spring Producer]\n        P2[Rust rdkafka Producer]\n    end\n\n    subgraph Kafka Cluster\n        direction TB\n        subgraph Broker 1 [\&quot;Broker 1 (Leader)\&quot;]\n            T1P0[\&quot;Topic-A | Partition 0\\n[Leader]\&quot;]\n            T1P1[\&quot;Topic-A | Partition 1\\n[Follower]\&quot;]\n        end\n        subgraph Broker 2\n            T1P0R[\&quot;Topic-A | Partition 0\\n[Follower]\&quot;]\n            T1P1L[\&quot;Topic-A | Partition 1\\n[Leader]\&quot;]\n        end\n        subgraph Broker 3\n            T1P0R2[\&quot;Topic-A | Partition 0\\n[Follower]\&quot;]\n            T1P1R[\&quot;Topic-A | Partition 1\\n[Follower]\&quot;]\n        end\n        ZK[(\&quot;ZooKeeper /\\nKRaft Controller\&quot;)]\n    end\n\n    subgraph Consumers [\&quot;Consumer Group: order-service\&quot;]\n        C1[Consumer 1\\nPartition 0]\n        C2[Consumer 2\\nPartition 1]\n    end\n\n    P1 -->|\&quot;batch + acks\&quot;| T1P0\n    P2 -->|\&quot;batch + acks\&quot;| T1P1L\n    T1P0 -->|replicate| T1P0R\n    T1P0 -->|replicate| T1P0R2\n    T1P1L -->|replicate| T1P1\n    T1P1L -->|replicate| T1P1R\n    ZK -.->|\&quot;leader election\&quot;| Broker 1\n    ZK -.->|\&quot;leader election\&quot;| Broker 2\n    T1P0 --> C1\n    T1P1L --> C2&quot;">graph TB
+    subgraph Producers
+        P1[Spring Producer]
+        P2[Rust rdkafka Producer]
+    end
+
+    subgraph Kafka Cluster
+        direction TB
+        subgraph Broker 1 [&quot;Broker 1 (Leader)&quot;]
+            T1P0[&quot;Topic-A | Partition 0\n[Leader]&quot;]
+            T1P1[&quot;Topic-A | Partition 1\n[Follower]&quot;]
+        end
+        subgraph Broker 2
+            T1P0R[&quot;Topic-A | Partition 0\n[Follower]&quot;]
+            T1P1L[&quot;Topic-A | Partition 1\n[Leader]&quot;]
+        end
+        subgraph Broker 3
+            T1P0R2[&quot;Topic-A | Partition 0\n[Follower]&quot;]
+            T1P1R[&quot;Topic-A | Partition 1\n[Follower]&quot;]
+        end
+        ZK[(&quot;ZooKeeper /\nKRaft Controller&quot;)]
+    end
+
+    subgraph Consumers [&quot;Consumer Group: order-service&quot;]
+        C1[Consumer 1\nPartition 0]
+        C2[Consumer 2\nPartition 1]
+    end
+
+    P1 -->|&quot;batch + acks&quot;| T1P0
+    P2 -->|&quot;batch + acks&quot;| T1P1L
+    T1P0 -->|replicate| T1P0R
+    T1P0 -->|replicate| T1P0R2
+    T1P1L -->|replicate| T1P1
+    T1P1L -->|replicate| T1P1R
+    ZK -.->|&quot;leader election&quot;| Broker 1
+    ZK -.->|&quot;leader election&quot;| Broker 2
+    T1P0 --> C1
+    T1P1L --> C2
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<hr/>
+<h2 id="-1-broker-configuration-serverproperties">📦 1. BROKER CONFIGURATION (<code>server.properties</code>)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-1-broker-configuration-serverproperties" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="11--log--storage">1.1 — Log &amp; Storage<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#11--log--storage" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    MSG[\&quot;Message Arrives\&quot;] --> SEG[\&quot;Active Segment\\n(.log file)\&quot;]\n    SEG -->|\&quot;segment.bytes reached\\nOR segment.ms elapsed\&quot;| ROLL[\&quot;Segment Rolled\\n(new .log created)\&quot;]\n    ROLL --> CLEAN{\&quot;log.cleanup.policy\&quot;}\n    CLEAN -->|delete| DEL[\&quot;Delete segments\\nolder than retention.ms\&quot;]\n    CLEAN -->|compact| COMP[\&quot;Keep only latest\\nvalue per key\&quot;]\n    COMP --> COMPACTED[\&quot;Compacted Log\\n(changelog topic)\&quot;]&quot;">flowchart LR
+    MSG[&quot;Message Arrives&quot;] --> SEG[&quot;Active Segment\n(.log file)&quot;]
+    SEG -->|&quot;segment.bytes reached\nOR segment.ms elapsed&quot;| ROLL[&quot;Segment Rolled\n(new .log created)&quot;]
+    ROLL --> CLEAN{&quot;log.cleanup.policy&quot;}
+    CLEAN -->|delete| DEL[&quot;Delete segments\nolder than retention.ms&quot;]
+    CLEAN -->|compact| COMP[&quot;Keep only latest\nvalue per key&quot;]
+    COMP --> COMPACTED[&quot;Compacted Log\n(changelog topic)&quot;]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Config</th><th>Default</th><th>Ý nghĩa</th></tr></thead><tbody><tr><td><code>log.dirs</code></td><td><code>/tmp/kafka-logs</code></td><td>Thư mục lưu log segments. Đặt SSD riêng biệt cho performance</td></tr><tr><td><code>log.segment.bytes</code></td><td><code>1GB</code></td><td>Kích thước tối đa 1 segment file. Khi đầy → tạo segment mới</td></tr><tr><td><code>log.segment.ms</code></td><td><code>7 days</code></td><td>Time-based segment roll, dù chưa đầy</td></tr><tr><td><code>log.retention.bytes</code></td><td><code>-1</code> (unlimited)</td><td>Max bytes giữ lại per partition</td></tr><tr><td><code>log.retention.hours</code></td><td><code>168</code> (7 days)</td><td>Xoá segment cũ hơn ngưỡng này</td></tr><tr><td><code>log.cleanup.policy</code></td><td><code>delete</code></td><td><code>delete</code> hoặc <code>compact</code> hoặc <code>delete,compact</code></td></tr><tr><td><code>log.index.interval.bytes</code></td><td><code>4096</code></td><td>Cứ mỗi 4KB ghi → thêm 1 entry vào sparse index</td></tr></tbody></table></div>
+<p><strong>💡 Khi nào dùng <code>compact</code>?</strong></p>
+<ul>
+<li><strong>Changelog topic</strong> (KTable trong Kafka Streams)</li>
+<li><strong>Event sourcing</strong> — muốn giữ trạng thái cuối cùng per key</li>
+<li><strong>Config/state sync</strong> giữa các service</li>
+</ul>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="properties" data-theme="github-light github-dark"><code data-language="properties" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># server.properties — Production setup</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">log.dirs</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=/data/kafka-logs</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">log.segment.bytes</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=536870912        </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># 512MB segments (faster cleanup)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">log.retention.hours</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=72             </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># 3 ngày cho transaction topics</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">log.cleanup.policy</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=delete</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">log.retention.check.interval.ms</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=300000  </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Check mỗi 5 phút</span></span></code></pre></figure>
+<hr/>
+<h3 id="12--replication--durability">1.2 — Replication &amp; Durability<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#12--replication--durability" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;sequenceDiagram\n    participant P as Producer\n    participant L as Leader (Broker 1)\n    participant F1 as Follower (Broker 2)\n    participant F2 as Follower (Broker 3)\n\n    P->>L: Send message (acks=all)\n    L->>L: Write to local log\n    L->>F1: Replicate\n    L->>F2: Replicate\n    F1-->>L: ACK\n    F2-->>L: ACK\n    Note over L: ISR = {Leader, F1, F2}\n    L-->>P: ACK (all ISR confirmed)&quot;">sequenceDiagram
+    participant P as Producer
+    participant L as Leader (Broker 1)
+    participant F1 as Follower (Broker 2)
+    participant F2 as Follower (Broker 3)
+
+    P->>L: Send message (acks=all)
+    L->>L: Write to local log
+    L->>F1: Replicate
+    L->>F2: Replicate
+    F1-->>L: ACK
+    F2-->>L: ACK
+    Note over L: ISR = {Leader, F1, F2}
+    L-->>P: ACK (all ISR confirmed)
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Config</th><th>Default</th><th>Ý nghĩa</th></tr></thead><tbody><tr><td><code>default.replication.factor</code></td><td><code>1</code></td><td>Số replicas mỗi partition. <strong>Production: 3</strong></td></tr><tr><td><code>min.insync.replicas</code></td><td><code>1</code></td><td>Số replicas tối thiểu phải ACK khi <code>acks=all</code>. <strong>Production: 2</strong></td></tr><tr><td><code>unclean.leader.election.enable</code></td><td><code>false</code></td><td>Cho phép follower out-of-sync trở thành leader → <strong>data loss risk</strong></td></tr><tr><td><code>replica.lag.time.max.ms</code></td><td><code>30000</code></td><td>Follower bị kick khỏi ISR nếu không fetch trong 30s</td></tr><tr><td><code>replica.fetch.max.bytes</code></td><td><code>1MB</code></td><td>Max bytes fetch mỗi lần giữa brokers</td></tr></tbody></table></div>
+<p><strong>💡 Công thức đảm bảo không mất dữ liệu:</strong></p>
+<pre><code>min.insync.replicas = replication.factor - 1
+acks=all (producer side)
+</code></pre>
+<blockquote>
+<p>Ví dụ: RF=3, min.insync.replicas=2 → cần ít nhất 2 brokers alive để write thành công. Nếu chỉ còn 1 broker → <code>NotEnoughReplicasException</code></p>
+</blockquote>
+<hr/>
+<h3 id="13--performance-tuning">1.3 — Performance Tuning<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#13--performance-tuning" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Config</th><th>Default</th><th>Ý nghĩa</th></tr></thead><tbody><tr><td><code>num.io.threads</code></td><td><code>8</code></td><td>Threads xử lý I/O. Tăng nếu nhiều partitions</td></tr><tr><td><code>num.network.threads</code></td><td><code>3</code></td><td>Threads xử lý network requests</td></tr><tr><td><code>socket.send.buffer.bytes</code></td><td><code>100KB</code></td><td>TCP send buffer. Tăng cho high-throughput</td></tr><tr><td><code>socket.receive.buffer.bytes</code></td><td><code>100KB</code></td><td>TCP receive buffer</td></tr><tr><td><code>socket.request.max.bytes</code></td><td><code>100MB</code></td><td>Max size 1 request (producer batch)</td></tr><tr><td><code>num.replica.fetchers</code></td><td><code>1</code></td><td>Threads fetch replication per broker. Tăng nếu lag cao</td></tr></tbody></table></div>
+<hr/>
+<h2 id="-2-producer-configuration">📤 2. PRODUCER CONFIGURATION<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-2-producer-configuration" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="21--batching--throughput">2.1 — Batching &amp; Throughput<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#21--batching--throughput" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TB\n    MSG1[\&quot;msg 1\&quot;] --> ACC[\&quot;RecordAccumulator\\n(in-memory buffer)\&quot;]\n    MSG2[\&quot;msg 2\&quot;] --> ACC\n    MSG3[\&quot;msg 3\&quot;] --> ACC\n\n    ACC --> COND{\&quot;batch.size filled?\\nOR linger.ms elapsed?\&quot;}\n    COND -->|Yes| SENDER[\&quot;Sender Thread\\n(I/O thread)\&quot;]\n    SENDER -->|compress| COMP[\&quot;Compressed Batch\&quot;]\n    COMP --> BROKER[\&quot;Kafka Broker\\nPartition Leader\&quot;]\n\n    subgraph Batching Window\n        TIMER[\&quot;linger.ms = 10ms\\nwait for more msgs\&quot;]\n    end\n    COND -.->|No, waiting| TIMER\n    TIMER --> COND&quot;">flowchart TB
+    MSG1[&quot;msg 1&quot;] --> ACC[&quot;RecordAccumulator\n(in-memory buffer)&quot;]
+    MSG2[&quot;msg 2&quot;] --> ACC
+    MSG3[&quot;msg 3&quot;] --> ACC
+
+    ACC --> COND{&quot;batch.size filled?\nOR linger.ms elapsed?&quot;}
+    COND -->|Yes| SENDER[&quot;Sender Thread\n(I/O thread)&quot;]
+    SENDER -->|compress| COMP[&quot;Compressed Batch&quot;]
+    COMP --> BROKER[&quot;Kafka Broker\nPartition Leader&quot;]
+
+    subgraph Batching Window
+        TIMER[&quot;linger.ms = 10ms\nwait for more msgs&quot;]
+    end
+    COND -.->|No, waiting| TIMER
+    TIMER --> COND
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Config</th><th>Default</th><th>Ý nghĩa</th></tr></thead><tbody><tr><td><code>batch.size</code></td><td><code>16384</code> (16KB)</td><td>Max size 1 batch bytes. Tăng → throughput tốt hơn, latency cao hơn</td></tr><tr><td><code>linger.ms</code></td><td><code>0</code></td><td>Chờ thêm msgs vào batch. <code>0</code> = gửi ngay. Tăng lên 5-20ms cho throughput</td></tr><tr><td><code>buffer.memory</code></td><td><code>32MB</code></td><td>Tổng RAM của RecordAccumulator. Khi đầy → block hoặc exception</td></tr><tr><td><code>max.block.ms</code></td><td><code>60000</code></td><td>Thời gian block send() khi buffer đầy trước khi throw exception</td></tr><tr><td><code>compression.type</code></td><td><code>none</code></td><td><code>gzip</code>, <code>snappy</code>, <code>lz4</code>, <code>zstd</code>. <strong>Khuyến nghị: <code>lz4</code> hoặc <code>zstd</code></strong></td></tr></tbody></table></div>
+<p><strong>💡 Benchmark compression:</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Codec</th><th>CPU Cost</th><th>Ratio</th><th>Latency</th></tr></thead><tbody><tr><td><code>none</code></td><td>0</td><td>1x</td><td>Thấp nhất</td></tr><tr><td><code>lz4</code></td><td>Thấp</td><td>2-3x</td><td>~1ms</td></tr><tr><td><code>snappy</code></td><td>Thấp</td><td>2-3x</td><td>~2ms</td></tr><tr><td><code>gzip</code></td><td>Cao</td><td>3-5x</td><td>~5ms</td></tr><tr><td><code>zstd</code></td><td>Trung bình</td><td>3-5x</td><td>~2ms</td></tr></tbody></table></div>
+<blockquote>
+<p><strong>Recommendation cho VPBank PDMS:</strong> <code>lz4</code> nếu CPU sensitive, <code>zstd</code> nếu network bandwidth là bottleneck</p>
+</blockquote>
+<hr/>
+<h3 id="22--delivery-guarantee--idempotency">2.2 — Delivery Guarantee &amp; Idempotency<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#22--delivery-guarantee--idempotency" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;stateDiagram-v2\n    [*] --> Sending: producer.send()\n    Sending --> WaitingACK: Batch sent to broker\n    WaitingACK --> Success: acks received\n    WaitingACK --> Retry: timeout / network error\n    Retry --> Sending: retries > 0\n    Retry --> Failed: retries exhausted\n    Success --> [*]\n    Failed --> [*]\n\n    note right of Retry\n        Idempotent Producer:\n        PID + SequenceNumber\n        → broker deduplicates\n        → exactly-once per partition\n    end note&quot;">stateDiagram-v2
+    [*] --> Sending: producer.send()
+    Sending --> WaitingACK: Batch sent to broker
+    WaitingACK --> Success: acks received
+    WaitingACK --> Retry: timeout / network error
+    Retry --> Sending: retries > 0
+    Retry --> Failed: retries exhausted
+    Success --> [*]
+    Failed --> [*]
+
+    note right of Retry
+        Idempotent Producer:
+        PID + SequenceNumber
+        → broker deduplicates
+        → exactly-once per partition
+    end note
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Config</th><th>Default</th><th>Ý nghĩa</th></tr></thead><tbody><tr><td><code>acks</code></td><td><code>1</code></td><td><code>0</code>=no ack, <code>1</code>=leader only, <code>all</code>=all ISR</td></tr><tr><td><code>retries</code></td><td><code>2147483647</code></td><td>Số lần retry khi fail. Khi <code>enable.idempotence=true</code> → auto set cao</td></tr><tr><td><code>retry.backoff.ms</code></td><td><code>100</code></td><td>Chờ giữa các lần retry</td></tr><tr><td><code>delivery.timeout.ms</code></td><td><code>120000</code></td><td>Tổng thời gian tối đa 1 record được deliver (bao gồm retries)</td></tr><tr><td><code>enable.idempotence</code></td><td><code>false</code></td><td><strong>Bật để exactly-once per partition</strong>. Auto set <code>acks=all</code>, <code>retries=MAX</code></td></tr><tr><td><code>max.in.flight.requests.per.connection</code></td><td><code>5</code></td><td>Số batches chưa được ACK đồng thời. Nếu >1 và không idempotent → ordering risk</td></tr></tbody></table></div>
+<p><strong>💡 Ordering Guarantee:</strong></p>
+<pre><code># Để đảm bảo ordering TUYỆT ĐỐI:
+enable.idempotence=true           # → max.in.flight tự limit = 5 (safe)
+# HOẶC:
+max.in.flight.requests.per.connection=1  # Không idempotent, throughput giảm
+</code></pre>
+<hr/>
+<h3 id="23--partitioning-strategy">2.3 — Partitioning Strategy<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#23--partitioning-strategy" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    MSG[\&quot;Message\\nkey='order-123'\&quot;] --> PART{\&quot;Partitioner\&quot;}\n\n    PART -->|\&quot;key != null\\n(default)\&quot;| HASH[\&quot;murmur2(key) % numPartitions\\n→ Partition 2\&quot;]\n    PART -->|\&quot;key == null\\n(sticky)\&quot;| STICKY[\&quot;Stick to 1 partition\\nuntil batch full\&quot;]\n    PART -->|\&quot;Custom\&quot;| CUSTOM[\&quot;Custom Partitioner\\ne.g. by region/tenant\&quot;]\n\n    HASH --> P2[\&quot;Partition 2\&quot;]\n    STICKY --> P0[\&quot;Partition 0 (sticky)\&quot;]\n    CUSTOM --> Px[\&quot;Partition X\&quot;]&quot;">flowchart LR
+    MSG[&quot;Message\nkey='order-123'&quot;] --> PART{&quot;Partitioner&quot;}
+
+    PART -->|&quot;key != null\n(default)&quot;| HASH[&quot;murmur2(key) % numPartitions\n→ Partition 2&quot;]
+    PART -->|&quot;key == null\n(sticky)&quot;| STICKY[&quot;Stick to 1 partition\nuntil batch full&quot;]
+    PART -->|&quot;Custom&quot;| CUSTOM[&quot;Custom Partitioner\ne.g. by region/tenant&quot;]
+
+    HASH --> P2[&quot;Partition 2&quot;]
+    STICKY --> P0[&quot;Partition 0 (sticky)&quot;]
+    CUSTOM --> Px[&quot;Partition X&quot;]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<hr/>
+<h3 id="24--spring-boot-producer-config">2.4 — Spring Boot Producer Config<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#24--spring-boot-producer-config" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="yaml" data-theme="github-light github-dark"><code data-language="yaml" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># application.yml</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">spring</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">  kafka</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">    bootstrap-servers</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">kafka1:9092,kafka2:9092,kafka3:9092</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">    producer</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">      # Serialization</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">      key-serializer</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">org.apache.kafka.common.serialization.StringSerializer</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">      value-serializer</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">org.springframework.kafka.support.serializer.JsonSerializer</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">      </span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">      # Durability</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">      acks</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">all</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">      retries</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">3</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">      </span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">      # Throughput</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">      batch-size</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">65536</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">          # 64KB batch</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">      buffer-memory</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">67108864</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">   # 64MB buffer</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">      compression-type</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">lz4</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">      </span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">      properties</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">        # Exactly-once</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">        enable.idempotence</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">true</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">        max.in.flight.requests.per.connection</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">5</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        </span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">        # Timing</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">        linger.ms</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">10</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">        delivery.timeout.ms</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">30000</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">        request.timeout.ms</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">15000</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        </span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">        # Schema</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">        spring.json.add.type.headers</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">false</span></span></code></pre></figure>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="java" data-theme="github-light github-dark"><code data-language="java" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// KafkaProducerConfig.java</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">@</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Configuration</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">public</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> class</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> KafkaProducerConfig</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    @</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Bean</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    public</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> ProducerFactory&lt;</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">String</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Object</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">> </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">producerFactory</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">() {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        Map&lt;</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">String</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Object</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">> props </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> new</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> HashMap&lt;>();</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        props.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">put</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;kafka1:9092,kafka2:9092&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        props.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">put</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(ProducerConfig.ACKS_CONFIG, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;all&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        props.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">put</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">true</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        props.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">put</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(ProducerConfig.COMPRESSION_TYPE_CONFIG, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;lz4&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        props.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">put</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(ProducerConfig.LINGER_MS_CONFIG, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">10</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        props.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">put</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(ProducerConfig.BATCH_SIZE_CONFIG, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">65536</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        props.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">put</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        props.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">put</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        return</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> new</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> DefaultKafkaProducerFactory&lt;>(props);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    }</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    @</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Bean</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    public</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> KafkaTemplate&lt;</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">String</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Object</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">> </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">kafkaTemplate</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">() {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        KafkaTemplate&lt;</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">String</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Object</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">> template </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> new</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> KafkaTemplate&lt;>(</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">producerFactory</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">());</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        template.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">setProducerListener</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">new</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> ProducerListener&lt;>() {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            @</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Override</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">            public</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> void</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> onError</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(ProducerRecord&lt;</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">String</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Object</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">> </span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">record</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">                                RecordMetadata </span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">metadata</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, Exception </span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">ex</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">                log.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">error</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;Failed to send: topic={}, key={}&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, record.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">topic</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(), record.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">key</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(), ex);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        });</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        return</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> template;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></figure>
+<h3 id="25--rust-rdkafka-producer-config">2.5 — Rust (rdkafka) Producer Config<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#25--rust-rdkafka-producer-config" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="rust" data-theme="github-light github-dark"><code data-language="rust" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// producer.rs</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">use</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> rdkafka</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">config</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">ClientConfig</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">use</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> rdkafka</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">producer</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">{</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">FutureProducer</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">FutureRecord</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">};</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">use</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> std</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">time</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">Duration</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">pub</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> fn</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> create_producer</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(brokers</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">:</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> &amp;</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">str</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-></span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> FutureProducer</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">    ClientConfig</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">new</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">()</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">set</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;bootstrap.servers&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, brokers)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">set</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;acks&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;all&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">set</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;enable.idempotence&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;true&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">set</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;retries&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;5&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">set</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;batch.size&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;65536&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">set</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;linger.ms&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;10&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">set</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;buffer.memory&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;67108864&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">set</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;compression.type&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;lz4&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">set</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;delivery.timeout.ms&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;30000&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">set</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;request.timeout.ms&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;15000&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">set</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;message.timeout.ms&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;30000&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">set</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;queue.buffering.max.messages&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;100000&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">set</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;socket.keepalive.enable&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;true&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">create</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">()</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">expect</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;Failed to create Kafka producer&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></figure>
+<hr/>
+<h2 id="-3-consumer-configuration">📥 3. CONSUMER CONFIGURATION<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-3-consumer-configuration" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h2 id="-30--consumer-group-tư-duy-đúng--các-bài-toán-thực-tế">🧠 3.0 — Consumer Group: Tư Duy Đúng &amp; Các Bài Toán Thực Tế<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-30--consumer-group-tư-duy-đúng--các-bài-toán-thực-tế" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<blockquote>
+<p><strong>Consumer Group không chỉ là “chạy nhiều consumer song song”.</strong> Đây là cơ chế trung tâm của Kafka, đồng thời giải quyết 4 bài toán kiến trúc khác nhau. Hiểu đúng mối quan hệ Group ↔ Partition ↔ Topic là nền tảng để thiết kế hệ thống đúng từ đầu.</p>
+</blockquote>
+<h3 id="301--nguyên-tắc-cốt-lõi-partition-là-đơn-vị-song-song">3.0.1 — Nguyên Tắc Cốt Lõi: Partition Là Đơn Vị Song Song<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#301--nguyên-tắc-cốt-lõi-partition-là-đơn-vị-song-song" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p><strong>Luật bất biến của Kafka:</strong></p>
+<blockquote>
+<p>Trong cùng một consumer group, <strong>1 partition chỉ được assign cho đúng 1 consumer</strong> tại một thời điểm.</p>
+</blockquote>
+<p>Tại sao? Kafka đảm bảo <strong>ordering trong một partition</strong> — nếu 2 consumer cùng đọc 1 partition, ordering bị phá vỡ, consistency không thể đảm bảo. Vì vậy partition là đơn vị song song tối thiểu.</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;graph TB\n    subgraph RULE[\&quot;Ba hệ quả bất biến\&quot;]\n        R1[\&quot;① 1 partition → 1 consumer duy nhất\\n   trong cùng 1 group (tại 1 thời điểm)\&quot;]\n        R2[\&quot;② 1 consumer → có thể nhận NHIỀU partitions\&quot;]\n        R3[\&quot;③ Consumer dư hơn partitions → IDLE hoàn toàn\\n   (không nhận bất kỳ message nào)\&quot;]\n    end\n\n    subgraph IMPLY[\&quot;Hệ quả thiết kế\&quot;]\n        I1[\&quot;Muốn tăng parallelism\\n→ Phải tăng số PARTITIONS\\n   (không chỉ tăng consumers)\&quot;]\n        I2[\&quot;Số partitions chỉ tăng được\\n→ Thiết kế DƯ từ đầu\&quot;]\n        I3[\&quot;Consumer dư = hot standby\\n→ Sẵn sàng tiếp quản khi\\n   consumer khác crash\&quot;]\n    end\n\n    style RULE fill:#1565C0,color:#fff\n    style IMPLY fill:#4a148c,color:#fff&quot;">graph TB
+    subgraph RULE[&quot;Ba hệ quả bất biến&quot;]
+        R1[&quot;① 1 partition → 1 consumer duy nhất\n   trong cùng 1 group (tại 1 thời điểm)&quot;]
+        R2[&quot;② 1 consumer → có thể nhận NHIỀU partitions&quot;]
+        R3[&quot;③ Consumer dư hơn partitions → IDLE hoàn toàn\n   (không nhận bất kỳ message nào)&quot;]
+    end
+
+    subgraph IMPLY[&quot;Hệ quả thiết kế&quot;]
+        I1[&quot;Muốn tăng parallelism\n→ Phải tăng số PARTITIONS\n   (không chỉ tăng consumers)&quot;]
+        I2[&quot;Số partitions chỉ tăng được\n→ Thiết kế DƯ từ đầu&quot;]
+        I3[&quot;Consumer dư = hot standby\n→ Sẵn sàng tiếp quản khi\n   consumer khác crash&quot;]
+    end
+
+    style RULE fill:#1565C0,color:#fff
+    style IMPLY fill:#4a148c,color:#fff
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<hr/>
+<h3 id="302--4-bài-toán-thực-tế-consumer-group-giải-quyết">3.0.2 — 4 Bài Toán Thực Tế Consumer Group Giải Quyết<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#302--4-bài-toán-thực-tế-consumer-group-giải-quyết" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="bài-toán-1-horizontal-scaling--tăng-throughput-tuyến-tính">Bài Toán 1: Horizontal Scaling — Tăng Throughput Tuyến Tính<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#bài-toán-1-horizontal-scaling--tăng-throughput-tuyến-tính" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p><strong>Vấn đề:</strong> 1 consumer xử lý được 10,000 msgs/s, nhưng topic có 50,000 msgs/s → lag tăng mãi không dừng.</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;graph LR\n    subgraph BEFORE[\&quot;Trước: bottleneck\&quot;]\n        direction TB\n        T1[\&quot;Topic\\n6 partitions\\n50k msgs/s\&quot;]\n        C1[\&quot;Consumer 1\\n10k/s\\n⚠️ LAG TĂNG MÃIMÃI\&quot;]\n        T1 --> C1\n    end\n\n    subgraph AFTER[\&quot;Sau: scale out 3 consumers\&quot;]\n        direction TB\n        T2[\&quot;Topic\\n6 partitions\\n50k msgs/s\&quot;]\n        C2a[\&quot;Consumer 1\\nP0,P1 — 17k/s\&quot;]\n        C2b[\&quot;Consumer 2\\nP2,P3 — 17k/s\&quot;]\n        C2c[\&quot;Consumer 3\\nP4,P5 — 17k/s\&quot;]\n        T2 --> C2a\n        T2 --> C2b\n        T2 --> C2c\n    end\n\n    style BEFORE fill:#b71c1c,color:#fff\n    style AFTER fill:#1b5e20,color:#fff&quot;">graph LR
+    subgraph BEFORE[&quot;Trước: bottleneck&quot;]
+        direction TB
+        T1[&quot;Topic\n6 partitions\n50k msgs/s&quot;]
+        C1[&quot;Consumer 1\n10k/s\n⚠️ LAG TĂNG MÃIMÃI&quot;]
+        T1 --> C1
+    end
+
+    subgraph AFTER[&quot;Sau: scale out 3 consumers&quot;]
+        direction TB
+        T2[&quot;Topic\n6 partitions\n50k msgs/s&quot;]
+        C2a[&quot;Consumer 1\nP0,P1 — 17k/s&quot;]
+        C2b[&quot;Consumer 2\nP2,P3 — 17k/s&quot;]
+        C2c[&quot;Consumer 3\nP4,P5 — 17k/s&quot;]
+        T2 --> C2a
+        T2 --> C2b
+        T2 --> C2c
+    end
+
+    style BEFORE fill:#b71c1c,color:#fff
+    style AFTER fill:#1b5e20,color:#fff
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p><strong>Điểm mấu chốt:</strong> Kafka <strong>tự động rebalance</strong> — chỉ cần start thêm instance với cùng <code>group.id</code>, không cần config thêm gì. Partitions được phân chia lại ngay.</p>
+<p><strong>Thực tế PDMS — K8s Horizontal Pod Autoscaler dựa trên consumer lag:</strong></p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="yaml" data-theme="github-light github-dark"><code data-language="yaml" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Tự động scale consumer pods khi lag vượt ngưỡng</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">apiVersion</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">autoscaling/v2</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">kind</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">HorizontalPodAutoscaler</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">metadata</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">  name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">document-processor-hpa</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">spec</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">  scaleTargetRef</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">    apiVersion</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">apps/v1</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">    kind</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">Deployment</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">    name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">document-processor</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">  minReplicas</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">2</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">  maxReplicas</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">12</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">   # = số partitions của topic</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">  metrics</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">  - </span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">type</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">External</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">    external</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">      metric</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">        name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">kafka_consumergroup_lag_sum</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">        selector</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">          matchLabels</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">            topic</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">pdms.document.events</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">            group</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">pdms-document-processor</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">      target</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">        type</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">AverageValue</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">        averageValue</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;500&quot;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">  # scale khi avg lag > 500/pod</span></span></code></pre></figure>
+<hr/>
+<h4 id="bài-toán-2-fan-out--1-event-phục-vụ-nhiều-use-case-độc-lập">Bài Toán 2: Fan-out — 1 Event Phục Vụ Nhiều Use Case Độc Lập<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#bài-toán-2-fan-out--1-event-phục-vụ-nhiều-use-case-độc-lập" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p><strong>Vấn đề:</strong> Khi document upload xong, đồng thời cần: lưu metadata, gửi notification, index search, ghi audit. Các việc này <strong>hoàn toàn độc lập</strong> — không nên service này gọi trực tiếp service kia.</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;graph TB\n    PROD[\&quot;DocumentUploadedEvent\\nProducer — 1 lần publish\&quot;] --> TOPIC[\&quot;Topic: pdms.document.events\\n12 partitions\\nRetention: 3 ngày\&quot;]\n\n    TOPIC --> CG1[\&quot;Consumer Group:\\npdms-metadata-svc\\n→ Lưu vào PostgreSQL\\n2 instances\&quot;]\n    TOPIC --> CG2[\&quot;Consumer Group:\\npdms-notification-svc\\n→ Email / Push notification\\n1 instance\&quot;]\n    TOPIC --> CG3[\&quot;Consumer Group:\\npdms-search-indexer\\n→ Elasticsearch\\n3 instances\&quot;]\n    TOPIC --> CG4[\&quot;Consumer Group:\\npdms-audit-svc\\n→ Audit trail DB\\n1 instance\&quot;]\n\n    subgraph KEY[\&quot;Điểm then chốt\&quot;]\n        K1[\&quot;Mỗi group có OFFSET RIÊNG — hoàn toàn độc lập\\nGroup chậm/crash KHÔNG ảnh hưởng group khác\\nThêm use case mới = tạo group mới, ZERO change producer\&quot;]\n    end\n\n    style PROD fill:#1565C0,color:#fff\n    style TOPIC fill:#6A1B9A,color:#fff\n    style KEY fill:#1b5e20,color:#fff&quot;">graph TB
+    PROD[&quot;DocumentUploadedEvent\nProducer — 1 lần publish&quot;] --> TOPIC[&quot;Topic: pdms.document.events\n12 partitions\nRetention: 3 ngày&quot;]
+
+    TOPIC --> CG1[&quot;Consumer Group:\npdms-metadata-svc\n→ Lưu vào PostgreSQL\n2 instances&quot;]
+    TOPIC --> CG2[&quot;Consumer Group:\npdms-notification-svc\n→ Email / Push notification\n1 instance&quot;]
+    TOPIC --> CG3[&quot;Consumer Group:\npdms-search-indexer\n→ Elasticsearch\n3 instances&quot;]
+    TOPIC --> CG4[&quot;Consumer Group:\npdms-audit-svc\n→ Audit trail DB\n1 instance&quot;]
+
+    subgraph KEY[&quot;Điểm then chốt&quot;]
+        K1[&quot;Mỗi group có OFFSET RIÊNG — hoàn toàn độc lập\nGroup chậm/crash KHÔNG ảnh hưởng group khác\nThêm use case mới = tạo group mới, ZERO change producer&quot;]
+    end
+
+    style PROD fill:#1565C0,color:#fff
+    style TOPIC fill:#6A1B9A,color:#fff
+    style KEY fill:#1b5e20,color:#fff
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p><strong>So sánh với REST Orchestration:</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Tiêu chí</th><th>REST/RPC trực tiếp</th><th>Kafka Fan-out</th></tr></thead><tbody><tr><td><strong>Coupling</strong></td><td>Upload service phải biết 4 downstream service</td><td>Chỉ publish 1 event, không biết ai consume</td></tr><tr><td><strong>Failure isolation</strong></td><td>1 service down → upload fail hoặc cần retry phức tạp</td><td>1 group lag/fail → các group khác unaffected</td></tr><tr><td><strong>Thêm use case</strong></td><td>Phải sửa code upload service, redeploy</td><td>Tạo consumer group mới, zero change</td></tr><tr><td><strong>Latency của producer</strong></td><td>Chờ tổng latency N service calls</td><td>Async, producer trả về ngay sau khi publish</td></tr><tr><td><strong>Scaling độc lập</strong></td><td>Phải coordinate scaling</td><td>Mỗi group scale độc lập</td></tr></tbody></table></div>
+<hr/>
+<h4 id="bài-toán-3-competing-consumers--work-queue-với-ordering-đảm-bảo">Bài Toán 3: Competing Consumers — Work Queue với Ordering Đảm Bảo<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#bài-toán-3-competing-consumers--work-queue-với-ordering-đảm-bảo" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p><strong>Vấn đề:</strong> Queue xử lý task — mỗi task chỉ được xử lý đúng 1 lần bởi đúng 1 worker, nhưng các task <strong>độc lập</strong> cần chạy song song để tăng throughput. Đồng thời, các task <strong>liên quan</strong> phải đảm bảo thứ tự.</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;sequenceDiagram\n    participant P as Producer\n    participant T as Topic: document-validation (4 partitions)\n    participant C1 as Worker 1 (P0, P1)\n    participant C2 as Worker 2 (P2, P3)\n\n    P->>T: DocA (key=contract-001) → P0\n    P->>T: DocB (key=contract-001) → P0\n    P->>T: DocC (key=contract-002) → P2\n    P->>T: DocD (key=contract-003) → P1\n\n    T->>C1: DocA, DocB, DocD (nhận theo thứ tự)\n    T->>C2: DocC (song song với C1)\n\n    Note over C1: DocA xong MỚI làm DocB\\n(cùng partition → ordering per contract)\n    Note over C1,C2: DocA và DocC chạy SONG SONG\\n(khác partition → khác worker)&quot;">sequenceDiagram
+    participant P as Producer
+    participant T as Topic: document-validation (4 partitions)
+    participant C1 as Worker 1 (P0, P1)
+    participant C2 as Worker 2 (P2, P3)
+
+    P->>T: DocA (key=contract-001) → P0
+    P->>T: DocB (key=contract-001) → P0
+    P->>T: DocC (key=contract-002) → P2
+    P->>T: DocD (key=contract-003) → P1
+
+    T->>C1: DocA, DocB, DocD (nhận theo thứ tự)
+    T->>C2: DocC (song song với C1)
+
+    Note over C1: DocA xong MỚI làm DocB\n(cùng partition → ordering per contract)
+    Note over C1,C2: DocA và DocC chạy SONG SONG\n(khác partition → khác worker)
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p><strong>Use case PDMS:</strong> Validate documents — các document của cùng 1 hợp đồng cần validate theo thứ tự (phụ lục sau hợp đồng gốc), nhưng các hợp đồng khác nhau hoàn toàn độc lập.</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="java" data-theme="github-light github-dark"><code data-language="java" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// contractId làm key → toàn bộ doc của 1 hợp đồng vào cùng 1 partition</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// → ordering đảm bảo per hợp đồng, song song giữa các hợp đồng</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">kafkaTemplate.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">send</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">    &quot;document-validation&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    contractId,                          </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// KEY → quyết định partition</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    new</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> DocumentValidationEvent</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(docId, contractId, sequence)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span></code></pre></figure>
+<p><strong>Tại sao tốt hơn traditional queue (RabbitMQ)?</strong></p>
+<p>Với RabbitMQ competing consumers, không có cách đảm bảo ordering per entity mà không dùng exclusive consumer. Kafka giải quyết bằng key-based partitioning — ordering per key, song song cross-key.</p>
+<hr/>
+<h4 id="bài-toán-4-isolation--môi-trường-độc-lập--replay-không-phá-production">Bài Toán 4: Isolation — Môi Trường Độc Lập &amp; Replay Không Phá Production<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#bài-toán-4-isolation--môi-trường-độc-lập--replay-không-phá-production" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p><strong>Vấn đề:</strong> Cần đọc data production để test, debug, hoặc chạy lại pipeline mà không làm ảnh hưởng production consumers.</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;graph TB\n    TOPIC[\&quot;Topic: pdms.transactions\\n12 partitions | Retention: 7 ngày\&quot;]\n\n    TOPIC --> CG_PROD[\&quot;Group: prod-transaction-processor\\nOffset: đang xử lý realtime\\nSLA: &lt; 100ms\&quot;]\n    TOPIC --> CG_STG[\&quot;Group: staging-transaction-processor\\nĐọc cùng data production\\nOffset riêng — KHÔNG ảnh hưởng prod\\nSLA: best effort\&quot;]\n    TOPIC --> CG_REPLAY[\&quot;Group: prod-tx-replay-bug-20250420\\nauto.offset.reset=earliest\\nReplay lại 7 ngày để reproduce bug\\nXoá group sau khi debug xong\&quot;]\n    TOPIC --> CG_ANALYTICS[\&quot;Group: analytics-pipeline-v2\\nĐọc lại từ ngày deploy feature mới\\nTest pipeline mới song song với v1\&quot;]\n\n    style CG_PROD fill:#1b5e20,color:#fff\n    style CG_STG fill:#E65100,color:#fff\n    style CG_REPLAY fill:#4a148c,color:#fff\n    style CG_ANALYTICS fill:#0d47a1,color:#fff&quot;">graph TB
+    TOPIC[&quot;Topic: pdms.transactions\n12 partitions | Retention: 7 ngày&quot;]
+
+    TOPIC --> CG_PROD[&quot;Group: prod-transaction-processor\nOffset: đang xử lý realtime\nSLA: &lt; 100ms&quot;]
+    TOPIC --> CG_STG[&quot;Group: staging-transaction-processor\nĐọc cùng data production\nOffset riêng — KHÔNG ảnh hưởng prod\nSLA: best effort&quot;]
+    TOPIC --> CG_REPLAY[&quot;Group: prod-tx-replay-bug-20250420\nauto.offset.reset=earliest\nReplay lại 7 ngày để reproduce bug\nXoá group sau khi debug xong&quot;]
+    TOPIC --> CG_ANALYTICS[&quot;Group: analytics-pipeline-v2\nĐọc lại từ ngày deploy feature mới\nTest pipeline mới song song với v1&quot;]
+
+    style CG_PROD fill:#1b5e20,color:#fff
+    style CG_STG fill:#E65100,color:#fff
+    style CG_REPLAY fill:#4a148c,color:#fff
+    style CG_ANALYTICS fill:#0d47a1,color:#fff
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Tạo group mới để replay — offset production KHÔNG bị ảnh hưởng</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">kafka-consumer-groups.sh</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --bootstrap-server</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> kafka1:9092</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --group</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> prod-tx-replay-bug-</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">$(</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">date</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> +%Y%m%d</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">\</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --reset-offsets</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --topic</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> pdms.transactions</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --to-datetime</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> 2025-04-15T00:00:00.000</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \ </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">  # replay từ ngày xảy ra bug</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">  --execute</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Start service với group name mới</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">GROUP_ID</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">prod-tx-replay-bug-20250420</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> \</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">  java</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -jar</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> transaction-processor.jar</span></span></code></pre></figure>
+<hr/>
+<h3 id="303--ma-trận-consumer-count-vs-partition-count">3.0.3 — Ma Trận: Consumer Count vs Partition Count<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#303--ma-trận-consumer-count-vs-partition-count" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;graph TB\n    subgraph SC1[\&quot;consumers &lt; partitions — Unoptimal\&quot;]\n        direction LR\n        A1[\&quot;P0 P1 P2 P3\&quot;]\n        A2[\&quot;C1: P0,P1,P2  |  C2: P3\&quot;]\n        A3[\&quot;C1 xử lý 3x load của C2\\nHot spot, throughput không tối ưu\&quot;]\n    end\n\n    subgraph SC2[\&quot;consumers = partitions — OPTIMAL\&quot;]\n        direction LR\n        B1[\&quot;P0 P1 P2 P3\&quot;]\n        B2[\&quot;C1:P0  C2:P1  C3:P2  C4:P3\&quot;]\n        B3[\&quot;Max parallelism\\nLoad cân bằng hoàn hảo\&quot;]\n    end\n\n    subgraph SC3[\&quot;consumers > partitions — Có dư\&quot;]\n        direction LR\n        C1[\&quot;P0 P1 P2 P3\&quot;]\n        C2[\&quot;C1:P0  C2:P1  C3:P2  C4:P3\\nC5: IDLE  C6: IDLE\&quot;]\n        C3[\&quot;C5, C6 không nhận message\\nNHƯNG là hot standby tức thì\\nnếu C1-C4 crash → rebalance ngay\&quot;]\n    end\n\n    style SC2 fill:#1b5e20,color:#fff\n    style SC3 fill:#E65100,color:#fff&quot;">graph TB
+    subgraph SC1[&quot;consumers &lt; partitions — Unoptimal&quot;]
+        direction LR
+        A1[&quot;P0 P1 P2 P3&quot;]
+        A2[&quot;C1: P0,P1,P2  |  C2: P3&quot;]
+        A3[&quot;C1 xử lý 3x load của C2\nHot spot, throughput không tối ưu&quot;]
+    end
+
+    subgraph SC2[&quot;consumers = partitions — OPTIMAL&quot;]
+        direction LR
+        B1[&quot;P0 P1 P2 P3&quot;]
+        B2[&quot;C1:P0  C2:P1  C3:P2  C4:P3&quot;]
+        B3[&quot;Max parallelism\nLoad cân bằng hoàn hảo&quot;]
+    end
+
+    subgraph SC3[&quot;consumers > partitions — Có dư&quot;]
+        direction LR
+        C1[&quot;P0 P1 P2 P3&quot;]
+        C2[&quot;C1:P0  C2:P1  C3:P2  C4:P3\nC5: IDLE  C6: IDLE&quot;]
+        C3[&quot;C5, C6 không nhận message\nNHƯNG là hot standby tức thì\nnếu C1-C4 crash → rebalance ngay&quot;]
+    end
+
+    style SC2 fill:#1b5e20,color:#fff
+    style SC3 fill:#E65100,color:#fff
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p><strong>Công thức thiết kế số partitions:</strong></p>
+<pre><code>partitions = max(
+    ceil(target_throughput / single_partition_throughput),
+    max_consumer_instances_khi_scale_tối_đa
+)
+
+Ví dụ — PDMS document-events:
+  Target throughput: 20,000 docs/phút
+  1 partition throughput: ~5,000 docs/phút
+  Max consumer instances: 8 pods
+
+→ max(ceil(20000/5000), 8) = max(4, 8) = 8
+→ Làm tròn lên 12 (multiple of 4, có headroom 50%)
+
+QUAN TRỌNG: Số partitions KHÔNG GIẢM ĐƯỢC sau khi tạo
+→ Luôn thiết kế dư từ đầu
+</code></pre>
+<hr/>
+<h3 id="304--rebalance-cơ-chế-tác-động--cách-giảm-downtime">3.0.4 — Rebalance: Cơ Chế, Tác Động &amp; Cách Giảm Downtime<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#304--rebalance-cơ-chế-tác-động--cách-giảm-downtime" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p><strong>Khi nào rebalance xảy ra?</strong></p>
+<ul>
+<li>Consumer mới join group (scale up, deploy mới)</li>
+<li>Consumer rời group (crash, graceful shutdown, <code>max.poll.interval.ms</code> exceeded)</li>
+<li>Số partitions của topic thay đổi</li>
+<li><code>group.instance.id</code> không set → mỗi lần restart = “consumer mới” → rebalance</li>
+</ul>
+<p><strong>Eager Rebalance (mặc định) — Stop-The-World:</strong></p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;sequenceDiagram\n    participant C1 as Consumer 1 (P0,P1)\n    participant C2 as Consumer 2 (P2,P3)\n    participant C3 as Consumer 3 (NEW)\n    participant GC as Group Coordinator\n\n    C3->>GC: JoinGroup request\n\n    GC->>C1: STOP — REBALANCE_IN_PROGRESS\n    GC->>C2: STOP — REBALANCE_IN_PROGRESS\n\n    Note over C1,C2,C3: ⏸️ TOÀN BỘ GROUP DỪNG CONSUME\\n(downtime thường 10-30s)\n\n    C1->>GC: JoinGroup (rejoin)\n    C2->>GC: JoinGroup (rejoin)\n    C3->>GC: JoinGroup\n\n    Note over GC: Leader Consumer chạy\\nthuật toán phân chia partition\n\n    GC->>C1: SyncGroup → P0\n    GC->>C2: SyncGroup → P1,P2\n    GC->>C3: SyncGroup → P3\n\n    Note over C1,C2,C3: ▶️ Resume consuming với assignment mới&quot;">sequenceDiagram
+    participant C1 as Consumer 1 (P0,P1)
+    participant C2 as Consumer 2 (P2,P3)
+    participant C3 as Consumer 3 (NEW)
+    participant GC as Group Coordinator
+
+    C3->>GC: JoinGroup request
+
+    GC->>C1: STOP — REBALANCE_IN_PROGRESS
+    GC->>C2: STOP — REBALANCE_IN_PROGRESS
+
+    Note over C1,C2,C3: ⏸️ TOÀN BỘ GROUP DỪNG CONSUME\n(downtime thường 10-30s)
+
+    C1->>GC: JoinGroup (rejoin)
+    C2->>GC: JoinGroup (rejoin)
+    C3->>GC: JoinGroup
+
+    Note over GC: Leader Consumer chạy\nthuật toán phân chia partition
+
+    GC->>C1: SyncGroup → P0
+    GC->>C2: SyncGroup → P1,P2
+    GC->>C3: SyncGroup → P3
+
+    Note over C1,C2,C3: ▶️ Resume consuming với assignment mới
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p><strong>Cooperative Rebalance (Kafka 2.4+) — Minimal Disruption:</strong></p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;sequenceDiagram\n    participant C1 as Consumer 1 (P0,P1)\n    participant C2 as Consumer 2 (P2,P3)\n    participant C3 as Consumer 3 (NEW)\n    participant GC as Group Coordinator\n\n    C3->>GC: JoinGroup request\n    Note over GC: Tính toán: chỉ cần migrate P3 sang C3\n\n    GC->>C2: Revoke P3 ONLY (giữ P2)\n    Note over C1,C2: C1 và C2 (trừ P3) VẪN CONSUME BÌNH THƯỜNG\n\n    C2->>GC: P3 revoked\n    GC->>C3: Assign P3\n\n    Note over C1,C2,C3: ▶️ Chỉ P3 bị gián đoạn trong vài giây\\nC1 (P0,P1) và C2 (P2) không bị ảnh hưởng&quot;">sequenceDiagram
+    participant C1 as Consumer 1 (P0,P1)
+    participant C2 as Consumer 2 (P2,P3)
+    participant C3 as Consumer 3 (NEW)
+    participant GC as Group Coordinator
+
+    C3->>GC: JoinGroup request
+    Note over GC: Tính toán: chỉ cần migrate P3 sang C3
+
+    GC->>C2: Revoke P3 ONLY (giữ P2)
+    Note over C1,C2: C1 và C2 (trừ P3) VẪN CONSUME BÌNH THƯỜNG
+
+    C2->>GC: P3 revoked
+    GC->>C3: Assign P3
+
+    Note over C1,C2,C3: ▶️ Chỉ P3 bị gián đoạn trong vài giây\nC1 (P0,P1) và C2 (P2) không bị ảnh hưởng
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p><strong>Config để minimize rebalance downtime:</strong></p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="yaml" data-theme="github-light github-dark"><code data-language="yaml" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">spring</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">  kafka</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">    consumer</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">      properties</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">        # 1. Bật Cooperative Rebalance</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">        partition.assignment.strategy</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">></span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">          org.apache.kafka.clients.consumer.CooperativeStickyAssignor</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">        # 2. Static Membership — restart pod KHÔNG trigger rebalance</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">        #    (K8s StatefulSet: HOSTNAME = pod-name ổn định như &quot;processor-0&quot;, &quot;processor-1&quot;)</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">        group.instance.id</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">${HOSTNAME:default-consumer}</span></span></code></pre></figure>
+<p><strong>Static Membership — Zero-Downtime Rolling Deploy:</strong></p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;sequenceDiagram\n    participant C as Consumer (instance.id=processor-0)\n    participant GC as Group Coordinator\n\n    Note over C: Pod restart do rolling deploy\n    C->>GC: JoinGroup với instance.id=processor-0\n\n    alt Session chưa timeout (session.timeout.ms chưa hết)\n        GC->>GC: Nhận ra instance.id quen biết\n        GC-->>C: Assign lại đúng partitions cũ NGAY\\nKHÔNG trigger full group rebalance\n        Note over C,GC: Zero downtime cho toàn group!\n    else Session đã timeout (pod down quá lâu)\n        GC->>GC: Full rebalance (expected behavior)\n    end&quot;">sequenceDiagram
+    participant C as Consumer (instance.id=processor-0)
+    participant GC as Group Coordinator
+
+    Note over C: Pod restart do rolling deploy
+    C->>GC: JoinGroup với instance.id=processor-0
+
+    alt Session chưa timeout (session.timeout.ms chưa hết)
+        GC->>GC: Nhận ra instance.id quen biết
+        GC-->>C: Assign lại đúng partitions cũ NGAY\nKHÔNG trigger full group rebalance
+        Note over C,GC: Zero downtime cho toàn group!
+    else Session đã timeout (pod down quá lâu)
+        GC->>GC: Full rebalance (expected behavior)
+    end
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<hr/>
+<h3 id="305--triển-khai-thực-tế-pdms-multi-group-architecture">3.0.5 — Triển Khai Thực Tế: PDMS Multi-Group Architecture<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#305--triển-khai-thực-tế-pdms-multi-group-architecture" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;graph TB\n    subgraph EVENTS[\&quot;Topic: pdms.document.events\\n12 partitions | RF=3 | Retention=72h\&quot;]\n    end\n\n    EVENTS --> SVC1[\&quot;Group: prod-pdms-metadata-svc\\n3 pods × 4 partitions/pod\\nSLA: &lt; 500ms\\nScale: 3→12 pods\&quot;]\n\n    EVENTS --> SVC2[\&quot;Group: prod-pdms-search-indexer\\n2 pods × 6 partitions/pod\\nSLA: &lt; 2s\\nScale: 2→12 pods\&quot;]\n\n    EVENTS --> SVC3[\&quot;Group: prod-pdms-notification-svc\\n1 pod × 12 partitions\\nSLA: &lt; 5s\\nScale: 1→12 pods\&quot;]\n\n    EVENTS --> SVC4[\&quot;Group: prod-pdms-audit-svc\\n1 pod × 12 partitions\\nSLA: best effort\\n(không scale — audit cần ordering)\&quot;]\n\n    EVENTS --> SVC5[\&quot;Group: staging-pdms-metadata-svc\\nĐọc production data\\nTest schema migration\\nOffset độc lập với prod\&quot;]\n\n    style EVENTS fill:#1565C0,color:#fff\n    style SVC1 fill:#1b5e20,color:#fff\n    style SVC2 fill:#1b5e20,color:#fff\n    style SVC3 fill:#1b5e20,color:#fff\n    style SVC4 fill:#1b5e20,color:#fff\n    style SVC5 fill:#E65100,color:#fff&quot;">graph TB
+    subgraph EVENTS[&quot;Topic: pdms.document.events\n12 partitions | RF=3 | Retention=72h&quot;]
+    end
+
+    EVENTS --> SVC1[&quot;Group: prod-pdms-metadata-svc\n3 pods × 4 partitions/pod\nSLA: &lt; 500ms\nScale: 3→12 pods&quot;]
+
+    EVENTS --> SVC2[&quot;Group: prod-pdms-search-indexer\n2 pods × 6 partitions/pod\nSLA: &lt; 2s\nScale: 2→12 pods&quot;]
+
+    EVENTS --> SVC3[&quot;Group: prod-pdms-notification-svc\n1 pod × 12 partitions\nSLA: &lt; 5s\nScale: 1→12 pods&quot;]
+
+    EVENTS --> SVC4[&quot;Group: prod-pdms-audit-svc\n1 pod × 12 partitions\nSLA: best effort\n(không scale — audit cần ordering)&quot;]
+
+    EVENTS --> SVC5[&quot;Group: staging-pdms-metadata-svc\nĐọc production data\nTest schema migration\nOffset độc lập với prod&quot;]
+
+    style EVENTS fill:#1565C0,color:#fff
+    style SVC1 fill:#1b5e20,color:#fff
+    style SVC2 fill:#1b5e20,color:#fff
+    style SVC3 fill:#1b5e20,color:#fff
+    style SVC4 fill:#1b5e20,color:#fff
+    style SVC5 fill:#E65100,color:#fff
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p><strong>Naming convention:</strong></p>
+<pre><code>{env}-{service-name}[-{purpose}]
+
+prod-pdms-metadata-svc            # production consumer
+staging-pdms-metadata-svc         # staging đọc production data
+prod-pdms-metadata-svc-replay-v2  # replay một lần để migrate data
+</code></pre>
+<p><strong>Nguyên tắc:</strong></p>
+<ul>
+<li>1 service = 1 consumer group riêng (không share group giữa các service)</li>
+<li>Staging/debug dùng group riêng khi cần đọc production data</li>
+<li>Replay/migration job dùng group có suffix timestamp/version, xoá sau khi hoàn tất</li>
+<li>Không bao giờ để 2 service production share 1 group (offset conflict)</li>
+<li>Group name phải <strong>stable</strong> — không đổi giữa các lần restart/redeploy</li>
+</ul>
+<hr/>
+<h3 id="31--consumer-group--partition-assignment-chi-tiết-kỹ-thuật">3.1 — Consumer Group &amp; Partition Assignment (Chi tiết kỹ thuật)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#31--consumer-group--partition-assignment-chi-tiết-kỹ-thuật" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;graph TB\n    subgraph Topic [\&quot;Topic: orders (4 partitions)\&quot;]\n        P0[\&quot;Partition 0\&quot;]\n        P1[\&quot;Partition 1\&quot;]\n        P2[\&quot;Partition 2\&quot;]\n        P3[\&quot;Partition 3\&quot;]\n    end\n\n    subgraph CG1 [\&quot;Consumer Group: order-processor (2 consumers)\&quot;]\n        C1[\&quot;Consumer 1\\nP0, P1\&quot;]\n        C2[\&quot;Consumer 2\\nP2, P3\&quot;]\n    end\n\n    subgraph CG2 [\&quot;Consumer Group: order-analytics (1 consumer)\&quot;]\n        C3[\&quot;Consumer 3\\nP0,P1,P2,P3\&quot;]\n    end\n\n    P0 --> C1\n    P1 --> C1\n    P2 --> C2\n    P3 --> C2\n    P0 --> C3\n    P1 --> C3\n    P2 --> C3\n    P3 --> C3\n\n    note[\&quot;Mỗi Consumer Group\\nđọc TOÀN BỘ topic\\nĐộc lập với nhau\&quot;]&quot;">graph TB
+    subgraph Topic [&quot;Topic: orders (4 partitions)&quot;]
+        P0[&quot;Partition 0&quot;]
+        P1[&quot;Partition 1&quot;]
+        P2[&quot;Partition 2&quot;]
+        P3[&quot;Partition 3&quot;]
+    end
+
+    subgraph CG1 [&quot;Consumer Group: order-processor (2 consumers)&quot;]
+        C1[&quot;Consumer 1\nP0, P1&quot;]
+        C2[&quot;Consumer 2\nP2, P3&quot;]
+    end
+
+    subgraph CG2 [&quot;Consumer Group: order-analytics (1 consumer)&quot;]
+        C3[&quot;Consumer 3\nP0,P1,P2,P3&quot;]
+    end
+
+    P0 --> C1
+    P1 --> C1
+    P2 --> C2
+    P3 --> C2
+    P0 --> C3
+    P1 --> C3
+    P2 --> C3
+    P3 --> C3
+
+    note[&quot;Mỗi Consumer Group\nđọc TOÀN BỘ topic\nĐộc lập với nhau&quot;]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<blockquote>
+<p><strong>Rule:</strong> <code>num_consumers ≤ num_partitions</code>. Consumer dư sẽ idle.</p>
+</blockquote>
+<hr/>
+<h3 id="32--offset-management">3.2 — Offset Management<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#32--offset-management" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;sequenceDiagram\n    participant C as Consumer\n    participant K as Kafka Broker\n    participant OT as __consumer_offsets topic\n\n    C->>K: poll() → receive msgs offset 100-199\n    C->>C: process messages\n    C->>OT: commitSync(offset=200)\n    Note over OT: Store: group=my-group\\ntopic=orders\\npartition=0\\noffset=200\n\n    Note over C,K: On restart / rebalance:\n    C->>OT: fetch committed offset\n    OT-->>C: offset=200\n    C->>K: fetch from offset 200&quot;">sequenceDiagram
+    participant C as Consumer
+    participant K as Kafka Broker
+    participant OT as __consumer_offsets topic
+
+    C->>K: poll() → receive msgs offset 100-199
+    C->>C: process messages
+    C->>OT: commitSync(offset=200)
+    Note over OT: Store: group=my-group\ntopic=orders\npartition=0\noffset=200
+
+    Note over C,K: On restart / rebalance:
+    C->>OT: fetch committed offset
+    OT-->>C: offset=200
+    C->>K: fetch from offset 200
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Config</th><th>Default</th><th>Ý nghĩa</th></tr></thead><tbody><tr><td><code>auto.offset.reset</code></td><td><code>latest</code></td><td>Khi không có committed offset: <code>earliest</code> (đọc từ đầu) hoặc <code>latest</code></td></tr><tr><td><code>enable.auto.commit</code></td><td><code>true</code></td><td>Tự động commit offset sau <code>auto.commit.interval.ms</code>. <strong>Tắt trong production</strong></td></tr><tr><td><code>auto.commit.interval.ms</code></td><td><code>5000</code></td><td>Interval auto commit (chỉ khi <code>enable.auto.commit=true</code>)</td></tr></tbody></table></div>
+<p><strong>💡 Manual commit patterns:</strong></p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="java" data-theme="github-light github-dark"><code data-language="java" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// At-least-once (khuyến nghị cho financial data)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">@</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">KafkaListener</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">topics</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;orders&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">public</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> void</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> consume</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(ConsumerRecord</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&lt;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">String, Order</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">></span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> record,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">                    Acknowledgment ack) {</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    try</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        orderService.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">process</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(record.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">value</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">());</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        ack.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">acknowledge</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">();  </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// Commit sau khi xử lý thành công</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    } </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">catch</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (RetryableException </span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">e</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) {</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">        // Không ack → reprocess</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        throw</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> e;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></figure>
+<hr/>
+<h3 id="33--polling--heartbeat">3.3 — Polling &amp; Heartbeat<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#33--polling--heartbeat" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;sequenceDiagram\n    participant C as Consumer Thread\n    participant HB as Heartbeat Thread (background)\n    participant GC as Group Coordinator\n\n    loop Every heartbeat.interval.ms (3s)\n        HB->>GC: HEARTBEAT request\n        GC-->>HB: OK / REBALANCE_IN_PROGRESS\n    end\n\n    C->>GC: poll() every max.poll.interval.ms\n    Note over C: Process 500 records...\n    C->>GC: poll() again\n    Note over GC: If poll() not called within\\nmax.poll.interval.ms (5min)\\n→ Consumer considered dead\\n→ Rebalance triggered&quot;">sequenceDiagram
+    participant C as Consumer Thread
+    participant HB as Heartbeat Thread (background)
+    participant GC as Group Coordinator
+
+    loop Every heartbeat.interval.ms (3s)
+        HB->>GC: HEARTBEAT request
+        GC-->>HB: OK / REBALANCE_IN_PROGRESS
+    end
+
+    C->>GC: poll() every max.poll.interval.ms
+    Note over C: Process 500 records...
+    C->>GC: poll() again
+    Note over GC: If poll() not called within\nmax.poll.interval.ms (5min)\n→ Consumer considered dead\n→ Rebalance triggered
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Config</th><th>Default</th><th>Ý nghĩa</th></tr></thead><tbody><tr><td><code>session.timeout.ms</code></td><td><code>45000</code></td><td>Broker khai tử consumer nếu không nhận heartbeat trong thời gian này</td></tr><tr><td><code>heartbeat.interval.ms</code></td><td><code>3000</code></td><td>Tần suất gửi heartbeat. Phải &lt; <code>session.timeout.ms / 3</code></td></tr><tr><td><code>max.poll.interval.ms</code></td><td><code>300000</code></td><td>Max time giữa 2 lần <code>poll()</code>. Nếu xử lý lâu hơn → bị kick khỏi group</td></tr><tr><td><code>max.poll.records</code></td><td><code>500</code></td><td>Số records tối đa mỗi lần <code>poll()</code></td></tr></tbody></table></div>
+<p><strong>💡 Vấn đề thường gặp: <code>max.poll.interval.ms</code> quá thấp</strong></p>
+<p>Nếu xử lý 500 records mất > 5 phút → consumer bị rebalance → records bị xử lý lại.</p>
+<p><strong>Fix:</strong></p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="yaml" data-theme="github-light github-dark"><code data-language="yaml" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">max.poll.records</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">50</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">        # Giảm số records mỗi batch</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">max.poll.interval.ms</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">600000</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">  # Tăng timeout (10 phút)</span></span></code></pre></figure>
+<hr/>
+<h3 id="34--fetch-tuning">3.4 — Fetch Tuning<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#34--fetch-tuning" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    C[\&quot;Consumer poll()\&quot;] --> REQ[\&quot;Fetch Request\\nto Broker\&quot;]\n    REQ --> WAIT{\&quot;fetch.min.bytes\\nmet?\&quot;}\n    WAIT -->|\&quot;No — wait\&quot;| TIMER[\&quot;fetch.max.wait.ms\\n(500ms)\&quot;]\n    TIMER --> RESP[\&quot;Return what we have\&quot;]\n    WAIT -->|\&quot;Yes\&quot;| RESP\n    RESP --> CHECK{\&quot;fetch.max.bytes\\nexceeded?\&quot;}\n    CHECK -->|\&quot;Truncate\&quot;| TRUNC[\&quot;Return up to\\nfetch.max.bytes\&quot;]\n    CHECK -->|\&quot;OK\&quot;| C&quot;">flowchart LR
+    C[&quot;Consumer poll()&quot;] --> REQ[&quot;Fetch Request\nto Broker&quot;]
+    REQ --> WAIT{&quot;fetch.min.bytes\nmet?&quot;}
+    WAIT -->|&quot;No — wait&quot;| TIMER[&quot;fetch.max.wait.ms\n(500ms)&quot;]
+    TIMER --> RESP[&quot;Return what we have&quot;]
+    WAIT -->|&quot;Yes&quot;| RESP
+    RESP --> CHECK{&quot;fetch.max.bytes\nexceeded?&quot;}
+    CHECK -->|&quot;Truncate&quot;| TRUNC[&quot;Return up to\nfetch.max.bytes&quot;]
+    CHECK -->|&quot;OK&quot;| C
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Config</th><th>Default</th><th>Ý nghĩa</th></tr></thead><tbody><tr><td><code>fetch.min.bytes</code></td><td><code>1</code></td><td>Chờ đủ bytes này trước khi trả về. Tăng → throughput tốt hơn</td></tr><tr><td><code>fetch.max.wait.ms</code></td><td><code>500</code></td><td>Max wait time nếu chưa đủ <code>fetch.min.bytes</code></td></tr><tr><td><code>fetch.max.bytes</code></td><td><code>50MB</code></td><td>Max bytes 1 fetch response (across all partitions)</td></tr><tr><td><code>max.partition.fetch.bytes</code></td><td><code>1MB</code></td><td>Max bytes per partition per fetch</td></tr></tbody></table></div>
+<hr/>
+<h3 id="35--spring-boot-consumer-config">3.5 — Spring Boot Consumer Config<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#35--spring-boot-consumer-config" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="yaml" data-theme="github-light github-dark"><code data-language="yaml" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">spring</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">  kafka</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">    consumer</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">      bootstrap-servers</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">kafka1:9092,kafka2:9092,kafka3:9092</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">      group-id</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">order-processor</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">      key-deserializer</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">org.apache.kafka.common.serialization.StringDeserializer</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">      value-deserializer</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">org.springframework.kafka.support.serializer.JsonDeserializer</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">      auto-offset-reset</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">earliest</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">      enable-auto-commit</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">false</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">   # Manual commit!</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">      fetch-min-size</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1024</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">      fetch-max-wait</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">500ms</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">      max-poll-records</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">100</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">      properties</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">        max.poll.interval.ms</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">300000</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">        session.timeout.ms</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">45000</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">        heartbeat.interval.ms</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">3000</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">        spring.json.trusted.packages</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;com.vpbank.pdms.*&quot;</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">        partition.assignment.strategy</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">></span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">          org.apache.kafka.clients.consumer.CooperativeStickyAssignor</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">        group.instance.id</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">${HOSTNAME:default}</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">    listener</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">      ack-mode</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">MANUAL_IMMEDIATE</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">      concurrency</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">3</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">      type</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">BATCH</span></span></code></pre></figure>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="java" data-theme="github-light github-dark"><code data-language="java" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">@</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Bean</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">public</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> DefaultErrorHandler </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">errorHandler</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(KafkaOperations</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&lt;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">String, Object</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">></span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> template) {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    ExponentialBackOffWithMaxRetries backOff </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> new</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> ExponentialBackOffWithMaxRetries</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">3</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    backOff.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">setInitialInterval</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1000L</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    backOff.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">setMultiplier</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">2.0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    DeadLetterPublishingRecoverer recoverer </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> new</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> DeadLetterPublishingRecoverer</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        template,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        (record, ex) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-></span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> new</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> TopicPartition</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(record.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">topic</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">() </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">+</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;.DLT&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, record.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">partition</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">())</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    );</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    return</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> new</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> DefaultErrorHandler</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(recoverer, backOff);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">@</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">KafkaListener</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">    topics</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;orders&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">    groupId</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;order-processor&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">    containerFactory</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;kafkaListenerContainerFactory&quot;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">public</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> void</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> consumeOrders</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    List</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&lt;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">ConsumerRecord</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&lt;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">String, OrderEvent</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">>></span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> records,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    Acknowledgment ack</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) {</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    try</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        records.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">forEach</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(r </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-></span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> orderService.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">process</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(r.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">value</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">()));</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        ack.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">acknowledge</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">();</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    } </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">catch</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (NonRetryableException </span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">e</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        ack.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">acknowledge</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">();</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></figure>
+<h3 id="36--rust-rdkafka-consumer-config">3.6 — Rust (rdkafka) Consumer Config<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#36--rust-rdkafka-consumer-config" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="rust" data-theme="github-light github-dark"><code data-language="rust" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">use</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> rdkafka</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">config</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">ClientConfig</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">use</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> rdkafka</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">consumer</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">{</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">CommitMode</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">Consumer</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">StreamConsumer</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">};</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">use</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> rdkafka</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">Message</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">pub</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> fn</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> create_consumer</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(brokers</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">:</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> &amp;</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">str</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, group_id</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">:</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> &amp;</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">str</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-></span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> StreamConsumer</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">    ClientConfig</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">new</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">()</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">set</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;bootstrap.servers&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, brokers)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">set</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;group.id&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, group_id)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">set</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;auto.offset.reset&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;earliest&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">set</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;enable.auto.commit&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;false&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">set</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;max.poll.interval.ms&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;300000&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">set</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;session.timeout.ms&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;45000&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">set</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;heartbeat.interval.ms&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;3000&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">set</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;fetch.min.bytes&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;1024&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">set</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;fetch.max.wait.ms&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;500&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">set</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;max.partition.fetch.bytes&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;1048576&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">set</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;queued.max.messages.kbytes&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;65536&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">set</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;socket.keepalive.enable&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;true&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">create</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">()</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">expect</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;Failed to create consumer&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></figure>
+<hr/>
+<h2 id="-4-topic-configuration">🔄 4. TOPIC CONFIGURATION<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-4-topic-configuration" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;graph LR\n    subgraph \&quot;Topic Design\&quot;\n        T1[\&quot;orders\\npartitions=12\\nRF=3\\nretention=72h\\ncleanup=delete\&quot;]\n        T2[\&quot;user-profiles\\npartitions=6\\nRF=3\\nretention=∞\\ncleanup=compact\&quot;]\n        T3[\&quot;audit-log\\npartitions=3\\nRF=3\\nretention=30days\\ncleanup=delete\&quot;]\n        T4[\&quot;orders.DLT\\npartitions=3\\nRF=3\\nretention=7days\&quot;]\n    end&quot;">graph LR
+    subgraph &quot;Topic Design&quot;
+        T1[&quot;orders\npartitions=12\nRF=3\nretention=72h\ncleanup=delete&quot;]
+        T2[&quot;user-profiles\npartitions=6\nRF=3\nretention=∞\ncleanup=compact&quot;]
+        T3[&quot;audit-log\npartitions=3\nRF=3\nretention=30days\ncleanup=delete&quot;]
+        T4[&quot;orders.DLT\npartitions=3\nRF=3\nretention=7days&quot;]
+    end
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">kafka-topics.sh</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --create</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --bootstrap-server</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> kafka1:9092</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --topic</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> orders</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --partitions</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 12</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --replication-factor</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 3</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --config</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> retention.ms=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">259200000</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --config</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> min.insync.replicas=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">2</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --config</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> compression.type=lz4</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --config</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> max.message.bytes=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1048576</span></span></code></pre></figure>
+<p><strong>Công thức số partitions:</strong></p>
+<pre><code>partitions = max(throughput_target / throughput_per_partition, num_consumers_max)
+
+Ví dụ PDMS:
+- Target: 50,000 msgs/s
+- 1 partition handle ~10,000 msgs/s
+- Max consumers: 8
+→ partitions = max(5, 8) = 8 (làm tròn lên 12 cho future scaling)
+</code></pre>
+<hr/>
+<h2 id="-5-transactions-exactly-once-end-to-end">🔐 5. TRANSACTIONS (Exactly-Once End-to-End)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-5-transactions-exactly-once-end-to-end" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;sequenceDiagram\n    participant P as Transactional Producer\n    participant TC as Transaction Coordinator\n    participant T2 as Topic B (output)\n    participant CO as __consumer_offsets\n\n    P->>TC: initTransactions() → get PID + epoch\n    P->>TC: beginTransaction()\n    P->>T2: send(record) — buffered\n    P->>CO: sendOffsetsToTransaction(offsets, groupId)\n    TC->>T2: write PREPARE_COMMIT marker\n    TC->>CO: write PREPARE_COMMIT marker\n    P->>TC: commitTransaction()\n    TC->>T2: write COMMIT marker\n    TC->>CO: write COMMIT marker\n    Note over T2,CO: Records now visible\\nto consumers with\\nisolation.level=read_committed&quot;">sequenceDiagram
+    participant P as Transactional Producer
+    participant TC as Transaction Coordinator
+    participant T2 as Topic B (output)
+    participant CO as __consumer_offsets
+
+    P->>TC: initTransactions() → get PID + epoch
+    P->>TC: beginTransaction()
+    P->>T2: send(record) — buffered
+    P->>CO: sendOffsetsToTransaction(offsets, groupId)
+    TC->>T2: write PREPARE_COMMIT marker
+    TC->>CO: write PREPARE_COMMIT marker
+    P->>TC: commitTransaction()
+    TC->>T2: write COMMIT marker
+    TC->>CO: write COMMIT marker
+    Note over T2,CO: Records now visible\nto consumers with\nisolation.level=read_committed
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="java" data-theme="github-light github-dark"><code data-language="java" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">@</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Transactional</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">public</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> void</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> processAndPublish</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(OrderCommand cmd) {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    kafkaTemplate.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">executeInTransaction</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(ops </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-></span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        ops.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">send</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;order-events&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, cmd.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">orderId</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(), </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">new</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> OrderCreatedEvent</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(cmd));</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        ops.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">send</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;audit-log&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, cmd.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">orderId</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(), </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">new</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> AuditEntry</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(cmd));</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        return</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> true</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    });</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></figure>
+<hr/>
+<h2 id="-6-monitoring--observability">🏥 6. MONITORING &amp; OBSERVABILITY<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-6-monitoring--observability" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;graph TB\n    subgraph \&quot;Producer Metrics\&quot;\n        PM1[\&quot;record-send-rate (records/s)\&quot;]\n        PM2[\&quot;record-error-rate (alert nếu > 0)\&quot;]\n        PM3[\&quot;request-latency-avg (alert nếu > 100ms)\&quot;]\n        PM4[\&quot;batch-size-avg (nên gần batch.size)\&quot;]\n    end\n\n    subgraph \&quot;Consumer Metrics\&quot;\n        CM1[\&quot;records-consumed-rate (records/s)\&quot;]\n        CM2[\&quot;consumer-lag (alert nếu > threshold)\&quot;]\n        CM3[\&quot;commit-latency-avg (ms)\&quot;]\n        CM4[\&quot;rebalance-rate (alert nếu > 0)\&quot;]\n    end\n\n    subgraph \&quot;Broker Metrics\&quot;\n        BM1[\&quot;UnderReplicatedPartitions (alert nếu > 0)\&quot;]\n        BM2[\&quot;ActiveControllerCount (alert nếu != 1)\&quot;]\n        BM3[\&quot;OfflinePartitionsCount (alert nếu > 0)\&quot;]\n        BM4[\&quot;RequestHandlerAvgIdlePercent (alert nếu &lt; 30%)\&quot;]\n    end&quot;">graph TB
+    subgraph &quot;Producer Metrics&quot;
+        PM1[&quot;record-send-rate (records/s)&quot;]
+        PM2[&quot;record-error-rate (alert nếu > 0)&quot;]
+        PM3[&quot;request-latency-avg (alert nếu > 100ms)&quot;]
+        PM4[&quot;batch-size-avg (nên gần batch.size)&quot;]
+    end
+
+    subgraph &quot;Consumer Metrics&quot;
+        CM1[&quot;records-consumed-rate (records/s)&quot;]
+        CM2[&quot;consumer-lag (alert nếu > threshold)&quot;]
+        CM3[&quot;commit-latency-avg (ms)&quot;]
+        CM4[&quot;rebalance-rate (alert nếu > 0)&quot;]
+    end
+
+    subgraph &quot;Broker Metrics&quot;
+        BM1[&quot;UnderReplicatedPartitions (alert nếu > 0)&quot;]
+        BM2[&quot;ActiveControllerCount (alert nếu != 1)&quot;]
+        BM3[&quot;OfflinePartitionsCount (alert nếu > 0)&quot;]
+        BM4[&quot;RequestHandlerAvgIdlePercent (alert nếu &lt; 30%)&quot;]
+    end
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<hr/>
+<h2 id="-7-quick-reference--config-profiles">📋 7. QUICK REFERENCE — Config Profiles<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-7-quick-reference--config-profiles" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="profile-high-throughput-batch-etl">Profile: High Throughput (Batch ETL)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#profile-high-throughput-batch-etl" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="properties" data-theme="github-light github-dark"><code data-language="properties" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">batch.size</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=131072</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">linger.ms</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=50</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">compression.type</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=lz4</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">acks</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=1</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">max.poll.records</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=1000</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">fetch.min.bytes</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=65536</span></span></code></pre></figure>
+<h3 id="profile-low-latency-real-time">Profile: Low Latency (Real-time)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#profile-low-latency-real-time" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="properties" data-theme="github-light github-dark"><code data-language="properties" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">batch.size</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=16384</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">linger.ms</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=0</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">compression.type</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=none</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">acks</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=1</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">max.poll.records</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=10</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">fetch.min.bytes</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=1</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">fetch.max.wait.ms</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=100</span></span></code></pre></figure>
+<h3 id="profile-high-durability-financial">Profile: High Durability (Financial)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#profile-high-durability-financial" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="properties" data-theme="github-light github-dark"><code data-language="properties" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">acks</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=all</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">enable.idempotence</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=true</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">max.in.flight.requests.per.connection</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=5</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">retries</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=2147483647</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">delivery.timeout.ms</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=120000</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">enable.auto.commit</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=false</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">isolation.level</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=read_committed</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">min.insync.replicas</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=2</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">replication.factor</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=3</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">unclean.leader.election.enable</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=false</span></span></code></pre></figure>
+<hr/>
+<h2 id="-related-notes">🔗 Related Notes<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-related-notes" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<ul>
+<li><a href="../Microservices-Patterns/Kafka-Troubleshooting-and-Tips" class="internal" data-slug="Microservices-Patterns/Kafka-Troubleshooting-and-Tips">Kafka-Troubleshooting-and-Tips</a> — Errors, incidents &amp; tips thực tế</li>
+<li><a href="../Microservices-Patterns/Transactional-Outbox" class="internal" data-slug="Microservices-Patterns/Transactional-Outbox">Transactional-Outbox</a> — Pattern kết hợp Kafka + DB transaction</li>
+<li><a href="../Microservices-Patterns/CQRS-Materialized-View" class="internal" data-slug="Microservices-Patterns/CQRS-Materialized-View">CQRS-Materialized-View</a> — Kafka Streams cho query-side</li>
+<li><a href="../Microservices-Patterns/RabbitMQ-Configuration-Deep-Dive" class="internal" data-slug="Microservices-Patterns/RabbitMQ-Configuration-Deep-Dive">RabbitMQ-Configuration-Deep-Dive</a> — So sánh với AMQP model</li>
+<li><a href="../Microservices-Patterns/02-Communication" class="internal" data-slug="Microservices-Patterns/02-Communication">02-Communication</a> — Tổng quan inter-service communication</li>
+</ul>
+<hr/>
+<p><em>Tags: <a href=".././tags/kafka" class="tag-link internal alias" data-slug="tags/kafka">kafka</a> <a href=".././tags/messaging" class="tag-link internal alias" data-slug="tags/messaging">messaging</a> <a href=".././tags/configuration" class="tag-link internal alias" data-slug="tags/configuration">configuration</a> <a href=".././tags/spring-boot" class="tag-link internal alias" data-slug="tags/spring-boot">spring-boot</a> <a href=".././tags/rust" class="tag-link internal alias" data-slug="tags/rust">rust</a> <a href=".././tags/microservices" class="tag-link internal alias" data-slug="tags/microservices">microservices</a> <a href=".././tags/vpbank-pdms" class="tag-link internal alias" data-slug="tags/vpbank-pdms">vpbank-pdms</a></em></p></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-81" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#-apache-kafka--deep-dive-configuration-guide" data-for="-apache-kafka--deep-dive-configuration-guide">⚡ Apache Kafka — Deep Dive Configuration Guide</a></li><li class="depth-1"><a href="#️-kafka-architecture-overview" data-for="️-kafka-architecture-overview">🗺️ Kafka Architecture Overview</a></li><li class="depth-1"><a href="#-1-broker-configuration-serverproperties" data-for="-1-broker-configuration-serverproperties">📦 1. BROKER CONFIGURATION (server.properties)</a></li><li class="depth-2"><a href="#11--log--storage" data-for="11--log--storage">1.1 — Log &amp; Storage</a></li><li class="depth-2"><a href="#12--replication--durability" data-for="12--replication--durability">1.2 — Replication &amp; Durability</a></li><li class="depth-2"><a href="#13--performance-tuning" data-for="13--performance-tuning">1.3 — Performance Tuning</a></li><li class="depth-1"><a href="#-2-producer-configuration" data-for="-2-producer-configuration">📤 2. PRODUCER CONFIGURATION</a></li><li class="depth-2"><a href="#21--batching--throughput" data-for="21--batching--throughput">2.1 — Batching &amp; Throughput</a></li><li class="depth-2"><a href="#22--delivery-guarantee--idempotency" data-for="22--delivery-guarantee--idempotency">2.2 — Delivery Guarantee &amp; Idempotency</a></li><li class="depth-2"><a href="#23--partitioning-strategy" data-for="23--partitioning-strategy">2.3 — Partitioning Strategy</a></li><li class="depth-2"><a href="#24--spring-boot-producer-config" data-for="24--spring-boot-producer-config">2.4 — Spring Boot Producer Config</a></li><li class="depth-2"><a href="#25--rust-rdkafka-producer-config" data-for="25--rust-rdkafka-producer-config">2.5 — Rust (rdkafka) Producer Config</a></li><li class="depth-1"><a href="#-3-consumer-configuration" data-for="-3-consumer-configuration">📥 3. CONSUMER CONFIGURATION</a></li><li class="depth-1"><a href="#-30--consumer-group-tư-duy-đúng--các-bài-toán-thực-tế" data-for="-30--consumer-group-tư-duy-đúng--các-bài-toán-thực-tế">🧠 3.0 — Consumer Group: Tư Duy Đúng &amp; Các Bài Toán Thực Tế</a></li><li class="depth-2"><a href="#301--nguyên-tắc-cốt-lõi-partition-là-đơn-vị-song-song" data-for="301--nguyên-tắc-cốt-lõi-partition-là-đơn-vị-song-song">3.0.1 — Nguyên Tắc Cốt Lõi: Partition Là Đơn Vị Song Song</a></li><li class="depth-2"><a href="#302--4-bài-toán-thực-tế-consumer-group-giải-quyết" data-for="302--4-bài-toán-thực-tế-consumer-group-giải-quyết">3.0.2 — 4 Bài Toán Thực Tế Consumer Group Giải Quyết</a></li><li class="depth-2"><a href="#303--ma-trận-consumer-count-vs-partition-count" data-for="303--ma-trận-consumer-count-vs-partition-count">3.0.3 — Ma Trận: Consumer Count vs Partition Count</a></li><li class="depth-2"><a href="#304--rebalance-cơ-chế-tác-động--cách-giảm-downtime" data-for="304--rebalance-cơ-chế-tác-động--cách-giảm-downtime">3.0.4 — Rebalance: Cơ Chế, Tác Động &amp; Cách Giảm Downtime</a></li><li class="depth-2"><a href="#305--triển-khai-thực-tế-pdms-multi-group-architecture" data-for="305--triển-khai-thực-tế-pdms-multi-group-architecture">3.0.5 — Triển Khai Thực Tế: PDMS Multi-Group Architecture</a></li><li class="depth-2"><a href="#31--consumer-group--partition-assignment-chi-tiết-kỹ-thuật" data-for="31--consumer-group--partition-assignment-chi-tiết-kỹ-thuật">3.1 — Consumer Group &amp; Partition Assignment (Chi tiết kỹ thuật)</a></li><li class="depth-2"><a href="#32--offset-management" data-for="32--offset-management">3.2 — Offset Management</a></li><li class="depth-2"><a href="#33--polling--heartbeat" data-for="33--polling--heartbeat">3.3 — Polling &amp; Heartbeat</a></li><li class="depth-2"><a href="#34--fetch-tuning" data-for="34--fetch-tuning">3.4 — Fetch Tuning</a></li><li class="depth-2"><a href="#35--spring-boot-consumer-config" data-for="35--spring-boot-consumer-config">3.5 — Spring Boot Consumer Config</a></li><li class="depth-2"><a href="#36--rust-rdkafka-consumer-config" data-for="36--rust-rdkafka-consumer-config">3.6 — Rust (rdkafka) Consumer Config</a></li><li class="depth-1"><a href="#-4-topic-configuration" data-for="-4-topic-configuration">🔄 4. TOPIC CONFIGURATION</a></li><li class="depth-1"><a href="#-5-transactions-exactly-once-end-to-end" data-for="-5-transactions-exactly-once-end-to-end">🔐 5. TRANSACTIONS (Exactly-Once End-to-End)</a></li><li class="depth-1"><a href="#-6-monitoring--observability" data-for="-6-monitoring--observability">🏥 6. MONITORING &amp; OBSERVABILITY</a></li><li class="depth-1"><a href="#-7-quick-reference--config-profiles" data-for="-7-quick-reference--config-profiles">📋 7. QUICK REFERENCE — Config Profiles</a></li><li class="depth-2"><a href="#profile-high-throughput-batch-etl" data-for="profile-high-throughput-batch-etl">Profile: High Throughput (Batch ETL)</a></li><li class="depth-2"><a href="#profile-low-latency-real-time" data-for="profile-low-latency-real-time">Profile: Low Latency (Real-time)</a></li><li class="depth-2"><a href="#profile-high-durability-financial" data-for="profile-high-durability-financial">Profile: High Durability (Financial)</a></li><li class="depth-1"><a href="#-related-notes" data-for="-related-notes">🔗 Related Notes</a></li><li class="overflow-end"></li></ul></div><div class="backlinks"><h3>Backlinks</h3><ul id="list-2" class="overflow"><li><a href="../Database-Patterns/JDBC-vs-R2DBC-vs-VirtualThreads" class="internal">JDBC-vs-R2DBC-vs-VirtualThreads</a></li><li><a href="../Microservices-Patterns/Debezium-CDC-Deep-Dive" class="internal">Debezium-CDC-Deep-Dive</a></li><li><a href="../Microservices-Patterns/Debezium-Postgres-to-MongoDB-Guide" class="internal">Debezium-Postgres-to-MongoDB-Guide</a></li><li><a href="../Microservices-Patterns/Kafka-Partition-and-Offset-Internals" class="internal">Kafka-Partition-and-Offset-Internals</a></li><li><a href="../Microservices-Patterns/Kafka-Troubleshooting-and-Tips" class="internal">Kafka-Troubleshooting-and-Tips</a></li><li><a href="../Microservices-Patterns/RabbitMQ-Configuration-Deep-Dive" class="internal">RabbitMQ-Configuration-Deep-Dive</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://dangthobach.github.io/">Back to Portfolio</a></li><li><a href="https://github.com/dangthobach">GitHub</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../postscript.js" type="module" data-persist="true"></script></html>

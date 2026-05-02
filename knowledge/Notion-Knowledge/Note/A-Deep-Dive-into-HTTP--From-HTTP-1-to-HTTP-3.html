@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>A Deep Dive into HTTP- From HTTP 1 to HTTP 3</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="Dang Tho Bach's Knowledge Base"/><meta property="og:title" content="A Deep Dive into HTTP- From HTTP 1 to HTTP 3"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="A Deep Dive into HTTP- From HTTP 1 to HTTP 3"/><meta name="twitter:description" content="HTTP is the backbone of modern internet communication, powering everything from browser requests to microservices inside Kubernetes clusters."/><meta property="og:description" content="HTTP is the backbone of modern internet communication, powering everything from browser requests to microservices inside Kubernetes clusters."/><meta property="og:image:alt" content="HTTP is the backbone of modern internet communication, powering everything from browser requests to microservices inside Kubernetes clusters."/><meta property="twitter:domain" content="dangthobach.github.io/knowledge"/><meta property="og:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Deep-Dive-into-HTTP--From-HTTP-1-to-HTTP-3"/><meta property="twitter:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Deep-Dive-into-HTTP--From-HTTP-1-to-HTTP-3"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="HTTP is the backbone of modern internet communication, powering everything from browser requests to microservices inside Kubernetes clusters."/><meta name="generator" content="Quartz"/><link href="../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiL2hvbWUvcnVubmVyL3dvcmsvZGFuZ3Rob2JhY2guZ2l0aHViLmlvL2Rhbmd0aG9iYWNoLmdpdGh1Yi5pby9xdWFydHovcXVhcnR6L2NvbXBvbmVudHMvc3R5bGVzIiwic291cmNlcyI6WyJtZXJtYWlkLmlubGluZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFHRjtFQUNFOzs7QUFLRjtFQUNFO0VBQ0E7OztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTs7QUFJRjtFQUNFO0VBQ0E7RUFDQSIsInNvdXJjZXNDb250ZW50IjpbIi5leHBhbmQtYnV0dG9uIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbG9hdDogcmlnaHQ7XG4gIHBhZGRpbmc6IDAuNHJlbTtcbiAgbWFyZ2luOiAwLjNyZW07XG4gIHJpZ2h0OiAwOyAvLyBOT1RFOiByaWdodCB3aWxsIGJlIHNldCBpbiBtZXJtYWlkLmlubGluZS50c1xuICBjb2xvcjogdmFyKC0tZ3JheSk7XG4gIGJvcmRlci1jb2xvcjogdmFyKC0tZGFyayk7XG4gIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgYm9yZGVyOiAxcHggc29saWQ7XG4gIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgb3BhY2l0eTogMDtcbiAgdHJhbnNpdGlvbjogMC4ycztcblxuICAmID4gc3ZnIHtcbiAgICBmaWxsOiB2YXIoLS1saWdodCk7XG4gICAgZmlsdGVyOiBjb250cmFzdCgwLjMpO1xuICB9XG5cbiAgJjpob3ZlciB7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIGJvcmRlci1jb2xvcjogdmFyKC0tc2Vjb25kYXJ5KTtcbiAgfVxuXG4gICY6Zm9jdXMge1xuICAgIG91dGxpbmU6IDA7XG4gIH1cbn1cblxucHJlIHtcbiAgJjpob3ZlciA+IC5leHBhbmQtYnV0dG9uIHtcbiAgICBvcGFjaXR5OiAxO1xuICAgIHRyYW5zaXRpb246IDAuMnM7XG4gIH1cbn1cblxuI21lcm1haWQtY29udGFpbmVyIHtcbiAgcG9zaXRpb246IGZpeGVkO1xuICBjb250YWluOiBsYXlvdXQ7XG4gIHotaW5kZXg6IDk5OTtcbiAgbGVmdDogMDtcbiAgdG9wOiAwO1xuICB3aWR0aDogMTAwdnc7XG4gIGhlaWdodDogMTAwdmg7XG4gIG92ZXJmbG93OiBoaWRkZW47XG4gIGRpc3BsYXk6IG5vbmU7XG4gIGJhY2tkcm9wLWZpbHRlcjogYmx1cig0cHgpO1xuICBiYWNrZ3JvdW5kOiByZ2JhKDAsIDAsIDAsIDAuNSk7XG5cbiAgJi5hY3RpdmUge1xuICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgfVxuXG4gICYgPiAjbWVybWFpZC1zcGFjZSB7XG4gICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gICAgYm9yZGVyLXJhZGl1czogNXB4O1xuICAgIHBvc2l0aW9uOiBmaXhlZDtcbiAgICB0b3A6IDUwJTtcbiAgICBsZWZ0OiA1MCU7XG4gICAgdHJhbnNmb3JtOiB0cmFuc2xhdGUoLTUwJSwgLTUwJSk7XG4gICAgaGVpZ2h0OiA4MHZoO1xuICAgIHdpZHRoOiA4MHZ3O1xuICAgIG92ZXJmbG93OiBoaWRkZW47XG5cbiAgICAmID4gLm1lcm1haWQtY29udGVudCB7XG4gICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgICB0cmFuc2Zvcm0tb3JpZ2luOiAwIDA7XG4gICAgICB0cmFuc2l0aW9uOiB0cmFuc2Zvcm0gMC4xcyBlYXNlO1xuICAgICAgb3ZlcmZsb3c6IHZpc2libGU7XG4gICAgICBtaW4taGVpZ2h0OiAyMDBweDtcbiAgICAgIG1pbi13aWR0aDogMjAwcHg7XG5cbiAgICAgIHByZSB7XG4gICAgICAgIG1hcmdpbjogMDtcbiAgICAgICAgYm9yZGVyOiBub25lO1xuICAgICAgfVxuXG4gICAgICBzdmcge1xuICAgICAgICBtYXgtd2lkdGg6IG5vbmU7XG4gICAgICAgIGhlaWdodDogYXV0bztcbiAgICAgIH1cbiAgICB9XG5cbiAgICAmID4gLm1lcm1haWQtY29udHJvbHMge1xuICAgICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgICAgYm90dG9tOiAyMHB4O1xuICAgICAgcmlnaHQ6IDIwcHg7XG4gICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgZ2FwOiA4cHg7XG4gICAgICBwYWRkaW5nOiA4cHg7XG4gICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgYm9yZGVyLXJhZGl1czogNnB4O1xuICAgICAgYm94LXNoYWRvdzogMCAycHggNHB4IHJnYmEoMCwgMCwgMCwgMC4xKTtcbiAgICAgIHotaW5kZXg6IDI7XG5cbiAgICAgIC5tZXJtYWlkLWNvbnRyb2wtYnV0dG9uIHtcbiAgICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgIHdpZHRoOiAzMnB4O1xuICAgICAgICBoZWlnaHQ6IDMycHg7XG4gICAgICAgIHBhZGRpbmc6IDA7XG4gICAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgICAgY29sb3I6IHZhcigtLWRhcmspO1xuICAgICAgICBib3JkZXItcmFkaXVzOiA0cHg7XG4gICAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICAgICAgZm9udC1zaXplOiAxNnB4O1xuICAgICAgICBmb250LWZhbWlseTogdmFyKC0tYm9keUZvbnQpO1xuICAgICAgICB0cmFuc2l0aW9uOiBhbGwgMC4ycyBlYXNlO1xuXG4gICAgICAgICY6aG92ZXIge1xuICAgICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIH1cblxuICAgICAgICAmOmFjdGl2ZSB7XG4gICAgICAgICAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKDFweCk7XG4gICAgICAgIH1cblxuICAgICAgICAvLyBTdHlsZSB0aGUgcmVzZXQgYnV0dG9uIGRpZmZlcmVudGx5XG4gICAgICAgICY6bnRoLWNoaWxkKDIpIHtcbiAgICAgICAgICB3aWR0aDogYXV0bztcbiAgICAgICAgICBwYWRkaW5nOiAwIDEycHg7XG4gICAgICAgICAgZm9udC1zaXplOiAxNHB4O1xuICAgICAgICB9XG4gICAgICB9XG4gICAgfVxuICB9XG59XG4iXX0= */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://dangthobach.github.io/knowledge/index.xml"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Deep-Dive-into-HTTP--From-HTTP-1-to-HTTP-3-og-image.webp"/><meta property="og:image:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Deep-Dive-into-HTTP--From-HTTP-1-to-HTTP-3-og-image.webp"/><meta name="twitter:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Deep-Dive-into-HTTP--From-HTTP-1-to-HTTP-3-og-image.webp"/><meta property="og:image:type" content="image/.webp"/></head><body data-slug="Notion-Knowledge/Note/A-Deep-Dive-into-HTTP--From-HTTP-1-to-HTTP-3"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../..">Dang Tho Bach's Knowledge Base</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-263"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-263" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/">Notion Knowledge</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/Note/">Note</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>A Deep Dive into HTTP  From HTTP 1 to HTTP 3</a></div></nav><h1 class="article-title">A Deep Dive into HTTP- From HTTP 1 to HTTP 3</h1><p show-comma="true" class="content-meta"><time datetime="2026-05-02T04:58:37.000Z">May 02, 2026</time><span>12 min read</span></p></div></div><article class="popover-hint"><p>HTTP is the backbone of modern internet communication, powering everything from browser requests to microservices inside Kubernetes clusters.</p>
+<p>Every time a browser loads a page, every time an app fetches an API response, every time a backend service queries another, it’s almost always over HTTP. That’s true even when the underlying transport changes. gRPC, for example, wraps itself around HTTP/2. RESTful APIs, which dominate backend design, are just a convention built on top of HTTP verbs and status codes. CDNs, caches, proxies, and gateways optimize around HTTP behavior.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!2s7A!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F7140c6e1-4315-45cf-8648-d7685219bc6b_1938x1116.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!2s7A!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F7140c6e1-4315-45cf-8648-d7685219bc6b_1938x1116.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Understanding HTTP is less about memorizing status codes and more about internalizing the performance trade-offs baked into the protocol’s evolution. HTTP/1.0 opened the door. HTTP/1.1 made it usable at scale. HTTP/2 pushed efficiency by multiplexing streams over a single TCP connection. And HTTP/3, built on QUIC over UDP, finally breaks free from decades-old constraints.</p>
+<p>In this article, we trace that journey. From the stateless, text-based simplicity of HTTP/1.1 to the encrypted, multiplexed, and mobile-optimized world of HTTP/3.</p>
+<p>Along the way, we’ll look at various important aspects of HTTP:</p>
+<ul>
+<li>
+<p>How does TCP’s design influence HTTP performance, especially in high-latency environments?</p>
+</li>
+<li>
+<p>Why does head-of-line (HOL) blocking become a problem at high scale?</p>
+</li>
+<li>
+<p>How do features like header compression, server push, and connection reuse change the performance game?</p>
+</li>
+<li>
+<p>And where does HTTP/3 shine and still face issues?</p>
+</li>
+</ul>
+<p><a href="https://substackcdn.com/image/fetch/$s_!SDob!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F8ea2cf88-f4a3-4135-8801-dcaa1eacadcc_2250x2624.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!SDob!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F8ea2cf88-f4a3-4135-8801-dcaa1eacadcc_2250x2624.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h1 id="http11---the-workhorse"><strong>HTTP/1.1 - The Workhorse</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#http11---the-workhorse" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>HTTP/1.1 was introduced in 1997. It took the barebones approach of HTTP/1.0 and added just enough muscle to support the explosive growth of the internet in the early 2000s. Most of today’s HTTP clients and servers still default to HTTP/1.1 if nothing more modern is available.</p>
+<p>The most important shift in HTTP/1.1 was the support for persistent connections. In HTTP/1.0, every request opened a new TCP connection, which is a costly and slow operation. HTTP/1.1 introduced “Connection: keep-alive”, which allowed multiple requests and responses to travel over the same TCP connection without reopening the socket every time. This single feature dramatically reduced latency and network overhead for web pages that needed dozens of assets.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!lKLG!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fcf6a8a90-f17c-4205-9f2c-4eea2480756b_1980x1410.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!lKLG!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fcf6a8a90-f17c-4205-9f2c-4eea2480756b_1980x1410.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Other critical upgrades followed:</p>
+<ul>
+<li>
+<p>Chunked Transfer Encoding allowed servers to begin sending responses before knowing the final content length, enabling streaming and more responsive apps.</p>
+</li>
+<li>
+<p>Host headers enabled virtual hosting, which lets multiple domains share the same IP address.</p>
+</li>
+<li>
+<p>Content negotiation allowed servers to serve different versions of the same resource (for example, language, encoding) based on client headers.</p>
+</li>
+<li>
+<p>Improved caching directives like Cache-Control, ETag, and Last-Modified helped both browsers and intermediate proxies make smarter decisions about what to reuse.</p>
+</li>
+<li>
+<p>Range requests made it possible to fetch partial content. This is useful for video streaming, resumable downloads, and media-heavy applications.</p>
+</li>
+</ul>
+<p>However, for all its improvements, HTTP/1.1 remained constrained by its transport layer.</p>
+<h3 id="where-things-start-to-break"><strong>Where Things Start to Break?</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#where-things-start-to-break" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>At its core, HTTP/1.1 uses TCP: a reliable, ordered protocol. That reliability comes at a price.</p>
+<p>First, head-of-line (HOL) blocking became a structural problem. TCP ensures that packets arrive in order, which means that if a single packet is delayed or lost, everything behind it must wait, even if it belongs to a different HTTP request. In HTTP/1.1, this gets worse because there’s no native way to interleave multiple requests within a single connection.</p>
+<p>Without pipelining, only one request at a time can be in flight per connection. The client must wait for a response before sending the next request. Browsers worked around this by opening multiple simultaneous connections per origin (usually 6 to 8), but that adds overhead on both client and server.</p>
+<p>HTTP/1.1 did support pipelining, where clients could send multiple requests without waiting for responses. However, due to inconsistent server support and response reordering issues, most clients disabled it. In practice, pipelining never saw real adoption.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!G_I8!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F8748ff98-82c1-4747-a85a-c22f328558e8_1938x1410.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!G_I8!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F8748ff98-82c1-4747-a85a-c22f328558e8_1938x1410.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>As web pages grew more complex (loading hundreds of assets including fonts, CSS, JavaScript, and images) HTTP/1.1 started to feel like a bottleneck. Engineers began reaching for workarounds such as:</p>
+<ul>
+<li>
+<p>Image sprites that combine multiple icons into one file to reduce request count.</p>
+</li>
+<li>
+<p>Concatenation of JS and CSS into fewer files to avoid connection limits.</p>
+</li>
+<li>
+<p>Domain sharding that spreads assets across subdomains to trick browsers into opening more parallel connections.</p>
+</li>
+</ul>
+<p>Each workaround improved throughput but added maintenance overhead and complexity. And none of them addressed the root issue: HTTP/1.1’s inability to efficiently handle concurrent requests at scale.</p>
+<h2 id="the-role-of-tcp"><strong>The Role of TCP</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#the-role-of-tcp" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>To understand where HTTP/1.x struggles, it’s necessary to look one layer down: at TCP, the transport protocol it depends on. TCP guarantees ordered, reliable delivery, which is great for correctness but introduces fundamental performance costs that ripple upward into every HTTP request.</p>
+<p>Every new TCP connection starts with a three-way handshake:</p>
+<ul>
+<li>
+<p>The client sends a SYN packet to initiate the connection.</p>
+</li>
+<li>
+<p>The server replies with a SYN-ACK.</p>
+</li>
+<li>
+<p>The client responds with an ACK, completing the setup.</p>
+</li>
+</ul>
+<p>Only after this handshake completes can actual data flow. On fast, local networks, this round-trip may feel negligible. However, over cellular or global connections, even this brief handshake introduces noticeable delay.</p>
+<p>If the connection uses HTTPS, which it increasingly does these days, there’s another handshake (TLS negotiation) layered on top that often adds one or two additional round-trips before any HTTP data moves. So, with HTTP/1.0 or non-persistent HTTP/1.1, each request potentially triggers multiple network round-trips before the application payload is even touched.</p>
+<p>TCP also comes with a built-in safety mechanism: congestion control. It doesn’t trust the network immediately. Instead, it starts by sending a small amount of data and then gradually ramps up as acknowledgments come back successfully. This is called a slow start.</p>
+<p>The intent is to avoid overwhelming congested networks. But in practice, it penalizes short-lived connections. If a request completes before the congestion window expands, bandwidth goes unused. This becomes especially problematic for assets like JSON APIs or small images that don’t stick around long enough to benefit from the ramp-up.</p>
+<h2 id="http2---multiplexing-to-the-rescue"><strong>HTTP/2 - Multiplexing to the Rescue</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#http2---multiplexing-to-the-rescue" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>By the mid-2010s, HTTP/1.1 was showing its age. Websites had grown into sprawling applications, routinely pulling in hundreds of resources. Frontend teams pushed for richer user experiences. Mobile usage surged. But the protocol still forced every request through a narrow, serialized path, often throttled by TCP limitations.</p>
+<p>HTTP/2, standardized in 2015, emerged as a direct response to these problems. It didn’t rewrite the semantics of HTTP. Verbs like GET, POST, PUT, and response codes like 200 OK remained the same. What changed was how data was transferred.</p>
+<h3 id="binary-framing-and-multiplexed-streams"><strong>Binary Framing and Multiplexed Streams</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#binary-framing-and-multiplexed-streams" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The most fundamental shift was HTTP/2 replacing the textual, line-by-line format of HTTP/1.x with a binary framing layer. Instead of parsing human-readable strings like Content-Type: application/json, HTTP/2 breaks all data into compact, structured binary frames. These frames are assigne independent streams, each with its ID.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!LTtP!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F1a0a38b7-c527-4cd8-a225-41379214f621_2028x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!LTtP!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F1a0a38b7-c527-4cd8-a225-41379214f621_2028x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>This means a client can now open a single TCP connection to a server and send multiple requests concurrently, multiplexed over one connection. No more waiting for one request to finish before starting the next. The client sends frames from many streams interleaved, and the server responds the same way. The result is smoother parallelism and better network utilization.</p>
+<p>See the diagram below:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!XYHH!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F37fc292a-ba06-4355-9a5f-905c9619d150_2546x1434.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!XYHH!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F37fc292a-ba06-4355-9a5f-905c9619d150_2546x1434.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Beyond multiplexing, HTTP/2 introduced several performance upgrades</p>
+<ul>
+<li>
+<p><strong>HPACK Header Compression:</strong> In HTTP/1.1, every request repeated headers like User-Agent, Accept-Encoding, and cookies, wasting bandwidth. HPACK eliminates this by using indexed compression. The client and server maintain synchronized tables of header values, and instead of resending them, they reference the table. This reduces header bloat significantly, especially when making repetitive API calls.</p>
+</li>
+<li>
+<p><strong>Stream Prioritization:</strong> Each stream can carry weight and dependency information, allowing the client to signal what matters most. For example, a browser can prioritize visible images over analytics scripts or preload fonts before below-the-fold assets.</p>
+</li>
+<li>
+<p><strong>Server Push:</strong> With HTTP/2, the server can preemptively send resources it knows the client will need (for example, CSS or JS files tied to an HTML page) before the browser explicitly asks. This avoids an extra round-trip and can speed up initial loads. However, in practice, server push adoption remains limited due to cache coordination issues and a lack of browser-level control.</p>
+</li>
+</ul>
+<h3 id="the-tcp-bottleneck-remains"><strong>The TCP Bottleneck Remains</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#the-tcp-bottleneck-remains" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Multiplexing solved the application-layer head-of-line (HOL) blocking that plagued HTTP/1.1. But it couldn’t escape TCP’s underlying limitations.</p>
+<p>All streams still funnel through a single TCP connection. If a packet is lost, TCP’s reliability guarantee kicks in: everything after the missing packet must wait, regardless of which stream it belongs to. This means that a dropped packet for a low-priority image can still stall a high-priority API response, because the packet loss affects the entire connection.</p>
+<p>This is transport-level HOL blocking, and it’s invisible to the application. From the browser or client’s perspective, everything takes a pause. In high-latency or lossy environments (like mobile networks or cross-continent traffic), this can turn into real pain: increased latency, jittery performance, or stalled loads despite otherwise efficient multiplexing logic.</p>
+<p>So while HTTP/2 dramatically improved performance over HTTP/1.1 in controlled or wired networks, its architecture still tied concurrency to a single, ordered stream of TCP packets.</p>
+<h2 id="http3-and-the-rise-of-quic"><strong>HTTP/3 and the Rise of QUIC</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#http3-and-the-rise-of-quic" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>As mentioned, HTTP/2 fixed many of the inefficiencies in HTTP/1.1, but it hit a hard wall: TCP itself. No amount of multiplexing at the HTTP layer could avoid the core issue of head-of-line blocking at the transport level. As long as everything ran over TCP, a single lost packet would stall the entire connection.</p>
+<p>HTTP/3 breaks that pattern. It doesn’t just evolve HTTP but rides on an entirely different transport protocol: QUIC (Quick UDP Internet Connections), a UDP-based, encrypted-by-default alternative to TCP. Originally developed by Google and later standardized by the IETF, QUIC is designed to give HTTP the concurrency, reliability, and performance it always needed.</p>
+<p>See the diagram below that shows how HTTP/3 works:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!3rfs!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F81d0ba02-ea4c-4f19-ae57-4da5309b1ef6_1600x1117.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!3rfs!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F81d0ba02-ea4c-4f19-ae57-4da5309b1ef6_1600x1117.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h3 id="multiplexing-at-the-transport-layer"><strong>Multiplexing at the Transport Layer</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#multiplexing-at-the-transport-layer" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The most critical shift in HTTP/3 is where multiplexing happens. HTTP/2 multiplexes streams at the application layer, but they still pass through a single ordered TCP connection. HTTP/3, by using QUIC, moves multiplexing down to the transport level.</p>
+<p>Each stream in HTTP/3 is independent, not just logically, but physically. Packet loss on one stream doesn’t affect the others. There’s no head-of-line blocking across streams. This makes a major difference on high-latency or lossy networks like mobile and Wi-Fi.</p>
+<h3 id="faster-connection-setup-with-0-rtt"><strong>Faster Connection Setup with 0-RTT</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#faster-connection-setup-with-0-rtt" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>HTTP/3 reduces connection overhead by supporting 0-RTT (Zero Round-Trip Time) handshakes. Clients can start sending data during the first flight of packets, assuming the server has been contacted before. This optimization is especially impactful in latency-sensitive apps, where even 100ms matters.</p>
+<p>Compare this to HTTP/1.1 and HTTP/2, where a full TCP + TLS handshake might consume two or three round-trips before any request can even begin. QUIC collapses that process into one, or in some cases zero, making everything feel snappier, especially under HTTPS, which is mandatory for HTTP/3.</p>
+<h3 id="built-in-tls-13-and-encryption-by-default"><strong>Built-In TLS 1.3 and Encryption by Default</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#built-in-tls-13-and-encryption-by-default" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>QUIC integrates TLS 1.3 directly into the protocol stack. Unlike previous versions of HTTP, where TLS sat on top of TCP, HTTP/3 treats encryption as a built-in primitive. Every connection is encrypted. There’s no such thing as “unencrypted HTTP/3.”</p>
+<p>This simplifies implementation logic, avoids awkward layering issues, and makes security the baseline. It also ensures that features like 0-RTT are natively compatible with modern cryptographic standards.</p>
+<h3 id="stream-level-independence-and-loss-recovery"><strong>Stream-Level Independence and Loss Recovery</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#stream-level-independence-and-loss-recovery" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Each stream in QUIC has independent flow control and retransmission logic. Packet loss no longer derails unrelated streams, and the protocol can recover more gracefully. QUIC’s internal acknowledgment and congestion control mechanisms mirror TCP’s in spirit but improve them in practice.</p>
+<p>The result is a better utilization of bandwidth, lower tail latency, and more consistent performance across varying network conditions.</p>
+<h3 id="the-deployment-gap"><strong>The Deployment Gap</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#the-deployment-gap" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Despite the benefits, QUIC adoption is still catching up. It uses UDP, which historically hasn’t played well with middleboxes (routers, firewalls, NAT devices) that expect predictable TCP flows.</p>
+<p>Widespread adoption also requires upgrades across the stack:</p>
+<ul>
+<li>
+<p>Servers need to support QUIC at the transport layer (for example, via Envoy, NGINX, or custom implementations).</p>
+</li>
+<li>
+<p>Clients, especially browsers and mobile apps, need QUIC-capable libraries.</p>
+</li>
+<li>
+<p>CDNs and edge providers must handle QUIC’s different performance characteristics.</p>
+</li>
+</ul>
+<p>That said, major players have already crossed that bridge. Google services, YouTube, Facebook, and Cloudflare all serve traffic over HTTP/3 at scale. Chrome, Firefox, Safari, and most modern browsers support it. The infrastructure is rapidly catching up.</p>
+<h2 id="summary"><strong>Summary</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#summary" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>In this article, we’ve looked at the HTTP protocol in great detail.</p>
+<p>Here are the key learning points in brief:</p>
+<ul>
+<li>
+<p>HTTP remains foundational to modern internet systems—understanding its evolution helps debug performance issues, optimize APIs, and build resilient architectures.</p>
+</li>
+<li>
+<p>HTTP/1.0 introduced basic request-response semantics but lacked persistence, making it inefficient for multi-asset pages.</p>
+</li>
+<li>
+<p>HTTP/1.1 added persistent connections with keep-alive, chunked transfer encoding, host headers, and caching features, significantly improving web performance.</p>
+</li>
+<li>
+<p>Despite improvements, HTTP/1.1 suffered from TCP-level limitations, especially head-of-line (HOL) blocking and one-request-at-a-time constraints.</p>
+</li>
+<li>
+<p>TCP’s three-way handshake and TLS setup introduce latency, particularly on high-latency or encrypted connections.</p>
+</li>
+<li>
+<p>TCP’s congestion control and slow start mechanisms penalize short-lived connections and limit throughput early in a session.</p>
+</li>
+<li>
+<p>HTTP/2 introduced a binary framing layer and allowed multiplexing of many requests over a single TCP connection, significantly improving concurrency and efficiency.</p>
+</li>
+<li>
+<p>HPACK compression in HTTP/2 reduced redundant headers, improving bandwidth efficiency for repetitive API calls or resource loading.</p>
+</li>
+<li>
+<p>Stream prioritization and server push allowed more intelligent control over asset delivery, though push adoption has remained limited.</p>
+</li>
+<li>
+<p>HTTP/2 still suffers from TCP-level HOL blocking. If one packet is lost, all multiplexed streams stall, hurting performance under lossy or mobile conditions.</p>
+</li>
+<li>
+<p>HTTP/3 replaces TCP with QUIC, a UDP-based protocol that eliminates HOL blocking by multiplexing streams directly at the transport layer.</p>
+</li>
+<li>
+<p>QUIC supports 0-RTT handshakes, reducing connection setup latency, which is critical for HTTPS connections and mobile responsiveness.</p>
+</li>
+<li>
+<p>TLS 1.3 is built into QUIC, making all HTTP/3 communication encrypted by default and simplifying protocol layering.</p>
+</li>
+<li>
+<p>Adoption of HTTP/3 is growing. Major platforms like Google, Facebook, and Cloudflare already use HTTP/3 at scale, and most modern browsers now support it.</p>
+</li>
+</ul></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-113" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#http11---the-workhorse" data-for="http11---the-workhorse">HTTP/1.1 - The Workhorse</a></li><li class="depth-2"><a href="#where-things-start-to-break" data-for="where-things-start-to-break">Where Things Start to Break?</a></li><li class="depth-1"><a href="#the-role-of-tcp" data-for="the-role-of-tcp">The Role of TCP</a></li><li class="depth-1"><a href="#http2---multiplexing-to-the-rescue" data-for="http2---multiplexing-to-the-rescue">HTTP/2 - Multiplexing to the Rescue</a></li><li class="depth-2"><a href="#binary-framing-and-multiplexed-streams" data-for="binary-framing-and-multiplexed-streams">Binary Framing and Multiplexed Streams</a></li><li class="depth-2"><a href="#the-tcp-bottleneck-remains" data-for="the-tcp-bottleneck-remains">The TCP Bottleneck Remains</a></li><li class="depth-1"><a href="#http3-and-the-rise-of-quic" data-for="http3-and-the-rise-of-quic">HTTP/3 and the Rise of QUIC</a></li><li class="depth-2"><a href="#multiplexing-at-the-transport-layer" data-for="multiplexing-at-the-transport-layer">Multiplexing at the Transport Layer</a></li><li class="depth-2"><a href="#faster-connection-setup-with-0-rtt" data-for="faster-connection-setup-with-0-rtt">Faster Connection Setup with 0-RTT</a></li><li class="depth-2"><a href="#built-in-tls-13-and-encryption-by-default" data-for="built-in-tls-13-and-encryption-by-default">Built-In TLS 1.3 and Encryption by Default</a></li><li class="depth-2"><a href="#stream-level-independence-and-loss-recovery" data-for="stream-level-independence-and-loss-recovery">Stream-Level Independence and Loss Recovery</a></li><li class="depth-2"><a href="#the-deployment-gap" data-for="the-deployment-gap">The Deployment Gap</a></li><li class="depth-1"><a href="#summary" data-for="summary">Summary</a></li><li class="overflow-end"></li></ul></div><div class="backlinks"><h3>Backlinks</h3><ul id="list-2" class="overflow"><li><a href="../../Notion-Knowledge/Note" class="internal">Note</a></li><li><a href="../../_moc/MOC-Reading-List" class="internal">MOC-Reading-List</a></li><li><a href="../../_moc/MOC-Scalability" class="internal">MOC-Scalability</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://dangthobach.github.io/">Back to Portfolio</a></li><li><a href="https://github.com/dangthobach">GitHub</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../postscript.js" type="module" data-persist="true"></script></html>

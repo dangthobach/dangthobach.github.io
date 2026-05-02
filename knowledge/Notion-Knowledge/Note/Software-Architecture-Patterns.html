@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>Software Architecture Patterns</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="Dang Tho Bach's Knowledge Base"/><meta property="og:title" content="Software Architecture Patterns"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="Software Architecture Patterns"/><meta name="twitter:description" content="Software architects often encounter similar goals and problems repeatedly throughout their careers."/><meta property="og:description" content="Software architects often encounter similar goals and problems repeatedly throughout their careers."/><meta property="og:image:alt" content="Software architects often encounter similar goals and problems repeatedly throughout their careers."/><meta property="twitter:domain" content="dangthobach.github.io/knowledge"/><meta property="og:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Software-Architecture-Patterns"/><meta property="twitter:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Software-Architecture-Patterns"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="Software architects often encounter similar goals and problems repeatedly throughout their careers."/><meta name="generator" content="Quartz"/><link href="../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiL2hvbWUvcnVubmVyL3dvcmsvZGFuZ3Rob2JhY2guZ2l0aHViLmlvL2Rhbmd0aG9iYWNoLmdpdGh1Yi5pby9xdWFydHovcXVhcnR6L2NvbXBvbmVudHMvc3R5bGVzIiwic291cmNlcyI6WyJtZXJtYWlkLmlubGluZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFHRjtFQUNFOzs7QUFLRjtFQUNFO0VBQ0E7OztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTs7QUFJRjtFQUNFO0VBQ0E7RUFDQSIsInNvdXJjZXNDb250ZW50IjpbIi5leHBhbmQtYnV0dG9uIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbG9hdDogcmlnaHQ7XG4gIHBhZGRpbmc6IDAuNHJlbTtcbiAgbWFyZ2luOiAwLjNyZW07XG4gIHJpZ2h0OiAwOyAvLyBOT1RFOiByaWdodCB3aWxsIGJlIHNldCBpbiBtZXJtYWlkLmlubGluZS50c1xuICBjb2xvcjogdmFyKC0tZ3JheSk7XG4gIGJvcmRlci1jb2xvcjogdmFyKC0tZGFyayk7XG4gIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgYm9yZGVyOiAxcHggc29saWQ7XG4gIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgb3BhY2l0eTogMDtcbiAgdHJhbnNpdGlvbjogMC4ycztcblxuICAmID4gc3ZnIHtcbiAgICBmaWxsOiB2YXIoLS1saWdodCk7XG4gICAgZmlsdGVyOiBjb250cmFzdCgwLjMpO1xuICB9XG5cbiAgJjpob3ZlciB7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIGJvcmRlci1jb2xvcjogdmFyKC0tc2Vjb25kYXJ5KTtcbiAgfVxuXG4gICY6Zm9jdXMge1xuICAgIG91dGxpbmU6IDA7XG4gIH1cbn1cblxucHJlIHtcbiAgJjpob3ZlciA+IC5leHBhbmQtYnV0dG9uIHtcbiAgICBvcGFjaXR5OiAxO1xuICAgIHRyYW5zaXRpb246IDAuMnM7XG4gIH1cbn1cblxuI21lcm1haWQtY29udGFpbmVyIHtcbiAgcG9zaXRpb246IGZpeGVkO1xuICBjb250YWluOiBsYXlvdXQ7XG4gIHotaW5kZXg6IDk5OTtcbiAgbGVmdDogMDtcbiAgdG9wOiAwO1xuICB3aWR0aDogMTAwdnc7XG4gIGhlaWdodDogMTAwdmg7XG4gIG92ZXJmbG93OiBoaWRkZW47XG4gIGRpc3BsYXk6IG5vbmU7XG4gIGJhY2tkcm9wLWZpbHRlcjogYmx1cig0cHgpO1xuICBiYWNrZ3JvdW5kOiByZ2JhKDAsIDAsIDAsIDAuNSk7XG5cbiAgJi5hY3RpdmUge1xuICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgfVxuXG4gICYgPiAjbWVybWFpZC1zcGFjZSB7XG4gICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gICAgYm9yZGVyLXJhZGl1czogNXB4O1xuICAgIHBvc2l0aW9uOiBmaXhlZDtcbiAgICB0b3A6IDUwJTtcbiAgICBsZWZ0OiA1MCU7XG4gICAgdHJhbnNmb3JtOiB0cmFuc2xhdGUoLTUwJSwgLTUwJSk7XG4gICAgaGVpZ2h0OiA4MHZoO1xuICAgIHdpZHRoOiA4MHZ3O1xuICAgIG92ZXJmbG93OiBoaWRkZW47XG5cbiAgICAmID4gLm1lcm1haWQtY29udGVudCB7XG4gICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgICB0cmFuc2Zvcm0tb3JpZ2luOiAwIDA7XG4gICAgICB0cmFuc2l0aW9uOiB0cmFuc2Zvcm0gMC4xcyBlYXNlO1xuICAgICAgb3ZlcmZsb3c6IHZpc2libGU7XG4gICAgICBtaW4taGVpZ2h0OiAyMDBweDtcbiAgICAgIG1pbi13aWR0aDogMjAwcHg7XG5cbiAgICAgIHByZSB7XG4gICAgICAgIG1hcmdpbjogMDtcbiAgICAgICAgYm9yZGVyOiBub25lO1xuICAgICAgfVxuXG4gICAgICBzdmcge1xuICAgICAgICBtYXgtd2lkdGg6IG5vbmU7XG4gICAgICAgIGhlaWdodDogYXV0bztcbiAgICAgIH1cbiAgICB9XG5cbiAgICAmID4gLm1lcm1haWQtY29udHJvbHMge1xuICAgICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgICAgYm90dG9tOiAyMHB4O1xuICAgICAgcmlnaHQ6IDIwcHg7XG4gICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgZ2FwOiA4cHg7XG4gICAgICBwYWRkaW5nOiA4cHg7XG4gICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgYm9yZGVyLXJhZGl1czogNnB4O1xuICAgICAgYm94LXNoYWRvdzogMCAycHggNHB4IHJnYmEoMCwgMCwgMCwgMC4xKTtcbiAgICAgIHotaW5kZXg6IDI7XG5cbiAgICAgIC5tZXJtYWlkLWNvbnRyb2wtYnV0dG9uIHtcbiAgICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgIHdpZHRoOiAzMnB4O1xuICAgICAgICBoZWlnaHQ6IDMycHg7XG4gICAgICAgIHBhZGRpbmc6IDA7XG4gICAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgICAgY29sb3I6IHZhcigtLWRhcmspO1xuICAgICAgICBib3JkZXItcmFkaXVzOiA0cHg7XG4gICAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICAgICAgZm9udC1zaXplOiAxNnB4O1xuICAgICAgICBmb250LWZhbWlseTogdmFyKC0tYm9keUZvbnQpO1xuICAgICAgICB0cmFuc2l0aW9uOiBhbGwgMC4ycyBlYXNlO1xuXG4gICAgICAgICY6aG92ZXIge1xuICAgICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIH1cblxuICAgICAgICAmOmFjdGl2ZSB7XG4gICAgICAgICAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKDFweCk7XG4gICAgICAgIH1cblxuICAgICAgICAvLyBTdHlsZSB0aGUgcmVzZXQgYnV0dG9uIGRpZmZlcmVudGx5XG4gICAgICAgICY6bnRoLWNoaWxkKDIpIHtcbiAgICAgICAgICB3aWR0aDogYXV0bztcbiAgICAgICAgICBwYWRkaW5nOiAwIDEycHg7XG4gICAgICAgICAgZm9udC1zaXplOiAxNHB4O1xuICAgICAgICB9XG4gICAgICB9XG4gICAgfVxuICB9XG59XG4iXX0= */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://dangthobach.github.io/knowledge/index.xml"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Software-Architecture-Patterns-og-image.webp"/><meta property="og:image:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Software-Architecture-Patterns-og-image.webp"/><meta name="twitter:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Software-Architecture-Patterns-og-image.webp"/><meta property="og:image:type" content="image/.webp"/></head><body data-slug="Notion-Knowledge/Note/Software-Architecture-Patterns"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../..">Dang Tho Bach's Knowledge Base</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-400"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-400" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/">Notion Knowledge</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/Note/">Note</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>Software Architecture Patterns</a></div></nav><h1 class="article-title">Software Architecture Patterns</h1><p show-comma="true" class="content-meta"><time datetime="2026-05-02T04:58:37.000Z">May 02, 2026</time><span>20 min read</span></p></div></div><article class="popover-hint"><p>Software architects often encounter similar goals and problems repeatedly throughout their careers. These challenges can arise within a single project, across multiple projects within a company, or even throughout an architect’s career.</p>
+<p>Architectural patterns provide a systematic approach to solving these recurring design issues.</p>
+<p>In essence, architectural patterns are reusable approaches to building software that address common design challenges. These patterns capture the core design structures of various systems and software elements, allowing them to be reused across different projects and scenarios.</p>
+<p>Some key benefits of knowing about architectural patterns are as follows:</p>
+<ul>
+<li>
+<p><strong>Increased productivity:</strong> Instead of reinventing the wheel for each project, architects can rely on established patterns to guide design decisions while saving time and effort. The productivity increase allows teams to focus on the unique aspects of their projects rather than reinventing solutions for recurring issues.</p>
+</li>
+<li>
+<p><strong>Improved code quality:</strong> By following standard patterns, developers can produce higher-quality code that is more maintainable, scalable, and easier to understand.</p>
+</li>
+<li>
+<p><strong>Better communication:</strong> Patterns provide a common language and vocabulary making it easy to discuss and communicate design decisions.</p>
+</li>
+<li>
+<p><strong>Faster development cycles:</strong> With the help of established patterns, development teams can accelerate their development cycles.</p>
+</li>
+</ul>
+<p>In this post, we’ll look at the most popular software architecture patterns used by developers and architects across organizations and systems.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!OjEZ!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F86fdda13-d57b-4d9c-b868-ac35d3c52569_1600x1582.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!OjEZ!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F86fdda13-d57b-4d9c-b868-ac35d3c52569_1600x1582.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h2 id="client-server-pattern"><strong>Client-Server Pattern</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#client-server-pattern" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Client-server architecture is a widely used model for network communication, where a client (user or application) sends requests to a server, and the server responds with the requested data or service. This architecture can be implemented on a single machine or across different machines connected through a network.</p>
+<p>See the diagram below for a typical client-server setup.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!eMin!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F380e98e8-f382-4cbb-bddf-ae938f3b7d08_1600x929.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!eMin!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F380e98e8-f382-4cbb-bddf-ae938f3b7d08_1600x929.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>In a client-server architecture, the client and server have distinct roles and responsibilities:</p>
+<ul>
+<li>
+<p><strong>Client:</strong> The client is responsible for initiating communication with the server. It sends requests to the server, specifying the desired data or service. The client can be a user interacting with an application or an application itself.</p>
+</li>
+<li>
+<p><strong>Server:</strong> The server listens for incoming requests from clients. Upon receiving a request, the server processes it and returns the appropriate response to the client. The server is responsible for managing and providing access to resources and data.</p>
+</li>
+</ul>
+<h3 id="advantages-of-client-server-architecture"><strong>Advantages of Client-Server Architecture</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#advantages-of-client-server-architecture" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Client-server architecture offers several key advantages that make it a popular choice for network communication:</p>
+<ul>
+<li>
+<p><strong>Scalability:</strong> Client-server architecture is highly scalable, allowing multiple clients to connect to the same server and share resources. As the number of clients increases, the server can handle the increased load by distributing the workload across multiple servers or by adding more resources to the existing server.</p>
+</li>
+<li>
+<p><strong>Security:</strong> In a client-server architecture, the server can control access to resources and data, ensuring that only authorized clients can access sensitive information. Security measures such as authentication, authorization, and encryption can be implemented at the server level to protect against unauthorized access and data breaches.</p>
+</li>
+<li>
+<p><strong>Reliability:</strong> Client-server architecture offers a high level of reliability. The server can provide backup and recovery services to ensure data integrity and availability. In case of a server failure, redundant servers can be deployed to maintain uninterrupted service.</p>
+</li>
+</ul>
+<h2 id="layered-architecture"><strong>Layered Architecture</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#layered-architecture" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Layered architecture is a common approach to designing complex software systems by breaking them into distinct layers, each responsible for a specific set of functionality. This architectural pattern helps organize code and makes the system easier to maintain and modify over time.</p>
+<p>A typical layered architecture consists of three main layers: the presentation layer, the business logic layer, and the data access layer. See the diagram below for an example:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!Y5BQ!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F71a3fd04-848d-44f4-9454-d58293aa1fa2_1559x1600.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!Y5BQ!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F71a3fd04-848d-44f4-9454-d58293aa1fa2_1559x1600.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h3 id="presentation-layer"><strong>Presentation Layer</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#presentation-layer" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The presentation layer is responsible for displaying information to the user and collecting input. It encompasses the user interface and other components that directly interact with the user.</p>
+<p>The key responsibilities of the presentation layer are as follows:</p>
+<ul>
+<li>
+<p><strong>User Interface:</strong> This is what users see and interact with, such as buttons, text boxes, and menus. It determines how the application looks and feels to the user, ensuring a smooth and intuitive interaction.</p>
+</li>
+<li>
+<p><strong>User Input Handling:</strong> This layer handles user input, such as capturing data entered into forms, responding to button clicks, and validating user input to ensure data integrity.</p>
+</li>
+<li>
+<p><strong>Data Presentation:</strong> The presentation layer is responsible for presenting data to the user in a meaningful and visually appealing way. It may involve formatting data, creating charts or graphs, and organizing information for easy consumption.</p>
+</li>
+</ul>
+<h3 id="business-logic-layer"><strong>Business Logic Layer</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#business-logic-layer" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The business logic layer is responsible for implementing the business rules of the application.</p>
+<p>Here are the key responsibilities of the business logic layer:</p>
+<ul>
+<li>
+<p><strong>Business Rules Implementation:</strong> The business logic layer encapsulates the business rules and processes of the application.</p>
+</li>
+<li>
+<p><strong>Data Processing:</strong> This layer is responsible for processing and transforming data received from the presentation layer or the data access layer. It may involve performing calculations, applying algorithms, or executing complex business logic.</p>
+</li>
+<li>
+<p><strong>Workflow Management:</strong> The business logic layer manages the workflow of the application, determining the sequence of steps and actions required to complete a specific task or process.</p>
+</li>
+</ul>
+<h3 id="data-access-layer"><strong>Data Access Layer</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#data-access-layer" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The data access layer is critical to the application functionality as it facilitates data persistence and retrieval. This is the application layer that interacts with databases or other external data sources.</p>
+<p>The key responsibilities of the data access layer are as follows:</p>
+<ul>
+<li>
+<p><strong>Data Retrieval:</strong> The data access layer is responsible for retrieving data from the database or other data sources. It provides methods or APIs to query the database and fetch the required data.</p>
+</li>
+<li>
+<p><strong>Data Persistence:</strong> This layer makes sure that changes made to the data are saved back to the database. It may involve executing database transactions, handling concurrency, and ensuring data integrity.</p>
+</li>
+<li>
+<p><strong>Data Mapping:</strong> The data access layer often includes data mapping functionality, which maps the data retrieved from the database to the objects or entities used in the application.</p>
+</li>
+</ul>
+<h2 id="pipes-and-filters-pattern"><strong>Pipes and Filters Pattern</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#pipes-and-filters-pattern" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>The pipe and filter architectural pattern enables software systems to process data by separating processing tasks into independent components. This architecture is particularly beneficial for systems that need to handle large amounts of data.</p>
+<p>The pipe and filter architecture consists of four main components: data source, pipe, filter, and data sink. Each component plays a specific role in the data processing pipeline.</p>
+<p>See the diagram below for an example:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!0jnn!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fe19a6bd6-69be-4d4e-b4b9-09d00fdfb7d5_1600x980.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!0jnn!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fe19a6bd6-69be-4d4e-b4b9-09d00fdfb7d5_1600x980.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h3 id="data-source"><strong>Data Source</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#data-source" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The data source serves as the starting point of the pipeline.</p>
+<p>It is responsible for receiving the input data and delivering it to the subsequent components in the pipeline. The data source can be any entity that provides data, such as a file, a database, or an external system.</p>
+<h3 id="pipe"><strong>Pipe</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#pipe" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Pipes are the connectors that link the components together.</p>
+<p>They serve the crucial role of transferring and buffering data between the components, ensuring a smooth flow of data from an upstream component to a downstream one.</p>
+<h3 id="filter"><strong>Filter</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#filter" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Filters are self-contained data processing units that perform specific transformation functions on the data.</p>
+<p>Each filter receives data from an upstream pipe, applies its transformation logic, and sends the transformed data to the downstream pipe. Filters are designed to be independent and reusable, allowing for modular and flexible data processing.</p>
+<h3 id="data-sink"><strong>Data Sink</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#data-sink" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The data sink serves as the endpoint of the pipeline.</p>
+<p>It receives the processed data at the end of the pipeline and serves as the application’s output. The data sink can be any entity that consumes or stores the processed data, such as a file, a database, or an external system.</p>
+<h2 id="domain-driven-design"><strong>Domain-Driven Design</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#domain-driven-design" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Domain-Driven Design (DDD) is not a typical architectural pattern. It is more of an approach to software design that emphasizes the importance of understanding and modeling the domain or problem space of a project.</p>
+<p>Rather than solely focusing on technical implementation, DDD encourages developers to prioritize business logic and domain knowledge when designing software systems.</p>
+<p>The core principle of DDD is to gain a deep understanding of the domain in which the software operates. This involves collaborating with domain experts, analyzing business requirements, and identifying the key concepts, entities, and relationships within the domain.</p>
+<p>By breaking down the domain into smaller, more manageable pieces, developers can create a clear and structured representation of the problem space. This understanding forms the foundation for the subsequent design and development phases.</p>
+<p>DDD introduces several key concepts that help in structuring the system:</p>
+<ul>
+<li>
+<p><strong>Bounded Contexts:</strong> Bounded Contexts are distinct areas within the software system that encapsulate a specific domain or subdomain. Each bounded context has its language, concepts, and rules, allowing for a clear separation of concerns and enabling teams to work independently on different parts of the system.</p>
+</li>
+<li>
+<p><strong>Aggregates:</strong> Aggregates are clusters of related entities and value objects that are treated as a single unit within a Bounded Context. They define consistency boundaries and ensure that the integrity of the domain is maintained. Aggregates help manage complexity and enforce business rules within the system.</p>
+</li>
+<li>
+<p><strong>Domain Services:</strong> Domain Services encapsulate domain-specific logic that doesn’t naturally fit within any particular entity or value object. They provide a way to capture complex business operations and maintain a clear separation between the domain model and the technical implementation.</p>
+</li>
+</ul>
+<p>See the diagram below for reference on a typical domain map.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!ayLY!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F27fa301f-f53b-4a83-aef7-85d5b373ea16_1600x1374.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!ayLY!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F27fa301f-f53b-4a83-aef7-85d5b373ea16_1600x1374.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h3 id="advantages-of-domain-driven-design"><strong>Advantages of Domain-Driven Design</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#advantages-of-domain-driven-design" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Adopting DDD offers several benefits while developing the application:</p>
+<ul>
+<li>
+<p><strong>Alignment with Business Requirements:</strong> By focusing on the domain and involving domain experts throughout the development process, DDD ensures that the software system accurately reflects the business requirements and meets the needs of the stakeholders.</p>
+</li>
+<li>
+<p><strong>Improved Communication:</strong> The domain model serves as a shared language between developers and domain experts, facilitating effective communication and reducing misunderstandings. It provides a common vocabulary and understanding of the problem space.</p>
+</li>
+<li>
+<p><strong>Modular and Maintainable Architecture:</strong> The use of Bounded Contexts and Aggregates promotes a modular and maintainable architecture. It allows for clear separation of concerns, enabling teams to work independently and making the system easier to understand, modify, and extend over time.</p>
+</li>
+</ul>
+<h2 id="monolithic-architecture"><strong>Monolithic Architecture</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#monolithic-architecture" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Monolithic architecture is a software design style that has been widely used for decades.</p>
+<p>It involves building an application as a single, cohesive unit rather than breaking it down into smaller, individual components. In this architecture, all the code and dependencies are packaged together, allowing the application to be deployed and run on a single server.</p>
+<p>See the diagram below:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!uffo!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F5df3a6cc-c79e-46a5-b0fd-21b509b015f0_1600x1298.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!uffo!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F5df3a6cc-c79e-46a5-b0fd-21b509b015f0_1600x1298.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>The key characteristics of monolithic architecture include:</p>
+<ul>
+<li>
+<p><strong>Single, Self-Contained Unit:</strong> In a monolithic architecture, the entire application is built as a single, self-contained unit. All the components, modules, and dependencies are tightly coupled and packaged.</p>
+</li>
+<li>
+<p><strong>Unified Deployment:</strong> The application is deployed as a single unit, typically on a single server. This simplifies the deployment process, as there is no need to manage multiple deployments for different components.</p>
+</li>
+</ul>
+<h3 id="advantages-of-monolithic-architecture"><strong>Advantages of Monolithic Architecture</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#advantages-of-monolithic-architecture" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Monolithic architecture offers several advantages:</p>
+<ul>
+<li>
+<p><strong>Simplicity:</strong> One of the biggest advantages of monolithic architecture is its simplicity. With all the components contained within a single unit, there are fewer moving parts to manage. This simplifies the development, testing, and deployment processes.</p>
+</li>
+<li>
+<p><strong>Ease of Maintenance and Debugging:</strong> Monolithic applications are easier to maintain and debug compared to distributed systems. Since everything is located in one place, it is easier to identify and fix issues without the need to navigate through multiple components.</p>
+</li>
+<li>
+<p><strong>Straightforward Development:</strong> Developing a monolithic application is often more straightforward than developing a distributed system. Developers can focus on building the application as a whole, without worrying about the complexities of integrating and coordinating multiple components.</p>
+</li>
+</ul>
+<h3 id="disadvantages-of-monolithic-architecture"><strong>Disadvantages of Monolithic Architecture</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#disadvantages-of-monolithic-architecture" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Despite its advantages, monolithic architecture also has some drawbacks:</p>
+<ul>
+<li>
+<p><strong>Limited Scalability:</strong> Monolithic applications can be challenging to scale. Since everything runs on a single server, the application’s performance is limited by the server’s capacity. Vertical scaling is the main option but can be costly in the long run.</p>
+</li>
+<li>
+<p><strong>Difficulty in Adopting New Technologies:</strong> Monolithic applications can be resistant to change, making it difficult to adopt new technologies or programming languages. Since all the components are tightly coupled, updating a single component can potentially break the entire application, requiring extensive testing and modifications.</p>
+</li>
+<li>
+<p><strong>Tight Coupling:</strong> Monolithic architectures tend to have tight coupling between components. This means that changes made to one part of the application can have unintended consequences on other parts. This tight coupling can make the application more brittle and harder to maintain over time.</p>
+</li>
+</ul>
+<h2 id="microservices-architecture"><strong>Microservices Architecture</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#microservices-architecture" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Microservices architecture is a software design approach that involves building applications as a collection of small, independent services that communicate with each other over a network.</p>
+<p>Each service focuses on a specific business capability and can be developed, deployed, and scaled independently of other services in the system.</p>
+<p>See the diagram below for reference on a typical microservices architecture:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!dk_J!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F63596c12-b894-4b5c-b8f6-46cdbca74d3c_1600x980.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!dk_J!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F63596c12-b894-4b5c-b8f6-46cdbca74d3c_1600x980.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>The main idea behind microservices architecture is to break down a large, monolithic application into smaller, more manageable services. This approach offers several benefits:</p>
+<ul>
+<li>
+<p><strong>Improved Scalability:</strong> In a microservices architecture, each service can be scaled independently based on specific requirements. This makes it easier to handle traffic spikes or changes in demand without affecting the entire system.</p>
+</li>
+<li>
+<p><strong>Increased Flexibility:</strong> Developers can modify or add new services without impacting other parts of the system. This results in faster development and deployment of new features, as well as the ability to adapt to changing business needs.</p>
+</li>
+<li>
+<p><strong>Technology Diversity:</strong> Microservices allow for the use of different technologies and programming languages for each service. This way the teams can choose the best tools for the specific requirements of each service.</p>
+</li>
+</ul>
+<h3 id="challenges-of-microservices-architecture"><strong>Challenges of Microservices Architecture</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#challenges-of-microservices-architecture" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>While microservices architecture offers numerous benefits, it also introduces additional complexity. Some of the key challenges include:</p>
+<ul>
+<li>
+<p><strong>Service Communication:</strong> Managing communication between services can be complex, especially at scale. Services need to be able to discover each other and communicate efficiently, requiring careful design and implementation of communication protocols and APIs.</p>
+</li>
+<li>
+<p><strong>Data Management:</strong> In a microservices architecture, each service should have its data store to ensure autonomy and avoid affecting other services. This can lead to increased complexity in data management and synchronization across services.</p>
+</li>
+<li>
+<p><strong>Distributed System Complexity:</strong> Microservices introduce the challenges of a distributed system, such as network latency, partial failures, and the need for distributed transactions. Developers must design and implement strategies to handle these complexities effectively.</p>
+</li>
+</ul>
+<h3 id="best-practices-for-microservices-architecture"><strong>Best Practices for Microservices Architecture</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#best-practices-for-microservices-architecture" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>To ensure the success of microservices-based systems, developers should follow some best practices for designing and implementing microservices:</p>
+<ul>
+<li>
+<p><strong>Design Services Around Business Capabilities:</strong> Use Domain-Driven Design (DDD) principles to define bounded contexts and design microservices based on business capabilities. This ensures a clear separation of concerns and promotes service autonomy.</p>
+</li>
+<li>
+<p><strong>Loose Coupling and High Cohesion:</strong> Design services that are loosely coupled and highly cohesive, with clear boundaries and well-defined interfaces. This allows for independent development, deployment, and scaling of services.</p>
+</li>
+<li>
+<p><strong>Containerization:</strong> Use containerization technologies like Docker to package and deploy each service as a separate container. This simplifies the scaling and deployment of individual services.</p>
+</li>
+<li>
+<p><strong>Monitoring and Management:</strong> Implement effective monitoring and management tools to ensure the smooth operation of the system and quickly detect and resolve issues.</p>
+</li>
+<li>
+<p><strong>Continuous Integration and Deployment (CI/CD):</strong> Implement CI/CD pipelines to automate testing and deployment of microservices. This enables faster and more reliable releases.</p>
+</li>
+<li>
+<p><strong>Resilience Patterns:</strong> Design for failure by implementing resilience patterns such as circuit breakers, retries, timeouts, and fallbacks. These patterns help handle temporary failures and degraded services gracefully.</p>
+</li>
+<li>
+<p><strong>12-Factor Approach:</strong> Follow the 12-Factor App methodology, which provides a set of best practices for building scalable and maintainable microservices.</p>
+</li>
+</ul>
+<h2 id="event-driven-architecture"><strong>Event-Driven Architecture</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#event-driven-architecture" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Event-driven architecture (EDA) is a software design paradigm that facilitates fast and efficient communication between different components or services within a system. In this architecture, components communicate through events rather than direct requests or responses.</p>
+<p>See the diagram below:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!Dl5j!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F03b047d1-38bf-43d0-ab19-11262fc1f01c_1600x917.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!Dl5j!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F03b047d1-38bf-43d0-ab19-11262fc1f01c_1600x917.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>To understand how event-driven architecture works, it’s essential to grasp the following key concepts:</p>
+<ul>
+<li>
+<p><strong>Events:</strong> Events are notifications or signals that indicate the occurrence of something of interest within the system. They can originate from various sources, such as user actions (e.g., clicking a button) or system-generated notifications (e.g., data updates or errors). Events encapsulate relevant information about the occurrence and are used to trigger actions or reactions in other components.</p>
+</li>
+<li>
+<p><strong>Event Sources (Producers):</strong> Event sources, also known as producers, are components or services within the system that generate events based on specific conditions or actions within the domain. When an event occurs, the event source publishes it to a central event broker or event bus.</p>
+</li>
+<li>
+<p><strong>Event Consumers (Subscribers):</strong> Event consumers, also referred to as subscribers, are components or services that have an interest in certain types of events. They subscribe to the events they are interested in and receive them from the event broker or event bus. Consumers react to the received events by performing specific actions or triggering further processing based on the event data.</p>
+</li>
+<li>
+<p><strong>Event Broker (or Event Bus):</strong> The event broker, also known as the event bus, is a middleware component that acts as a central hub for managing the routing and delivery of events from producers to consumers. The event broker decouples event producers from event consumers, allowing for a more flexible and scalable architecture. It also ensures that events are efficiently distributed to the appropriate consumers based on their subscriptions.</p>
+</li>
+</ul>
+<h3 id="benefits-of-event-driven-architecture"><strong>Benefits of Event-Driven Architecture</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#benefits-of-event-driven-architecture" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>
+<p><strong>Decoupling of Components:</strong> One of the key benefits of event-driven architecture is its ability to decouple the different components of a software system. In EDA, components communicate through events rather than direct requests, which reduces their dependence on each other. This decoupling makes it easier to modify or update individual components without impacting other parts of the system.</p>
+</li>
+<li>
+<p><strong>Scalability:</strong> Event-driven architecture enables excellent scalability. Since events are broadcast to multiple components of the system, large amounts of data and transactions can be processed in parallel. This parallel processing capability allows the system to handle high traffic and demand spikes effectively, as the workload can be distributed across multiple event consumers.</p>
+</li>
+<li>
+<p><strong>Asynchronous Processing:</strong> EDA supports asynchronous processing of events, which means that event producers and consumers can operate independently without blocking each other. This asynchronous nature enables better resource utilization and improved performance, as components can continue processing events without waiting for responses from other components.</p>
+</li>
+</ul>
+<h3 id="challenges-of-event-driven-architecture"><strong>Challenges of Event-Driven Architecture</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#challenges-of-event-driven-architecture" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>While event-driven architecture offers significant benefits, it also presents some challenges that need to be addressed:</p>
+<ul>
+<li>
+<p><strong>Complexity Management:</strong> As events can be generated and consumed by multiple components, tracking and debugging issues can be more difficult compared to traditional request-response architectures. Proper monitoring, logging, and tracing mechanisms need to be in place to manage and troubleshoot event-driven systems.</p>
+</li>
+<li>
+<p><strong>Event Ordering:</strong> Since events are generated and processed asynchronously, there is a risk of events being processed out of order, which can lead to data inconsistencies or calculation errors. Mechanisms such as event sequencing, timestamps, or event sourcing may be necessary to maintain event ordering and data consistency.</p>
+</li>
+<li>
+<p><strong>Error Handling and Recovery:</strong> Since events are processed asynchronously, errors may not be immediately visible, and recovering from failures may require additional mechanisms such as event replays or compensating actions. Robust error handling and recovery strategies need to be implemented to ensure the reliability and resilience of the system.</p>
+</li>
+<li>
+<p><strong>Event Schema Evolution:</strong> As the system evolves over time, the structure and content of events may need to change. Managing event schema evolution can be challenging, as it requires coordination and compatibility between event producers and consumers. Proper versioning, backward compatibility, and migration strategies need to be in place to handle event schema changes without disrupting the system.</p>
+</li>
+</ul>
+<h2 id="stream-based-architecture"><strong>Stream-based Architecture</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#stream-based-architecture" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Stream-based architecture is a design approach that focuses on the continuous processing of data as it flows through a system.</p>
+<p>At the core of this architecture are data streams, which are sequences of data records (events or messages) that are produced, transmitted, and consumed in real-time or near real-time.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!u2LZ!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Ffc254446-82ba-4e0b-89ce-1300774c2234_1600x974.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!u2LZ!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Ffc254446-82ba-4e0b-89ce-1300774c2234_1600x974.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>The key principles of stream-based architecture include:</p>
+<ul>
+<li>
+<p><strong>Event-Driven Processing:</strong> Stream-based systems process data as it is generated, rather than in batches. This event-driven approach enables real-time processing and allows systems to respond to data changes with minimal latency.</p>
+</li>
+<li>
+<p><strong>Continuous Data Flow:</strong> Data is continuously flowing through the system, with each data record being processed as it arrives. This continuous flow of data enables real-time analytics, pattern detection, and timely decision-making.</p>
+</li>
+</ul>
+<h3 id="advantages-of-stream-based-architecture"><strong>Advantages of Stream-based Architecture</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#advantages-of-stream-based-architecture" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Stream-based architecture offers several benefits that make it well-suited for modern data-intensive applications:</p>
+<ul>
+<li>
+<p><strong>Real-Time Processing:</strong> Stream-based systems enable real-time processing of data, allowing for immediate insights and timely decision-making. This is particularly valuable in scenarios where low-latency responses are critical, such as fraud detection, real-time recommendations, or IoT applications.</p>
+</li>
+<li>
+<p><strong>Scalability and Elasticity:</strong> Stream-based architectures are designed to handle large volumes of data and can scale horizontally to accommodate increasing data throughput. The system can dynamically adjust its processing capacity based on the incoming data load.</p>
+</li>
+<li>
+<p><strong>Flexibility and Adaptability:</strong> Stream-based systems are highly flexible and can adapt to changing data sources, processing requirements, and business needs. New data sources can be easily integrated, and processing logic can be modified or extended without disrupting the overall system.</p>
+</li>
+<li>
+<p><strong>Fault Tolerance and Resilience:</strong> Stream-based architectures often incorporate fault tolerance mechanisms, such as data replication, checkpointing, and exactly-once processing guarantees. These mechanisms ensure that the system can recover from failures and maintain data integrity, even in the face of system crashes or network disruptions.</p>
+</li>
+</ul>
+<h2 id="serverless-architecture"><strong>Serverless Architecture</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#serverless-architecture" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Serverless architecture is a cloud computing execution model that abstracts away the complexity of server management, allowing developers to focus on writing code and deploying individual functions or services.</p>
+<p>In this model, the cloud provider dynamically manages the allocation and provisioning of servers, freeing developers from the burden of infrastructure management.</p>
+<p>See the diagram below for a high-level look at serverless architecture:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!22Sx!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fca698c7d-62ec-45ff-8e58-734f1ef79f43_1600x941.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!22Sx!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fca698c7d-62ec-45ff-8e58-734f1ef79f43_1600x941.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Serverless architecture exhibits several key characteristics that distinguish it from traditional server-based approaches:</p>
+<ol>
+<li>
+<p><strong>Event-Driven:</strong> Functions, also known as serverless components, are triggered by specific events such as HTTP requests, database changes, file uploads, or scheduled tasks. These events act as the driving force behind the execution of serverless functions.</p>
+</li>
+<li>
+<p><strong>Auto-Scaling:</strong> Serverless architecture automatically scales to match the exact demand, seamlessly adjusting the number of function instances based on the incoming workload. Whether there are a few requests per day or thousands per second, the system dynamically adapts without requiring manual intervention.</p>
+</li>
+<li>
+<p><strong>Pay-Per-Use:</strong> Billing in serverless architecture is based on the actual resources consumed by the function execution, rather than pre-allocated server instances. This means that you only pay for the compute time and resources used during the execution of your functions, leading to cost efficiency and optimized resource utilization.</p>
+</li>
+</ol>
+<h2 id="summary"><strong>Summary</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#summary" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>In this article, we’ve learned about multiple software architectural patterns and their benefits in different scenarios.</p>
+<p>Let’s summarize the key learnings in brief:</p>
+<ul>
+<li>
+<p>Architectural patterns are reusable approaches to building software that address common design challenges.</p>
+</li>
+<li>
+<p>Client-server architecture is a widely used model for network communication, where a client sends requests to a server, and the server responds with the requested data or service</p>
+</li>
+<li>
+<p>Layered architecture is a common approach to designing complex software systems by breaking them into distinct layers, each responsible for a specific set of functionality.</p>
+</li>
+<li>
+<p>Pipe and filter architecture is a design pattern that enables software systems to process data by separating processing tasks into independent components.</p>
+</li>
+<li>
+<p>The core principle of DDD is to gain a deep understanding of the domain in which the software operates.</p>
+</li>
+<li>
+<p>Monolithic architecture involves building an application as a single, cohesive unit rather than breaking it down into smaller, individual components.</p>
+</li>
+<li>
+<p>Microservices architecture is a software design approach that involves building applications as a collection of small, independent services that communicate with each other over a network.</p>
+</li>
+<li>
+<p>Event-driven architecture (EDA) is a software design approach that facilitates fast and efficient communication between different components using events.</p>
+</li>
+<li>
+<p>Stream-based architecture is a design approach that focuses on the continuous processing of data as it flows through a system.</p>
+</li>
+<li>
+<p>Serverless architecture is a cloud computing execution model that abstracts away the complexity of server management, allowing developers to focus on writing code and deploying individual functions or services.</p>
+</li>
+</ul></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-172" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#client-server-pattern" data-for="client-server-pattern">Client-Server Pattern</a></li><li class="depth-1"><a href="#advantages-of-client-server-architecture" data-for="advantages-of-client-server-architecture">Advantages of Client-Server Architecture</a></li><li class="depth-0"><a href="#layered-architecture" data-for="layered-architecture">Layered Architecture</a></li><li class="depth-1"><a href="#presentation-layer" data-for="presentation-layer">Presentation Layer</a></li><li class="depth-1"><a href="#business-logic-layer" data-for="business-logic-layer">Business Logic Layer</a></li><li class="depth-1"><a href="#data-access-layer" data-for="data-access-layer">Data Access Layer</a></li><li class="depth-0"><a href="#pipes-and-filters-pattern" data-for="pipes-and-filters-pattern">Pipes and Filters Pattern</a></li><li class="depth-1"><a href="#data-source" data-for="data-source">Data Source</a></li><li class="depth-1"><a href="#pipe" data-for="pipe">Pipe</a></li><li class="depth-1"><a href="#filter" data-for="filter">Filter</a></li><li class="depth-1"><a href="#data-sink" data-for="data-sink">Data Sink</a></li><li class="depth-0"><a href="#domain-driven-design" data-for="domain-driven-design">Domain-Driven Design</a></li><li class="depth-1"><a href="#advantages-of-domain-driven-design" data-for="advantages-of-domain-driven-design">Advantages of Domain-Driven Design</a></li><li class="depth-0"><a href="#monolithic-architecture" data-for="monolithic-architecture">Monolithic Architecture</a></li><li class="depth-1"><a href="#advantages-of-monolithic-architecture" data-for="advantages-of-monolithic-architecture">Advantages of Monolithic Architecture</a></li><li class="depth-1"><a href="#disadvantages-of-monolithic-architecture" data-for="disadvantages-of-monolithic-architecture">Disadvantages of Monolithic Architecture</a></li><li class="depth-0"><a href="#microservices-architecture" data-for="microservices-architecture">Microservices Architecture</a></li><li class="depth-1"><a href="#challenges-of-microservices-architecture" data-for="challenges-of-microservices-architecture">Challenges of Microservices Architecture</a></li><li class="depth-1"><a href="#best-practices-for-microservices-architecture" data-for="best-practices-for-microservices-architecture">Best Practices for Microservices Architecture</a></li><li class="depth-0"><a href="#event-driven-architecture" data-for="event-driven-architecture">Event-Driven Architecture</a></li><li class="depth-1"><a href="#benefits-of-event-driven-architecture" data-for="benefits-of-event-driven-architecture">Benefits of Event-Driven Architecture</a></li><li class="depth-1"><a href="#challenges-of-event-driven-architecture" data-for="challenges-of-event-driven-architecture">Challenges of Event-Driven Architecture</a></li><li class="depth-0"><a href="#stream-based-architecture" data-for="stream-based-architecture">Stream-based Architecture</a></li><li class="depth-1"><a href="#advantages-of-stream-based-architecture" data-for="advantages-of-stream-based-architecture">Advantages of Stream-based Architecture</a></li><li class="depth-0"><a href="#serverless-architecture" data-for="serverless-architecture">Serverless Architecture</a></li><li class="depth-0"><a href="#summary" data-for="summary">Summary</a></li><li class="overflow-end"></li></ul></div><div class="backlinks"><h3>Backlinks</h3><ul id="list-2" class="overflow"><li><a href="../../Notion-Knowledge/Note" class="internal">Note</a></li><li><a href="../../_moc/MOC-Reading-List" class="internal">MOC-Reading-List</a></li><li><a href="../../_moc/MOC-System-Design" class="internal">MOC-System-Design</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://dangthobach.github.io/">Back to Portfolio</a></li><li><a href="https://github.com/dangthobach">GitHub</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../postscript.js" type="module" data-persist="true"></script></html>

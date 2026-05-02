@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>BPMN-CMMN-DMN-Enterprise-Process-Modeling</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="Dang Tho Bach's Knowledge Base"/><meta property="og:title" content="BPMN-CMMN-DMN-Enterprise-Process-Modeling"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="BPMN-CMMN-DMN-Enterprise-Process-Modeling"/><meta name="twitter:description" content="BPMN · CMMN · DMN — Enterprise Process Modeling Deep Dive Tags: bpmn cmmn dmn process-modeling workflow enterprise camunda pdms Status: 🟢 Complete Related: PDMS-Workflow-Optimal-Communication · PDMS-Architecture-Overview · Saga-Pattern · Transactional-Outbox 📌 Tại sao các Model này là xu hướng? Tr..."/><meta property="og:description" content="BPMN · CMMN · DMN — Enterprise Process Modeling Deep Dive Tags: bpmn cmmn dmn process-modeling workflow enterprise camunda pdms Status: 🟢 Complete Related: PDMS-Workflow-Optimal-Communication · PDMS-Architecture-Overview · Saga-Pattern · Transactional-Outbox 📌 Tại sao các Model này là xu hướng? Tr..."/><meta property="og:image:alt" content="BPMN · CMMN · DMN — Enterprise Process Modeling Deep Dive Tags: bpmn cmmn dmn process-modeling workflow enterprise camunda pdms Status: 🟢 Complete Related: PDMS-Workflow-Optimal-Communication · PDMS-Architecture-Overview · Saga-Pattern · Transactional-Outbox 📌 Tại sao các Model này là xu hướng? Tr..."/><meta property="twitter:domain" content="dangthobach.github.io/knowledge"/><meta property="og:url" content="https://dangthobach.github.io/knowledge/Microservices-Patterns/BPMN-CMMN-DMN-Enterprise-Process-Modeling"/><meta property="twitter:url" content="https://dangthobach.github.io/knowledge/Microservices-Patterns/BPMN-CMMN-DMN-Enterprise-Process-Modeling"/><link rel="icon" href="../static/icon.png"/><meta name="description" content="BPMN · CMMN · DMN — Enterprise Process Modeling Deep Dive Tags: bpmn cmmn dmn process-modeling workflow enterprise camunda pdms Status: 🟢 Complete Related: PDMS-Workflow-Optimal-Communication · PDMS-Architecture-Overview · Saga-Pattern · Transactional-Outbox 📌 Tại sao các Model này là xu hướng? Tr..."/><meta name="generator" content="Quartz"/><link href="../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiL2hvbWUvcnVubmVyL3dvcmsvZGFuZ3Rob2JhY2guZ2l0aHViLmlvL2Rhbmd0aG9iYWNoLmdpdGh1Yi5pby9xdWFydHovcXVhcnR6L2NvbXBvbmVudHMvc3R5bGVzIiwic291cmNlcyI6WyJtZXJtYWlkLmlubGluZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFHRjtFQUNFOzs7QUFLRjtFQUNFO0VBQ0E7OztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTs7QUFJRjtFQUNFO0VBQ0E7RUFDQSIsInNvdXJjZXNDb250ZW50IjpbIi5leHBhbmQtYnV0dG9uIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbG9hdDogcmlnaHQ7XG4gIHBhZGRpbmc6IDAuNHJlbTtcbiAgbWFyZ2luOiAwLjNyZW07XG4gIHJpZ2h0OiAwOyAvLyBOT1RFOiByaWdodCB3aWxsIGJlIHNldCBpbiBtZXJtYWlkLmlubGluZS50c1xuICBjb2xvcjogdmFyKC0tZ3JheSk7XG4gIGJvcmRlci1jb2xvcjogdmFyKC0tZGFyayk7XG4gIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgYm9yZGVyOiAxcHggc29saWQ7XG4gIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgb3BhY2l0eTogMDtcbiAgdHJhbnNpdGlvbjogMC4ycztcblxuICAmID4gc3ZnIHtcbiAgICBmaWxsOiB2YXIoLS1saWdodCk7XG4gICAgZmlsdGVyOiBjb250cmFzdCgwLjMpO1xuICB9XG5cbiAgJjpob3ZlciB7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIGJvcmRlci1jb2xvcjogdmFyKC0tc2Vjb25kYXJ5KTtcbiAgfVxuXG4gICY6Zm9jdXMge1xuICAgIG91dGxpbmU6IDA7XG4gIH1cbn1cblxucHJlIHtcbiAgJjpob3ZlciA+IC5leHBhbmQtYnV0dG9uIHtcbiAgICBvcGFjaXR5OiAxO1xuICAgIHRyYW5zaXRpb246IDAuMnM7XG4gIH1cbn1cblxuI21lcm1haWQtY29udGFpbmVyIHtcbiAgcG9zaXRpb246IGZpeGVkO1xuICBjb250YWluOiBsYXlvdXQ7XG4gIHotaW5kZXg6IDk5OTtcbiAgbGVmdDogMDtcbiAgdG9wOiAwO1xuICB3aWR0aDogMTAwdnc7XG4gIGhlaWdodDogMTAwdmg7XG4gIG92ZXJmbG93OiBoaWRkZW47XG4gIGRpc3BsYXk6IG5vbmU7XG4gIGJhY2tkcm9wLWZpbHRlcjogYmx1cig0cHgpO1xuICBiYWNrZ3JvdW5kOiByZ2JhKDAsIDAsIDAsIDAuNSk7XG5cbiAgJi5hY3RpdmUge1xuICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgfVxuXG4gICYgPiAjbWVybWFpZC1zcGFjZSB7XG4gICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gICAgYm9yZGVyLXJhZGl1czogNXB4O1xuICAgIHBvc2l0aW9uOiBmaXhlZDtcbiAgICB0b3A6IDUwJTtcbiAgICBsZWZ0OiA1MCU7XG4gICAgdHJhbnNmb3JtOiB0cmFuc2xhdGUoLTUwJSwgLTUwJSk7XG4gICAgaGVpZ2h0OiA4MHZoO1xuICAgIHdpZHRoOiA4MHZ3O1xuICAgIG92ZXJmbG93OiBoaWRkZW47XG5cbiAgICAmID4gLm1lcm1haWQtY29udGVudCB7XG4gICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgICB0cmFuc2Zvcm0tb3JpZ2luOiAwIDA7XG4gICAgICB0cmFuc2l0aW9uOiB0cmFuc2Zvcm0gMC4xcyBlYXNlO1xuICAgICAgb3ZlcmZsb3c6IHZpc2libGU7XG4gICAgICBtaW4taGVpZ2h0OiAyMDBweDtcbiAgICAgIG1pbi13aWR0aDogMjAwcHg7XG5cbiAgICAgIHByZSB7XG4gICAgICAgIG1hcmdpbjogMDtcbiAgICAgICAgYm9yZGVyOiBub25lO1xuICAgICAgfVxuXG4gICAgICBzdmcge1xuICAgICAgICBtYXgtd2lkdGg6IG5vbmU7XG4gICAgICAgIGhlaWdodDogYXV0bztcbiAgICAgIH1cbiAgICB9XG5cbiAgICAmID4gLm1lcm1haWQtY29udHJvbHMge1xuICAgICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgICAgYm90dG9tOiAyMHB4O1xuICAgICAgcmlnaHQ6IDIwcHg7XG4gICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgZ2FwOiA4cHg7XG4gICAgICBwYWRkaW5nOiA4cHg7XG4gICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgYm9yZGVyLXJhZGl1czogNnB4O1xuICAgICAgYm94LXNoYWRvdzogMCAycHggNHB4IHJnYmEoMCwgMCwgMCwgMC4xKTtcbiAgICAgIHotaW5kZXg6IDI7XG5cbiAgICAgIC5tZXJtYWlkLWNvbnRyb2wtYnV0dG9uIHtcbiAgICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgIHdpZHRoOiAzMnB4O1xuICAgICAgICBoZWlnaHQ6IDMycHg7XG4gICAgICAgIHBhZGRpbmc6IDA7XG4gICAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgICAgY29sb3I6IHZhcigtLWRhcmspO1xuICAgICAgICBib3JkZXItcmFkaXVzOiA0cHg7XG4gICAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICAgICAgZm9udC1zaXplOiAxNnB4O1xuICAgICAgICBmb250LWZhbWlseTogdmFyKC0tYm9keUZvbnQpO1xuICAgICAgICB0cmFuc2l0aW9uOiBhbGwgMC4ycyBlYXNlO1xuXG4gICAgICAgICY6aG92ZXIge1xuICAgICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIH1cblxuICAgICAgICAmOmFjdGl2ZSB7XG4gICAgICAgICAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKDFweCk7XG4gICAgICAgIH1cblxuICAgICAgICAvLyBTdHlsZSB0aGUgcmVzZXQgYnV0dG9uIGRpZmZlcmVudGx5XG4gICAgICAgICY6bnRoLWNoaWxkKDIpIHtcbiAgICAgICAgICB3aWR0aDogYXV0bztcbiAgICAgICAgICBwYWRkaW5nOiAwIDEycHg7XG4gICAgICAgICAgZm9udC1zaXplOiAxNHB4O1xuICAgICAgICB9XG4gICAgICB9XG4gICAgfVxuICB9XG59XG4iXX0= */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://dangthobach.github.io/knowledge/index.xml"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image" content="https://dangthobach.github.io/knowledge/Microservices-Patterns/BPMN-CMMN-DMN-Enterprise-Process-Modeling-og-image.webp"/><meta property="og:image:url" content="https://dangthobach.github.io/knowledge/Microservices-Patterns/BPMN-CMMN-DMN-Enterprise-Process-Modeling-og-image.webp"/><meta name="twitter:image" content="https://dangthobach.github.io/knowledge/Microservices-Patterns/BPMN-CMMN-DMN-Enterprise-Process-Modeling-og-image.webp"/><meta property="og:image:type" content="image/.webp"/></head><body data-slug="Microservices-Patterns/BPMN-CMMN-DMN-Enterprise-Process-Modeling"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="..">Dang Tho Bach's Knowledge Base</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-173"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-173" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../Microservices-Patterns/">Microservices Patterns</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>BPMN CMMN DMN Enterprise Process Modeling</a></div></nav><h1 class="article-title">BPMN-CMMN-DMN-Enterprise-Process-Modeling</h1><p show-comma="true" class="content-meta"><time datetime="2026-05-02T04:58:37.000Z">May 02, 2026</time><span>17 min read</span></p><ul class="tags"><li><a href="../tags/bpmn" class="internal tag-link">bpmn</a></li><li><a href="../tags/cmmn" class="internal tag-link">cmmn</a></li><li><a href="../tags/dmn" class="internal tag-link">dmn</a></li><li><a href="../tags/process-modeling" class="internal tag-link">process-modeling</a></li><li><a href="../tags/workflow" class="internal tag-link">workflow</a></li><li><a href="../tags/enterprise" class="internal tag-link">enterprise</a></li><li><a href="../tags/camunda" class="internal tag-link">camunda</a></li><li><a href="../tags/pdms" class="internal tag-link">pdms</a></li></ul></div></div><article class="popover-hint"><h1 id="bpmn--cmmn--dmn--enterprise-process-modeling-deep-dive">BPMN · CMMN · DMN — Enterprise Process Modeling Deep Dive<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#bpmn--cmmn--dmn--enterprise-process-modeling-deep-dive" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<blockquote>
+<p><strong>Tags:</strong> <a href=".././tags/bpmn" class="tag-link internal alias" data-slug="tags/bpmn">bpmn</a> <a href=".././tags/cmmn" class="tag-link internal alias" data-slug="tags/cmmn">cmmn</a> <a href=".././tags/dmn" class="tag-link internal alias" data-slug="tags/dmn">dmn</a> <a href=".././tags/process-modeling" class="tag-link internal alias" data-slug="tags/process-modeling">process-modeling</a> <a href=".././tags/workflow" class="tag-link internal alias" data-slug="tags/workflow">workflow</a> <a href=".././tags/enterprise" class="tag-link internal alias" data-slug="tags/enterprise">enterprise</a> <a href=".././tags/camunda" class="tag-link internal alias" data-slug="tags/camunda">camunda</a> <a href=".././tags/pdms" class="tag-link internal alias" data-slug="tags/pdms">pdms</a><br/>
+<strong>Status:</strong> 🟢 Complete<br/>
+<strong>Related:</strong> <a href="../Microservices-Patterns/PDMS-Workflow-Optimal-Communication" class="internal" data-slug="Microservices-Patterns/PDMS-Workflow-Optimal-Communication">PDMS-Workflow-Optimal-Communication</a> · <a href="../Microservices-Patterns/PDMS-Architecture-Overview" class="internal" data-slug="Microservices-Patterns/PDMS-Architecture-Overview">PDMS-Architecture-Overview</a> · <a href="../Microservices-Patterns/Saga-Pattern" class="internal" data-slug="Microservices-Patterns/Saga-Pattern">Saga-Pattern</a> · <a href="../Microservices-Patterns/Transactional-Outbox" class="internal" data-slug="Microservices-Patterns/Transactional-Outbox">Transactional-Outbox</a></p>
+</blockquote>
+<hr/>
+<h2 id="-tại-sao-các-model-này-là-xu-hướng">📌 Tại sao các Model này là xu hướng?<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-tại-sao-các-model-này-là-xu-hướng" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Trước khi đi vào từng notation, cần hiểu <strong>vấn đề mà chúng giải quyết</strong>.</p>
+<h3 id="bài-toán-cốt-lõi-của-enterprise-systems">Bài toán cốt lõi của Enterprise Systems<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#bài-toán-cốt-lõi-của-enterprise-systems" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Các hệ thống doanh nghiệp hiện đại — như PDMS tại VPBank — phải xử lý:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Thách thức</th><th>Hệ quả nếu thiếu standard</th></tr></thead><tbody><tr><td>Business logic phức tạp, nhiều nhánh điều kiện</td><td>Code spaghetti, khó audit</td></tr><tr><td>Quy trình kéo dài nhiều ngày (long-running process)</td><td>State bị mất khi restart service</td></tr><tr><td>Quy trình có thể thay đổi theo nghiệp vụ</td><td>Deploy lại toàn bộ app chỉ để đổi 1 luồng</td></tr><tr><td>Multi-stakeholder (nhiều phòng ban cùng tham gia)</td><td>Không ai hiểu được “cả hệ thống”</td></tr><tr><td>Audit, compliance, traceability</td><td>Không có lịch sử thực thi</td></tr></tbody></table></div>
+<h3 id="ba-notation-ba-vai-trò-khác-nhau">Ba Notation, Ba Vai trò khác nhau<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#ba-notation-ba-vai-trò-khác-nhau" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>┌──────────────────────────────────────────────────────────────────────┐
+│                     Enterprise Process Triad                         │
+│                                                                      │
+│   BPMN                   CMMN                    DMN                 │
+│   (How to DO it)         (What MIGHT happen)     (Why to DO it)      │
+│                                                                      │
+│   Structured Flow        Adaptive Case           Decision Logic      │
+│   Sequential Steps       Knowledge Work          Business Rules      │
+│   &quot;Onboarding KH&quot;        &quot;Xử lý khiếu nại&quot;       &quot;Tính lãi suất&quot;    │
+│                                                                      │
+│   ──────────────────────────────────────────────────────────────     │
+│              Cùng nhau = Complete Business Automation                │
+└──────────────────────────────────────────────────────────────────────┘
+</code></pre>
+<p><strong>Lý do chúng trở thành xu hướng:</strong></p>
+<ol>
+<li><strong>OMG Standard</strong> — Được chuẩn hóa bởi Object Management Group, vendor-neutral, không bị lock-in</li>
+<li><strong>Executable Models</strong> — Không chỉ là diagram, các engine (Camunda, Flowable, Drools) có thể <em>chạy</em> trực tiếp từ model</li>
+<li><strong>Business-IT Alignment</strong> — Business analyst vẽ diagram, developer deploy nguyên diagram đó, không dịch thuật mất thông tin</li>
+<li><strong>Audit by Design</strong> — Mọi token chạy qua process đều được log, visualize được real-time</li>
+<li><strong>Microservices-friendly</strong> — Service Task trong BPMN gọi REST/gRPC → tích hợp tự nhiên với microservices</li>
+</ol>
+<hr/>
+<h2 id="-bpmn--business-process-model-and-notation">🔷 BPMN — Business Process Model and Notation<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-bpmn--business-process-model-and-notation" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="khái-niệm-cốt-lõi">Khái niệm cốt lõi<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#khái-niệm-cốt-lõi" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p><strong>BPMN (phiên bản 2.0)</strong> là ngôn ngữ mô hình hóa quy trình nghiệp vụ <em>có thể thực thi</em>. Nó định nghĩa một tập hợp ký hiệu chuẩn để biểu diễn luồng công việc tuần tự, điều kiện rẽ nhánh, và tương tác giữa các bên tham gia.</p>
+<blockquote>
+<p><strong>Mental model:</strong> Hãy nghĩ BPMN như một <strong>flowchart trên steroid</strong> — đủ expressive để máy tính có thể execute, đủ visual để business người đọc được.</p>
+</blockquote>
+<h3 id="các-phần-tử-cơ-bản">Các phần tử cơ bản<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#các-phần-tử-cơ-bản" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="1-events-sự-kiện">1. Events (Sự kiện)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-events-sự-kiện" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>Events là những điểm quan trọng xảy ra trong process. Có 3 loại chính theo vị trí:</p>
+<pre><code>Start Event          Intermediate Event       End Event
+    ○                      ◎                     ●
+(Mỏng, trống)        (Vòng đôi)            (Đặc/dày)
+</code></pre>
+<p>Và theo <strong>loại trigger</strong>:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Symbol</th><th>Loại</th><th>Ý nghĩa</th><th>Ví dụ PDMS</th></tr></thead><tbody><tr><td>○</td><td>None Start</td><td>Bắt đầu thủ công</td><td>Nhân viên click “Tạo hồ sơ”</td></tr><tr><td>✉○</td><td>Message Start</td><td>Nhận message để bắt đầu</td><td>Nhận event từ Kafka topic</td></tr><tr><td>⏱○</td><td>Timer Start</td><td>Bắt đầu theo lịch</td><td>Cron job batch validation lúc 2AM</td></tr><tr><td>⚡○</td><td>Signal Start</td><td>Nhận broadcast signal</td><td>Hệ thống CoreBanking gửi signal</td></tr><tr><td>✉◎</td><td>Message Intermediate</td><td>Chờ/gửi message giữa chừng</td><td>Chờ approval từ manager</td></tr><tr><td>⏱◎</td><td>Timer Intermediate</td><td>Chờ sau N giờ/ngày</td><td>Escalate nếu 24h chưa approve</td></tr><tr><td>🔗◎</td><td>Link Intermediate</td><td>Jump giữa các phần trong process</td><td>Nối subprocess với main flow</td></tr><tr><td>●</td><td>None End</td><td>Kết thúc</td><td>Hồ sơ đã lưu thành công</td></tr><tr><td>✉●</td><td>Message End</td><td>Gửi message khi kết thúc</td><td>Gửi notification đến KH</td></tr><tr><td>⚠●</td><td>Error End</td><td>Kết thúc với lỗi</td><td>Validation thất bại</td></tr><tr><td>⛔●</td><td>Terminate End</td><td>Kết thúc toàn bộ process instance</td><td></td></tr></tbody></table></div>
+<h4 id="2-activities-hoạt-động">2. Activities (Hoạt động)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-activities-hoạt-động" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<pre><code>┌──────────────────┐    ┌──────────────────┐    ┌──────────────────┐
+│                  │    │ ≡ (có dấu gạch)  │    │  +  (có dấu +)  │
+│   User Task      │    │  Script Task     │    │  Subprocess      │
+│  (người thực)    │    │  (tự động/code)  │    │  (process con)   │
+└──────────────────┘    └──────────────────┘    └──────────────────┘
+
+┌──────────────────┐    ┌──────────────────┐
+│  ⚙ Service Task  │    │  Call Activity   │
+│  (gọi service    │    │  (gọi process    │
+│   bên ngoài)     │    │   khác)          │
+└──────────────────┘    └──────────────────┘
+</code></pre>
+<p><strong>Service Task</strong> là loại quan trọng nhất trong microservices:</p>
+<ul>
+<li>Gọi REST API của service khác</li>
+<li>Publish message lên Kafka</li>
+<li>Tương tác với database</li>
+<li>Có thể implement bằng Java Delegate, External Task, hoặc Connector</li>
+</ul>
+<h4 id="3-gateways-cổng-phân-nhánh">3. Gateways (Cổng phân nhánh)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-gateways-cổng-phân-nhánh" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<pre><code>◇ XOR (Exclusive)   ◇ AND (Parallel)    ◇ OR (Inclusive)    ◇ Event-Based
+     X                    +                   O                    ⬡
+  Chọn 1 nhánh      Tất cả nhánh         1+ nhánh           Theo event nào đến
+</code></pre>
+<p><strong>XOR Gateway — ví dụ thực tế:</strong></p>
+<pre><code>                    ┌─── [Số lượng > 1000] ──→ Senior Review
+Upload Excel ──→ ◇ ─┤
+                    └─── [Số lượng ≤ 1000] ──→ Auto Validate
+</code></pre>
+<p><strong>Parallel (AND) Gateway — xử lý song song:</strong></p>
+<pre><code>                    ┌──→ Validate CIF ────────────┐
+                    │                              │
+Nhận file  ──→ ◇+ ─┼──→ Validate HopDong ─────── ┼──→ ◇+ ──→ Tổng hợp kết quả
+                    │                              │
+                    └──→ Validate TAP ─────────────┘
+</code></pre>
+<p><strong>Event-Based Gateway — chờ event nào đến trước:</strong></p>
+<pre><code>                    ┌─── ⏱ 24h timeout ──→ Auto Reject
+                    │
+Gửi yêu cầu ──→ ◇⬡ ┤
+                    │
+                    └─── ✉ Nhận approval ──→ Tiếp tục
+</code></pre>
+<h4 id="4-sequence-flow-và-message-flow">4. Sequence Flow và Message Flow<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-sequence-flow-và-message-flow" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<pre><code>──────────────────────►  Sequence Flow   (trong cùng pool)
+- - - - - - - - - - - ►  Message Flow   (giữa các pool/participant)
+</code></pre>
+<h4 id="5-pools-và-lanes">5. Pools và Lanes<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5-pools-và-lanes" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p><strong>Pool</strong> = một participant (một tổ chức/system).<br/>
+<strong>Lane</strong> = phân chia vai trò trong pool.</p>
+<pre><code>┌─────────────────────────────────────────────────────────────────────┐
+│ POOL: Hệ thống PDMS                                                  │
+│  ┌───────────────────────────────────────────────────────────────┐  │
+│  │ LANE: Nhân viên Kho                                            │  │
+│  │   ○ ──→ [Upload file] ──→ [Kiểm tra] ──→ ✉→                  │  │
+│  └───────────────────────────────────────────────────────────────┘  │
+│  ┌───────────────────────────────────────────────────────────────┐  │
+│  │ LANE: Hệ thống Tự động                                        │  │
+│  │                       ←✉ ──→ [ETL Process] ──→ [Notify] ──→ ● │  │
+│  └───────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────┘
+</code></pre>
+<hr/>
+<h3 id="-subprocess--xử-lý-process-phức-tạp">🔬 Subprocess — Xử lý Process Phức tạp<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-subprocess--xử-lý-process-phức-tạp" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="tại-sao-cần-subprocess">Tại sao cần Subprocess?<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#tại-sao-cần-subprocess" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>Khi một process có hơn 20-30 task, nó trở nên khó đọc và khó maintain. Subprocess cho phép <strong>đóng gói</strong> một nhóm task thành một unit có thể collapse/expand.</p>
+<p>Có <strong>3 loại Subprocess</strong> quan trọng:</p>
+<h4 id="31-embedded-subprocess-inline">3.1. Embedded Subprocess (Inline)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#31-embedded-subprocess-inline" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>Chạy <strong>trong cùng process instance</strong>, share cùng process variables.</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="xml" data-theme="github-light github-dark"><code data-language="xml" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">&lt;!-- Camunda BPMN XML --></span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">&lt;</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">subProcess</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> id</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;validateDocuments&quot;</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;Validate Documents&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">></span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">  &lt;</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">startEvent</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> id</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;startValidate&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">/></span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">  &lt;</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">serviceTask</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> id</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;validateCIF&quot;</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;Validate CIF&quot;</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">    camunda:class</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;vn.vpbank.pdms.delegate.ValidateCIFDelegate&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">/></span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">  &lt;</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">serviceTask</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> id</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;validateHopDong&quot;</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;Validate HopDong&quot;</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">    camunda:class</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;vn.vpbank.pdms.delegate.ValidateHopDongDelegate&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">/></span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">  &lt;</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">parallelGateway</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> id</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;joinGateway&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">/></span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">  &lt;</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">endEvent</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> id</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;endValidate&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">/></span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">  &lt;!-- sequence flows... --></span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">&lt;/</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">subProcess</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">></span></span></code></pre></figure>
+<p><strong>Đặc điểm:</strong></p>
+<ul>
+<li>Variables của subprocess accessible từ parent</li>
+<li>Nếu subprocess end với error → có thể catch ở boundary của subprocess</li>
+<li>Không thể tái sử dụng ở process khác</li>
+</ul>
+<h4 id="32-call-activity-reusable-subprocess">3.2. Call Activity (Reusable Subprocess)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#32-call-activity-reusable-subprocess" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>Gọi một <strong>process riêng biệt</strong>, có thể tái sử dụng, có thể version độc lập.</p>
+<pre><code>Main Process:                     Sub Process (riêng):
+                                  ┌────────────────────────────┐
+○ ──→ [Upload] ──→ [Validate] ──→ │ Process: DocumentValidation │ ──→ [Store] ──→ ●
+                      ↑           │   ○──→[CIF]──→[Contract]──→●│
+                 Call Activity    └────────────────────────────┘
+                 gọi process con
+</code></pre>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="xml" data-theme="github-light github-dark"><code data-language="xml" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">&lt;!-- Call Activity trong Camunda --></span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">&lt;</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">callActivity</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> id</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;callValidation&quot;</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">              name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;Run Document Validation&quot;</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">              calledElement</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;documentValidationProcess&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">></span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">  &lt;</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">extensionElements</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">></span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    &lt;</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">camunda:in</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> source</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;batchId&quot;</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> target</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;batchId&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">/></span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    &lt;</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">camunda:in</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> source</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;warehouseId&quot;</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> target</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;warehouseId&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">/></span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    &lt;</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">camunda:out</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> source</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;validationResult&quot;</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> target</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;validationResult&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">/></span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    &lt;</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">camunda:out</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> source</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;errorCount&quot;</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> target</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;errorCount&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">/></span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">  &lt;/</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">extensionElements</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">></span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">&lt;/</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">callActivity</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">></span></span></code></pre></figure>
+<p><strong>Input/Output Mapping</strong> rất quan trọng — bạn explicit define variable nào được pass vào và trả về.</p>
+<h4 id="33-event-subprocess">3.3. Event Subprocess<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#33-event-subprocess" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>Một subprocess <strong>không nằm trong main flow</strong>, chỉ triggered khi có event xảy ra. Dùng cho cross-cutting concerns như logging, error handling, timeout.</p>
+<pre><code>┌─────────────────────────────────────────────────────────────────────┐
+│ Main Process                                                         │
+│   ○ ──→ [Validate] ──→ [ETL] ──→ [Store] ──→ ●                     │
+│                                                                      │
+│   ┌──────────────────────────────────────────┐                      │
+│   │ Event Subprocess (triggered by Error)    │                      │
+│   │  ⚠○ ──→ [Log Error] ──→ [Notify Admin] ──→ ●                   │
+│   └──────────────────────────────────────────┘                      │
+└─────────────────────────────────────────────────────────────────────┘
+</code></pre>
+<hr/>
+<h3 id="-linkedtriggered-processes--giải-quyết-multi-process-orchestration">🔗 Linked/Triggered Processes — Giải quyết Multi-Process Orchestration<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-linkedtriggered-processes--giải-quyết-multi-process-orchestration" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Đây là câu hỏi quan trọng: <strong>Khi các process cần trigger lẫn nhau, giải quyết thế nào?</strong></p>
+<p>Có <strong>4 cơ chế</strong> chính:</p>
+<h4 id="cơ-chế-1-call-activity-synchronous">Cơ chế 1: Call Activity (Synchronous)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#cơ-chế-1-call-activity-synchronous" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>Process cha <strong>gọi</strong> process con và <strong>chờ</strong> kết quả. Phù hợp khi cần kết quả ngay.</p>
+<pre><code>PDMS Example:
+BatchUploadProcess
+  └──→ [Call: ValidateAllDocuments] ←── chờ xong mới tiếp
+          └── ValidateAllDocuments Process
+                ├── [Validate CIF]
+                ├── [Validate HopDong]
+                └── [Return: errorList]
+  └──→ [Nếu OK: Call ETLProcess]
+</code></pre>
+<h4 id="cơ-chế-2-message-events-asynchronous">Cơ chế 2: Message Events (Asynchronous)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#cơ-chế-2-message-events-asynchronous" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>Process A gửi <strong>Message</strong>, Process B lắng nghe Message đó. Không cần biết nhau trực tiếp.</p>
+<pre><code>WarehouseUploadProcess                    ETLProcess
+                                          ✉○ &quot;BatchReadyToETL&quot;
+   [Upload OK] ──→ ✉● &quot;BatchReadyToETL&quot;  ──────────────────►   [Start ETL]
+   (kết thúc/tiếp tục)                    (được trigger bởi message)
+</code></pre>
+<p>Trong Camunda, correlate message qua:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="java" data-theme="github-light github-dark"><code data-language="java" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">runtimeService.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">createMessageCorrelation</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;BatchReadyToETL&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">processInstanceVariableEquals</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;batchId&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, batchId)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">correlate</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">();</span></span></code></pre></figure>
+<h4 id="cơ-chế-3-signal-events-broadcast">Cơ chế 3: Signal Events (Broadcast)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#cơ-chế-3-signal-events-broadcast" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>Một process gửi <strong>Signal</strong> — <strong>tất cả</strong> processes đang chờ signal đó đều được kích hoạt. Dùng cho system-wide events.</p>
+<pre><code>CoreBankingSystem ──→ ⚡ Signal &quot;EndOfDay&quot;
+                           │
+                           ├──→ BatchReconcileProcess (đang chờ signal này) ── start
+                           ├──→ AuditReportProcess    (đang chờ signal này) ── start
+                           └──→ NotificationProcess   (đang chờ signal này) ── start
+</code></pre>
+<h4 id="cơ-chế-4-errorescalation-boundary-events">Cơ chế 4: Error/Escalation Boundary Events<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#cơ-chế-4-errorescalation-boundary-events" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>Khi subprocess throw error, parent có thể catch và xử lý:</p>
+<pre><code>Main Process:
+  [Validate] ──→ [ETL Subprocess]
+                        │
+                  ⚠ Error Boundary ──→ [Handle ETL Error] ──→ [Retry or Fail]
+</code></pre>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="xml" data-theme="github-light github-dark"><code data-language="xml" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">&lt;</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">boundaryEvent</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> id</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;etlError&quot;</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> attachedToRef</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;etlSubProcess&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">></span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">  &lt;</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">errorEventDefinition</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> errorRef</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;ETLException&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">/></span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">&lt;/</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">boundaryEvent</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">></span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">&lt;</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">sequenceFlow</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> sourceRef</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;etlError&quot;</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> targetRef</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;handleETLError&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">/></span></span></code></pre></figure>
+<h4 id="so-sánh-4-cơ-chế">So sánh 4 cơ chế<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#so-sánh-4-cơ-chế" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Cơ chế</th><th>Coupling</th><th>Hướng</th><th>Use Case</th></tr></thead><tbody><tr><td>Call Activity</td><td>Tight (biết tên process)</td><td>1-to-1, sync</td><td>Sub-workflow bắt buộc phải xong</td></tr><tr><td>Message</td><td>Loose (biết tên message)</td><td>1-to-1, async</td><td>Handoff giữa departments</td></tr><tr><td>Signal</td><td>Loose</td><td>1-to-many, broadcast</td><td>System events, EOD</td></tr><tr><td>Error/Escalation</td><td>Context</td><td>Child → Parent</td><td>Exception handling</td></tr></tbody></table></div>
+<hr/>
+<h3 id="-bpmn-usecase-pdms-batch-upload--etl">📋 BPMN UseCase: PDMS Batch Upload &amp; ETL<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-bpmn-usecase-pdms-batch-upload--etl" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Đây là một ví dụ <strong>full-feature</strong> áp dụng vào PDMS:</p>
+<pre><code>POOL: PDMS System
+│
+LANE: Nhân viên Kho
+│  ○ ──→ [Upload Excel] ──→ [Preview Summary] ──→◇──[Confirm?]──→●(Cancel)
+│                                                  └──[Yes]──→✉● &quot;UploadConfirmed&quot;
+│
+LANE: Batch Processing Service
+│  ✉○ &quot;UploadConfirmed&quot;
+│    │
+│    ▼
+│  [Parse Excel SAX] ──→ [Stage to DB] ──→◇+ ─┬──→[Validate CIF Batch]──┐
+│                                              ├──→[Validate HD Batch] ──┤──→◇+ ──→[Merge Results]
+│                                              └──→[Validate TAP Batch]──┘
+│                                                                  │
+│                                              ┌───────────────────┘
+│                                              ▼
+│                                        ◇XOR──┬──[errorCount > 0]──→[Notify Errors]──→✉●&quot;BatchFailed&quot;
+│                                              └──[errorCount = 0]──→[Call: ETLProcess]
+│                                                                           │
+│                                                              ┌────────────┘
+│                                                              ▼
+LANE: ETL Process (Call Activity / separate process)
+│     ○──→[pdms_etl_from_staging()]──→[Invalidate Cache]──→[Audit Log]──→●
+│          (stored procedure)
+│
+LANE: Notification Service
+│  ✉○ &quot;BatchFailed&quot; ──→ [Send Notification] ──→ ●
+│  ✉○ &quot;ETLComplete&quot; ──→ [Send Success Notif] ──→ ●
+</code></pre>
+<hr/>
+<h2 id="-cmmn--case-management-model-and-notation">🔷 CMMN — Case Management Model and Notation<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-cmmn--case-management-model-and-notation" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="khái-niệm-adaptive-vs-structured">Khái niệm: Adaptive vs Structured<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#khái-niệm-adaptive-vs-structured" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>BPMN giỏi mô hình hóa <strong>structured processes</strong> — những gì bạn biết trước sẽ xảy ra. Nhưng nhiều công việc thực tế của doanh nghiệp là <strong>knowledge work</strong> — những gì cần làm phụ thuộc vào những gì khám phá được trong quá trình.</p>
+<blockquote>
+<p><strong>Analogy:</strong> BPMN là <strong>bản đồ GPS</strong> (đường đi cố định). CMMN là <strong>tấm bản đồ mở</strong> của thám tử — bạn có các manh mối, các hành động có thể làm, nhưng thứ tự và điều kiện do người xử lý quyết định theo context.</p>
+</blockquote>
+<h3 id="khi-nào-dùng-cmmn-thay-vì-bpmn">Khi nào dùng CMMN thay vì BPMN?<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#khi-nào-dùng-cmmn-thay-vì-bpmn" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Tình huống</th><th>BPMN</th><th>CMMN</th></tr></thead><tbody><tr><td>Onboarding KH tiêu chuẩn</td><td>✅</td><td></td></tr><tr><td>Xử lý khiếu nại phức tạp</td><td></td><td>✅</td></tr><tr><td>Quy trình phê duyệt 3 cấp</td><td>✅</td><td></td></tr><tr><td>Điều tra gian lận</td><td></td><td>✅</td></tr><tr><td>ETL batch processing</td><td>✅</td><td></td></tr><tr><td>Case management y tế</td><td></td><td>✅</td></tr><tr><td>KYC/AML screening</td><td></td><td>✅</td></tr><tr><td>Hỗ trợ khách hàng đặc biệt</td><td></td><td>✅</td></tr></tbody></table></div>
+<p><strong>Rule of thumb:</strong> Nếu bạn không thể vẽ được flowchart rõ ràng cho một tình huống, đó là CMMN territory.</p>
+<h3 id="các-phần-tử-cmmn">Các phần tử CMMN<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#các-phần-tử-cmmn" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="case-hồ-sơ">Case (Hồ sơ)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#case-hồ-sơ" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>Một <strong>Case</strong> là unit công việc chính trong CMMN. Mỗi case instance mang theo <strong>Case File</strong> — tập hợp data liên quan đến case đó.</p>
+<pre><code>┌──────────────────────────────────────────────────────────┐
+│ CASE: Xử lý Khiếu nại KH #KN-2024-001                   │
+│                                                           │
+│ Case File:                                                │
+│   - KhachHang: { id, name, segment }                     │
+│   - KhieuNai: { loai, moTa, ngayGui }                    │
+│   - TaiLieuDinhKem: [...]                                 │
+│   - LichSuXuLy: [...]                                     │
+│                                                           │
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐    │
+│  │ Task:    │ │ Task:    │ │ Task:    │ │ Stage:   │    │
+│  │ Tiếp    │ │ Điều tra │ │ Phê      │ │ Escalate │    │
+│  │ nhận    │ │ hồ sơ    │ │ duyệt    │ │ (nếu cần)│    │
+│  │[ENABLED]│ │[AVAILABLE│ │[AVAILABLE│ │[AVAILABLE│    │
+│  └──────────┘ └──────────┘ └──────────┘ └──────────┘    │
+└──────────────────────────────────────────────────────────┘
+</code></pre>
+<h4 id="task-states-trong-cmmn">Task States trong CMMN<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#task-states-trong-cmmn" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>Khác với BPMN (task chạy theo sequence), CMMN task có lifecycle state:</p>
+<pre><code>INITIAL ──→ AVAILABLE ──→ ENABLED ──→ ACTIVE ──→ COMPLETED
+                │                       │
+                └──→ DISABLED           └──→ FAILED
+                                        └──→ TERMINATED
+</code></pre>
+<ul>
+<li><strong>AVAILABLE</strong>: Task có thể được thực hiện nhưng chưa ai bắt đầu</li>
+<li><strong>ENABLED</strong>: Điều kiện để start task đã thỏa mãn</li>
+<li><strong>ACTIVE</strong>: Đang được thực hiện</li>
+</ul>
+<h4 id="sentries--điều-kiện-kích-hoạt">Sentries — Điều kiện kích hoạt<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#sentries--điều-kiện-kích-hoạt" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p><strong>Sentry</strong> là điều kiện quyết định khi nào một task trở nên available/required.</p>
+<pre><code>Entry Sentry (◇ trước task):  Khi nào task có thể BẮT ĐẦU
+Exit Sentry  (◇ sau task):    Khi nào task có thể KẾT THÚC
+</code></pre>
+<p>Sentry kết hợp:</p>
+<ul>
+<li><strong>On Part</strong>: Dựa vào lifecycle transition của task/stage khác (“sau khi task A complete”)</li>
+<li><strong>If Part</strong>: Dựa vào expression trên Case File data (“nếu <code>khieuNai.giaTriThietHai > 100_000_000</code>”)</li>
+</ul>
+<h4 id="plan-items-và-discretionary-items">Plan Items và Discretionary Items<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#plan-items-và-discretionary-items" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<ul>
+<li><strong>Plan Item</strong> (solid border): Task mặc định có trong case plan</li>
+<li><strong>Discretionary Item</strong> (dashed border): Task tùy chọn — case worker có thể add nếu thấy cần</li>
+</ul>
+<pre><code>┌ ─ ─ ─ ─ ─ ─ ─ ─ ─┐    ┌──────────────────┐
+  [Lấy thêm tài liệu]      │ [Xác minh danh   │
+└ ─ ─ ─ ─ ─ ─ ─ ─ ─┘    │  tính KH]         │
+  Discretionary             └──────────────────┘
+  (tùy chọn)                Plan Item (bắt buộc)
+</code></pre>
+<h3 id="usecase-cmmn-xử-lý-khiếu-nại-pdms">UseCase CMMN: Xử lý Khiếu nại PDMS<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#usecase-cmmn-xử-lý-khiếu-nại-pdms" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Khi một lô tài liệu PDMS bị từ chối sau kiểm tra, case worker cần điều tra:</p>
+<pre><code>CASE: DocumentDisputeCase
+
+Plan Items (bắt buộc):
+  [Tiếp nhận thông tin] ──◇(entry: case created)
+  [Phân tích lỗi]       ──◇(entry: tiếp nhận completed AND loaiKhieuNai != null)
+  [Ra quyết định]       ──◇(entry: phanTich completed)
+
+Discretionary Items (case worker thêm nếu cần):
+  [Liên hệ đơn vị cung cấp]  ── dashed
+  [Yêu cầu bổ sung tài liệu] ── dashed
+  [Escalate lên Ban lãnh đạo] ── dashed
+
+Milestones:
+  ⬡ &quot;Đã có đủ thông tin&quot;     ── trigger khi case file đủ data
+  ⬡ &quot;Quyết định đã được ký&quot;  ── trigger khi decision document uploaded
+
+Case File Items:
+  - KhieuNaiInfo: { maBatch, loaiLoi, moTa }
+  - TaiLieuGoc: File[]
+  - KetQuaDieuTra: { ketLuan, deNghi }
+  - QuyetDinh: { type: APPROVE|REJECT|PARTIAL }
+</code></pre>
+<hr/>
+<h2 id="-dmn--decision-model-and-notation">🔷 DMN — Decision Model and Notation<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-dmn--decision-model-and-notation" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="khái-niệm-tách-business-rules-ra-khỏi-code">Khái niệm: Tách Business Rules ra khỏi Code<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#khái-niệm-tách-business-rules-ra-khỏi-code" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p><strong>DMN</strong> giải quyết một vấn đề kinh điển: business rules bị <strong>chôn vùi trong code</strong> dưới dạng <code>if-else</code> chains dài hàng trăm dòng.</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="java" data-theme="github-light github-dark"><code data-language="java" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// ❌ Business rule trong code — khó maintain</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (customerSegment.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">equals</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;VIP&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&amp;&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> amount </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">></span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 1_000_000_000</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) {</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (documentCount </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">>=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 3</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) {</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        return</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;APPROVE_LEVEL_3&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    } </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">else</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (documentCount </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">>=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) {</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        return</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;APPROVE_LEVEL_2&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">} </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">else</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (customerSegment.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">equals</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;STANDARD&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&amp;&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> amount </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">></span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 500_000_000</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) {</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">    // ... 50 dòng nữa</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></figure>
+<p>DMN cho phép <strong>business analyst</strong> định nghĩa rules trong bảng, không cần developer:</p>
+<h3 id="decision-table--trái-tim-của-dmn">Decision Table — Trái tim của DMN<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#decision-table--trái-tim-của-dmn" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>╔══════════════════════════════════════════════════════════════════════╗
+║ Decision Table: ApprovalLevelDecision                               ║
+║ Hit Policy: UNIQUE (chỉ 1 rule match)                               ║
+╠═══════════════════╦════════════════╦══════════════╦════════════════╣
+║ INPUT             ║ INPUT          ║ OUTPUT       ║ ANNOTATION     ║
+╠═══════════════════╬════════════════╬══════════════╬════════════════╣
+║ customerSegment   ║ amount         ║ approvalLevel║                ║
+╠═══════════════════╬════════════════╬══════════════╬════════════════╣
+║ &quot;VIP&quot;             ║ > 1000000000   ║ &quot;LEVEL_3&quot;    ║ VIP lớn        ║
+╠═══════════════════╬════════════════╬══════════════╬════════════════╣
+║ &quot;VIP&quot;             ║ [100M..1B]     ║ &quot;LEVEL_2&quot;    ║ VIP trung      ║
+╠═══════════════════╬════════════════╬══════════════╬════════════════╣
+║ &quot;VIP&quot;             ║ &lt; 100000000    ║ &quot;LEVEL_1&quot;    ║ VIP nhỏ        ║
+╠═══════════════════╬════════════════╬══════════════╬════════════════╣
+║ &quot;STANDARD&quot;        ║ > 500000000    ║ &quot;LEVEL_2&quot;    ║ Standard lớn   ║
+╠═══════════════════╬════════════════╬══════════════╬════════════════╣
+║ &quot;STANDARD&quot;        ║ -              ║ &quot;LEVEL_1&quot;    ║ Standard còn   ║
+╚═══════════════════╩════════════════╩══════════════╩════════════════╝
+</code></pre>
+<h3 id="hit-policies">Hit Policies<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#hit-policies" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Hit policy quyết định khi <strong>nhiều rule cùng match</strong> thì xử lý thế nào:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Hit Policy</th><th>Symbol</th><th>Ý nghĩa</th><th>Dùng khi</th></tr></thead><tbody><tr><td>UNIQUE</td><td>U</td><td>Chỉ đúng 1 rule match, else error</td><td>Mutually exclusive rules</td></tr><tr><td>FIRST</td><td>F</td><td>Lấy rule match đầu tiên (theo thứ tự)</td><td>Priority-based rules</td></tr><tr><td>RULE ORDER</td><td>R</td><td>Trả về list kết quả theo thứ tự rule match</td><td>Nhiều kết quả có priority</td></tr><tr><td>ANY</td><td>A</td><td>Nhiều rule match nhưng output phải giống nhau</td><td>Redundant rules</td></tr><tr><td>COLLECT</td><td>C</td><td>Thu thập tất cả output (có thể aggregate)</td><td>Multi-match, sum/count</td></tr><tr><td>OUTPUT ORDER</td><td>O</td><td>List kết quả sorted theo output value</td><td></td></tr></tbody></table></div>
+<p><strong>COLLECT với Aggregation:</strong></p>
+<pre><code>C+ = sum tất cả output numeric
+C&lt; = min
+C> = max
+C# = count
+</code></pre>
+<h3 id="feel--friendly-enough-expression-language">FEEL — Friendly Enough Expression Language<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#feel--friendly-enough-expression-language" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>DMN sử dụng <strong>FEEL</strong> để viết conditions:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="feel" data-theme="github-light github-dark"><code data-language="feel" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>// Numeric ranges</span></span>
+<span data-line><span>amount > 1000000              // greater than</span></span>
+<span data-line><span>amount in [100000..500000]    // inclusive range</span></span>
+<span data-line><span>amount in (100000..500000)    // exclusive range</span></span>
+<span data-line><span>amount in [100000..500000)    // half-open</span></span>
+<span data-line> </span>
+<span data-line><span>// String</span></span>
+<span data-line><span>customerSegment = &quot;VIP&quot;</span></span>
+<span data-line><span>customerSegment in [&quot;VIP&quot;, &quot;PREMIUM&quot;]</span></span>
+<span data-line> </span>
+<span data-line><span>// Date/Time</span></span>
+<span data-line><span>date(&quot;2024-01-01&quot;)</span></span>
+<span data-line><span>date and time(&quot;2024-01-01T09:00:00&quot;)</span></span>
+<span data-line><span>duration(&quot;P1Y2M&quot;)             // 1 year 2 months</span></span>
+<span data-line> </span>
+<span data-line><span>// List</span></span>
+<span data-line><span>count(items) > 3</span></span>
+<span data-line><span>some item in items satisfies item.status = &quot;PENDING&quot;</span></span>
+<span data-line><span>every item in items satisfies item.validated = true</span></span>
+<span data-line> </span>
+<span data-line><span>// Functions</span></span>
+<span data-line><span>if condition then value1 else value2</span></span></code></pre></figure>
+<h3 id="decision-requirements-diagram-drd">Decision Requirements Diagram (DRD)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#decision-requirements-diagram-drd" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Khi có nhiều decision tables liên kết nhau:</p>
+<pre><code>        ┌────────────────────┐
+        │ GetCustomerSegment │  ← Input Data: customerId
+        │ (Decision Table)   │
+        └─────────┬──────────┘
+                  │ customerSegment
+                  ▼
+        ┌────────────────────┐         ┌──────────────────┐
+        │ ApprovalLevel      │ ◄────── │ amount           │
+        │ Decision           │         │ (Input Data)     │
+        └─────────┬──────────┘         └──────────────────┘
+                  │ approvalLevel
+                  ▼
+        ┌────────────────────┐
+        │ NotificationPolicy │  ← approvalLevel
+        │ Decision           │
+        └────────────────────┘
+</code></pre>
+<h3 id="usecase-dmn-pdms-document-processing-rules">UseCase DMN: PDMS Document Processing Rules<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#usecase-dmn-pdms-document-processing-rules" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="decision-1-xác-định-loại-validation-cần-thiết">Decision 1: Xác định loại validation cần thiết<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#decision-1-xác-định-loại-validation-cần-thiết" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<pre><code>╔══════════════════════════════════════════════════════════════════╗
+║ ValidationRequirementDecision  |  Hit Policy: COLLECT (output list)║
+╠═══════════════════╦════════════╦══════════════════════════════════╣
+║ documentType      ║ batchSize  ║ requiredValidations              ║
+╠═══════════════════╬════════════╬══════════════════════════════════╣
+║ &quot;HSBG&quot;            ║ -          ║ [&quot;CIF&quot;, &quot;HOP_DONG&quot;, &quot;TAP&quot;]       ║
+╠═══════════════════╬════════════╬══════════════════════════════════╣
+║ &quot;KHO_CHUNG&quot;       ║ > 10000    ║ [&quot;CIF&quot;, &quot;BARCODE&quot;]               ║
+╠═══════════════════╬════════════╬══════════════════════════════════╣
+║ &quot;KHO_CHUNG&quot;       ║ &lt;= 10000   ║ [&quot;CIF&quot;]                          ║
+╚═══════════════════╩════════════╩══════════════════════════════════╝
+</code></pre>
+<h4 id="decision-2-notification-escalation">Decision 2: Notification Escalation<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#decision-2-notification-escalation" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<pre><code>╔═════════════════════════════════════════════════════════════════╗
+║ EscalationDecision  |  Hit Policy: FIRST                        ║
+╠═══════════════╦══════════════════╦══════════════════════════════╣
+║ errorRate     ║ timeSinceUpload  ║ action                       ║
+╠═══════════════╬══════════════════╬══════════════════════════════╣
+║ > 0.5         ║ -                ║ &quot;NOTIFY_MANAGER_IMMEDIATELY&quot; ║
+╠═══════════════╬══════════════════╬══════════════════════════════╣
+║ > 0.2         ║ > duration(&quot;PT4H&quot;)║ &quot;NOTIFY_MANAGER&quot;            ║
+╠═══════════════╬══════════════════╬══════════════════════════════╣
+║ > 0           ║ > duration(&quot;PT8H&quot;)║ &quot;NOTIFY_STAFF&quot;              ║
+╠═══════════════╬══════════════════╬══════════════════════════════╣
+║ -             ║ -                ║ &quot;NO_ACTION&quot;                  ║
+╚═══════════════╩══════════════════╩══════════════════════════════╝
+</code></pre>
+<hr/>
+<h2 id="-tích-hợp-bpmn--cmmn--dmn-trong-một-hệ-thống">🔗 Tích hợp BPMN + CMMN + DMN trong một hệ thống<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-tích-hợp-bpmn--cmmn--dmn-trong-một-hệ-thống" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Đây là kiến trúc <strong>Hybrid</strong> — ba notation làm việc cùng nhau:</p>
+<pre><code>┌─────────────────────────────────────────────────────────────────────┐
+│                    PDMS Process Orchestration                        │
+│                                                                      │
+│  1. BPMN: BatchUploadProcess (structured, predictable flow)          │
+│     ○─→[Upload]─→[Stage]─→ ◇ ─→[Validate]─→[Call DMN Decision]─→◇  │
+│                              │                      │               │
+│                              │              [DMN: ValidationReqDecision]
+│                              │                      │               │
+│                         [Auto Reject]    [ETL]─→[Notify]─→●         │
+│                                                                      │
+│  2. DMN: Embedded in BPMN Service Tasks                              │
+│     [Determine Approval Level] ──calls──► [ApprovalLevelDecision]   │
+│     [Escalation Check]         ──calls──► [EscalationDecision]      │
+│                                                                      │
+│  3. CMMN: Triggered when batch has disputes                          │
+│     BPMN ──Message──► DocumentDisputeCase (CMMN)                    │
+│                        [Investigate] [Contact] [Decide]              │
+│                         (adaptive, human-driven)                     │
+└─────────────────────────────────────────────────────────────────────┘
+</code></pre>
+<h3 id="orchestration-với-camunda-78">Orchestration với Camunda 7/8<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#orchestration-với-camunda-78" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="java" data-theme="github-light github-dark"><code data-language="java" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// Spring Boot integration</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">@</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Component</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">public</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> class</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> ETLDecisionDelegate</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> implements</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> JavaDelegate</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    </span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    @</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Autowired</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    private</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> DecisionService decisionService;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    </span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    @</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Override</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    public</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> void</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> execute</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(DelegateExecution </span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">execution</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        String documentType </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (String) execution.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">getVariable</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;documentType&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        Long batchSize </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (Long) execution.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">getVariable</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;batchSize&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        </span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">        // Gọi DMN Decision Table</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        DmnDecisionTableResult result </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> decisionService</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">evaluateDecisionTableByKey</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;ValidationRequirementDecision&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">variable</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;documentType&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, documentType)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">variable</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;batchSize&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, batchSize)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">evaluate</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">();</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        </span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        List&lt;</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">String</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">> requiredValidations </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> result.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">collectEntries</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;requiredValidations&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        execution.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">setVariable</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;requiredValidations&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, requiredValidations);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// External Task (Non-blocking pattern)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">@</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Component</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">public</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> class</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> ValidateBatchExternalTask</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> implements</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> ExternalTaskHandler</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    </span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    @</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Override</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    public</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> void</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> execute</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(ExternalTask </span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">externalTask</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, ExternalTaskService </span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">service</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        String batchId </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> externalTask.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">getVariable</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;batchId&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        </span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        try</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            ValidationResult result </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> validationService.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">validate</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(batchId);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            service.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">complete</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(externalTask,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">                Map.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">of</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;validationResult&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, result.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">toJson</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(),</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">                       &quot;errorCount&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, result.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">getErrorCount</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">()));</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        } </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">catch</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (Exception </span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">e</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            service.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">handleBpmnError</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(externalTask, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;VALIDATION_ERROR&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, e.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">getMessage</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">());</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></figure>
+<hr/>
+<h2 id="-tool-support-và-implementation-path">⚡ Tool Support và Implementation Path<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-tool-support-và-implementation-path" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="process-engine-options">Process Engine Options<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#process-engine-options" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Engine</th><th>License</th><th>Strengths</th><th>Best For</th></tr></thead><tbody><tr><td><strong>Camunda 7</strong></td><td>Community/Enterprise</td><td>BPMN+CMMN+DMN, mature, Spring integration</td><td>Enterprise Java</td></tr><tr><td><strong>Camunda 8</strong> (SaaS/Self)</td><td>SSPL/Enterprise</td><td>Cloud-native, Zeebe engine, high throughput</td><td>Cloud microservices</td></tr><tr><td><strong>Flowable</strong></td><td>Apache 2.0</td><td>Lightweight, BPMN+CMMN+DMN</td><td>Open-source</td></tr><tr><td><strong>Activiti</strong></td><td>Apache 2.0</td><td>Simple, widely known</td><td>Simple workflows</td></tr><tr><td><strong>jBPM</strong></td><td>Apache 2.0</td><td>Drools integration, decision-heavy</td><td>Rule-heavy systems</td></tr></tbody></table></div>
+<h3 id="tooling-cho-pdms-đề-xuất-stack">Tooling cho PDMS (đề xuất stack)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#tooling-cho-pdms-đề-xuất-stack" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>Design:       Camunda Modeler (free desktop app) → export BPMN/DMN XML
+Engine:       Camunda 7 (embedded trong Spring Boot) hoặc Camunda 8
+Testing:      camunda-bpm-assert + JUnit5
+Monitoring:   Camunda Cockpit (built-in) + Grafana metrics
+Version:      Store BPMN/DMN XML trong Git, CI/CD deploy to engine
+</code></pre>
+<h3 id="spring-boot--camunda-7-setup-nhanh">Spring Boot + Camunda 7 setup nhanh<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#spring-boot--camunda-7-setup-nhanh" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="xml" data-theme="github-light github-dark"><code data-language="xml" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">&lt;!-- pom.xml --></span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">&lt;</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">dependency</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">></span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    &lt;</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">groupId</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">>org.camunda.bpm.springboot&lt;/</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">groupId</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">></span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    &lt;</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">artifactId</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">>camunda-bpm-spring-boot-starter&lt;/</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">artifactId</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">></span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    &lt;</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">version</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">>7.21.0&lt;/</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">version</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">></span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">&lt;/</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">dependency</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">></span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">&lt;</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">dependency</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">></span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    &lt;</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">groupId</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">>org.camunda.bpm.springboot&lt;/</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">groupId</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">></span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    &lt;</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">artifactId</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">>camunda-bpm-spring-boot-starter-rest&lt;/</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">artifactId</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">></span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    &lt;</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">version</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">>7.21.0&lt;/</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">version</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">></span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">&lt;/</span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">dependency</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">></span></span></code></pre></figure>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="yaml" data-theme="github-light github-dark"><code data-language="yaml" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># application.yml</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">camunda.bpm</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">  admin-user</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">    id</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">admin</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">    password</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">admin</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">  database</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">    schema-update</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">true</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">  job-execution</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">    enabled</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">true</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">    core-pool-size</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">5</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">    max-pool-size</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">25</span></span></code></pre></figure>
+<p>BPMN files đặt trong <code>src/main/resources/bpmn/</code> sẽ được <strong>auto-deploy</strong> khi start.</p>
+<hr/>
+<h2 id="-summary--khi-nào-dùng-gì">📊 Summary — Khi nào dùng gì?<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-summary--khi-nào-dùng-gì" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><code>Câu hỏi: Process này có predictable flow không?
+    │
+    ├── YES → Dùng BPMN
+    │         Câu hỏi: Có business rules phức tạp không?
+    │             ├── YES → BPMN + DMN embedded
+    │             └── NO  → BPMN thuần
+    │
+    └── NO → Knowledge work / adaptive
+              Dùng CMMN
+              Câu hỏi: Có rules để quyết định actions không?
+                  ├── YES → CMMN + DMN
+                  └── NO  → CMMN thuần
+
+Luôn tích hợp cả 3 trong enterprise system phức tạp.
+</code></pre>
+<h3 id="quick-reference-cards">Quick Reference Cards<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#quick-reference-cards" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p><strong>BPMN Quick Card:</strong></p>
+<ul>
+<li>Events: ○ Start / ◎ Intermediate / ● End</li>
+<li>Tasks: User / Service / Script / Call Activity / Subprocess</li>
+<li>Gateways: XOR (◇X) / AND (◇+) / OR (◇O) / Event-Based (◇⬡)</li>
+<li>Multi-process: Message Events cho async, Call Activity cho sync</li>
+</ul>
+<p><strong>CMMN Quick Card:</strong></p>
+<ul>
+<li>Case = unit công việc adaptive</li>
+<li>Plan Item = task bắt buộc trong plan</li>
+<li>Discretionary = task tùy chọn</li>
+<li>Sentry = điều kiện trigger (on part + if part)</li>
+<li>Milestone = checkpoint trong case</li>
+</ul>
+<p><strong>DMN Quick Card:</strong></p>
+<ul>
+<li>Decision Table = bảng if-else rõ ràng, business-editable</li>
+<li>Hit Policy: U(nique), F(irst), C(ollect), A(ny)</li>
+<li>FEEL = expression language cho conditions</li>
+<li>DRD = nhiều decisions liên kết thành graph</li>
+</ul>
+<hr/>
+<h2 id="-resources">📚 Resources<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-resources" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<ul>
+<li><a href="https://www.omg.org/spec/BPMN/2.0/" class="external">BPMN 2.0 Spec<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><a href="https://www.omg.org/spec/CMMN/1.1/" class="external">CMMN 1.1 Spec<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><a href="https://www.omg.org/spec/DMN/1.3/" class="external">DMN 1.3 Spec<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><a href="https://docs.camunda.org/manual/latest/reference/bpmn20/" class="external">Camunda BPMN Reference<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><a href="https://docs.camunda.org/manual/latest/reference/dmn/" class="external">Camunda DMN Reference<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><a href="https://www.flowable.com/open-source/docs/" class="external">Flowable Documentation<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><a href="https://bpmn.io/" class="external">BPMN.io Modeler<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a> — online modeler free</li>
+</ul></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-70" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#bpmn--cmmn--dmn--enterprise-process-modeling-deep-dive" data-for="bpmn--cmmn--dmn--enterprise-process-modeling-deep-dive">BPMN · CMMN · DMN — Enterprise Process Modeling Deep Dive</a></li><li class="depth-1"><a href="#-tại-sao-các-model-này-là-xu-hướng" data-for="-tại-sao-các-model-này-là-xu-hướng">📌 Tại sao các Model này là xu hướng?</a></li><li class="depth-2"><a href="#bài-toán-cốt-lõi-của-enterprise-systems" data-for="bài-toán-cốt-lõi-của-enterprise-systems">Bài toán cốt lõi của Enterprise Systems</a></li><li class="depth-2"><a href="#ba-notation-ba-vai-trò-khác-nhau" data-for="ba-notation-ba-vai-trò-khác-nhau">Ba Notation, Ba Vai trò khác nhau</a></li><li class="depth-1"><a href="#-bpmn--business-process-model-and-notation" data-for="-bpmn--business-process-model-and-notation">🔷 BPMN — Business Process Model and Notation</a></li><li class="depth-2"><a href="#khái-niệm-cốt-lõi" data-for="khái-niệm-cốt-lõi">Khái niệm cốt lõi</a></li><li class="depth-2"><a href="#các-phần-tử-cơ-bản" data-for="các-phần-tử-cơ-bản">Các phần tử cơ bản</a></li><li class="depth-2"><a href="#-subprocess--xử-lý-process-phức-tạp" data-for="-subprocess--xử-lý-process-phức-tạp">🔬 Subprocess — Xử lý Process Phức tạp</a></li><li class="depth-2"><a href="#-linkedtriggered-processes--giải-quyết-multi-process-orchestration" data-for="-linkedtriggered-processes--giải-quyết-multi-process-orchestration">🔗 Linked/Triggered Processes — Giải quyết Multi-Process Orchestration</a></li><li class="depth-2"><a href="#-bpmn-usecase-pdms-batch-upload--etl" data-for="-bpmn-usecase-pdms-batch-upload--etl">📋 BPMN UseCase: PDMS Batch Upload &amp; ETL</a></li><li class="depth-1"><a href="#-cmmn--case-management-model-and-notation" data-for="-cmmn--case-management-model-and-notation">🔷 CMMN — Case Management Model and Notation</a></li><li class="depth-2"><a href="#khái-niệm-adaptive-vs-structured" data-for="khái-niệm-adaptive-vs-structured">Khái niệm: Adaptive vs Structured</a></li><li class="depth-2"><a href="#khi-nào-dùng-cmmn-thay-vì-bpmn" data-for="khi-nào-dùng-cmmn-thay-vì-bpmn">Khi nào dùng CMMN thay vì BPMN?</a></li><li class="depth-2"><a href="#các-phần-tử-cmmn" data-for="các-phần-tử-cmmn">Các phần tử CMMN</a></li><li class="depth-2"><a href="#usecase-cmmn-xử-lý-khiếu-nại-pdms" data-for="usecase-cmmn-xử-lý-khiếu-nại-pdms">UseCase CMMN: Xử lý Khiếu nại PDMS</a></li><li class="depth-1"><a href="#-dmn--decision-model-and-notation" data-for="-dmn--decision-model-and-notation">🔷 DMN — Decision Model and Notation</a></li><li class="depth-2"><a href="#khái-niệm-tách-business-rules-ra-khỏi-code" data-for="khái-niệm-tách-business-rules-ra-khỏi-code">Khái niệm: Tách Business Rules ra khỏi Code</a></li><li class="depth-2"><a href="#decision-table--trái-tim-của-dmn" data-for="decision-table--trái-tim-của-dmn">Decision Table — Trái tim của DMN</a></li><li class="depth-2"><a href="#hit-policies" data-for="hit-policies">Hit Policies</a></li><li class="depth-2"><a href="#feel--friendly-enough-expression-language" data-for="feel--friendly-enough-expression-language">FEEL — Friendly Enough Expression Language</a></li><li class="depth-2"><a href="#decision-requirements-diagram-drd" data-for="decision-requirements-diagram-drd">Decision Requirements Diagram (DRD)</a></li><li class="depth-2"><a href="#usecase-dmn-pdms-document-processing-rules" data-for="usecase-dmn-pdms-document-processing-rules">UseCase DMN: PDMS Document Processing Rules</a></li><li class="depth-1"><a href="#-tích-hợp-bpmn--cmmn--dmn-trong-một-hệ-thống" data-for="-tích-hợp-bpmn--cmmn--dmn-trong-một-hệ-thống">🔗 Tích hợp BPMN + CMMN + DMN trong một hệ thống</a></li><li class="depth-2"><a href="#orchestration-với-camunda-78" data-for="orchestration-với-camunda-78">Orchestration với Camunda 7/8</a></li><li class="depth-1"><a href="#-tool-support-và-implementation-path" data-for="-tool-support-và-implementation-path">⚡ Tool Support và Implementation Path</a></li><li class="depth-2"><a href="#process-engine-options" data-for="process-engine-options">Process Engine Options</a></li><li class="depth-2"><a href="#tooling-cho-pdms-đề-xuất-stack" data-for="tooling-cho-pdms-đề-xuất-stack">Tooling cho PDMS (đề xuất stack)</a></li><li class="depth-2"><a href="#spring-boot--camunda-7-setup-nhanh" data-for="spring-boot--camunda-7-setup-nhanh">Spring Boot + Camunda 7 setup nhanh</a></li><li class="depth-1"><a href="#-summary--khi-nào-dùng-gì" data-for="-summary--khi-nào-dùng-gì">📊 Summary — Khi nào dùng gì?</a></li><li class="depth-2"><a href="#quick-reference-cards" data-for="quick-reference-cards">Quick Reference Cards</a></li><li class="depth-1"><a href="#-resources" data-for="-resources">📚 Resources</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://dangthobach.github.io/">Back to Portfolio</a></li><li><a href="https://github.com/dangthobach">GitHub</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../postscript.js" type="module" data-persist="true"></script></html>

@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>API Gateway</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="Dang Tho Bach's Knowledge Base"/><meta property="og:title" content="API Gateway"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="API Gateway"/><meta name="twitter:description" content="API Gateways are essential components in modern software architectures, particularly microservices-based systems."/><meta property="og:description" content="API Gateways are essential components in modern software architectures, particularly microservices-based systems."/><meta property="og:image:alt" content="API Gateways are essential components in modern software architectures, particularly microservices-based systems."/><meta property="twitter:domain" content="dangthobach.github.io/knowledge"/><meta property="og:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/API-Gateway"/><meta property="twitter:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/API-Gateway"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="API Gateways are essential components in modern software architectures, particularly microservices-based systems."/><meta name="generator" content="Quartz"/><link href="../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiL2hvbWUvcnVubmVyL3dvcmsvZGFuZ3Rob2JhY2guZ2l0aHViLmlvL2Rhbmd0aG9iYWNoLmdpdGh1Yi5pby9xdWFydHovcXVhcnR6L2NvbXBvbmVudHMvc3R5bGVzIiwic291cmNlcyI6WyJtZXJtYWlkLmlubGluZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFHRjtFQUNFOzs7QUFLRjtFQUNFO0VBQ0E7OztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTs7QUFJRjtFQUNFO0VBQ0E7RUFDQSIsInNvdXJjZXNDb250ZW50IjpbIi5leHBhbmQtYnV0dG9uIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbG9hdDogcmlnaHQ7XG4gIHBhZGRpbmc6IDAuNHJlbTtcbiAgbWFyZ2luOiAwLjNyZW07XG4gIHJpZ2h0OiAwOyAvLyBOT1RFOiByaWdodCB3aWxsIGJlIHNldCBpbiBtZXJtYWlkLmlubGluZS50c1xuICBjb2xvcjogdmFyKC0tZ3JheSk7XG4gIGJvcmRlci1jb2xvcjogdmFyKC0tZGFyayk7XG4gIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgYm9yZGVyOiAxcHggc29saWQ7XG4gIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgb3BhY2l0eTogMDtcbiAgdHJhbnNpdGlvbjogMC4ycztcblxuICAmID4gc3ZnIHtcbiAgICBmaWxsOiB2YXIoLS1saWdodCk7XG4gICAgZmlsdGVyOiBjb250cmFzdCgwLjMpO1xuICB9XG5cbiAgJjpob3ZlciB7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIGJvcmRlci1jb2xvcjogdmFyKC0tc2Vjb25kYXJ5KTtcbiAgfVxuXG4gICY6Zm9jdXMge1xuICAgIG91dGxpbmU6IDA7XG4gIH1cbn1cblxucHJlIHtcbiAgJjpob3ZlciA+IC5leHBhbmQtYnV0dG9uIHtcbiAgICBvcGFjaXR5OiAxO1xuICAgIHRyYW5zaXRpb246IDAuMnM7XG4gIH1cbn1cblxuI21lcm1haWQtY29udGFpbmVyIHtcbiAgcG9zaXRpb246IGZpeGVkO1xuICBjb250YWluOiBsYXlvdXQ7XG4gIHotaW5kZXg6IDk5OTtcbiAgbGVmdDogMDtcbiAgdG9wOiAwO1xuICB3aWR0aDogMTAwdnc7XG4gIGhlaWdodDogMTAwdmg7XG4gIG92ZXJmbG93OiBoaWRkZW47XG4gIGRpc3BsYXk6IG5vbmU7XG4gIGJhY2tkcm9wLWZpbHRlcjogYmx1cig0cHgpO1xuICBiYWNrZ3JvdW5kOiByZ2JhKDAsIDAsIDAsIDAuNSk7XG5cbiAgJi5hY3RpdmUge1xuICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgfVxuXG4gICYgPiAjbWVybWFpZC1zcGFjZSB7XG4gICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gICAgYm9yZGVyLXJhZGl1czogNXB4O1xuICAgIHBvc2l0aW9uOiBmaXhlZDtcbiAgICB0b3A6IDUwJTtcbiAgICBsZWZ0OiA1MCU7XG4gICAgdHJhbnNmb3JtOiB0cmFuc2xhdGUoLTUwJSwgLTUwJSk7XG4gICAgaGVpZ2h0OiA4MHZoO1xuICAgIHdpZHRoOiA4MHZ3O1xuICAgIG92ZXJmbG93OiBoaWRkZW47XG5cbiAgICAmID4gLm1lcm1haWQtY29udGVudCB7XG4gICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgICB0cmFuc2Zvcm0tb3JpZ2luOiAwIDA7XG4gICAgICB0cmFuc2l0aW9uOiB0cmFuc2Zvcm0gMC4xcyBlYXNlO1xuICAgICAgb3ZlcmZsb3c6IHZpc2libGU7XG4gICAgICBtaW4taGVpZ2h0OiAyMDBweDtcbiAgICAgIG1pbi13aWR0aDogMjAwcHg7XG5cbiAgICAgIHByZSB7XG4gICAgICAgIG1hcmdpbjogMDtcbiAgICAgICAgYm9yZGVyOiBub25lO1xuICAgICAgfVxuXG4gICAgICBzdmcge1xuICAgICAgICBtYXgtd2lkdGg6IG5vbmU7XG4gICAgICAgIGhlaWdodDogYXV0bztcbiAgICAgIH1cbiAgICB9XG5cbiAgICAmID4gLm1lcm1haWQtY29udHJvbHMge1xuICAgICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgICAgYm90dG9tOiAyMHB4O1xuICAgICAgcmlnaHQ6IDIwcHg7XG4gICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgZ2FwOiA4cHg7XG4gICAgICBwYWRkaW5nOiA4cHg7XG4gICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgYm9yZGVyLXJhZGl1czogNnB4O1xuICAgICAgYm94LXNoYWRvdzogMCAycHggNHB4IHJnYmEoMCwgMCwgMCwgMC4xKTtcbiAgICAgIHotaW5kZXg6IDI7XG5cbiAgICAgIC5tZXJtYWlkLWNvbnRyb2wtYnV0dG9uIHtcbiAgICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgIHdpZHRoOiAzMnB4O1xuICAgICAgICBoZWlnaHQ6IDMycHg7XG4gICAgICAgIHBhZGRpbmc6IDA7XG4gICAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgICAgY29sb3I6IHZhcigtLWRhcmspO1xuICAgICAgICBib3JkZXItcmFkaXVzOiA0cHg7XG4gICAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICAgICAgZm9udC1zaXplOiAxNnB4O1xuICAgICAgICBmb250LWZhbWlseTogdmFyKC0tYm9keUZvbnQpO1xuICAgICAgICB0cmFuc2l0aW9uOiBhbGwgMC4ycyBlYXNlO1xuXG4gICAgICAgICY6aG92ZXIge1xuICAgICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIH1cblxuICAgICAgICAmOmFjdGl2ZSB7XG4gICAgICAgICAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKDFweCk7XG4gICAgICAgIH1cblxuICAgICAgICAvLyBTdHlsZSB0aGUgcmVzZXQgYnV0dG9uIGRpZmZlcmVudGx5XG4gICAgICAgICY6bnRoLWNoaWxkKDIpIHtcbiAgICAgICAgICB3aWR0aDogYXV0bztcbiAgICAgICAgICBwYWRkaW5nOiAwIDEycHg7XG4gICAgICAgICAgZm9udC1zaXplOiAxNHB4O1xuICAgICAgICB9XG4gICAgICB9XG4gICAgfVxuICB9XG59XG4iXX0= */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://dangthobach.github.io/knowledge/index.xml"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/API-Gateway-og-image.webp"/><meta property="og:image:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/API-Gateway-og-image.webp"/><meta name="twitter:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/API-Gateway-og-image.webp"/><meta property="og:image:type" content="image/.webp"/></head><body data-slug="Notion-Knowledge/Note/API-Gateway"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../..">Dang Tho Bach's Knowledge Base</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-281"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-281" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/">Notion Knowledge</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/Note/">Note</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>API Gateway</a></div></nav><h1 class="article-title">API Gateway</h1><p show-comma="true" class="content-meta"><time datetime="2026-05-02T04:58:37.000Z">May 02, 2026</time><span>15 min read</span></p></div></div><article class="popover-hint"><p>API Gateways are essential components in modern software architectures, particularly microservices-based systems.</p>
+<p>They act as a single entry point for all API requests, providing a unified interface for accessing various services and data. By decoupling client applications from backend microservices, API Gateways simplify API management and enhance the overall performance and security of the system.</p>
+<p>API Gateways help enhance the developer experience while building scalable and maintainable systems. Organizations can achieve better control over their API landscape by using API Gateways.</p>
+<p>As the complexity of software systems continues to grow, API Gateways will play an increasingly important role in enabling effective communication and integration between services and clients.</p>
+<p>In this post, we’ll explore the various aspects of API Gateways in detail.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!KDJ0!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fa5d572a6-c679-43d9-affa-54cc711a4b75_2250x2504.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!KDJ0!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fa5d572a6-c679-43d9-affa-54cc711a4b75_2250x2504.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h2 id="what-is-an-api-gateway"><strong>What is an API Gateway</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#what-is-an-api-gateway" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>An API Gateway is a component that serves as the central entry point for all API requests in a system.</p>
+<p>Its primary purpose is to decouple the client applications from the backend microservices, providing a consistent and unified interface for accessing different services and data sources.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!uLaz!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F0d095207-18e1-4ac4-bc61-b8c8b284c3f0_1600x970.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!uLaz!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F0d095207-18e1-4ac4-bc61-b8c8b284c3f0_1600x970.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Implementing an API Gateway offers several key benefits such as:</p>
+<ul>
+<li>
+<p><strong>Centralized API Management:</strong> API Gateways simplify the management of APIs by providing a central location for routing, monitoring, and securing API traffic. This centralization makes enforcing policies, tracking usage, and troubleshooting issues easier.</p>
+</li>
+<li>
+<p><strong>Improved Security:</strong> By enforcing security policies, such as authentication and authorization, at a central point, API Gateways protect backend services from unauthorized access. They act as a security layer, ensuring only authenticated and authorized clients can interact with the underlying services.</p>
+</li>
+<li>
+<p><strong>Enhanced Performance:</strong> API Gateways can improve the performance and scalability of API services by implementing caching, rate limiting, and load balancing. Caching frequently accessed data at the gateway level reduces the load on backend services, while rate limiting prevents abuse and ensures fair usage of resources. Load balancing distributes incoming requests across multiple instances of a service, improving overall performance and reliability.</p>
+</li>
+<li>
+<p><strong>Simplified Client Interaction:</strong> API Gateways provide a consistent and simplified interface for client applications, regardless of the complexity of the underlying microservices architecture. This simplification reduces the complexity of client development and makes it easier to consume APIs.</p>
+</li>
+</ul>
+<h2 id="key-features-and-functionalities-of-api-gateways"><strong>Key Features and Functionalities of API Gateways</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#key-features-and-functionalities-of-api-gateways" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>API Gateways offer a wide range of functionalities that simplify API management, enhance security, and improve the overall performance and scalability of the system.</p>
+<p>The diagram below shows the various features that API Gateways can support.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!HP71!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F6510e4e8-e392-4e99-9115-99f82061e29d_1600x1428.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!HP71!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F6510e4e8-e392-4e99-9115-99f82061e29d_1600x1428.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Let’s now explore some key functionalities provided by API Gateways.</p>
+<h3 id="request-routing-and-api-composition"><strong>Request Routing and API Composition</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#request-routing-and-api-composition" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>One of the primary functions of API Gateways is request routing.</p>
+<p>They act as a single entry point for client requests and intelligently route them to the appropriate backend services based on the request parameters, headers, or other criteria. This centralized routing mechanism simplifies client development and allows for flexible scaling and deployment of backend services.</p>
+<p>API Gateways also support API composition, which involves aggregating and combining multiple API calls into a single request. This capability reduces the number of round trips between the client and the backend, improving performance and reducing network overhead.</p>
+<p>API Gateways can also perform request transformation, modifying headers, query parameters, or payloads before forwarding the request to the backend services, ensuring compatibility and consistency.</p>
+<h3 id="protocol-transformation-and-translation"><strong>Protocol Transformation and Translation</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#protocol-transformation-and-translation" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>API Gateways support multiple communication protocols, such as HTTP, WebSocket, and gRPC, and can seamlessly translate between them. This protocol transformation capability allows clients and backend services to use different protocols while the API Gateway handles the necessary translations.</p>
+<p>Additionally, API Gateways can convert the request and response formats, such as JSON to XML or vice versa, based on the client’s requirements or the backend service’s expectations. They can also handle protocol-specific features, such as HTTP method override or content negotiation, providing flexibility and interoperability.</p>
+<h3 id="api-versioning-and-lifecycle-management"><strong>API Versioning and Lifecycle Management</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#api-versioning-and-lifecycle-management" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>API Gateways play a crucial role in API versioning and lifecycle management.</p>
+<p>They enable the coexistence of multiple versions of an API, allowing developers to introduce new features or make changes without disrupting existing clients. API Gateways can route requests to the appropriate version of the backend service based on the version specified in the request.</p>
+<p>Moreover, API Gateways facilitate API lifecycle management, including deprecating older versions, providing migration paths, and handling version-specific configurations. This functionality ensures a smooth transition for clients as APIs evolve.</p>
+<h3 id="authentication-and-authorization"><strong>Authentication and Authorization</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#authentication-and-authorization" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Security is critical for API management, and API Gateways provide robust authentication and authorization mechanisms.</p>
+<p>They handle the authentication of client requests before forwarding them to the backend services, supporting various authentication schemes such as API keys, OAuth tokens, or JSON Web Tokens (JWT).</p>
+<p>API Gateways validate and verify the authentication credentials, ensuring that only authorized clients can access protected resources. They can also enforce fine-grained authorization rules based on user roles, permissions, or other attributes, providing granular access control and security.</p>
+<h3 id="rate-limiting-and-throttling"><strong>Rate Limiting and Throttling</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#rate-limiting-and-throttling" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>To protect backend services from excessive traffic and ensure fair usage, API Gateways implement rate limiting and throttling.</p>
+<p>They can limit the number of requests per client, API key, or IP address within a specific time window, preventing abuse and mitigating the impact of high-traffic scenarios.</p>
+<p>API Gateways can also implement burst limits, allowing clients to temporarily exceed the rate limit for a short period. Throttling helps maintain the overall performance and availability of the API by regulating the incoming traffic.</p>
+<h3 id="caching-and-response-caching"><strong>Caching and Response Caching</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#caching-and-response-caching" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Caching is a powerful technique to optimize performance and reduce the load on backend services. API Gateways can cache frequently accessed data or API responses at various levels, such as per client, per API, or per resource.</p>
+<p>By serving cached responses, API Gateways can reduce response times and minimize the impact of high-traffic scenarios. They can also invalidate cached data based on predefined rules or when the underlying data changes, ensuring data consistency.</p>
+<h3 id="logging-monitoring-and-analytics"><strong>Logging, Monitoring, and Analytics</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#logging-monitoring-and-analytics" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>API Gateways provide comprehensive logging and monitoring capabilities to track API usage, performance, and errors. They can log request and response metadata, such as headers, payloads, and response times, enabling detailed analysis and troubleshooting.</p>
+<p>Integration with monitoring and analytics tools allows API Gateways to provide valuable insights into API usage patterns, identify bottlenecks, and monitor the overall health and performance of the API ecosystem. Real-time metrics and dashboards facilitate proactive monitoring and timely resolution of issues.</p>
+<h2 id="api-gateway-architecture"><strong>API Gateway Architecture</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#api-gateway-architecture" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Let’s explore the key architectural components, design patterns, and considerations in building robust API Gateways.</p>
+<h3 id="architectural-components-and-design-patterns"><strong>Architectural Components and Design Patterns</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#architectural-components-and-design-patterns" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>API Gateways typically consist of several essential architectural components and follow specific design patterns to enable efficient API management and delivery.</p>
+<h3 id="reverse-proxy-and-gateway-routing"><strong>Reverse Proxy and Gateway Routing</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#reverse-proxy-and-gateway-routing" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>API Gateways act as a reverse proxy, receiving client requests and forwarding them to the appropriate backend services.</p>
+<p>The gateway handles the routing logic and determines which service should handle each request.</p>
+<p>Key aspects of reverse proxy and Gateway routing include:</p>
+<ul>
+<li>
+<p><strong>Dynamic Routing:</strong> API Gateways can dynamically route requests based on various factors such as URL paths, query parameters, headers, or request payload. This flexibility allows for configurable and adaptive routing rules that can be modified as needed.</p>
+</li>
+<li>
+<p><strong>Load Balancing:</strong> API Gateways can distribute incoming requests across multiple instances of a backend service to ensure optimal performance and high availability. They can employ different load balancing algorithms like round-robin, least connections, or weighted distribution to distribute the traffic evenly.</p>
+</li>
+</ul>
+<h3 id="microservice-integration-and-service-discovery"><strong>Microservice Integration and Service Discovery</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#microservice-integration-and-service-discovery" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>API Gateways play a vital role in integrating microservices and facilitating service discovery in a microservices architecture.</p>
+<p>Key aspects of microservices integration and service discovery include:</p>
+<ul>
+<li>
+<p><strong>Service Registry:</strong> API Gateways often integrate with a service registry, which maintains a directory of available services and their network locations. The gateway uses this information to route requests to the appropriate services, enabling dynamic service discovery and load balancing.</p>
+</li>
+<li>
+<p><strong>Service Orchestration:</strong> API Gateways can orchestrate and compose multiple microservices to fulfill a single client request. They can aggregate data from multiple services, perform transformations, and handle service dependencies, providing a unified and coherent API response to the client.</p>
+</li>
+<li>
+<p><strong>Circuit Breaker and Fault Tolerance:</strong> API Gateways can implement circuit breaker patterns to handle failures and prevent cascading failures across microservices. They can detect unresponsive services, route requests to fallback services, or return cached responses to maintain system stability and resilience.</p>
+</li>
+</ul>
+<p>The diagram below shows the role of API Gateway in a microservice architecture.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!X1BD!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F3c08f7b7-af4c-4d96-b94b-1d8f00267ad2_1600x921.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!X1BD!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F3c08f7b7-af4c-4d96-b94b-1d8f00267ad2_1600x921.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h2 id="the-role-of-api-gateway-in-application-security"><strong>The Role of API Gateway in Application Security</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#the-role-of-api-gateway-in-application-security" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>API Gateways play a crucial role in securing and protecting API communication by implementing various authentication mechanisms, enforcing authorization and access control policies, and following security best practices.</p>
+<p>Let’s explore the key aspects of API Gateway security.</p>
+<h3 id="authentication-mechanisms"><strong>Authentication Mechanisms</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#authentication-mechanisms" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>API Gateways support different authentication mechanisms to verify the identity of clients accessing the APIs. Some common authentication mechanisms include:</p>
+<ul>
+<li>
+<p><strong>JSON Web Tokens (JWT):</strong> JWTs are a compact and self-contained way of securely transmitting information between parties as a JSON object. API Gateways can validate and verify JWTs to authenticate clients and extract relevant information from the token payload.</p>
+</li>
+<li>
+<p><strong>OAuth:</strong> OAuth is an open standard for authorization that allows clients to access protected resources on behalf of the resource owner. API Gateways can act as OAuth servers, handling the OAuth flow and issuing access tokens to authenticated clients.</p>
+</li>
+<li>
+<p><strong>API Keys:</strong> API keys are unique identifiers that are assigned to clients to authenticate their requests. API Gateways can validate API keys and ensure that only authorized clients with valid keys can access the APIs.</p>
+</li>
+<li>
+<p><strong>Basic Authentication:</strong> Basic authentication involves sending username and password credentials in the request headers. API Gateways can validate these credentials against a user database or identity provider.</p>
+</li>
+</ul>
+<p>See the diagram below on one possible approach to secure the backend with API Gateways using an identity provider.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!eMIF!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F4b1cbf8d-a4da-4e05-8b8f-518e5bc7255f_1600x1026.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!eMIF!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F4b1cbf8d-a4da-4e05-8b8f-518e5bc7255f_1600x1026.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h3 id="authorization-and-access-control"><strong>Authorization and Access Control</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#authorization-and-access-control" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Once a client is authenticated, API Gateways enforce authorization and access control policies to determine what actions or resources the client is allowed to access. Key aspects of authorization and access control include:</p>
+<ul>
+<li>
+<p><strong>Role-Based Access Control (RBAC):</strong> API Gateways can define and enforce RBAC policies, where clients are assigned specific roles, and each role is granted permission to access certain APIs or perform specific actions.</p>
+</li>
+<li>
+<p><strong>Attribute-Based Access Control (ABAC):</strong> ABAC policies define access control based on attributes associated with the client, resource, or environment. API Gateways can evaluate these attributes to make fine-grained access control decisions.</p>
+</li>
+<li>
+<p><strong>Scope-Based Access Control:</strong> API Gateways can limit the scope of access granted to clients based on the permissions associated with their access tokens. Scopes define the specific actions or resources a client is allowed to access.</p>
+</li>
+</ul>
+<h3 id="ssltls-encryption-and-https"><strong>SSL/TLS Encryption and HTTPS</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#ssltls-encryption-and-https" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>To protect the confidentiality and integrity of API communication, API Gateways should enforce the use of SSL/TLS encryption and HTTPS. Key considerations include:</p>
+<ul>
+<li>
+<p><strong>SSL/TLS Certificates:</strong> API Gateways should be configured with valid SSL/TLS certificates to enable secure communication over HTTPS. Certificates should be properly installed and regularly updated.</p>
+</li>
+<li>
+<p><strong>Encryption Protocols:</strong> API Gateways should support and enforce the use of strong encryption protocols, such as TLS 1.2 or higher, to protect against eavesdropping and tampering.</p>
+</li>
+<li>
+<p><strong>Secure Cipher Suites:</strong> API Gateways should be configured to use secure cipher suites that provide strong encryption and forward secrecy.</p>
+</li>
+</ul>
+<h3 id="api-key-management-and-security-best-practices"><strong>API Key Management and Security Best Practices</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#api-key-management-and-security-best-practices" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>API keys are commonly used for authentication and rate limiting. API Gateways should follow best practices for managing and securing API keys:</p>
+<ul>
+<li>
+<p><strong>Secure Generation and Distribution:</strong> API keys should be generated using secure random algorithms and distributed to clients over secure channels.</p>
+</li>
+<li>
+<p><strong>API Key Rotation:</strong> API Gateways should support the ability to rotate API keys periodically to reduce the impact of key compromises.</p>
+</li>
+<li>
+<p><strong>API Key Revocation:</strong> API Gateways should provide mechanisms to revoke or invalidate API keys in case of misuse or compromise.</p>
+</li>
+<li>
+<p><strong>Secure Storage:</strong> API keys should be securely stored and protected, both on the client side and within the API Gateway.</p>
+</li>
+</ul>
+<h3 id="preventing-common-attacks"><strong>Preventing Common Attacks</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#preventing-common-attacks" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>API Gateways should implement measures to prevent common security attacks. Some important functionalities are as follows:</p>
+<ul>
+<li>
+<p><strong>Input Validation:</strong> API Gateways should validate and sanitize incoming requests to prevent attacks like SQL injection, cross-site scripting (XSS), and parameter tampering.</p>
+</li>
+<li>
+<p><strong>Rate Limiting and Throttling:</strong> API Gateways should enforce rate limits and throttling to prevent abuse, protect against denial-of-service attacks, and ensure fair usage of APIs.</p>
+</li>
+<li>
+<p><strong>Security Headers:</strong> API Gateways should set appropriate security headers, such as X-XSS-Protection, X-Frame-Options, and Content-Security-Policy, to protect against common web vulnerabilities.</p>
+</li>
+<li>
+<p><strong>Request and Response Validation:</strong> API Gateways should validate the structure and content of incoming requests and outgoing responses to ensure they adhere to the expected format and schema.</p>
+</li>
+</ul>
+<h2 id="api-gateway-platforms-and-tools"><strong>API Gateway Platforms and Tools</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#api-gateway-platforms-and-tools" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>API Gateways have become an essential component of modern application architectures, providing a centralized layer for managing, securing, and exposing APIs.</p>
+<p>Let’s explore some of the popular API Gateway platforms available in the market.</p>
+<h3 id="amazon-api-gateway"><strong>Amazon API Gateway</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#amazon-api-gateway" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Amazon API Gateway is a fully managed service provided by Amazon Web Services (AWS) that enables developers to create, publish, maintain, monitor, and secure APIs at any scale.</p>
+<p>It offers a comprehensive set of features and integrations:</p>
+<ul>
+<li>
+<p><strong>Seamless Integration with AWS Services:</strong> Amazon API Gateway integrates seamlessly with other AWS services like Lambda, EC2, and IAM for authentication and authorization. This integration allows developers to leverage the power of the AWS ecosystem for building and deploying APIs.</p>
+</li>
+<li>
+<p><strong>Multi-Protocol Support:</strong> It supports multiple protocols, including REST, WebSocket, and HTTP, providing flexibility in designing and exposing APIs. This multi-protocol support enables developers to cater to different client requirements and use cases.</p>
+</li>
+<li>
+<p><strong>Advanced Features:</strong> Amazon API Gateway offers features like request/response transformation, API versioning, and custom domain names. These features enhance the functionality and usability of APIs, making them more adaptable and user-friendly.</p>
+</li>
+</ul>
+<p>The diagram below shows a typical setup using the Amazon API Gateway:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!q7s1!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Feb6ff15f-3ef1-4095-bb98-261a563cec43_1600x969.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!q7s1!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Feb6ff15f-3ef1-4095-bb98-261a563cec43_1600x969.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h3 id="azure-api-management"><strong>Azure API Management</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#azure-api-management" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Azure API Management is a comprehensive platform for publishing, managing, and analyzing APIs within the Microsoft Azure ecosystem. It provides a rich set of capabilities for API management:</p>
+<ul>
+<li>
+<p><strong>Developer Portal:</strong> Azure API Management offers a developer portal for API documentation, testing, and onboarding. This portal facilitates developer engagement and adoption of APIs by providing a centralized hub for API exploration and interaction.</p>
+</li>
+<li>
+<p><strong>API Versioning and Policy Enforcement:</strong> It supports API versioning, allowing multiple versions of an API to coexist. It also provides rate limiting, caching, and policy enforcement features to control and optimize API usage.</p>
+</li>
+<li>
+<p><strong>Authentication and Authorization:</strong> Azure API Management integrates with Azure Active Directory for authentication and authorization, ensuring secure access to APIs. It supports various protocols like REST, SOAP, and WebSocket, catering to different API styles and requirements.</p>
+</li>
+</ul>
+<p>See the diagram below for understanding the capabilities of Azure API Management:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!BDxt!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fda945864-1be0-47b2-8ad1-f57665284ab1_1600x969.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!BDxt!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fda945864-1be0-47b2-8ad1-f57665284ab1_1600x969.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h3 id="google-cloud-endpoints"><strong>Google Cloud Endpoints</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#google-cloud-endpoints" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Google Cloud Endpoints is a fully managed API management platform provided by Google Cloud. It simplifies the development, deployment, and management of APIs running on Google Cloud Platform (GCP):</p>
+<ul>
+<li>
+<p><strong>Integration with GCP Services:</strong> Google Cloud Endpoints integrates seamlessly with other GCP services like Cloud Functions and Kubernetes Engine, allowing developers to build and deploy APIs using familiar GCP tools and services.</p>
+</li>
+<li>
+<p><strong>API Versioning and Authentication:</strong> It provides features like API versioning and authentication/authorization using Google IAM (Identity and Access Management). These features ensure the proper management and security of APIs.</p>
+</li>
+<li>
+<p><strong>Monitoring and Logging:</strong> Google Cloud Endpoints offers monitoring and logging capabilities, enabling developers to track API usage, and performance, and troubleshoot issues effectively. It supports both REST and gRPC APIs, catering to different API design preferences.</p>
+</li>
+</ul>
+<h3 id="kong"><strong>Kong</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#kong" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Kong is an open-source API Gateway and microservices management platform that provides a flexible and extensible solution for managing APIs:</p>
+<ul>
+<li>
+<p><strong>Plugin Architecture:</strong> Kong is built on top of NGINX and provides a plugin architecture for extending functionality. This plugin-based approach allows developers to customize and enhance the capabilities of the API Gateway based on their specific requirements.</p>
+</li>
+<li>
+<p><strong>Multi-Protocol Support:</strong> It supports multiple protocols, including REST, gRPC, and GraphQL, making it suitable for various API styles and use cases. Kong can be deployed on-premises or in the cloud, providing deployment flexibility.</p>
+</li>
+<li>
+<p><strong>API Management Features:</strong> Kong offers features like API routing, authentication, rate limiting, caching, and request/response transformation. These features enable effective API management, security, and performance optimization.</p>
+</li>
+</ul>
+<h3 id="apigee"><strong>Apigee</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#apigee" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Apigee is a comprehensive API management platform owned by Google Cloud. It provides a wide range of features for API design, development, security, publishing, and analytics:</p>
+<ul>
+<li>
+<p><strong>Visual API Designer and Developer Portal:</strong> Apigee offers a visual API designer for creating and modifying APIs, as well as a developer portal for API documentation and testing.</p>
+</li>
+<li>
+<p><strong>Authentication and Policy Enforcement:</strong> It supports various authentication mechanisms, rate limiting, caching, and policy enforcement. These features ensure the security and control of APIs, protecting them from unauthorized access and abuse.</p>
+</li>
+<li>
+<p><strong>Advanced Analytics and Monitoring:</strong> Apigee provides advanced analytics and monitoring capabilities for tracking API usage and performance. These insights help in making data-driven decisions and optimizing API performance.</p>
+</li>
+</ul>
+<h2 id="summary"><strong>Summary</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#summary" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>In this article, we’ve taken a detailed look at API Gateways and how they help build modern-day applications.</p>
+<p>Let’s summarize the key learnings from the article:</p>
+<ul>
+<li>
+<p>An API Gateway is a component that serves as the central entry point for all API requests in a system.</p>
+</li>
+<li>
+<p>Implementing an API Gateway provides several benefits such as centralized management, security, performance, and simplified client interaction.</p>
+</li>
+<li>
+<p>Some key features and functionalities provided by API Gateways are request routing, protocol transformation, API versioning, authentication, authorization, rate limiting and throttling, caching and response caching, and logging.</p>
+</li>
+<li>
+<p>API Gateways act as a reverse proxy, receiving client requests and forwarding them to the appropriate backend services.</p>
+</li>
+<li>
+<p>API Gateways play a vital role in integrating microservices and facilitating service discovery in a microservices architecture.</p>
+</li>
+<li>
+<p>API Gateways help secure and protect API communication by implementing various authentication mechanisms, enforcing authorization and access control policies, and following security best practices.</p>
+</li>
+<li>
+<p>Some popular API Gateway platforms are Amazon API Gateway, Azure API Management, Google Cloud Endpoints, Kong, and Apigee.</p>
+</li>
+</ul></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-122" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#what-is-an-api-gateway" data-for="what-is-an-api-gateway">What is an API Gateway</a></li><li class="depth-0"><a href="#key-features-and-functionalities-of-api-gateways" data-for="key-features-and-functionalities-of-api-gateways">Key Features and Functionalities of API Gateways</a></li><li class="depth-1"><a href="#request-routing-and-api-composition" data-for="request-routing-and-api-composition">Request Routing and API Composition</a></li><li class="depth-1"><a href="#protocol-transformation-and-translation" data-for="protocol-transformation-and-translation">Protocol Transformation and Translation</a></li><li class="depth-1"><a href="#api-versioning-and-lifecycle-management" data-for="api-versioning-and-lifecycle-management">API Versioning and Lifecycle Management</a></li><li class="depth-1"><a href="#authentication-and-authorization" data-for="authentication-and-authorization">Authentication and Authorization</a></li><li class="depth-1"><a href="#rate-limiting-and-throttling" data-for="rate-limiting-and-throttling">Rate Limiting and Throttling</a></li><li class="depth-1"><a href="#caching-and-response-caching" data-for="caching-and-response-caching">Caching and Response Caching</a></li><li class="depth-1"><a href="#logging-monitoring-and-analytics" data-for="logging-monitoring-and-analytics">Logging, Monitoring, and Analytics</a></li><li class="depth-0"><a href="#api-gateway-architecture" data-for="api-gateway-architecture">API Gateway Architecture</a></li><li class="depth-1"><a href="#architectural-components-and-design-patterns" data-for="architectural-components-and-design-patterns">Architectural Components and Design Patterns</a></li><li class="depth-1"><a href="#reverse-proxy-and-gateway-routing" data-for="reverse-proxy-and-gateway-routing">Reverse Proxy and Gateway Routing</a></li><li class="depth-1"><a href="#microservice-integration-and-service-discovery" data-for="microservice-integration-and-service-discovery">Microservice Integration and Service Discovery</a></li><li class="depth-0"><a href="#the-role-of-api-gateway-in-application-security" data-for="the-role-of-api-gateway-in-application-security">The Role of API Gateway in Application Security</a></li><li class="depth-1"><a href="#authentication-mechanisms" data-for="authentication-mechanisms">Authentication Mechanisms</a></li><li class="depth-1"><a href="#authorization-and-access-control" data-for="authorization-and-access-control">Authorization and Access Control</a></li><li class="depth-1"><a href="#ssltls-encryption-and-https" data-for="ssltls-encryption-and-https">SSL/TLS Encryption and HTTPS</a></li><li class="depth-1"><a href="#api-key-management-and-security-best-practices" data-for="api-key-management-and-security-best-practices">API Key Management and Security Best Practices</a></li><li class="depth-1"><a href="#preventing-common-attacks" data-for="preventing-common-attacks">Preventing Common Attacks</a></li><li class="depth-0"><a href="#api-gateway-platforms-and-tools" data-for="api-gateway-platforms-and-tools">API Gateway Platforms and Tools</a></li><li class="depth-1"><a href="#amazon-api-gateway" data-for="amazon-api-gateway">Amazon API Gateway</a></li><li class="depth-1"><a href="#azure-api-management" data-for="azure-api-management">Azure API Management</a></li><li class="depth-1"><a href="#google-cloud-endpoints" data-for="google-cloud-endpoints">Google Cloud Endpoints</a></li><li class="depth-1"><a href="#kong" data-for="kong">Kong</a></li><li class="depth-1"><a href="#apigee" data-for="apigee">Apigee</a></li><li class="depth-0"><a href="#summary" data-for="summary">Summary</a></li><li class="overflow-end"></li></ul></div><div class="backlinks"><h3>Backlinks</h3><ul id="list-2" class="overflow"><li><a href="../../Microservices-Patterns/02-Communication" class="internal">02-Communication</a></li><li><a href="../../Notion-Knowledge/Note" class="internal">Note</a></li><li><a href="../../_moc/MOC-API-Design" class="internal">MOC-API-Design</a></li><li><a href="../../_moc/MOC-Reading-List" class="internal">MOC-Reading-List</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://dangthobach.github.io/">Back to Portfolio</a></li><li><a href="https://github.com/dangthobach">GitHub</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../postscript.js" type="module" data-persist="true"></script></html>

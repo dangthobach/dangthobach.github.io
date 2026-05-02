@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>A Crash Course on Domain-Driven Design</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="Dang Tho Bach's Knowledge Base"/><meta property="og:title" content="A Crash Course on Domain-Driven Design"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="A Crash Course on Domain-Driven Design"/><meta name="twitter:description" content="Developing software for complex domains is a challenging task."/><meta property="og:description" content="Developing software for complex domains is a challenging task."/><meta property="og:image:alt" content="Developing software for complex domains is a challenging task."/><meta property="twitter:domain" content="dangthobach.github.io/knowledge"/><meta property="og:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Crash-Course-on-Domain-Driven-Design"/><meta property="twitter:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Crash-Course-on-Domain-Driven-Design"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="Developing software for complex domains is a challenging task."/><meta name="generator" content="Quartz"/><link href="../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiL2hvbWUvcnVubmVyL3dvcmsvZGFuZ3Rob2JhY2guZ2l0aHViLmlvL2Rhbmd0aG9iYWNoLmdpdGh1Yi5pby9xdWFydHovcXVhcnR6L2NvbXBvbmVudHMvc3R5bGVzIiwic291cmNlcyI6WyJtZXJtYWlkLmlubGluZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFHRjtFQUNFOzs7QUFLRjtFQUNFO0VBQ0E7OztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTs7QUFJRjtFQUNFO0VBQ0E7RUFDQSIsInNvdXJjZXNDb250ZW50IjpbIi5leHBhbmQtYnV0dG9uIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbG9hdDogcmlnaHQ7XG4gIHBhZGRpbmc6IDAuNHJlbTtcbiAgbWFyZ2luOiAwLjNyZW07XG4gIHJpZ2h0OiAwOyAvLyBOT1RFOiByaWdodCB3aWxsIGJlIHNldCBpbiBtZXJtYWlkLmlubGluZS50c1xuICBjb2xvcjogdmFyKC0tZ3JheSk7XG4gIGJvcmRlci1jb2xvcjogdmFyKC0tZGFyayk7XG4gIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgYm9yZGVyOiAxcHggc29saWQ7XG4gIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgb3BhY2l0eTogMDtcbiAgdHJhbnNpdGlvbjogMC4ycztcblxuICAmID4gc3ZnIHtcbiAgICBmaWxsOiB2YXIoLS1saWdodCk7XG4gICAgZmlsdGVyOiBjb250cmFzdCgwLjMpO1xuICB9XG5cbiAgJjpob3ZlciB7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIGJvcmRlci1jb2xvcjogdmFyKC0tc2Vjb25kYXJ5KTtcbiAgfVxuXG4gICY6Zm9jdXMge1xuICAgIG91dGxpbmU6IDA7XG4gIH1cbn1cblxucHJlIHtcbiAgJjpob3ZlciA+IC5leHBhbmQtYnV0dG9uIHtcbiAgICBvcGFjaXR5OiAxO1xuICAgIHRyYW5zaXRpb246IDAuMnM7XG4gIH1cbn1cblxuI21lcm1haWQtY29udGFpbmVyIHtcbiAgcG9zaXRpb246IGZpeGVkO1xuICBjb250YWluOiBsYXlvdXQ7XG4gIHotaW5kZXg6IDk5OTtcbiAgbGVmdDogMDtcbiAgdG9wOiAwO1xuICB3aWR0aDogMTAwdnc7XG4gIGhlaWdodDogMTAwdmg7XG4gIG92ZXJmbG93OiBoaWRkZW47XG4gIGRpc3BsYXk6IG5vbmU7XG4gIGJhY2tkcm9wLWZpbHRlcjogYmx1cig0cHgpO1xuICBiYWNrZ3JvdW5kOiByZ2JhKDAsIDAsIDAsIDAuNSk7XG5cbiAgJi5hY3RpdmUge1xuICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgfVxuXG4gICYgPiAjbWVybWFpZC1zcGFjZSB7XG4gICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gICAgYm9yZGVyLXJhZGl1czogNXB4O1xuICAgIHBvc2l0aW9uOiBmaXhlZDtcbiAgICB0b3A6IDUwJTtcbiAgICBsZWZ0OiA1MCU7XG4gICAgdHJhbnNmb3JtOiB0cmFuc2xhdGUoLTUwJSwgLTUwJSk7XG4gICAgaGVpZ2h0OiA4MHZoO1xuICAgIHdpZHRoOiA4MHZ3O1xuICAgIG92ZXJmbG93OiBoaWRkZW47XG5cbiAgICAmID4gLm1lcm1haWQtY29udGVudCB7XG4gICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgICB0cmFuc2Zvcm0tb3JpZ2luOiAwIDA7XG4gICAgICB0cmFuc2l0aW9uOiB0cmFuc2Zvcm0gMC4xcyBlYXNlO1xuICAgICAgb3ZlcmZsb3c6IHZpc2libGU7XG4gICAgICBtaW4taGVpZ2h0OiAyMDBweDtcbiAgICAgIG1pbi13aWR0aDogMjAwcHg7XG5cbiAgICAgIHByZSB7XG4gICAgICAgIG1hcmdpbjogMDtcbiAgICAgICAgYm9yZGVyOiBub25lO1xuICAgICAgfVxuXG4gICAgICBzdmcge1xuICAgICAgICBtYXgtd2lkdGg6IG5vbmU7XG4gICAgICAgIGhlaWdodDogYXV0bztcbiAgICAgIH1cbiAgICB9XG5cbiAgICAmID4gLm1lcm1haWQtY29udHJvbHMge1xuICAgICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgICAgYm90dG9tOiAyMHB4O1xuICAgICAgcmlnaHQ6IDIwcHg7XG4gICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgZ2FwOiA4cHg7XG4gICAgICBwYWRkaW5nOiA4cHg7XG4gICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgYm9yZGVyLXJhZGl1czogNnB4O1xuICAgICAgYm94LXNoYWRvdzogMCAycHggNHB4IHJnYmEoMCwgMCwgMCwgMC4xKTtcbiAgICAgIHotaW5kZXg6IDI7XG5cbiAgICAgIC5tZXJtYWlkLWNvbnRyb2wtYnV0dG9uIHtcbiAgICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgIHdpZHRoOiAzMnB4O1xuICAgICAgICBoZWlnaHQ6IDMycHg7XG4gICAgICAgIHBhZGRpbmc6IDA7XG4gICAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgICAgY29sb3I6IHZhcigtLWRhcmspO1xuICAgICAgICBib3JkZXItcmFkaXVzOiA0cHg7XG4gICAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICAgICAgZm9udC1zaXplOiAxNnB4O1xuICAgICAgICBmb250LWZhbWlseTogdmFyKC0tYm9keUZvbnQpO1xuICAgICAgICB0cmFuc2l0aW9uOiBhbGwgMC4ycyBlYXNlO1xuXG4gICAgICAgICY6aG92ZXIge1xuICAgICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIH1cblxuICAgICAgICAmOmFjdGl2ZSB7XG4gICAgICAgICAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKDFweCk7XG4gICAgICAgIH1cblxuICAgICAgICAvLyBTdHlsZSB0aGUgcmVzZXQgYnV0dG9uIGRpZmZlcmVudGx5XG4gICAgICAgICY6bnRoLWNoaWxkKDIpIHtcbiAgICAgICAgICB3aWR0aDogYXV0bztcbiAgICAgICAgICBwYWRkaW5nOiAwIDEycHg7XG4gICAgICAgICAgZm9udC1zaXplOiAxNHB4O1xuICAgICAgICB9XG4gICAgICB9XG4gICAgfVxuICB9XG59XG4iXX0= */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://dangthobach.github.io/knowledge/index.xml"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Crash-Course-on-Domain-Driven-Design-og-image.webp"/><meta property="og:image:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Crash-Course-on-Domain-Driven-Design-og-image.webp"/><meta name="twitter:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Crash-Course-on-Domain-Driven-Design-og-image.webp"/><meta property="og:image:type" content="image/.webp"/></head><body data-slug="Notion-Knowledge/Note/A-Crash-Course-on-Domain-Driven-Design"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../..">Dang Tho Bach's Knowledge Base</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-249"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-249" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/">Notion Knowledge</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/Note/">Note</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>A Crash Course on Domain Driven Design</a></div></nav><h1 class="article-title">A Crash Course on Domain-Driven Design</h1><p show-comma="true" class="content-meta"><time datetime="2026-05-02T04:58:37.000Z">May 02, 2026</time><span>18 min read</span></p></div></div><article class="popover-hint"><p>Developing software for complex domains is a challenging task.</p>
+<p>As the complexity of the problem domain grows, it becomes increasingly difficult to create software that accurately represents the business concepts, rules, and processes. Poorly designed software can quickly turn into an incomprehensible tangle of code that is difficult to understand, maintain, and extend.</p>
+<p>Domain-Driven Design (DDD) offers a solution to this problem.</p>
+<p>DDD is an approach to software development that tackles domain complexity by emphasizing the importance of modeling the core domain and business logic and using those models as the foundation for software design.</p>
+<p>At its heart, Domain-Driven Design is about:</p>
+<ul>
+<li>
+<p>Placing the primary focus on the core domain.</p>
+</li>
+<li>
+<p>Basing complex designs on a model of the domain</p>
+</li>
+<li>
+<p>Building collaboration between technical and domain experts.</p>
+</li>
+</ul>
+<p>The need for Domain-Driven Design has become more pressing in recent years. Architectures based on microservices and cloud computing have resulted in systems composed of numerous small components that interact in intricate ways. Without a clear and well-defined model of the domain guiding their design, such systems can quickly become a “big ball of mud”.</p>
+<p>In this article, we’ll understand the basics of Domain-Driven Design and its key concepts that can help us build more maintainable and extensible systems that are aligned with the core domain and business logic.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!_ite!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F813befc8-72c0-45fc-9568-b9bc5ca9a69d_2250x2840.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!_ite!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F813befc8-72c0-45fc-9568-b9bc5ca9a69d_2250x2840.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h2 id="core-principles-of-domain-driven-design"><strong>Core Principles of Domain-Driven Design</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#core-principles-of-domain-driven-design" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Domain-Driven Design (DDD) focuses on creating software systems that closely align with the underlying business domain.</p>
+<p>It aims to bridge the gap between the technical implementation and the business requirements by placing the domain model at the center of the development process.</p>
+<p>There are three core principles of DDD:</p>
+<ul>
+<li>
+<p>Creating a rich domain model based on input from domain experts</p>
+</li>
+<li>
+<p>Using a ubiquitous language based on the domain model</p>
+</li>
+<li>
+<p>Driving the design of the software from the domain model</p>
+</li>
+</ul>
+<p>Let’s explore each of these principles in more detail.</p>
+<h3 id="creating-a-rich-domain-model"><strong>Creating a Rich Domain Model</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#creating-a-rich-domain-model" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The foundation of DDD lies in the creation of a rich domain model that accurately captures the key concepts, relationships, and business rules of the problem domain. This model is not created in isolation by the development team but emerges through close collaboration with domain experts who possess deep knowledge of the business.</p>
+<p>The process of distilling domain knowledge into a usable model is known as knowledge crunching.</p>
+<p>During this process, the development team works closely with the domain experts to identify and refine the most relevant concepts and rules for the problem. This collaborative effort often includes brainstorming sessions, experimentation with different model designs, and iterative refinement based on feedback and insights gained during development.</p>
+<p>For example, in a banking system, a knowledge session with domain experts from the finance department would focus on understanding core concepts such as accounts, customers, transactions, and interest calculations.</p>
+<p>The goal is to create a model that captures these fundamental concepts and their relationships, which are understandable to the domain experts and serve as a practical foundation for the software system.</p>
+<h3 id="using-a-ubiquitous-language"><strong>Using a Ubiquitous Language</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#using-a-ubiquitous-language" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>As the domain model takes shape, it gives rise to a common language shared by the development team and domain experts. DDD refers to this as the ubiquitous language, as it permeates all aspects of the project.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!scdo!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fde058fbd-4455-4b1b-8944-76ed4ca1f8cb_1600x1062.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!scdo!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fde058fbd-4455-4b1b-8944-76ed4ca1f8cb_1600x1062.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>The ubiquitous language is directly based on the domain model.</p>
+<p>The names of classes, methods, and variables in the code are derived from the model concepts. Similarly, in discussions and documents, the team uses the terms and phrases of the ubiquitous language to ensure clear communication and avoid ambiguity.</p>
+<p>With a consistent use of the ubiquitous language, the code directly reflects the model, making it easier to understand and modify as the model involves.</p>
+<p>For instance, if the banking domain model includes concepts like “Account,” “Deposit,” and “Withdrawal,” these same terms will be used consistently in the code, discussions between developers and domain experts, and project documentation. Any ambiguities or inconsistencies in understanding are quickly brought to light when everyone uses the same language.</p>
+<p>Here’s a simple code example demonstrating the use of the ubiquitous language while writing the class and its methods.</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>public class Account {</span></span>
+<span data-line><span>    private String accountNumber;</span></span>
+<span data-line><span>    private double balance;</span></span>
+<span data-line><span>    public void deposit(double amount) {</span></span>
+<span data-line><span>// Perform deposit logic</span></span>
+<span data-line><span>        balance += amount;</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    public void withdraw(double amount) {</span></span>
+<span data-line><span>// Perform withdrawal logic</span></span>
+<span data-line><span>        if (balance >= amount) {</span></span>
+<span data-line><span>            balance -= amount;</span></span>
+<span data-line><span>        } else {</span></span>
+<span data-line><span>            throw new InsufficientFundsException(&quot;Insufficient funds for withdrawal&quot;);</span></span>
+<span data-line><span>        }</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<h3 id="domain-model-to-software-design"><strong>Domain Model to Software Design</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#domain-model-to-software-design" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>In DDD, the domain model is not just a conceptual tool. It is the very foundation of the software design. The structure and behavior of the software mirror the structure and behavior of the model.</p>
+<p>This approach is known as model-driven design.</p>
+<p>In practice, it means that the classes, relationships, and behaviors in the code directly correspond to the concepts, relationships, and rules in the domain model. The design is not driven by technical concerns or infrastructure details but by the need to effectively express the domain model.</p>
+<p>For example, if the banking domain model defines an “Account” concept with behaviors like “deposit” and “withdraw,” the software design will include an “Account” class with methods for “deposit” and “withdraw.” The implementation details of how these methods work will be guided by the rules and requirements captured in the model. We’ve already seen this in action in the previous section.</p>
+<h2 id="key-patterns-to-craft-a-domain-model"><strong>Key Patterns to Craft a Domain Model</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#key-patterns-to-craft-a-domain-model" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Crafting a domain model is the most important aspect of Domain Driven Design. However, some key patterns and practices can help us achieve optimal results.</p>
+<p>Let’s look at the major ones in detail.</p>
+<h3 id="layered-architecture"><strong>Layered Architecture</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#layered-architecture" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>In the context of Domain-Driven Design (DDD), a layered architecture helps isolate the domain model and promote a clear separation of concerns.</p>
+<p>The diagram below shows how an application can be structured into layers.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!E3mM!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F09404273-c031-42c4-9f5f-8deb5730aec0_1600x1552.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!E3mM!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F09404273-c031-42c4-9f5f-8deb5730aec0_1600x1552.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Typically, a layered architecture consists of four main layers:</p>
+<ul>
+<li>
+<p><strong>User Interface (Presentation) Layer:</strong> This layer is responsible for presenting information to the user and interpreting user commands. It communicates with the Application Layer to send user requests and receive responses.</p>
+</li>
+<li>
+<p><strong>Application Layer:</strong> The Application Layer coordinates the overall application activity and orchestrates the data flow between the UI and the Domain Layer. It does not contain business logic but delegates it to the Domain Layer. The Application Layer handles application-specific tasks, such as transaction management and security.</p>
+</li>
+<li>
+<p><strong>Domain Layer:</strong> The Domain Layer is the core of the software system and the primary focus of Domain-Driven Design. The Domain Layer represents the real-world concepts, entities, and their relationships within the problem domain. In other words, it encapsulates the information about the business domain and contains the business rules and logic.</p>
+</li>
+<li>
+<p><strong>Infrastructure Layer:</strong> The Infrastructure Layer provides generic technical capabilities and supports the higher layers of the architecture. It includes cross-cutting concerns such as persistence, messaging, logging, and other technical services.</p>
+</li>
+</ul>
+<p>For example, in an e-commerce system, the Domain Layer would contain core business concepts like Product, Order, and Customer. The UI Layer would have screens for product display, shopping cart, and checkout. The Application Layer would handle the flow of the order placement process. The Infrastructure Layer would provide functionalities like persistence, messaging, etc.</p>
+<h3 id="entities"><strong>Entities</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#entities" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>In Domain-Driven Design (DDD), an entity is a fundamental concept that represents an object with a distinct identity and a thread of continuity.</p>
+<p>Entities possess several key characteristics that distinguish them from other objects in the domain:</p>
+<ul>
+<li>
+<p>Entities are defined by their identity rather than just a collection of attributes. The identity makes an entity unique.</p>
+</li>
+<li>
+<p>Entities can change their state and attributes with time while still maintaining their identity.</p>
+</li>
+<li>
+<p>The identity of an entity is used to track and reference it within the system. Other entities can establish relationships with an entity based on its identity.</p>
+</li>
+</ul>
+<p>To understand the concept of an entity, consider a banking system. In this context, BankAccount would be a prime example of an entity.</p>
+<p>Each bank account has a unique account number that serves as its identity. This account number distinguishes one account from another, regardless of any other attributes different accounts may have in common.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!M3dX!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F16391d92-f261-43fb-ac80-2772b777669e_1600x1002.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!M3dX!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F16391d92-f261-43fb-ac80-2772b777669e_1600x1002.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>A bank account’s information can change over time, due to deposits, withdrawals, or updates to the account holder’s information. Despite these changes, the account retains its identity. It remains the same account throughout its lifecycle.</p>
+<h3 id="value-object"><strong>Value Object</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#value-object" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>A value object represents a descriptive aspect of the domain without having its own identity. They are defined solely by their attributes, rather than having a separate identity that distinguishes them from other objects.</p>
+<p>Some key characteristics of value objects are as follows:</p>
+<ul>
+<li>
+<p>Unlike entities, value objects do not have a unique identity. They are defined entirely by their attributes.</p>
+</li>
+<li>
+<p>Value objects are immutable, meaning their state cannot be modified after creation. Changing a value object means creating a new instance with the desired attribute values.</p>
+</li>
+<li>
+<p>Any two value objects with the same attribute values are considered equal and interchangeable.</p>
+</li>
+</ul>
+<p>For example, within a Customer entity, the Address representing a specific location is a prime example of a value object. It is defined by attributes such as street, city, and pin code. Also, any two addresses with the same details are considered the same address.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!iYJt!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F27d6a401-ba17-4a0b-a18a-1c124e3b58e4_1600x1037.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!iYJt!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F27d6a401-ba17-4a0b-a18a-1c124e3b58e4_1600x1037.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Some other value object examples are “MonetaryAmount”, “GeographicLocation”, “Color”, etc.</p>
+<h3 id="services"><strong>Services</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#services" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>A service is a concept that represents an operation or a behavior that doesn’t naturally fit within the responsibility of an entity or a value object. They encapsulate logic that doesn’t belong to any particular object but still plays a significant role in the domain model.</p>
+<p>The key characteristics of services are as follows:</p>
+<ul>
+<li>
+<p>Services operate on entities and value objects, but they don’t have an internal state that affects their behavior.</p>
+</li>
+<li>
+<p>The interface of a service is defined using other elements. For example, services take entities or value objects as input, perform operations on them, and may return other entities or value objects as output.</p>
+</li>
+<li>
+<p>Services are stateless. In other words, any service instance can be used by any client without affecting other clients.</p>
+</li>
+</ul>
+<p>For example, an airline booking system can have a “FlightSchedulingService” responsible for finding available flights based on the provided criteria. A method in this service can take the departure and the destination airport as input and return a list of available flights. Such an operation doesn’t naturally belong to any single entity, such as the “Airport” or “Flight”, because it involves coordinating information from multiple sources and applying business rules.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!RmIX!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fbf519bc6-9252-4e0e-bb77-03ac2be1bbb2_1600x1037.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!RmIX!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fbf519bc6-9252-4e0e-bb77-03ac2be1bbb2_1600x1037.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h3 id="aggregates"><strong>Aggregates</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#aggregates" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>In Domain-Driven Design (DDD), an aggregate is a pattern that helps manage the complexity of the domain model by grouping related objects into a cohesive unit.</p>
+<p>They have several key characteristics such as:</p>
+<ul>
+<li>
+<p>Aggregates define a consistent boundary around a group of related objects. This means that the objects within an aggregate are always in a consistent state with each other.</p>
+</li>
+<li>
+<p>Every aggregate has a designated root entity known as the aggregate root. The root entity is the only member of the aggregate that outside objects can hold references to. All interactions with the objects inside the aggregate must go through the root entity.</p>
+</li>
+<li>
+<p>Aggregates should be designed to be small enough to ensure consistency and maintainability, but large enough to encompass all the necessary related objects.</p>
+</li>
+</ul>
+<p>To illustrate the concept of an aggregate, let’s consider an example from an order processing system.</p>
+<p>In this example, an “Order” and its associated “LineItems” form a natural aggregate. The “Order” encapsulates the business rules and invariants related to order processing, such as calculating the total amount, applying discounts, and ensuring the validity of the line items.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!nTqL!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F39ed4b64-b9dc-4e58-989a-ddc523ae56d0_1600x998.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!nTqL!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F39ed4b64-b9dc-4e58-989a-ddc523ae56d0_1600x998.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>From a code point of view, the Order aggregate can look like this when it comes to dealing with LineItems:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>public class Order {</span></span>
+<span data-line><span>    private String orderId;</span></span>
+<span data-line><span>    private List&lt;LineItem> lineItems;</span></span>
+<span data-line><span>    private BigDecimal totalAmount;</span></span>
+<span data-line><span>    private OrderStatus status;</span></span>
+<span data-line><span>    public void addLineItem(LineItem lineItem) {</span></span>
+<span data-line><span>        lineItems.add(lineItem);</span></span>
+<span data-line><span>        totalAmount = totalAmount.add(lineItem.getSubtotal());</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    public void removeLineItem(LineItem lineItem) {</span></span>
+<span data-line><span>        lineItems.remove(lineItem);</span></span>
+<span data-line><span>        totalAmount = totalAmount.subtract(lineItem.getSubtotal());</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>public class LineItem {</span></span>
+<span data-line><span>    private String productId;</span></span>
+<span data-line><span>    private int quantity;</span></span>
+<span data-line><span>    private BigDecimal unitPrice;</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>External objects, such as a “Customer” or a “Payment”, would hold references only to the “Order” entity and not directly to the “LineItems”. Any operations or modifications to the “LineItems”, such as adding, removing, or updating items, would be performed through the “Order” entity.</p>
+<h3 id="repository"><strong>Repository</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#repository" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>A repository is a pattern that provides an abstraction over the persistence layer for a specific type of entity or aggregate root. It acts as a collection-like interface, encapsulating the underlying data access and storage mechanisms.</p>
+<p>A few key points about repositories are as follows:</p>
+<ul>
+<li>
+<p>Repositories provide methods that simulate the behavior of a collection, such as adding, removing, and querying objects. The client code can interact with the repository as if it were a simple collection, without exposing the complexities of the underlying persistence mechanism.</p>
+</li>
+<li>
+<p>Repositories act as a gateway to the persistence layer for a specific aggregate or entity.</p>
+</li>
+<li>
+<p>Repositories decouple the application and the domain design from the specifics of the persistence layer.</p>
+</li>
+</ul>
+<p>For example, A “CustomerRepository” would provide methods like add(customer), remove(customer), and findByID(id) to manage the persistence of Customer entities, without exposing details of the storage approach.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!_MRj!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F83735d92-0dc3-4042-af0c-fb39435de55b_1600x1328.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!_MRj!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F83735d92-0dc3-4042-af0c-fb39435de55b_1600x1328.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>These methods allow the client code to interact with the “CustomerRepository” in a way that mimics a collection of “Customer” objects.</p>
+<p>The client can add, remove, and query customers without worrying about how the data is stored in the database. Behind the scenes, the repository may use an ORM tool, SQL query, or any other persistence mechanism to interact with the underlying storage system.</p>
+<h3 id="factory"><strong>Factory</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#factory" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>In domain-driven design, a factory is a pattern that encapsulates the creation of complex entities or aggregates. It provides an interface for clients to create objects without exposing the details of the creation process or the dependencies involved.</p>
+<p>Some key characteristics of factories are as follows:</p>
+<ul>
+<li>
+<p>Factories hide the intricacies of object instantiation, validations, and dealing with dependencies.</p>
+</li>
+<li>
+<p>Factories allow the creation process to be changed independently of the clients that use them. This improves the flexibility and maintainability of the system.</p>
+</li>
+<li>
+<p>Factories ensure that the objects they create are always in a consistent and fully initialized state.</p>
+</li>
+</ul>
+<p>For example, an “OrderFactory” in an e-commerce system can take all the necessary details (customer, items, quantities, etc.), create the “Order” and “LineItem” instances, link them together appropriately, and return the resulting Order aggregate to the client.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!gNSj!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fd7a33513-a714-4fdb-af27-6f8b405c1be7_1600x1003.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!gNSj!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fd7a33513-a714-4fdb-af27-6f8b405c1be7_1600x1003.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h2 id="strategic-design-concepts-of-ddd"><strong>Strategic Design Concepts of DDD</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#strategic-design-concepts-of-ddd" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>When dealing with large models in big projects, some strategic design concepts should be followed to gain the benefits of domain-driven design.</p>
+<h3 id="bounded-contexts"><strong>Bounded Contexts</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#bounded-contexts" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>In large-scale software projects, the domain model often encompasses multiple subdomains, each with its own set of concepts, entities, and business rules.</p>
+<p>Attempting to maintain a single, unified model across all these subdomains can lead to a complex and tangled model that becomes difficult to understand, reason about, and maintain over time.</p>
+<p>The solution to this challenge is to introduce the concept of Bounded Contexts.</p>
+<p>A Bounded Context is a specific area within the domain model that represents a particular subdomain or a cohesive set of related concepts. Each Bounded Context encapsulates its unified model, which is tailored to the specific needs and requirements of that subdomain.</p>
+<p>A well-defined Bounded Context exhibits the following characteristics:</p>
+<ul>
+<li>
+<p><strong>Unified Model:</strong> Within a Bounded Context, there should be a consistent and coherent model that represents the concepts, entities, and relationships specific to that subdomain.</p>
+</li>
+<li>
+<p><strong>Ubiquitous Language:</strong> Each Bounded Context should have its ubiquitous language.</p>
+</li>
+<li>
+<p><strong>Clear Scope and Boundary:</strong> A Bounded Context should have a well-defined scope and boundary.</p>
+</li>
+</ul>
+<p>To understand the concept of Bounded Contexts, consider the example of an e-commerce system. In this system, we can identify several subdomains, each of which can be a separate Bounded Context:</p>
+<ul>
+<li>
+<p><strong>Catalog Context:</strong> This context focuses on managing the product catalog, including product information, categories, and attributes. It has its model that represents products, their variations, and the relationships between them.</p>
+</li>
+<li>
+<p><strong>Order Context:</strong> The Order Context deals with the process of placing and managing orders. It has a model that represents orders, order items, and the associated business rules for order processing and fulfillment.</p>
+</li>
+<li>
+<p><strong>Billing Context:</strong> The Billing Context handles the financial aspects of the e-commerce system, including invoicing, payments, and refunds. It has a model representing invoices, payment transactions, and the associated business rules.</p>
+</li>
+<li>
+<p><strong>Fulfillment Context:</strong> The Fulfillment Context is responsible for the logistics and delivery of orders. It has a model representing shipping methods, tracking information, and the processes involved in fulfilling orders.</p>
+</li>
+</ul>
+<p><a href="https://substackcdn.com/image/fetch/$s_!J6Iv!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fef30af01-d023-4f7c-80d3-ce8d1b4a54db_1600x1373.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!J6Iv!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fef30af01-d023-4f7c-80d3-ce8d1b4a54db_1600x1373.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h3 id="relationships-between-bounded-contexts"><strong>Relationships Between Bounded Contexts</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#relationships-between-bounded-contexts" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>There can be relationships and interactions between different Bounded Contexts. These relationships are typically represented through shared concepts or translations between the models of the different contexts.</p>
+<p>Some key patterns to establish relationships between Bounded Contexts are as follows:</p>
+<h3 id="1---context-maps"><strong>1 - Context Maps</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1---context-maps" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>In a complex domain-driven design (DDD) project, multiple Bounded Contexts represent different subdomains or parts of the system. It might become difficult to understand the overall system landscape. It becomes beneficial to create a Context Map.</p>
+<p>A Context Map is a high-level visual representation of the Bounded Contexts in a project and the relationships between them. It provides a bird’s-eye view of the system, highlighting the key boundaries and integration points.</p>
+<p>The Context Map should provide a clear overview of:</p>
+<ul>
+<li>
+<p><strong>Bounded Contexts:</strong> The distinct subdomains or logical boundaries within the system, each representing a specific area of the domain model.</p>
+</li>
+<li>
+<p><strong>Relationships:</strong> The connections and interactions between the Bounded Contexts, indicating how they relate to and communicate with each other.</p>
+</li>
+<li>
+<p><strong>Integration Points:</strong> The key points of integration where Bounded Contexts exchange data or coordinate their behavior.</p>
+</li>
+</ul>
+<h3 id="2---shared-kernel"><strong>2 - Shared Kernel</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2---shared-kernel" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>A shared kernel represents a portion of the domain model commonly used and relied upon by multiple teams or Bounded Contexts. It encapsulates the core concepts, entities, and their relationships that are fundamental to the domain and relevant across different parts of the system.</p>
+<p>For example, consider that there are two Bounded Contexts - Sales and Fulfillment. The Sales Bounded Context includes the product catalog, pricing, promotions, the shopping cart, and order placement. The Fulfillment Bounded Context handles inventory, suppliers, shipment, and delivery.</p>
+<p>While these Bounded Contexts have distinct concerns, the “Order” is one concept shared by both of them. The “Order” originates in the Sales Bounded Context, but once it is placed, it needs to be fulfilled by the Fulfillment Bounded Context. Therefore, the Order forms a shared kernel between Sales and Fulfillment. Both teams need to agree on what an “Order” means and its lifecycle.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!Hr9h!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F5208977f-7488-4a1f-9621-f6f9aa925db6_1600x892.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!Hr9h!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F5208977f-7488-4a1f-9621-f6f9aa925db6_1600x892.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h3 id="3---anticorruption-layer"><strong>3 - Anticorruption Layer</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3---anticorruption-layer" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>When integrating a new system with a legacy system or an external partner’s system that has an incompatible or undesirable model, it’s essential to protect the integrity and purity of the new system’s model.</p>
+<p>This is where the Anticorruption Layer pattern comes into play.</p>
+<p>The Anticorruption Layer acts as an insulating layer between the new system and the existing system or external partner’s system. It provides a translation mechanism that allows the new system to interact with the other system without compromising its own model and design principles.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!iyc-!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fa128bf55-b120-4b04-b620-60af1a804eff_1600x877.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!iyc-!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fa128bf55-b120-4b04-b620-60af1a804eff_1600x877.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Here’s how it works:</p>
+<ul>
+<li>
+<p>The new system sends requests to the Anticorruption Layer instead of directly interacting with the legacy or external system.</p>
+</li>
+<li>
+<p>The Anticorruption Layer receives the requests from the new system and translates them into a format compatible with the legacy or external system’s model. It communicates with the external system using these translated requests.</p>
+</li>
+<li>
+<p>When the external system responds, the Anticorruption Layer translates the response back into the format that aligns with the new system’s domain model before letting it through.</p>
+</li>
+</ul>
+<h2 id="summary"><strong>Summary</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#summary" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>In this article, we’ve learned the fundamentals of Domain-Driven Design and how it can help you design systems based on the core domain.</p>
+<p>Let’s summarize the learnings in brief:</p>
+<ul>
+<li>
+<p>DDD focuses on creating a rich domain model that reflects a deep understanding of the business domain. The domain model is based on input from domain experts and serves as a conceptual framework for the software.</p>
+</li>
+<li>
+<p>A ubiquitous language is cultivated based on the domain model. This language is used consistently by developers and domain experts in all communication - in conversations, documentation, and the code itself. Using the ubiquitous language helps keep the model and implementation aligned.</p>
+</li>
+<li>
+<p>The software design is driven by the domain model, rather than technical concerns. This is called model-driven design.</p>
+</li>
+<li>
+<p>DDD manages complexity by isolating the domain layer from infrastructure and user interface concerns and dividing large models into Bounded Contexts.</p>
+</li>
+<li>
+<p>To build a domain model, DDD utilizes several patterns such as layered architecture, entities, value objects, services, aggregates, repositories, and factories.</p>
+</li>
+<li>
+<p>For more complex domains, strategic design patterns like bounded contexts are leveraged.</p>
+</li>
+<li>
+<p>To manage relationships between multiple Bounded Contexts, techniques like context maps, shared kernels, and anticorruption layers are used.</p>
+</li>
+</ul></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-106" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#core-principles-of-domain-driven-design" data-for="core-principles-of-domain-driven-design">Core Principles of Domain-Driven Design</a></li><li class="depth-1"><a href="#creating-a-rich-domain-model" data-for="creating-a-rich-domain-model">Creating a Rich Domain Model</a></li><li class="depth-1"><a href="#using-a-ubiquitous-language" data-for="using-a-ubiquitous-language">Using a Ubiquitous Language</a></li><li class="depth-1"><a href="#domain-model-to-software-design" data-for="domain-model-to-software-design">Domain Model to Software Design</a></li><li class="depth-0"><a href="#key-patterns-to-craft-a-domain-model" data-for="key-patterns-to-craft-a-domain-model">Key Patterns to Craft a Domain Model</a></li><li class="depth-1"><a href="#layered-architecture" data-for="layered-architecture">Layered Architecture</a></li><li class="depth-1"><a href="#entities" data-for="entities">Entities</a></li><li class="depth-1"><a href="#value-object" data-for="value-object">Value Object</a></li><li class="depth-1"><a href="#services" data-for="services">Services</a></li><li class="depth-1"><a href="#aggregates" data-for="aggregates">Aggregates</a></li><li class="depth-1"><a href="#repository" data-for="repository">Repository</a></li><li class="depth-1"><a href="#factory" data-for="factory">Factory</a></li><li class="depth-0"><a href="#strategic-design-concepts-of-ddd" data-for="strategic-design-concepts-of-ddd">Strategic Design Concepts of DDD</a></li><li class="depth-1"><a href="#bounded-contexts" data-for="bounded-contexts">Bounded Contexts</a></li><li class="depth-1"><a href="#relationships-between-bounded-contexts" data-for="relationships-between-bounded-contexts">Relationships Between Bounded Contexts</a></li><li class="depth-1"><a href="#1---context-maps" data-for="1---context-maps">1 - Context Maps</a></li><li class="depth-1"><a href="#2---shared-kernel" data-for="2---shared-kernel">2 - Shared Kernel</a></li><li class="depth-1"><a href="#3---anticorruption-layer" data-for="3---anticorruption-layer">3 - Anticorruption Layer</a></li><li class="depth-0"><a href="#summary" data-for="summary">Summary</a></li><li class="overflow-end"></li></ul></div><div class="backlinks"><h3>Backlinks</h3><ul id="list-2" class="overflow"><li><a href="../../Notion-Knowledge/Note" class="internal">Note</a></li><li><a href="../../_moc/MOC-Reading-List" class="internal">MOC-Reading-List</a></li><li><a href="../../_moc/MOC-System-Design" class="internal">MOC-System-Design</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://dangthobach.github.io/">Back to Portfolio</a></li><li><a href="https://github.com/dangthobach">GitHub</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../postscript.js" type="module" data-persist="true"></script></html>

@@ -6,11 +6,65 @@
       <description>Last 10 notes on Dang Tho Bach&#039;s Knowledge Base</description>
       <generator>Quartz -- quartz.jzhao.xyz</generator>
       <item>
-    <title>Welcome to my Knowledge Base</title>
-    <link>https://dangthobach.github.io/knowledge/</link>
-    <guid>https://dangthobach.github.io/knowledge/</guid>
-    <description><![CDATA[ Chào mừng bạn đến với vườn tri thức của tôi! Đây là nơi tôi lưu trữ các ghi chú từ Obsidian. ]]></description>
-    <pubDate>Sat, 02 May 2026 03:59:03 GMT</pubDate>
+    <title>template-til</title>
+    <link>https://dangthobach.github.io/knowledge/_templates/template-til</link>
+    <guid>https://dangthobach.github.io/knowledge/_templates/template-til</guid>
+    <description><![CDATA[ TIL: {{title}} 💡 Insight 🔍 Context 🔗 Liên quan . ]]></description>
+    <pubDate>Sat, 02 May 2026 04:59:24 GMT</pubDate>
+  </item><item>
+    <title>template-pattern</title>
+    <link>https://dangthobach.github.io/knowledge/_templates/template-pattern</link>
+    <guid>https://dangthobach.github.io/knowledge/_templates/template-pattern</guid>
+    <description><![CDATA[ Pattern: {{title}} 🎯 Problem 💡 Solution 🔄 Flow &lt;!-- Diagram text hoặc steps --&gt; ✅ Pros / ❌ Cons ProsCons 📍 Applied In MOC-PDMS — 🔗 Related Patterns . ]]></description>
+    <pubDate>Sat, 02 May 2026 04:59:24 GMT</pubDate>
+  </item><item>
+    <title>template-concept</title>
+    <link>https://dangthobach.github.io/knowledge/_templates/template-concept</link>
+    <guid>https://dangthobach.github.io/knowledge/_templates/template-concept</guid>
+    <description><![CDATA[ {{title}} 📌 One-liner Concept này là gì trong một câu 🧠 Core Idea 🔁 Java / Rust Analog JavaRustEquivalentKey difference 💡 Khi nào dùng ⚠️ Pitfalls 🔗 Liên quan 📖 Nguồn . ]]></description>
+    <pubDate>Sat, 02 May 2026 04:59:24 GMT</pubDate>
+  </item><item>
+    <title>00-Hub-Database-Persistence</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/00-Hub-Database-Persistence</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/00-Hub-Database-Persistence</guid>
+    <description><![CDATA[ Database Persistence in Java — Bức Tranh Tổng Quan Mục tiêu: Trả lời câu hỏi “Dùng cái gì?” trước khi đi vào từng thứ. ]]></description>
+    <pubDate>Sat, 02 May 2026 04:58:37 GMT</pubDate>
+  </item><item>
+    <title>Hibernate-Performance-Deep-Dive</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/Hibernate-Performance-Deep-Dive</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/Hibernate-Performance-Deep-Dive</guid>
+    <description><![CDATA[ Hibernate Performance Deep Dive — Từ Cơ Bản Đến Nâng Cao Audience: Senior engineer, quen RDBMS, muốn hiểu tại sao Hibernate hoạt động thế — không chỉ cách dùng. ]]></description>
+    <pubDate>Sat, 02 May 2026 04:58:37 GMT</pubDate>
+  </item><item>
+    <title>Hibernate-Reactive-Deep-Dive</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/Hibernate-Reactive-Deep-Dive</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/Hibernate-Reactive-Deep-Dive</guid>
+    <description><![CDATA[ Hibernate Reactive Deep Dive Định nghĩa nhanh: Hibernate Reactive = toàn bộ Hibernate ORM (Persistence Context, dirty checking, lazy loading, L1/L2 cache) — nhưng thay JDBC driver bằng Vert.x SQL Client để non-blocking I/O. ]]></description>
+    <pubDate>Sat, 02 May 2026 04:58:37 GMT</pubDate>
+  </item><item>
+    <title>JDBC-vs-R2DBC-vs-VirtualThreads</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/JDBC-vs-R2DBC-vs-VirtualThreads</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/JDBC-vs-R2DBC-vs-VirtualThreads</guid>
+    <description><![CDATA[ JDBC vs R2DBC vs Virtual Threads — Bức Tranh Thực Tế 2025/2026 Câu hỏi cốt lõi: R2DBC non-blocking có thực sự là xu hướng tất yếu, hay Virtual Threads (Project Loom) đã thay đổi cuộc chơi? Verdict ngắn: Phức tạp hơn marketing rất nhiều. ]]></description>
+    <pubDate>Sat, 02 May 2026 04:58:37 GMT</pubDate>
+  </item><item>
+    <title>Spring-Data-R2DBC-Deep-Dive</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/Spring-Data-R2DBC-Deep-Dive</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/Spring-Data-R2DBC-Deep-Dive</guid>
+    <description><![CDATA[ Spring Data R2DBC Deep Dive Định nghĩa nhanh: Spring Data R2DBC = Spring Data repository pattern + R2DBC reactive driver — KHÔNG có ORM, không có Persistence Context, không có lazy loading, không có dirty checking. ]]></description>
+    <pubDate>Sat, 02 May 2026 04:58:37 GMT</pubDate>
+  </item><item>
+    <title>Bai-1-Go-Mindset</title>
+    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-1-Go-Mindset</link>
+    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-1-Go-Mindset</guid>
+    <description><![CDATA[ Bài 1: Go Mindset — Chuyển tư duy từ Java/Rust sang Go Mục tiêu: Hiểu triết lý thiết kế của Go, so sánh với Java và Rust, setup workspace chuẩn. 1. ]]></description>
+    <pubDate>Sat, 02 May 2026 04:58:37 GMT</pubDate>
+  </item><item>
+    <title>Bai-10-GORM-PostgreSQL</title>
+    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-10-GORM-PostgreSQL</link>
+    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-10-GORM-PostgreSQL</guid>
+    <description><![CDATA[ Bài 10: GORM &amp; PostgreSQL Integration Mục tiêu: Làm chủ GORM — ORM phổ biến nhất trong Go ecosystem. ]]></description>
+    <pubDate>Sat, 02 May 2026 04:58:37 GMT</pubDate>
   </item>
     </channel>
   </rss>

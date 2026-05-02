@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>Mastering OOP Fundamentals with SOLID Principles</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="Dang Tho Bach's Knowledge Base"/><meta property="og:title" content="Mastering OOP Fundamentals with SOLID Principles"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="Mastering OOP Fundamentals with SOLID Principles"/><meta name="twitter:description" content="Imagine trying to build a complex machine, but instead of using pre-made, reusable parts, we have to carve each component."/><meta property="og:description" content="Imagine trying to build a complex machine, but instead of using pre-made, reusable parts, we have to carve each component."/><meta property="og:image:alt" content="Imagine trying to build a complex machine, but instead of using pre-made, reusable parts, we have to carve each component."/><meta property="twitter:domain" content="dangthobach.github.io/knowledge"/><meta property="og:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Mastering-OOP-Fundamentals-with-SOLID-Principles"/><meta property="twitter:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Mastering-OOP-Fundamentals-with-SOLID-Principles"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="Imagine trying to build a complex machine, but instead of using pre-made, reusable parts, we have to carve each component."/><meta name="generator" content="Quartz"/><link href="../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiL2hvbWUvcnVubmVyL3dvcmsvZGFuZ3Rob2JhY2guZ2l0aHViLmlvL2Rhbmd0aG9iYWNoLmdpdGh1Yi5pby9xdWFydHovcXVhcnR6L2NvbXBvbmVudHMvc3R5bGVzIiwic291cmNlcyI6WyJtZXJtYWlkLmlubGluZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFHRjtFQUNFOzs7QUFLRjtFQUNFO0VBQ0E7OztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTs7QUFJRjtFQUNFO0VBQ0E7RUFDQSIsInNvdXJjZXNDb250ZW50IjpbIi5leHBhbmQtYnV0dG9uIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbG9hdDogcmlnaHQ7XG4gIHBhZGRpbmc6IDAuNHJlbTtcbiAgbWFyZ2luOiAwLjNyZW07XG4gIHJpZ2h0OiAwOyAvLyBOT1RFOiByaWdodCB3aWxsIGJlIHNldCBpbiBtZXJtYWlkLmlubGluZS50c1xuICBjb2xvcjogdmFyKC0tZ3JheSk7XG4gIGJvcmRlci1jb2xvcjogdmFyKC0tZGFyayk7XG4gIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgYm9yZGVyOiAxcHggc29saWQ7XG4gIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgb3BhY2l0eTogMDtcbiAgdHJhbnNpdGlvbjogMC4ycztcblxuICAmID4gc3ZnIHtcbiAgICBmaWxsOiB2YXIoLS1saWdodCk7XG4gICAgZmlsdGVyOiBjb250cmFzdCgwLjMpO1xuICB9XG5cbiAgJjpob3ZlciB7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIGJvcmRlci1jb2xvcjogdmFyKC0tc2Vjb25kYXJ5KTtcbiAgfVxuXG4gICY6Zm9jdXMge1xuICAgIG91dGxpbmU6IDA7XG4gIH1cbn1cblxucHJlIHtcbiAgJjpob3ZlciA+IC5leHBhbmQtYnV0dG9uIHtcbiAgICBvcGFjaXR5OiAxO1xuICAgIHRyYW5zaXRpb246IDAuMnM7XG4gIH1cbn1cblxuI21lcm1haWQtY29udGFpbmVyIHtcbiAgcG9zaXRpb246IGZpeGVkO1xuICBjb250YWluOiBsYXlvdXQ7XG4gIHotaW5kZXg6IDk5OTtcbiAgbGVmdDogMDtcbiAgdG9wOiAwO1xuICB3aWR0aDogMTAwdnc7XG4gIGhlaWdodDogMTAwdmg7XG4gIG92ZXJmbG93OiBoaWRkZW47XG4gIGRpc3BsYXk6IG5vbmU7XG4gIGJhY2tkcm9wLWZpbHRlcjogYmx1cig0cHgpO1xuICBiYWNrZ3JvdW5kOiByZ2JhKDAsIDAsIDAsIDAuNSk7XG5cbiAgJi5hY3RpdmUge1xuICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgfVxuXG4gICYgPiAjbWVybWFpZC1zcGFjZSB7XG4gICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gICAgYm9yZGVyLXJhZGl1czogNXB4O1xuICAgIHBvc2l0aW9uOiBmaXhlZDtcbiAgICB0b3A6IDUwJTtcbiAgICBsZWZ0OiA1MCU7XG4gICAgdHJhbnNmb3JtOiB0cmFuc2xhdGUoLTUwJSwgLTUwJSk7XG4gICAgaGVpZ2h0OiA4MHZoO1xuICAgIHdpZHRoOiA4MHZ3O1xuICAgIG92ZXJmbG93OiBoaWRkZW47XG5cbiAgICAmID4gLm1lcm1haWQtY29udGVudCB7XG4gICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgICB0cmFuc2Zvcm0tb3JpZ2luOiAwIDA7XG4gICAgICB0cmFuc2l0aW9uOiB0cmFuc2Zvcm0gMC4xcyBlYXNlO1xuICAgICAgb3ZlcmZsb3c6IHZpc2libGU7XG4gICAgICBtaW4taGVpZ2h0OiAyMDBweDtcbiAgICAgIG1pbi13aWR0aDogMjAwcHg7XG5cbiAgICAgIHByZSB7XG4gICAgICAgIG1hcmdpbjogMDtcbiAgICAgICAgYm9yZGVyOiBub25lO1xuICAgICAgfVxuXG4gICAgICBzdmcge1xuICAgICAgICBtYXgtd2lkdGg6IG5vbmU7XG4gICAgICAgIGhlaWdodDogYXV0bztcbiAgICAgIH1cbiAgICB9XG5cbiAgICAmID4gLm1lcm1haWQtY29udHJvbHMge1xuICAgICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgICAgYm90dG9tOiAyMHB4O1xuICAgICAgcmlnaHQ6IDIwcHg7XG4gICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgZ2FwOiA4cHg7XG4gICAgICBwYWRkaW5nOiA4cHg7XG4gICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgYm9yZGVyLXJhZGl1czogNnB4O1xuICAgICAgYm94LXNoYWRvdzogMCAycHggNHB4IHJnYmEoMCwgMCwgMCwgMC4xKTtcbiAgICAgIHotaW5kZXg6IDI7XG5cbiAgICAgIC5tZXJtYWlkLWNvbnRyb2wtYnV0dG9uIHtcbiAgICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgIHdpZHRoOiAzMnB4O1xuICAgICAgICBoZWlnaHQ6IDMycHg7XG4gICAgICAgIHBhZGRpbmc6IDA7XG4gICAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgICAgY29sb3I6IHZhcigtLWRhcmspO1xuICAgICAgICBib3JkZXItcmFkaXVzOiA0cHg7XG4gICAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICAgICAgZm9udC1zaXplOiAxNnB4O1xuICAgICAgICBmb250LWZhbWlseTogdmFyKC0tYm9keUZvbnQpO1xuICAgICAgICB0cmFuc2l0aW9uOiBhbGwgMC4ycyBlYXNlO1xuXG4gICAgICAgICY6aG92ZXIge1xuICAgICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIH1cblxuICAgICAgICAmOmFjdGl2ZSB7XG4gICAgICAgICAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKDFweCk7XG4gICAgICAgIH1cblxuICAgICAgICAvLyBTdHlsZSB0aGUgcmVzZXQgYnV0dG9uIGRpZmZlcmVudGx5XG4gICAgICAgICY6bnRoLWNoaWxkKDIpIHtcbiAgICAgICAgICB3aWR0aDogYXV0bztcbiAgICAgICAgICBwYWRkaW5nOiAwIDEycHg7XG4gICAgICAgICAgZm9udC1zaXplOiAxNHB4O1xuICAgICAgICB9XG4gICAgICB9XG4gICAgfVxuICB9XG59XG4iXX0= */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://dangthobach.github.io/knowledge/index.xml"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Mastering-OOP-Fundamentals-with-SOLID-Principles-og-image.webp"/><meta property="og:image:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Mastering-OOP-Fundamentals-with-SOLID-Principles-og-image.webp"/><meta name="twitter:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Mastering-OOP-Fundamentals-with-SOLID-Principles-og-image.webp"/><meta property="og:image:type" content="image/.webp"/></head><body data-slug="Notion-Knowledge/Note/Mastering-OOP-Fundamentals-with-SOLID-Principles"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../..">Dang Tho Bach's Knowledge Base</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-374"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-374" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/">Notion Knowledge</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/Note/">Note</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>Mastering OOP Fundamentals with SOLID Principles</a></div></nav><h1 class="article-title">Mastering OOP Fundamentals with SOLID Principles</h1><p show-comma="true" class="content-meta"><time datetime="2026-05-02T04:58:37.000Z">May 02, 2026</time><span>23 min read</span></p><ul class="tags"><li><a href="../../tags/ByteByteGo" class="internal tag-link">ByteByteGo</a></li></ul></div></div><article class="popover-hint"><p>Imagine trying to build a complex machine, but instead of using pre-made, reusable parts, we have to carve each component. Every screw, bolt, and gear must be recreated from scratch, making the process slow, error-prone, and nearly impossible to scale.</p>
+<p>Software development faces the same challenge. Projects can become unmanageable and fragile without a structured way to reuse, organize, and scale code.</p>
+<p>That’s where Object-Oriented Programming (OOP) comes in.</p>
+<p>OOP is a programming paradigm that organizes software around objects. Think of objects like LEGO bricks. Each object is a self-contained unit that bundles together data and the methods that operate on that data. By using modular and reusable components, developers can build complex systems efficiently without reinventing the wheel every time.</p>
+<p>A few key reasons why OOP is so widely used in modern development are as follows:</p>
+<ul>
+<li>
+<p>OOP lets developers structure large applications into smaller, modular components.</p>
+</li>
+<li>
+<p>If OOP is applied correctly, changes in one part of the code are less likely to break other parts.</p>
+</li>
+<li>
+<p>OOP allows better code reuse opportunities.</p>
+</li>
+<li>
+<p>Data is protected and accessible through controlled mechanisms.</p>
+</li>
+</ul>
+<p>Four core fundamentals form the foundation of object-oriented programming: encapsulation, abstraction, inheritance, and polymorphism.</p>
+<p>However, just knowing these principles is not enough. While OOP provides structure, not all object-oriented code is good code. To avoid this, developers also follow SOLID principles.</p>
+<p>In this article, we will take a deep dive into the core fundamentals of OOP followed by an introduction to the SOLID principles.</p>
+<p><img src="../../image-4.png" width="auto" height="auto" alt="image 4.png"/></p>
+<h2 id="core-fundamentals-of-oop">Core Fundamentals of OOP<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#core-fundamentals-of-oop" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Let’s look at the four main principles of OOP one by one.</p>
+<h3 id="1---encapsulation">1 - Encapsulation<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1---encapsulation" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Encapsulation refers to bundling data (variables) and the methods (functions) that operate on that data into a single unit known as a class.</p>
+<p>It plays a crucial role in object-oriented design for multiple reasons:</p>
+<ul>
+<li>
+<p>Encapsulation helps enforce controlled access to an object’s internal state, restricting direct modification from outside the class.</p>
+</li>
+<li>
+<p>It allows access to object properties through specific methods, thereby ensuring consistency.</p>
+</li>
+</ul>
+<p>Consider a bank account as an example of encapsulation. A bank does not allow customers direct access to their account balance in its internal database. Instead, users interact with their account through well-defined methods (such as depositing and withdrawing money). These methods can enforce rules such as “the user cannot withdraw more than the available balance”.</p>
+<p><a href="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F8595e563-524b-4dda-be2b-b9b68b8338f6_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F8595e563-524b-4dda-be2b-b9b68b8338f6_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Programming languages provide mechanisms to support encapsulation. For example, Java implements encapsulation using access modifiers such as private, protected, and public. The most common approach is to declare class attributes private and provide public getter and setter methods for controlled access.</p>
+<p>See the example below of a basic implementation of the BankAccount class:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>// BankAccount class demonstrating encapsulation</span></span>
+<span data-line><span>class BankAccount {</span></span>
+<span data-line><span>    // Private attribute (data is hidden from direct access)</span></span>
+<span data-line><span>    private double balance;</span></span>
+<span data-line> </span>
+<span data-line><span>    // Constructor to initialize balance</span></span>
+<span data-line><span>    public BankAccount(double initialBalance) {</span></span>
+<span data-line><span>        if (initialBalance > 0) {</span></span>
+<span data-line><span>            this.balance = initialBalance;</span></span>
+<span data-line><span>        } else {</span></span>
+<span data-line><span>            this.balance = 0; // Ensure balance is never negative</span></span>
+<span data-line><span>        }</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    // Getter method to retrieve the balance (read-only access)</span></span>
+<span data-line><span>    public double getBalance() {</span></span>
+<span data-line><span>        return balance;</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    // Setter method for depositing money (controlled access)</span></span>
+<span data-line><span>    public void deposit(double amount) {</span></span>
+<span data-line><span>        if (amount > 0) {</span></span>
+<span data-line><span>            balance += amount;</span></span>
+<span data-line><span>            System.out.println(&quot;Deposited: &quot; + amount);</span></span>
+<span data-line><span>        } else {</span></span>
+<span data-line><span>            System.out.println(&quot;Deposit amount must be positive.&quot;);</span></span>
+<span data-line><span>        }</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    // Setter method for withdrawing money (with validation)</span></span>
+<span data-line><span>    public void withdraw(double amount) {</span></span>
+<span data-line><span>        if (amount > 0 &amp;&amp; amount &lt;= balance) {</span></span>
+<span data-line><span>            balance -= amount;</span></span>
+<span data-line><span>            System.out.println(&quot;Withdrawn: &quot; + amount);</span></span>
+<span data-line><span>        } else {</span></span>
+<span data-line><span>            System.out.println(&quot;Invalid withdrawal amount.&quot;);</span></span>
+<span data-line><span>        }</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>Note that this code example is just for explanation purposes and should not be treated as real production code.</p>
+<p>Let’s break down this example a little more:</p>
+<ul>
+<li>
+<p>The balance attribute is declared private, meaning it cannot be accessed directly outside the class.</p>
+</li>
+<li>
+<p>The getter method (getBalance()) allows read-only access to the balance.</p>
+</li>
+<li>
+<p>The setter methods (deposit() and withdraw()) allow modifications but enforce business logic constraints, preventing invalid operations.</p>
+</li>
+<li>
+<p>If we try to modify the balance directly from outside the class (account.balance = 5000;), the compiler throws an error.</p>
+</li>
+</ul>
+<h3 id="2---abstraction">2 - Abstraction<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2---abstraction" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Abstraction in OOP focuses on hiding the complex implementation details of an object while exposing only the necessary features.</p>
+<p>Consider driving a car. When we turn the steering wheel, the car changes direction, but we do not need to understand the intricate mechanisms involved, such as how the steering column transfers motion to the wheels or how hydraulic systems assist in turning. The steering wheel abstracts the complex system beneath it, providing a simple interface for the driver.</p>
+<p>Similarly, in programming, abstraction allows users to interact with objects without worrying about their complex internal logic. This is achieved through abstract classes and interfaces, which define behaviors without specifying how they are implemented.</p>
+<p>See the diagram below for reference:</p>
+<p><a href="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F13c60cf3-8e5a-4fb4-b258-b1cc3e4b9a03_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F13c60cf3-8e5a-4fb4-b258-b1cc3e4b9a03_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Though both abstraction and encapsulation involve hiding details, they serve different purposes. Encapsulation protects internal data, while abstraction hides implementation details, exposing only relevant functionality to the user.</p>
+<p>In Java, abstraction is implemented using abstract classes that define common behavior but allow subclasses to provide specific implementations. Here’s a code example of the same:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>// Abstract class representing a Vehicle</span></span>
+<span data-line><span>abstract class Vehicle {</span></span>
+<span data-line><span>    // Abstract method (no implementation, only declaration)</span></span>
+<span data-line><span>    abstract void start();</span></span>
+<span data-line> </span>
+<span data-line><span>    // Concrete method (implementation provided)</span></span>
+<span data-line><span>    void stop() {</span></span>
+<span data-line><span>        System.out.println(&quot;Vehicle is stopping...&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Concrete class (Car) extending the abstract class</span></span>
+<span data-line><span>class Car extends Vehicle {</span></span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    void start() {</span></span>
+<span data-line><span>        System.out.println(&quot;Car is starting with a key...&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Concrete class (Bike) extending the abstract class</span></span>
+<span data-line><span>class Bike extends Vehicle {</span></span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    void start() {</span></span>
+<span data-line><span>        System.out.println(&quot;Bike is starting with a button...&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Main class to test abstraction</span></span>
+<span data-line><span>public class Main {</span></span>
+<span data-line><span>    public static void main(String[] args) {</span></span>
+<span data-line><span>        Vehicle car = new Car();</span></span>
+<span data-line><span>        car.start(); // Calls Car's start method</span></span>
+<span data-line><span>        car.stop();  // Calls the inherited stop method</span></span>
+<span data-line> </span>
+<span data-line><span>        Vehicle bike = new Bike();</span></span>
+<span data-line><span>        bike.start(); // Calls Bike's start method</span></span>
+<span data-line><span>        bike.stop();  // Calls the inherited stop method</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>In case of trying to run this code in an online compiler and facing issues, try moving the Main class at the top. Note that the code is just for example purpose.</p>
+<p>The second way to implement abstraction is using interfaces that define a contract that multiple classes can implement. The interface users do not need to know how the methods are implemented. They only need to know that the methods exist and what they do. By focusing on what a class should do rather than how it does it, interfaces promote abstraction.</p>
+<p>Here’s an example of the same:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>// Interface defining vehicle behavior</span></span>
+<span data-line><span>interface Vehicle {</span></span>
+<span data-line><span>    void start();  // Abstract method (no body)</span></span>
+<span data-line><span>    void stop();</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Car class implementing Vehicle interface</span></span>
+<span data-line><span>class Car implements Vehicle {</span></span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    public void start() {</span></span>
+<span data-line><span>        System.out.println(&quot;Car is starting...&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    public void stop() {</span></span>
+<span data-line><span>        System.out.println(&quot;Car is stopping...&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Bike class implementing Vehicle interface</span></span>
+<span data-line><span>class Bike implements Vehicle {</span></span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    public void start() {</span></span>
+<span data-line><span>        System.out.println(&quot;Bike is starting...&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    public void stop() {</span></span>
+<span data-line><span>        System.out.println(&quot;Bike is stopping...&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Main class to test interface abstraction</span></span>
+<span data-line><span>public class Main {</span></span>
+<span data-line><span>    public static void main(String[] args) {</span></span>
+<span data-line><span>        Vehicle myCar = new Car();</span></span>
+<span data-line><span>        myCar.start();</span></span>
+<span data-line><span>        myCar.stop();</span></span>
+<span data-line> </span>
+<span data-line><span>        Vehicle myBike = new Bike();</span></span>
+<span data-line><span>        myBike.start();</span></span>
+<span data-line><span>        myBike.stop();</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<h3 id="3---inheritance">3 - Inheritance<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3---inheritance" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Inheritance allows a class to inherit properties and behavior from another class, promoting code reuse and making applications easier to extend and manage.</p>
+<p>At its core, inheritance establishes a parent-child relationship where:</p>
+<ul>
+<li>
+<p>The parent class (superclass or base class) contains common properties and behaviors.</p>
+</li>
+<li>
+<p>The child class (subclass or derived class) inherits these properties and can extend or modify them.</p>
+</li>
+</ul>
+<p>There are different types of inheritance:</p>
+<h3 id="single-inheritance">Single Inheritance<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#single-inheritance" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>In this type, a single subclass inherits from one superclass. For example, a Car class inherits from a Vehicle class.</p>
+<p><a href="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F22a32047-cea0-4687-8daa-1bd6339b58e6_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F22a32047-cea0-4687-8daa-1bd6339b58e6_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>See the code example below:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>class Vehicle {</span></span>
+<span data-line><span>    void move() {</span></span>
+<span data-line><span>        System.out.println(&quot;Vehicle is moving&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>class Car extends Vehicle {</span></span>
+<span data-line><span>    void honk() {</span></span>
+<span data-line><span>        System.out.println(&quot;Car is honking&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<h3 id="multiple-inheritance">Multiple Inheritance<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#multiple-inheritance" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>In this type of inheritance, a child class inherits from multiple parent classes. See the diagram below:</p>
+<p><a href="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fa9b2a778-f61a-4ca1-9976-a2bcd1b6c640_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fa9b2a778-f61a-4ca1-9976-a2bcd1b6c640_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Java does not support multiple inheritance with classes to avoid the diamond problem where a class inherits from two parent classes that have the same method, leading to ambiguity.</p>
+<p>However, multiple inheritance in Java can be achieved using interfaces. See the code example below:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>interface Engine {</span></span>
+<span data-line><span>    void startEngine();</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>interface Wheels {</span></span>
+<span data-line><span>    void rotate();</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>class Car implements Engine, Wheels {</span></span>
+<span data-line><span>    public void startEngine() {</span></span>
+<span data-line><span>        System.out.println(&quot;Car engine started&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    public void rotate() {</span></span>
+<span data-line><span>        System.out.println(&quot;Car wheels rotating&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>public class Main {</span></span>
+<span data-line><span>    public static void main(String[] args) {</span></span>
+<span data-line><span>        Car myCar = new Car();</span></span>
+<span data-line><span>        myCar.startEngine();</span></span>
+<span data-line><span>        myCar.rotate();</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>Even if the two interfaces declare the same method, the implementing class must provide its implementation of the method, resolving the conflict.</p>
+<h3 id="multilevel-inheritance">Multilevel Inheritance<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#multilevel-inheritance" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>In this type of inheritance, a subclass inherits from another subclass, forming a chain of inheritance.</p>
+<p><a href="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F549344d6-e52e-4d2b-9f09-f65b3db6d7a7_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F549344d6-e52e-4d2b-9f09-f65b3db6d7a7_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>See the code example below:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>class Vehicle {</span></span>
+<span data-line><span>    void move() {</span></span>
+<span data-line><span>        System.out.println(&quot;Vehicle is moving&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>class Car extends Vehicle {</span></span>
+<span data-line><span>    void fuelType() {</span></span>
+<span data-line><span>        System.out.println(&quot;Car uses petrol or diesel&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>class ElectricCar extends Car {</span></span>
+<span data-line><span>    void batteryCapacity() {</span></span>
+<span data-line><span>        System.out.println(&quot;Electric Car has a 75 kWh battery&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>public class Main {</span></span>
+<span data-line><span>    public static void main(String[] args) {</span></span>
+<span data-line><span>        ElectricCar myTesla = new ElectricCar();</span></span>
+<span data-line><span>        myTesla.move(); // Inherited from Vehicle</span></span>
+<span data-line><span>        myTesla.fuelType(); // Inherited from Car</span></span>
+<span data-line><span>        myTesla.batteryCapacity(); // Defined in ElectricCar</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<h3 id="hierarchical-inheritance">Hierarchical Inheritance<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#hierarchical-inheritance" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>In this type of inheritance, multiple subclasses inherit from the same parent class. See the diagram below:</p>
+<p><a href="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fb1e02b3b-454e-492d-aa1a-ac114d723836_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fb1e02b3b-454e-492d-aa1a-ac114d723836_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>See the example below:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>class Vehicle {</span></span>
+<span data-line><span>    void move() {</span></span>
+<span data-line><span>        System.out.println(&quot;Vehicle is moving&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>class Car extends Vehicle {</span></span>
+<span data-line><span>    void honk() {</span></span>
+<span data-line><span>        System.out.println(&quot;Car is honking&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>class Bike extends Vehicle {</span></span>
+<span data-line><span>    void kickStart() {</span></span>
+<span data-line><span>        System.out.println(&quot;Bike is kick-starting&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>public class Main {</span></span>
+<span data-line><span>    public static void main(String[] args) {</span></span>
+<span data-line><span>        Car myCar = new Car();</span></span>
+<span data-line><span>        myCar.move();</span></span>
+<span data-line><span>        myCar.honk();</span></span>
+<span data-line> </span>
+<span data-line><span>        Bike myBike = new Bike();</span></span>
+<span data-line><span>        myBike.move();</span></span>
+<span data-line><span>        myBike.kickStart();</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<h3 id="risks-of-deep-inheritance-trees">Risks of Deep Inheritance Trees<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#risks-of-deep-inheritance-trees" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>While inheritance helps with code reusability and reduced redundancy, deep inheritance trees can result in maintenance nightmares.</p>
+<p>Here’s an example:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>class A { void methodA() { System.out.println(&quot;A&quot;); } }</span></span>
+<span data-line><span>class B extends A { void methodB() { System.out.println(&quot;B&quot;); } }</span></span>
+<span data-line><span>class C extends B { void methodC() { System.out.println(&quot;C&quot;); } }</span></span>
+<span data-line><span>class D extends C { void methodD() { System.out.println(&quot;D&quot;); } }</span></span>
+<span data-line><span>// More levels...</span></span>
+<span data-line> </span>
+<span data-line><span>public class Main {</span></span>
+<span data-line><span>    public static void main(String[] args) {</span></span>
+<span data-line><span>        D obj = new D();</span></span>
+<span data-line><span>        obj.methodA(); // Inherited from A</span></span>
+<span data-line><span>        obj.methodB(); // Inherited from B</span></span>
+<span data-line><span>        obj.methodC(); // Inherited from C</span></span>
+<span data-line><span>        obj.methodD(); // Defined in D</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>In the above hypothetical example, if A is modified, B, C, and D may break unexpectedly. Also, debugging is harder when methods are spread across multiple levels.</p>
+<p>This is why inheritance should be used with a lot of caution. Also, if possible, it is better to use composition where a class contains another class as a field.</p>
+<h3 id="4---polymorphism">4 - Polymorphism<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4---polymorphism" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The term polymorphism is derived from Greek, meaning “many forms.” In OOP, it allows one method, class, or interface to behave differently in different scenarios.</p>
+<p>Consider a person who plays different roles depending on the situation. As a teacher, they explain concepts to students. As a parent, they care for their children. As a friend, they engage in casual conversations. Despite being the same person, their behavior changes based on the context.</p>
+<p>Similarly, polymorphism enables a method or an object to perform different actions based on the situation.</p>
+<p>In truth, it allows a single interface to represent multiple implementations. The two main types of polymorphism are as follows:</p>
+<ul>
+<li>
+<p><strong>Compile-Time Polymorphism (Method Overloading):</strong> The method to execute is determined at compile-time.</p>
+</li>
+<li>
+<p><strong>Runtime Polymorphism (Method Overriding):</strong> The method to execute is determined at runtime.</p>
+</li>
+</ul>
+<h3 id="compile-time-polymorphism-method-overloading">Compile Time Polymorphism (Method Overloading)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#compile-time-polymorphism-method-overloading" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Method overloading occurs when multiple methods in the same class share the same name but have different parameters (different number, type, or sequence of parameters). The compiler determines which method to call based on the method signature.</p>
+<p>See the example below:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>class MathOperations {</span></span>
+<span data-line><span>    // Method to add two integers</span></span>
+<span data-line><span>    int add(int a, int b) {</span></span>
+<span data-line><span>        return a + b;</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    // Overloaded method to add three integers</span></span>
+<span data-line><span>    int add(int a, int b, int c) {</span></span>
+<span data-line><span>        return a + b + c;</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    // Overloaded method to add two double numbers</span></span>
+<span data-line><span>    double add(double a, double b) {</span></span>
+<span data-line><span>        return a + b;</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>public class Main {</span></span>
+<span data-line><span>    public static void main(String[] args) {</span></span>
+<span data-line><span>        MathOperations math = new MathOperations();</span></span>
+<span data-line> </span>
+<span data-line><span>        System.out.println(&quot;Sum of two integers: &quot; + math.add(5, 10));</span></span>
+<span data-line><span>        System.out.println(&quot;Sum of three integers: &quot; + math.add(5, 10, 15));</span></span>
+<span data-line><span>        System.out.println(&quot;Sum of two doubles: &quot; + math.add(5.5, 10.5));</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>Here, the method add() is defined multiple times with different parameters. The correct method is chosen by the compiler based on the arguments passed.</p>
+<h3 id="runtime-polymorphism-method-overriding">Runtime Polymorphism (Method Overriding)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#runtime-polymorphism-method-overriding" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Method overriding occurs when a subclass provides a specific implementation of a method that is already defined in its parent class. The method signature remains the same, but the behavior changes.</p>
+<p>Here’s a code example for the same:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>class Animal {</span></span>
+<span data-line><span>    // Base method</span></span>
+<span data-line><span>    void makeSound() {</span></span>
+<span data-line><span>        System.out.println(&quot;Animal makes a sound&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>class Dog extends Animal {</span></span>
+<span data-line><span>    // Overriding the makeSound method</span></span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    void makeSound() {</span></span>
+<span data-line><span>        System.out.println(&quot;Dog barks&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>class Cat extends Animal {</span></span>
+<span data-line><span>    // Overriding the makeSound method</span></span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    void makeSound() {</span></span>
+<span data-line><span>        System.out.println(&quot;Cat meows&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>public class Main {</span></span>
+<span data-line><span>    public static void main(String[] args) {</span></span>
+<span data-line><span>        Animal myAnimal; // Reference variable of parent type</span></span>
+<span data-line> </span>
+<span data-line><span>        myAnimal = new Dog();</span></span>
+<span data-line><span>        myAnimal.makeSound(); // Calls Dog's implementation</span></span>
+<span data-line> </span>
+<span data-line><span>        myAnimal = new Cat();</span></span>
+<span data-line><span>        myAnimal.makeSound(); // Calls Cat's implementation</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>Here, the subclasses (Dog and Cat) provide their versions of the makeSound() method. The method is called based on the actual object type at runtime, not the reference type.</p>
+<h2 id="solid-principles">SOLID Principles<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#solid-principles" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Understanding OOP fundamental principles like encapsulation, abstraction, inheritance, and polymorphism lays the foundation for writing structured code, but it does not guarantee maintainability or scalability on its own.</p>
+<p>To build truly robust, flexible, and extensible applications, developers must also learn about SOLID principles.</p>
+<p>Let’s look at each principle in detail:</p>
+<h3 id="1---single-responsibility-principle-s">1 - Single Responsibility Principle (S)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1---single-responsibility-principle-s" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The Single Responsibility Principle (SRP) states that a class should have only one reason to change.</p>
+<p>When a class handles multiple responsibilities, it becomes harder to maintain and extend. A change in one functionality might inadvertently affect another, increasing the risk of bugs.</p>
+<p>By following SRP, we ensure:</p>
+<ul>
+<li>
+<p>Better code organization because each class has a well-defined purpose.</p>
+</li>
+<li>
+<p>Easier debugging and modification.</p>
+</li>
+<li>
+<p>Improved testability.</p>
+</li>
+</ul>
+<p>Consider a class InvoiceManager that handles invoice calculations, printing invoices, and saving to a database.</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>class InvoiceManager {</span></span>
+<span data-line><span>    private double amount;</span></span>
+<span data-line> </span>
+<span data-line><span>    public InvoiceManager(double amount) {</span></span>
+<span data-line><span>        this.amount = amount;</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    // Responsibility 1: Calculate total amount</span></span>
+<span data-line><span>    public double calculateTotal() {</span></span>
+<span data-line><span>        return amount * 1.18; // Assuming 18% tax</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    // Responsibility 2: Print invoice</span></span>
+<span data-line><span>    public void printInvoice() {</span></span>
+<span data-line><span>        System.out.println(&quot;Invoice Amount: &quot; + calculateTotal());</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    // Responsibility 3: Save invoice to database</span></span>
+<span data-line><span>    public void saveToDatabase() {</span></span>
+<span data-line><span>        System.out.println(&quot;Invoice saved to database.&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>This class has too many responsibilities. It calculates the invoice, prints it, and saves it to the database. If we need to change the way invoices are saved, we might unintentionally break the invoice printing functionality. Also, unit testing is complicated.</p>
+<p>Here’s a refactored version of the same class following SRP:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>// Responsibility 1: Handles Invoice Calculation</span></span>
+<span data-line><span>class InvoiceCalculator {</span></span>
+<span data-line><span>    private double amount;</span></span>
+<span data-line> </span>
+<span data-line><span>    public InvoiceCalculator(double amount) {</span></span>
+<span data-line><span>        this.amount = amount;</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    public double calculateTotal() {</span></span>
+<span data-line><span>        return amount * 1.18; // Assuming 18% tax</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Responsibility 2: Handles Invoice Printing</span></span>
+<span data-line><span>class InvoicePrinter {</span></span>
+<span data-line><span>    public void printInvoice(double totalAmount) {</span></span>
+<span data-line><span>        System.out.println(&quot;Invoice Amount: &quot; + totalAmount);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Responsibility 3: Handles Invoice Persistence</span></span>
+<span data-line><span>class InvoiceRepository {</span></span>
+<span data-line><span>    public void saveToDatabase(double totalAmount) {</span></span>
+<span data-line><span>        System.out.println(&quot;Invoice of amount &quot; + totalAmount + &quot; saved to database.&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Main Class</span></span>
+<span data-line><span>public class Main {</span></span>
+<span data-line><span>    public static void main(String[] args) {</span></span>
+<span data-line><span>        InvoiceCalculator calculator = new InvoiceCalculator(1000);</span></span>
+<span data-line><span>        double totalAmount = calculator.calculateTotal();</span></span>
+<span data-line> </span>
+<span data-line><span>        InvoicePrinter printer = new InvoicePrinter();</span></span>
+<span data-line><span>        printer.printInvoice(totalAmount);</span></span>
+<span data-line> </span>
+<span data-line><span>        InvoiceRepository repository = new InvoiceRepository();</span></span>
+<span data-line><span>        repository.saveToDatabase(totalAmount);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>Here, each class has a single responsibility as follows:</p>
+<ul>
+<li>
+<p><strong>Invoice Calculator:</strong> Handles the computation.</p>
+</li>
+<li>
+<p><strong>Invoice Printer:</strong> Deals with printing the invoice.</p>
+</li>
+<li>
+<p><strong>Invoice Repository:</strong> Manages persistence.</p>
+</li>
+</ul>
+<p><a href="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F1c4905f1-f075-47c3-a3b8-d133a9442c72_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F1c4905f1-f075-47c3-a3b8-d133a9442c72_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>We can now change and test each class separately. The code is also more readable and less complex. Issues can be isolated to a specific responsibility rather than debugging an entire class.</p>
+<h3 id="2---openclosed-principle-o">2 - Open/Closed Principle (O)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2---openclosed-principle-o" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The Open/Closed Principle (OCP) states that classes should be open for extension but closed for modification.</p>
+<p>This means that we should be able to extend the functionality of a class without modifying its existing code. Instead of altering an existing class to add new behavior, new functionality should be added by creating new subclasses or implementing interfaces.</p>
+<p>Let’s consider a PaymentProcessor class that supports credit card payments. Later, we need to add support for a third-party payment. Here’s an example that does not follow OCP</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>class PaymentProcessor {</span></span>
+<span data-line><span>    public void processPayment(String paymentType) {</span></span>
+<span data-line><span>        if (paymentType.equals(&quot;CreditCard&quot;)) {</span></span>
+<span data-line><span>            System.out.println(&quot;Processing Credit Card Payment&quot;);</span></span>
+<span data-line><span>        } else if (paymentType.equals(&quot;3rdParty&quot;)) {</span></span>
+<span data-line><span>            System.out.println(&quot;Processing 3rd Party Payment&quot;);</span></span>
+<span data-line><span>        }</span></span>
+<span data-line><span>        // Future payment methods would require modifying this class</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>Each time a new payment method is added, this class must be modified. In other words, the class is not closed for modification. If other parts of the system depend on PaymentProcessor, changing it could introduce bugs.</p>
+<p>To follow OCP, we should create an interface or abstract class and allow new payment methods t added without modifying the existing code.</p>
+<p><a href="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Ffcd84eec-7f97-4162-9752-27f130120319_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Ffcd84eec-7f97-4162-9752-27f130120319_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>See the example below:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>// Step 1: Define an interface for payment processing</span></span>
+<span data-line><span>interface Payment {</span></span>
+<span data-line><span>    void processPayment();</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Step 2: Implement different payment methods</span></span>
+<span data-line><span>class CreditCardPayment implements Payment {</span></span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    public void processPayment() {</span></span>
+<span data-line><span>        System.out.println(&quot;Processing Credit Card Payment&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>class ThirdPartyPayment implements Payment {</span></span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    public void processPayment() {</span></span>
+<span data-line><span>        System.out.println(&quot;Processing 3rdParty Payment&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Step 3: Use abstraction to process any payment type</span></span>
+<span data-line><span>class PaymentProcessor {</span></span>
+<span data-line><span>    public void process(Payment payment) {</span></span>
+<span data-line><span>        payment.processPayment();</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Step 4: Demonstration</span></span>
+<span data-line><span>public class Main {</span></span>
+<span data-line><span>    public static void main(String[] args) {</span></span>
+<span data-line><span>        PaymentProcessor processor = new PaymentProcessor();</span></span>
+<span data-line> </span>
+<span data-line><span>        Payment creditCard = new CreditCardPayment();</span></span>
+<span data-line><span>        processor.process(creditCard); // Processes Credit Card Payment</span></span>
+<span data-line> </span>
+<span data-line><span>        Payment thirdParty = new ThirdPartyPayment();</span></span>
+<span data-line><span>        processor.process(thirdParty); // Processes 3rd Party Payment</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>With this approach, new payment methods can be added by creating new classes that implement Payment without modifying PaymentProcessor. Each payment method is independent, ensuring modularity.</p>
+<p>Of course, this code is not a perfect OCP implementation and is just to demonstrate the approach. We can argue that if a new payment method requires additional behavior (such as logging, applying discounts, etc), or different payment methods require different types of validation, we end up modifying the PaymentProcessor class and potentially breaking OCP differently. This can be avoided by designing PaymentProcessor as an extensible abstraction, preventing modifications when adding new behaviors.</p>
+<h3 id="3---liskov-substitution-principle-l">3 - Liskov Substitution Principle (L)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3---liskov-substitution-principle-l" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The Liskov Substitution Principle (LSP) states that objects of a derived class must be replaceable by objects of the base class without altering the program’s correctness.</p>
+<p>In simple terms, this means that a subclass should behave like its parent class without breaking existing functionality.</p>
+<p>Let’s consider a Bird class with a fly() method. A Penguin class extends Bird, but penguins cannot fly.</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>// Base class: Bird</span></span>
+<span data-line><span>class Bird {</span></span>
+<span data-line><span>    void fly() {</span></span>
+<span data-line><span>        System.out.println(&quot;This bird is flying&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Subclass: Penguin (violates LSP because penguins cannot fly)</span></span>
+<span data-line><span>class Penguin extends Bird {</span></span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    void fly() {</span></span>
+<span data-line><span>        throw new UnsupportedOperationException(&quot;Penguins cannot fly&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>public class Main {</span></span>
+<span data-line><span>    public static void main(String[] args) {</span></span>
+<span data-line><span>        Bird myBird = new Bird();</span></span>
+<span data-line><span>        myBird.fly(); // Works fine</span></span>
+<span data-line> </span>
+<span data-line><span>        Bird myPenguin = new Penguin();</span></span>
+<span data-line><span>        myPenguin.fly(); // Throws an exception at runtime</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>This example is a violation of LSP. Since Penguin is a subclass of Bird, it should behave like a Bird, but it breaks expectations by throwing an exception. A function that expects Bird objects cannot reliably use a Penguin object without checking its type first.</p>
+<p>A better approach would have been to separate “bird” behavior into different classes. Since all birds cannot fly, we create a Flyable interface. See the example below:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>// Behavior Interface for Flying</span></span>
+<span data-line><span>interface Flyable {</span></span>
+<span data-line><span>    void fly();</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Base class: Bird (general properties of birds)</span></span>
+<span data-line><span>class Bird {</span></span>
+<span data-line><span>    void eat() {</span></span>
+<span data-line><span>        System.out.println(&quot;This bird is eating&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Subclass: Sparrow (Can fly, so implements Flyable)</span></span>
+<span data-line><span>class Sparrow extends Bird implements Flyable {</span></span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    public void fly() {</span></span>
+<span data-line><span>        System.out.println(&quot;Sparrow is flying&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Subclass: Penguin (Does not implement Flyable)</span></span>
+<span data-line><span>class Penguin extends Bird {</span></span>
+<span data-line><span>    void swim() {</span></span>
+<span data-line><span>        System.out.println(&quot;Penguin is swimming&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>public class Main {</span></span>
+<span data-line><span>    public static void main(String[] args) {</span></span>
+<span data-line><span>        Sparrow sparrow = new Sparrow();</span></span>
+<span data-line><span>        sparrow.fly(); // Works fine</span></span>
+<span data-line> </span>
+<span data-line><span>        Penguin penguin = new Penguin();</span></span>
+<span data-line><span>        penguin.swim(); // Works fine</span></span>
+<span data-line> </span>
+<span data-line><span>        Bird myBird = new Penguin();</span></span>
+<span data-line><span>        myBird.eat(); // Works fine</span></span>
+<span data-line><span>        // myBird.fly(); // No longer possible, avoiding runtime errors</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>In this approach, Penguin does not inherit fly() from Bird, so it never breaks expectations. There are no runtime errors due to the fly() method getting called on a non-flying bird. The Flyable interface is implemented only by birds that can fly.</p>
+<h3 id="4---interface-segregation-principle-i">4 - Interface Segregation Principle (I)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4---interface-segregation-principle-i" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The Interface Segregation Principle (ISP) states that clients should not be forced to depend on interfaces they do not use.</p>
+<p>The implication is that an interface should be small and specific, containing only methods that are relevant to the implementing class. A single large interface with many unrelated methods forces classes to implement methods they do not need.</p>
+<p>Consider an interface Worker that combines multiple responsibilities, forcing all implementing classes to define methods they may not need.</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>// A bloated interface</span></span>
+<span data-line><span>interface Worker {</span></span>
+<span data-line><span>    void work();   // Common for all workers</span></span>
+<span data-line><span>    void eat();    // Only relevant for human workers</span></span>
+<span data-line><span>    void sleep();  // Only relevant for human workers</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Class representing a human worker</span></span>
+<span data-line><span>class HumanWorker implements Worker {</span></span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    public void work() {</span></span>
+<span data-line><span>        System.out.println(&quot;Human is working.&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    public void eat() {</span></span>
+<span data-line><span>        System.out.println(&quot;Human is eating.&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    public void sleep() {</span></span>
+<span data-line><span>        System.out.println(&quot;Human is sleeping.&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Class representing a robot worker</span></span>
+<span data-line><span>class RobotWorker implements Worker {</span></span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    public void work() {</span></span>
+<span data-line><span>        System.out.println(&quot;Robot is working.&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    public void eat() {</span></span>
+<span data-line><span>        // Robots do not eat, but they are forced to implement this method.</span></span>
+<span data-line><span>        throw new UnsupportedOperationException(&quot;Robots do not eat.&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    public void sleep() {</span></span>
+<span data-line><span>        // Robots do not sleep, but they are forced to implement this method.</span></span>
+<span data-line><span>        throw new UnsupportedOperationException(&quot;Robots do not sleep.&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>public class Main {</span></span>
+<span data-line><span>    public static void main(String[] args) {</span></span>
+<span data-line><span>        Worker robot = new RobotWorker();</span></span>
+<span data-line><span>        robot.work();</span></span>
+<span data-line><span>        // Calling robot.eat() or robot.sleep() would cause an error.</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>As we can see in the example, the RobotWorker class is forced to implement eat() and sleep() even though it does not need them. Any changes to the Worker interface would impact all classes.</p>
+<p>To follow the Interface Segregation Principle, we split the large Worker interface into smaller, more focused interfaces.</p>
+<p><a href="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F400e0419-c1c5-47cd-abdd-db3e90838759_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F400e0419-c1c5-47cd-abdd-db3e90838759_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>See the example below:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>// Separate interface for working</span></span>
+<span data-line><span>interface Workable {</span></span>
+<span data-line><span>    void work();</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Separate interface for eating</span></span>
+<span data-line><span>interface Eatable {</span></span>
+<span data-line><span>    void eat();</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Separate interface for sleeping</span></span>
+<span data-line><span>interface Sleepable {</span></span>
+<span data-line><span>    void sleep();</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Human worker implements all relevant interfaces</span></span>
+<span data-line><span>class HumanWorker implements Workable, Eatable, Sleepable {</span></span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    public void work() {</span></span>
+<span data-line><span>        System.out.println(&quot;Human is working.&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    public void eat() {</span></span>
+<span data-line><span>        System.out.println(&quot;Human is eating.&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    public void sleep() {</span></span>
+<span data-line><span>        System.out.println(&quot;Human is sleeping.&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Robot worker only implements the Workable interface</span></span>
+<span data-line><span>class RobotWorker implements Workable {</span></span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    public void work() {</span></span>
+<span data-line><span>        System.out.println(&quot;Robot is working.&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Main class to test ISP compliance</span></span>
+<span data-line><span>public class Main {</span></span>
+<span data-line><span>    public static void main(String[] args) {</span></span>
+<span data-line><span>        Workable human = new HumanWorker();</span></span>
+<span data-line><span>        human.work();  // Works fine</span></span>
+<span data-line> </span>
+<span data-line><span>        Workable robot = new RobotWorker();</span></span>
+<span data-line><span>        robot.work();  // Works fine, and no unnecessary methods are forced</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>In this approach, each interface is small and specific. A class can implement only those behaviors that it needs. No class is forced to implement unnecessary methods. For example, RobotWorker only implements Workable.</p>
+<h3 id="5---dependency-inversion-principle-d">5 - Dependency Inversion Principle (D)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5---dependency-inversion-principle-d" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The Dependency Inversion Principle (DIP) states that high-level modules should not depend on low-level modules. Both should depend on abstractions.</p>
+<p>Here, high-level modules contain business logic and the low-level modules handle concerns like database connections, file systems, or third-party services. The goal is that both high-level and low-level modules should depend on an interface. This helps reduce tight coupling and improves flexibility.</p>
+<p><a href="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fa7adfa19-75aa-43ac-96dd-b71ee60b35e9_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fa7adfa19-75aa-43ac-96dd-b71ee60b35e9_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>For example, here’s a class that violates the DIP.</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>// Low-level module: MySQLDatabase</span></span>
+<span data-line><span>class MySQLDatabase {</span></span>
+<span data-line><span>    public void saveData(String data) {</span></span>
+<span data-line><span>        System.out.println(&quot;Saving data to MySQL: &quot; + data);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// High-level module: UserService</span></span>
+<span data-line><span>class UserService {</span></span>
+<span data-line><span>    private MySQLDatabase database; // Direct dependency on a concrete class</span></span>
+<span data-line> </span>
+<span data-line><span>    public UserService() {</span></span>
+<span data-line><span>        this.database = new MySQLDatabase(); // Hardcoded dependency</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    public void registerUser(String username) {</span></span>
+<span data-line><span>        database.saveData(username);</span></span>
+<span data-line><span>        System.out.println(&quot;User registered successfully.&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Main class to test the functionality</span></span>
+<span data-line><span>public class Main {</span></span>
+<span data-line><span>    public static void main(String[] args) {</span></span>
+<span data-line><span>        UserService userService = new UserService();</span></span>
+<span data-line><span>        userService.registerUser(&quot;JohnDoe&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>UserService is tightly coupled to MySQLDatabase. If we want to switch to another database (for example, PostgreSQL), we must modify UserService. Unit testing UserService is difficult because it always depends on a real MySQL database.</p>
+<p>To follow DIP, we can introduce an abstraction (interface Database) that both MySQLDatabase and other databases can implement.</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>// Step 1: Create an abstraction (interface)</span></span>
+<span data-line><span>interface Database {</span></span>
+<span data-line><span>    void saveData(String data);</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Step 2: Implement the abstraction in different database classes</span></span>
+<span data-line><span>class MySQLDatabase implements Database {</span></span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    public void saveData(String data) {</span></span>
+<span data-line><span>        System.out.println(&quot;Saving data to MySQL: &quot; + data);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>class PostgreSQLDatabase implements Database {</span></span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    public void saveData(String data) {</span></span>
+<span data-line><span>        System.out.println(&quot;Saving data to PostgreSQL: &quot; + data);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Step 3: Modify UserService to depend on abstraction</span></span>
+<span data-line><span>class UserService {</span></span>
+<span data-line><span>    private Database database; // Depend on abstraction, not a concrete class</span></span>
+<span data-line> </span>
+<span data-line><span>    public UserService(Database database) { // Inject dependency through constructor</span></span>
+<span data-line><span>        this.database = database;</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    public void registerUser(String username) {</span></span>
+<span data-line><span>        database.saveData(username);</span></span>
+<span data-line><span>        System.out.println(&quot;User registered successfully.&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Step 4: Use dependency injection in the main class</span></span>
+<span data-line><span>public class Main {</span></span>
+<span data-line><span>    public static void main(String[] args) {</span></span>
+<span data-line><span>        Database mySQLDatabase = new MySQLDatabase();</span></span>
+<span data-line><span>        UserService userService1 = new UserService(mySQLDatabase);</span></span>
+<span data-line><span>        userService1.registerUser(&quot;JohnDoe&quot;);</span></span>
+<span data-line> </span>
+<span data-line><span>        Database postgreSQLDatabase = new PostgreSQLDatabase();</span></span>
+<span data-line><span>        UserService userService2 = new UserService(postgreSQLDatabase);</span></span>
+<span data-line><span>        userService2.registerUser(&quot;JaneDoe&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>In this example, high-level module (UserService) depends on an abstraction (Database), not a concrete class. Also, low-level modules (MySQLDatabase, PostgreSQLDatabase) implement the Database interface. UserService can work with any database without modification.</p>
+<h1 id="summary">Summary<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#summary" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>In this article, we have looked at object-oriented programming principles and the SOLID principles in detail with appropriate examples.</p>
+<p>Let’s summarize the key learning points in brief:</p>
+<ul>
+<li>
+<p>There are four main fundamentals to consider in OOP: encapsulation, abstraction, inheritance, polymorphism.</p>
+</li>
+<li>
+<p>Encapsulation bundles data and behavior within a class, restricting direct access to internal details.</p>
+</li>
+<li>
+<p>Abstraction hides complex implementation details and provides a simplified interface for interacting with objects.</p>
+</li>
+<li>
+<p>Inheritance enables code reuse by allowing a child class to inherit attributes and behaviors from a parent class, forming a hierarchical structure.</p>
+</li>
+<li>
+<p>Polymorphism allows objects to take multiple forms, enabling method overloading (compile-time polymorphism) and method overriding (runtime polymorphism).</p>
+</li>
+<li>
+<p>However, OOP principles alone do not guarantee maintainable code. SOLID principles provide guidelines for designing scalable and flexible object-oriented systems.</p>
+</li>
+<li>
+<p>Single Responsibility Principle suggests that a class should have only one reason to change, ensuring each class has a single, well-defined responsibility.</p>
+</li>
+<li>
+<p>Open/Closed Principle says that a class should be open for extension but closed for modification, meaning new functionality should be added without altering existing code.</p>
+</li>
+<li>
+<p>Liskov Substitution Principle states that a subclass must be replaceable for its parent class without breaking the system.</p>
+</li>
+<li>
+<p>Interface Segregation Principle suggests that large interfaces should be split into smaller, specific ones, ensuring that classes do not implement unnecessary methods.</p>
+</li>
+<li>
+<p>Dependency Inversion Principle says that high-level modules should not depend on low-level modules. Both should depend on abstractions.</p>
+</li>
+</ul></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-162" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-1"><a href="#core-fundamentals-of-oop" data-for="core-fundamentals-of-oop">Core Fundamentals of OOP</a></li><li class="depth-2"><a href="#1---encapsulation" data-for="1---encapsulation">1 - Encapsulation</a></li><li class="depth-2"><a href="#2---abstraction" data-for="2---abstraction">2 - Abstraction</a></li><li class="depth-2"><a href="#3---inheritance" data-for="3---inheritance">3 - Inheritance</a></li><li class="depth-2"><a href="#single-inheritance" data-for="single-inheritance">Single Inheritance</a></li><li class="depth-2"><a href="#multiple-inheritance" data-for="multiple-inheritance">Multiple Inheritance</a></li><li class="depth-2"><a href="#multilevel-inheritance" data-for="multilevel-inheritance">Multilevel Inheritance</a></li><li class="depth-2"><a href="#hierarchical-inheritance" data-for="hierarchical-inheritance">Hierarchical Inheritance</a></li><li class="depth-2"><a href="#risks-of-deep-inheritance-trees" data-for="risks-of-deep-inheritance-trees">Risks of Deep Inheritance Trees</a></li><li class="depth-2"><a href="#4---polymorphism" data-for="4---polymorphism">4 - Polymorphism</a></li><li class="depth-2"><a href="#compile-time-polymorphism-method-overloading" data-for="compile-time-polymorphism-method-overloading">Compile Time Polymorphism (Method Overloading)</a></li><li class="depth-2"><a href="#runtime-polymorphism-method-overriding" data-for="runtime-polymorphism-method-overriding">Runtime Polymorphism (Method Overriding)</a></li><li class="depth-1"><a href="#solid-principles" data-for="solid-principles">SOLID Principles</a></li><li class="depth-2"><a href="#1---single-responsibility-principle-s" data-for="1---single-responsibility-principle-s">1 - Single Responsibility Principle (S)</a></li><li class="depth-2"><a href="#2---openclosed-principle-o" data-for="2---openclosed-principle-o">2 - Open/Closed Principle (O)</a></li><li class="depth-2"><a href="#3---liskov-substitution-principle-l" data-for="3---liskov-substitution-principle-l">3 - Liskov Substitution Principle (L)</a></li><li class="depth-2"><a href="#4---interface-segregation-principle-i" data-for="4---interface-segregation-principle-i">4 - Interface Segregation Principle (I)</a></li><li class="depth-2"><a href="#5---dependency-inversion-principle-d" data-for="5---dependency-inversion-principle-d">5 - Dependency Inversion Principle (D)</a></li><li class="depth-0"><a href="#summary" data-for="summary">Summary</a></li><li class="overflow-end"></li></ul></div><div class="backlinks"><h3>Backlinks</h3><ul id="list-2" class="overflow"><li><a href="../../Notion-Knowledge/Note" class="internal">Note</a></li><li><a href="../../_moc/MOC-Reading-List" class="internal">MOC-Reading-List</a></li><li><a href="../../_moc/MOC-System-Design" class="internal">MOC-System-Design</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://dangthobach.github.io/">Back to Portfolio</a></li><li><a href="https://github.com/dangthobach">GitHub</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../postscript.js" type="module" data-persist="true"></script></html>

@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>API Gateway vs Service Mesh - Which One Do You Need</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="Dang Tho Bach's Knowledge Base"/><meta property="og:title" content="API Gateway vs Service Mesh - Which One Do You Need"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="API Gateway vs Service Mesh - Which One Do You Need"/><meta name="twitter:description" content="Modern software systems rarely live in isolation."/><meta property="og:description" content="Modern software systems rarely live in isolation."/><meta property="og:image:alt" content="Modern software systems rarely live in isolation."/><meta property="twitter:domain" content="dangthobach.github.io/knowledge"/><meta property="og:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/API-Gateway-vs-Service-Mesh---Which-One-Do-You-Need"/><meta property="twitter:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/API-Gateway-vs-Service-Mesh---Which-One-Do-You-Need"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="Modern software systems rarely live in isolation."/><meta name="generator" content="Quartz"/><link href="../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiL2hvbWUvcnVubmVyL3dvcmsvZGFuZ3Rob2JhY2guZ2l0aHViLmlvL2Rhbmd0aG9iYWNoLmdpdGh1Yi5pby9xdWFydHovcXVhcnR6L2NvbXBvbmVudHMvc3R5bGVzIiwic291cmNlcyI6WyJtZXJtYWlkLmlubGluZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFHRjtFQUNFOzs7QUFLRjtFQUNFO0VBQ0E7OztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTs7QUFJRjtFQUNFO0VBQ0E7RUFDQSIsInNvdXJjZXNDb250ZW50IjpbIi5leHBhbmQtYnV0dG9uIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbG9hdDogcmlnaHQ7XG4gIHBhZGRpbmc6IDAuNHJlbTtcbiAgbWFyZ2luOiAwLjNyZW07XG4gIHJpZ2h0OiAwOyAvLyBOT1RFOiByaWdodCB3aWxsIGJlIHNldCBpbiBtZXJtYWlkLmlubGluZS50c1xuICBjb2xvcjogdmFyKC0tZ3JheSk7XG4gIGJvcmRlci1jb2xvcjogdmFyKC0tZGFyayk7XG4gIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgYm9yZGVyOiAxcHggc29saWQ7XG4gIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgb3BhY2l0eTogMDtcbiAgdHJhbnNpdGlvbjogMC4ycztcblxuICAmID4gc3ZnIHtcbiAgICBmaWxsOiB2YXIoLS1saWdodCk7XG4gICAgZmlsdGVyOiBjb250cmFzdCgwLjMpO1xuICB9XG5cbiAgJjpob3ZlciB7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIGJvcmRlci1jb2xvcjogdmFyKC0tc2Vjb25kYXJ5KTtcbiAgfVxuXG4gICY6Zm9jdXMge1xuICAgIG91dGxpbmU6IDA7XG4gIH1cbn1cblxucHJlIHtcbiAgJjpob3ZlciA+IC5leHBhbmQtYnV0dG9uIHtcbiAgICBvcGFjaXR5OiAxO1xuICAgIHRyYW5zaXRpb246IDAuMnM7XG4gIH1cbn1cblxuI21lcm1haWQtY29udGFpbmVyIHtcbiAgcG9zaXRpb246IGZpeGVkO1xuICBjb250YWluOiBsYXlvdXQ7XG4gIHotaW5kZXg6IDk5OTtcbiAgbGVmdDogMDtcbiAgdG9wOiAwO1xuICB3aWR0aDogMTAwdnc7XG4gIGhlaWdodDogMTAwdmg7XG4gIG92ZXJmbG93OiBoaWRkZW47XG4gIGRpc3BsYXk6IG5vbmU7XG4gIGJhY2tkcm9wLWZpbHRlcjogYmx1cig0cHgpO1xuICBiYWNrZ3JvdW5kOiByZ2JhKDAsIDAsIDAsIDAuNSk7XG5cbiAgJi5hY3RpdmUge1xuICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgfVxuXG4gICYgPiAjbWVybWFpZC1zcGFjZSB7XG4gICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gICAgYm9yZGVyLXJhZGl1czogNXB4O1xuICAgIHBvc2l0aW9uOiBmaXhlZDtcbiAgICB0b3A6IDUwJTtcbiAgICBsZWZ0OiA1MCU7XG4gICAgdHJhbnNmb3JtOiB0cmFuc2xhdGUoLTUwJSwgLTUwJSk7XG4gICAgaGVpZ2h0OiA4MHZoO1xuICAgIHdpZHRoOiA4MHZ3O1xuICAgIG92ZXJmbG93OiBoaWRkZW47XG5cbiAgICAmID4gLm1lcm1haWQtY29udGVudCB7XG4gICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgICB0cmFuc2Zvcm0tb3JpZ2luOiAwIDA7XG4gICAgICB0cmFuc2l0aW9uOiB0cmFuc2Zvcm0gMC4xcyBlYXNlO1xuICAgICAgb3ZlcmZsb3c6IHZpc2libGU7XG4gICAgICBtaW4taGVpZ2h0OiAyMDBweDtcbiAgICAgIG1pbi13aWR0aDogMjAwcHg7XG5cbiAgICAgIHByZSB7XG4gICAgICAgIG1hcmdpbjogMDtcbiAgICAgICAgYm9yZGVyOiBub25lO1xuICAgICAgfVxuXG4gICAgICBzdmcge1xuICAgICAgICBtYXgtd2lkdGg6IG5vbmU7XG4gICAgICAgIGhlaWdodDogYXV0bztcbiAgICAgIH1cbiAgICB9XG5cbiAgICAmID4gLm1lcm1haWQtY29udHJvbHMge1xuICAgICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgICAgYm90dG9tOiAyMHB4O1xuICAgICAgcmlnaHQ6IDIwcHg7XG4gICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgZ2FwOiA4cHg7XG4gICAgICBwYWRkaW5nOiA4cHg7XG4gICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgYm9yZGVyLXJhZGl1czogNnB4O1xuICAgICAgYm94LXNoYWRvdzogMCAycHggNHB4IHJnYmEoMCwgMCwgMCwgMC4xKTtcbiAgICAgIHotaW5kZXg6IDI7XG5cbiAgICAgIC5tZXJtYWlkLWNvbnRyb2wtYnV0dG9uIHtcbiAgICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgIHdpZHRoOiAzMnB4O1xuICAgICAgICBoZWlnaHQ6IDMycHg7XG4gICAgICAgIHBhZGRpbmc6IDA7XG4gICAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgICAgY29sb3I6IHZhcigtLWRhcmspO1xuICAgICAgICBib3JkZXItcmFkaXVzOiA0cHg7XG4gICAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICAgICAgZm9udC1zaXplOiAxNnB4O1xuICAgICAgICBmb250LWZhbWlseTogdmFyKC0tYm9keUZvbnQpO1xuICAgICAgICB0cmFuc2l0aW9uOiBhbGwgMC4ycyBlYXNlO1xuXG4gICAgICAgICY6aG92ZXIge1xuICAgICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIH1cblxuICAgICAgICAmOmFjdGl2ZSB7XG4gICAgICAgICAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKDFweCk7XG4gICAgICAgIH1cblxuICAgICAgICAvLyBTdHlsZSB0aGUgcmVzZXQgYnV0dG9uIGRpZmZlcmVudGx5XG4gICAgICAgICY6bnRoLWNoaWxkKDIpIHtcbiAgICAgICAgICB3aWR0aDogYXV0bztcbiAgICAgICAgICBwYWRkaW5nOiAwIDEycHg7XG4gICAgICAgICAgZm9udC1zaXplOiAxNHB4O1xuICAgICAgICB9XG4gICAgICB9XG4gICAgfVxuICB9XG59XG4iXX0= */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://dangthobach.github.io/knowledge/index.xml"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/API-Gateway-vs-Service-Mesh---Which-One-Do-You-Need-og-image.webp"/><meta property="og:image:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/API-Gateway-vs-Service-Mesh---Which-One-Do-You-Need-og-image.webp"/><meta name="twitter:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/API-Gateway-vs-Service-Mesh---Which-One-Do-You-Need-og-image.webp"/><meta property="og:image:type" content="image/.webp"/></head><body data-slug="Notion-Knowledge/Note/API-Gateway-vs-Service-Mesh---Which-One-Do-You-Need"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../..">Dang Tho Bach's Knowledge Base</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-279"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-279" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/">Notion Knowledge</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/Note/">Note</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>API Gateway vs Service Mesh   Which One Do You Need</a></div></nav><h1 class="article-title">API Gateway vs Service Mesh - Which One Do You Need</h1><p show-comma="true" class="content-meta"><time datetime="2026-05-02T04:58:37.000Z">May 02, 2026</time><span>15 min read</span></p></div></div><article class="popover-hint"><p>Modern software systems rarely live in isolation. Most applications today are stitched together from dozens,  sometimes hundreds, of independently deployed services, each handling a piece of the puzzle. This helps create smaller units of responsibility and loose coupling. However, the flexibility comes with a new kind of complexity, especially around how these services communicate.</p>
+<p>In a monolith, in-process function calls stitch components together. In a service-based world, everything talks over the network. Suddenly, concerns that were once handled inside the application, like retries, authentication, rate limiting, encryption, and observability, become distributed concerns. And distributed concerns are harder to get right.</p>
+<p>To manage this complexity, engineering teams typically reach for one of two patterns: the API gateway or the service mesh.</p>
+<p>Both aim to make communication between services more manageable, secure, and observable. But they do it in very different ways, and for different reasons. The confusion often starts when these tools are treated as interchangeable or when their roles are reduced to simple traffic direction: “API gateways are for north-south traffic, service meshes are for east-west.” That shortcut oversimplifies both and sets teams up for misuse or unnecessary overhead.</p>
+<p>In this article, we look at both API Gateways and Service Mesh in detail, along with their key differences and usage goals.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!31us!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F3530d961-653b-4631-95db-004c0df05073_2250x2624.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!31us!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F3530d961-653b-4631-95db-004c0df05073_2250x2624.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h2 id="what-is-an-api-gateway"><strong>What is an API Gateway?</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#what-is-an-api-gateway" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>An API gateway acts as the front door to a system. It sits between external clients (web browsers, mobile apps, partner systems) and the backend services that do the work. Every request from the outside world flows through this centralized layer before reaching the services behind it.</p>
+<p>At its core, the API gateway pattern solves one fundamental problem: how to expose a distributed set of backend services through a single, manageable entry point. It does this by operating at Layer 7 (L7) of the OSI model (the application layer), where it has full visibility into HTTP requests, headers, and payloads. That position gives it powerful control over how requests are handled.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!UzFM!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F7733bdca-052d-472e-96c1-93e648a23c93_1992x1216.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!UzFM!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F7733bdca-052d-472e-96c1-93e648a23c93_1992x1216.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>This pattern is especially common for requests coming from outside the system into the data center or cloud environment. But in practice, many teams also route internal requests through the gateway when they need consistent access policies or observability.</p>
+<p>An effective API gateway handles a wide range of responsibilities, offloading work from backend services and standardizing how clients interact with them. Here are some core responsibilities:</p>
+<ul>
+<li>
+<p><strong>Request Routing and Protocol Translation:</strong> The gateway routes requests to the appropriate backend service based on the path, method, or other metadata. It can also act as a protocol translator, converting between HTTP, gRPC, WebSocket, or other formats to match what each service expects.</p>
+</li>
+<li>
+<p><strong>Authentication and Authorization:</strong> A central place to enforce identity and access control. This might include OAuth2 token validation, API key enforcement, or integrating with identity providers. Instead of duplicating auth logic across services, the gateway handles it up front.</p>
+</li>
+<li>
+<p><strong>Rate Limiting and Request Shaping:</strong> To prevent abuse or overload, the gateway can throttle clients, limit request frequency, or block malformed payloads before they hit internal systems.</p>
+</li>
+<li>
+<p><strong>Load Balancing and Caching:</strong> API gateways often balance traffic across multiple service instances. They may also cache frequent responses, reducing load on backend services and speeding up response times for clients.</p>
+</li>
+<li>
+<p><strong>Observability and Analytics:</strong> Because it sits on the request path, the gateway becomes a natural place to collect logs, metrics, and traces. These insights help teams understand traffic patterns, troubleshoot latency, and detect anomalies.</p>
+</li>
+<li>
+<p><strong>API Versioning and Abstraction:</strong> Backend services evolve, but clients don’t always update immediately. The gateway can present a stable interface to consumers while routing requests to newer versions behind the scenes. It also enables aggregation, combining responses from multiple services into one payload.</p>
+</li>
+</ul>
+<p>The diagram below shows the various features and functionalities of an API Gateway:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!GcXx!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F893588c6-f136-45f7-ad47-626e4a21728a_1992x1816.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!GcXx!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F893588c6-f136-45f7-ad47-626e4a21728a_1992x1816.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Beyond runtime concerns, many gateways serve as the anchor point for API productization. When APIs are treated as products that are used by internal teams, partners, or third-party developers, more is needed than just routing and auth.</p>
+<p>Modern gateways often tie into broader API management platforms that support various capabilities such as:</p>
+<ul>
+<li>
+<p>Developer portals with documentation and testing tools</p>
+</li>
+<li>
+<p>Self-service onboarding for developers</p>
+</li>
+<li>
+<p>API monetization features (for example, tiered plans or billing hooks)</p>
+</li>
+<li>
+<p>Mocking and testing environments before deployment</p>
+</li>
+<li>
+<p>Access control dashboards for administrators</p>
+</li>
+</ul>
+<h2 id="what-is-a-service-mesh"><strong>What is a Service Mesh?</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#what-is-a-service-mesh" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>A service mesh is an infrastructure layer that manages service-to-service communication in a distributed system. It focuses on the internal traffic that flows between services inside a data center or cloud environment. While API gateways protect the edge, the service mesh secures and controls the interior.</p>
+<p>What makes service mesh different is how it handles this control. Instead of baking networking logic into application code, the mesh delegates it to lightweight network proxies called sidecars that run alongside each service instance. These proxies intercept all inbound and outbound traffic, enforcing policies without requiring services to be aware of them.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!PUsd!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F71543b63-9ac4-4c4f-bea9-103cd25fcdc3_1992x1514.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!PUsd!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F71543b63-9ac4-4c4f-bea9-103cd25fcdc3_1992x1514.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>This design shifts networking from application code to the infrastructure, bringing consistency, security, and observability across the system without touching the service logic.</p>
+<p>A typical service mesh architecture is split into two parts:</p>
+<ul>
+<li>
+<p><strong>Data Plane:</strong> The data plane consists of <strong>sidecar proxies</strong>: one running next to each service instance. These proxies sit directly on the execution path of requests, handling traffic routing, encryption, authentication, retries, and more. Since each proxy is paired with a specific service, the deployment model is decentralized.</p>
+</li>
+<li>
+<p><strong>Control Plane:</strong> The control plane is the brain of the operation. It pushes configuration and policies to the sidecar proxies, manages service identities, and coordinates updates. It is not on the request path, which helps reduce latency, but makes it essential that proxies remain connected and in sync.</p>
+</li>
+</ul>
+<p>This separation ensures that data path operations are lightweight and fast, while administrative logic remains centralized and easier to manage.</p>
+<p>The key responsibilities of a service mesh are as follows:</p>
+<ul>
+<li>
+<p><strong>mTLS Encryption and Service Identity:</strong> Every service gets a unique identity, often backed by certificates. Sidecar proxies enforce mutual TLS (mTLS) between services, ensuring traffic is encrypted and only trusted services can talk to each other.</p>
+</li>
+<li>
+<p><strong>Dynamic Service Discovery and Routing:</strong> Proxies automatically discover where to send requests, often without hardcoded IPs or DNS tricks. This enables seamless scaling and migration of services without client-side awareness.</p>
+</li>
+<li>
+<p><strong>Load Balancing and Retries:</strong> Each proxy performs intelligent routing and load balancing, spreading traffic across service instances. It also handles retries and timeouts transparently, avoiding code duplication in each service.</p>
+</li>
+<li>
+<p><strong>Tracing, Metrics, and Logging:</strong> Proxies emit telemetry data that feeds into observability platforms. Since every request flows through the mesh, teams gain full visibility into service interactions, latency, and failure points, without instrumenting every application.</p>
+</li>
+<li>
+<p><strong>Resilience Features: Circuit Breaking and Fault Injection:</strong> Meshes can automatically short-circuit failing services to avoid cascading failures.</p>
+</li>
+<li>
+<p><strong>Access Control and Policy Enforcement:</strong> Fine-grained access rules determine which services can talk to each other. Policies can be updated at runtime, scoped to services, namespaces, or even request metadata.</p>
+</li>
+</ul>
+<p>Service meshes thrive in highly dynamic environments, especially container orchestrators like Kubernetes, where services scale up and down constantly, IPs change frequently, and communication patterns evolve quickly. In these contexts, writing custom networking logic inside each service doesn’t scale.</p>
+<h2 id="key-differences-deployment-scope-and-use-cases"><strong>Key Differences: Deployment, Scope, and Use Cases</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#key-differences-deployment-scope-and-use-cases" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>A mature architecture often needs both API Gateways and Service Mesh. Understanding how they differ helps avoid forcing one tool to do the other’s job or worse, layering both without understanding what each contributes.</p>
+<p>Let’s look at the key differentiation points:</p>
+<h3 id="1---deployment-model"><strong>1 - Deployment Model</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1---deployment-model" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>API gateways are centralized components. They typically run as edge-facing services or ingress controllers, handling all traffic that enters the system. One instance or a small cluster manages the full flow of incoming requests, which makes it easy to enforce global policies and observe all external interactions from a single point.</p>
+<p>Service meshes, by contrast, are decentralized. They embed control at the service level, deploying a sidecar proxy alongside every service replica. That model pushes traffic control to the edges of each application, turning policy enforcement and routing into localized operations. The result is fine-grained control, but at the cost of increased infrastructure footprint and coordination.</p>
+<h3 id="2---layer-of-operation"><strong>2 - Layer of Operation</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2---layer-of-operation" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>API gateways operate at Layer 7 (L7) or the application layer. They understand high-level protocols like HTTP, HTTPS, and WebSocket. That focus makes them ideal for tasks that depend on full visibility into request paths, headers, and payloads like routing based on URL patterns or injecting authorization tokens.</p>
+<p>Service meshes span both Layer 4 (L4) and Layer 7. They handle low-level TCP and UDP traffic, while also inspecting L7 metadata when needed. This broader scope allows them to manage diverse communication protocols (gRPC, raw TCP streams, or even database calls) without being tightly coupled to the HTTP layer.</p>
+<h3 id="3---scope-of-control"><strong>3 - Scope of Control</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3---scope-of-control" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>An API gateway governs access from outside the system. It controls who can reach which services, how requests are shaped, and how failures are surfaced to clients. It’s the front door of the architecture, deciding what gets in and what gets blocked.</p>
+<p>A service mesh controls communication inside the system. It manages how services talk to each other, routes internal requests, and enforces rules about what is allowed to call what. It also adds visibility into internal failures that would otherwise get lost between services.</p>
+<h3 id="4---identity-and-trust"><strong>4 - Identity and Trust</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4---identity-and-trust" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Service meshes assign identity to services using mutual TLS (mTLS). Every service gets a unique certificate, and every connection between services is encrypted and authenticated. This enables a zero-trust model internally. In other words, no implicit trust based on IP addresses or networks.</p>
+<p>API gateways focus on external identity. They handle OAuth2, JWTs, API keys, or client certificates to authenticate external users or systems.</p>
+<h3 id="5---use-case-breadth"><strong>5 - Use Case Breadth</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5---use-case-breadth" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>API gateways do more than route traffic. They support API productization, enabling teams to expose, document, version, monetize, and secure their APIs. Features like developer portals, onboarding flows, and analytics dashboards turn APIs into shareable, consumable products, especially in B2B and internal platform settings.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!dFmp!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fd2a30ac1-dac2-4583-9dc0-1602026e90c3_1992x1610.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!dFmp!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fd2a30ac1-dac2-4583-9dc0-1602026e90c3_1992x1610.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Service meshes don’t deal with API consumption. Their focus is service connectivity, reliability, and security. They don’t expose APIs to external consumers or provide developer self-service tools. Instead, they aim to make internal communication safer and more resilient.</p>
+<h2 id="when-to-use-api-gateway"><strong>When to Use API Gateway?</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#when-to-use-api-gateway" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>An API gateway shines when the boundary between external clients and internal services needs to be managed with care. This edge layer becomes the control point for how users, applications, and partners access backend systems. When traffic originates outside the system or when internal teams are treated as consumers of shared APIs, the gateway simplifies complexity and enforces consistency.</p>
+<p>Here are some important use cases for API Gateways:</p>
+<h3 id="exposing-apis-to-external-consumers-or-internal-teams"><strong>Exposing APIs to External Consumers or Internal Teams</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#exposing-apis-to-external-consumers-or-internal-teams" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>When backend services need to be exposed beyond the team that built them, whether to external partners, mobile apps, frontend teams, or other internal squads, the API gateway becomes a clean access point. It wraps internal systems in a stable interface, hiding internal churn while offering a contract to consumers.</p>
+<p>Without a gateway, teams often end up hardcoding service endpoints, maintaining inconsistent interfaces, or duplicating access logic. The gateway centralizes that responsibility.</p>
+<h3 id="managing-authentication-authorization-and-rate-limits"><strong>Managing Authentication, Authorization, and Rate Limits</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#managing-authentication-authorization-and-rate-limits" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>APIs that face the outside world must be protected. Gateways enforce authentication (for example, API keys, JWTs, OAuth2) and authorization policies up front before requests reach sensitive business logic.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!ccgH!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fe614f19e-35ef-40ae-920f-b789a4c57e5f_2456x1514.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!ccgH!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fe614f19e-35ef-40ae-920f-b789a4c57e5f_2456x1514.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>They also prevent misuse or abuse through rate limiting and throttling, which helps safeguard downstream services from being overwhelmed. Without these controls, one buggy client—or one aggressive scraper—can degrade performance for everyone else.</p>
+<h3 id="providing-a-consistent-developer-experience"><strong>Providing a Consistent Developer Experience</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#providing-a-consistent-developer-experience" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>APIs are products. When treated as such, they need more than an endpoint. They also need documentation, testing tools, and onboarding flows. Many gateways integrate with developer portals, where teams can:</p>
+<ul>
+<li>
+<p>Explore available APIs</p>
+</li>
+<li>
+<p>Generate credentials</p>
+</li>
+<li>
+<p>Try out endpoints in a sandbox</p>
+</li>
+<li>
+<p>Monitor usage and errors</p>
+</li>
+</ul>
+<p>This becomes especially valuable in platform engineering contexts, where teams expose reusable services across the organization.</p>
+<h3 id="acting-as-a-façade-over-backend-evolution"><strong>Acting as a Façade Over Backend Evolution</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#acting-as-a-façade-over-backend-evolution" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Backend services change, but APIs should not do so in a way that breaks consumers. The gateway acts as a translation layer, enabling teams to evolve internal systems without forcing every client to adapt immediately.</p>
+<p>It supports versioning strategies, response transformation, and request aggregation. This abstraction shields clients from internal refactors or service splits.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!ot8M!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F5635e141-6b2b-4b71-8299-8958e7ccfd9a_1992x1610.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!ot8M!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F5635e141-6b2b-4b71-8299-8958e7ccfd9a_1992x1610.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h3 id="handling-diverse-client-types"><strong>Handling Diverse Client Types</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#handling-diverse-client-types" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Different clients have different needs. A mobile app might require lightweight payloads. A web dashboard might make frequent polling calls. A third-party partner might call from a slower network or use an older protocol.</p>
+<p>The gateway accommodates these differences by:</p>
+<ul>
+<li>
+<p>Compressing responses for mobile</p>
+</li>
+<li>
+<p>Caching static data for web apps</p>
+</li>
+<li>
+<p>Translating protocols for legacy clients</p>
+</li>
+</ul>
+<p>This flexibility keeps backend services focused on business logic while the gateway handles adaptation at the edge.</p>
+<h2 id="when-to-use-a-service-mesh"><strong>When to Use a Service Mesh</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#when-to-use-a-service-mesh" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>In modern systems, especially those built on Kubernetes or other container platforms, services are ephemeral, dynamic, and interconnected. Each network call introduces a point of failure. Each dependency adds coupling. And each inconsistency in how services talk to each other increases operational overhead.</p>
+<p>The service mesh steps in to create a uniform communication layer that handles reliability, security, and observability, without requiring every service to reimplement the same boilerplate logic.</p>
+<p>Here are the key use cases of a service mesh:</p>
+<h3 id="managing-a-large-number-of-microservices"><strong>Managing a Large Number of Microservices</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#managing-a-large-number-of-microservices" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>In small systems, direct service-to-service calls with basic DNS-based discovery might suffice. But once the architecture grows—dozens or hundreds of microservices, each deployed independently—the network becomes a distributed minefield.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!axGm!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fd688502f-df1a-44af-8e9f-a08058dfadb4_1992x1216.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!axGm!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fd688502f-df1a-44af-8e9f-a08058dfadb4_1992x1216.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Routing rules get complicated. Dependencies shift constantly. One service’s failure can ripple through the rest. A service mesh abstracts away this chaos by managing routing, retries, discovery, and failure handling consistently across the system.</p>
+<p>Instead of every team building their networking library, the mesh handles it uniformly—one configuration change applies everywhere.</p>
+<h3 id="achieving-observability-without-changing-application-code"><strong>Achieving Observability Without Changing Application Code</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#achieving-observability-without-changing-application-code" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Understanding what happens across microservices requires distributed tracing, latency metrics, traffic logs, and error tracking. Without a mesh, that means modifying every service to emit telemetry.</p>
+<p>With a service mesh, sidecar proxies emit telemetry automatically, since they sit on the request path. This enables full visibility across the system (end-to-end traces, service dependency graphs, real-time metrics) without changing a line of application code.</p>
+<p>This is especially powerful during on-call incidents, when teams need quick insight into which service is slow, broken, or misbehaving, without digging through logs from five different places.</p>
+<h3 id="enforcing-zero-trust-security-internally"><strong>Enforcing Zero-Trust Security Internally</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#enforcing-zero-trust-security-internally" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The zero-trust model says no service should implicitly trust another, even inside the same network. Every call must be authenticated, encrypted, and auditable.</p>
+<p>A service mesh enforces this with mutual TLS (mTLS) between all services. It assigns identities to services, rotates certificates, and blocks unauthorized communication. This closes the gaps left by traditional perimeter-based security models, especially in multi-tenant or multi-cluster environments.</p>
+<h3 id="requiring-advanced-traffic-control"><strong>Requiring Advanced Traffic Control</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#requiring-advanced-traffic-control" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Some of the most valuable features of a service mesh live in its traffic control layer. This includes:</p>
+<ul>
+<li>
+<p>Automatic retries with jitter and backoff</p>
+</li>
+<li>
+<p>Failovers to healthy instances</p>
+</li>
+<li>
+<p>Circuit breakers to isolate unstable services</p>
+</li>
+<li>
+<p>Timeout enforcement</p>
+</li>
+<li>
+<p>Canary releases and traffic splitting</p>
+</li>
+</ul>
+<h2 id="can-we-use-both-together"><strong>Can We Use Both Together?</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#can-we-use-both-together" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>API gateways and service meshes solve different problems at different layers of a distributed system, and in many modern setups, they work best together.</p>
+<p>Used together, these tools form a clean boundary: the API gateway controls how external systems enter, and the service mesh governs how services interact once inside. This layered model brings clarity and control to both user-facing and internal concerns.</p>
+<p>For example, imagine a multi-tenant SaaS platform running on Kubernetes. A user logs in through a mobile app, which sends an authenticated request to an endpoint managed by the API gateway. The gateway validates the token, applies rate limits, and transforms the request into a gRPC call.</p>
+<p>That call is then forwarded to a service—say, cart-service—which lives inside a mesh-enabled cluster. From there, the mesh takes over. The request is securely routed to the correct instance, retries are handled automatically if latency spikes occur, and any calls from cart-service to inventory or payments follow mesh policies, including circuit breakers and trace emission.</p>
+<p>Notably, the API gateway can live as a service within the mesh. This allows it to participate in mTLS-based encryption, benefit from mesh-wide observability, and route requests using service discovery. It acts as the system’s front door but still plays by the same internal rules as the services it connects.</p>
+<h2 id="summary"><strong>Summary</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#summary" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>In this article, we’ve looked at API Gateway and Service Mesh in detail.</p>
+<p>Here are the key learning points in brief:</p>
+<ul>
+<li>
+<p>Microservices increase flexibility but introduce complex communication challenges that must be managed explicitly.</p>
+</li>
+<li>
+<p>API gateways act as centralized entry points, managing external requests and exposing services cleanly and securely.</p>
+</li>
+<li>
+<p>Service meshes manage internal service-to-service communication, providing security, observability, and resilience inside the system.</p>
+</li>
+<li>
+<p>API gateways typically operate at Layer 7 and are ideal for handling HTTP-based, client-facing traffic.</p>
+</li>
+<li>
+<p>Service meshes operate at both Layer 4 and Layer 7, supporting a wider range of protocols and communication patterns.</p>
+</li>
+<li>
+<p>API gateways centralize authentication, rate limiting, caching, and routing for external clients.</p>
+</li>
+<li>
+<p>Service meshes decentralize communication control using sidecars, enabling encryption, retries, tracing, and access policies without changing app code.</p>
+</li>
+<li>
+<p>API gateways simplify client interaction, enable API versioning, and provide developer portals and analytics for productized APIs.</p>
+</li>
+<li>
+<p>Service meshes enforce zero-trust security through mTLS and automate routing and resilience across internal service calls.</p>
+</li>
+<li>
+<p>API gateways are best suited for managing ingress traffic from web, mobile, or third-party integrations.</p>
+</li>
+<li>
+<p>Service meshes are ideal for complex, dynamic microservice environments where internal service interactions need reliability and visibility.</p>
+</li>
+<li>
+<p>The two are not mutually exclusive. Gateways and meshes complement each other when layered properly.</p>
+</li>
+<li>
+<p>In a combined setup, the API gateway handles external traffic at the edge, while the mesh secures and manages communication within the cluster.</p>
+</li>
+<li>
+<p>Treating API gateways and service meshes as interchangeable leads to architectural mistakes. Each has a distinct role and strength.</p>
+</li>
+<li>
+<p>Mature systems benefit from using both, creating a secure, observable, and adaptable communication layer from edge to core.</p>
+</li>
+</ul></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-121" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#what-is-an-api-gateway" data-for="what-is-an-api-gateway">What is an API Gateway?</a></li><li class="depth-0"><a href="#what-is-a-service-mesh" data-for="what-is-a-service-mesh">What is a Service Mesh?</a></li><li class="depth-0"><a href="#key-differences-deployment-scope-and-use-cases" data-for="key-differences-deployment-scope-and-use-cases">Key Differences: Deployment, Scope, and Use Cases</a></li><li class="depth-1"><a href="#1---deployment-model" data-for="1---deployment-model">1 - Deployment Model</a></li><li class="depth-1"><a href="#2---layer-of-operation" data-for="2---layer-of-operation">2 - Layer of Operation</a></li><li class="depth-1"><a href="#3---scope-of-control" data-for="3---scope-of-control">3 - Scope of Control</a></li><li class="depth-1"><a href="#4---identity-and-trust" data-for="4---identity-and-trust">4 - Identity and Trust</a></li><li class="depth-1"><a href="#5---use-case-breadth" data-for="5---use-case-breadth">5 - Use Case Breadth</a></li><li class="depth-0"><a href="#when-to-use-api-gateway" data-for="when-to-use-api-gateway">When to Use API Gateway?</a></li><li class="depth-1"><a href="#exposing-apis-to-external-consumers-or-internal-teams" data-for="exposing-apis-to-external-consumers-or-internal-teams">Exposing APIs to External Consumers or Internal Teams</a></li><li class="depth-1"><a href="#managing-authentication-authorization-and-rate-limits" data-for="managing-authentication-authorization-and-rate-limits">Managing Authentication, Authorization, and Rate Limits</a></li><li class="depth-1"><a href="#providing-a-consistent-developer-experience" data-for="providing-a-consistent-developer-experience">Providing a Consistent Developer Experience</a></li><li class="depth-1"><a href="#acting-as-a-façade-over-backend-evolution" data-for="acting-as-a-façade-over-backend-evolution">Acting as a Façade Over Backend Evolution</a></li><li class="depth-1"><a href="#handling-diverse-client-types" data-for="handling-diverse-client-types">Handling Diverse Client Types</a></li><li class="depth-0"><a href="#when-to-use-a-service-mesh" data-for="when-to-use-a-service-mesh">When to Use a Service Mesh</a></li><li class="depth-1"><a href="#managing-a-large-number-of-microservices" data-for="managing-a-large-number-of-microservices">Managing a Large Number of Microservices</a></li><li class="depth-1"><a href="#achieving-observability-without-changing-application-code" data-for="achieving-observability-without-changing-application-code">Achieving Observability Without Changing Application Code</a></li><li class="depth-1"><a href="#enforcing-zero-trust-security-internally" data-for="enforcing-zero-trust-security-internally">Enforcing Zero-Trust Security Internally</a></li><li class="depth-1"><a href="#requiring-advanced-traffic-control" data-for="requiring-advanced-traffic-control">Requiring Advanced Traffic Control</a></li><li class="depth-0"><a href="#can-we-use-both-together" data-for="can-we-use-both-together">Can We Use Both Together?</a></li><li class="depth-0"><a href="#summary" data-for="summary">Summary</a></li><li class="overflow-end"></li></ul></div><div class="backlinks"><h3>Backlinks</h3><ul id="list-2" class="overflow"><li><a href="../../Notion-Knowledge/Note" class="internal">Note</a></li><li><a href="../../_moc/MOC-API-Design" class="internal">MOC-API-Design</a></li><li><a href="../../_moc/MOC-Reading-List" class="internal">MOC-Reading-List</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://dangthobach.github.io/">Back to Portfolio</a></li><li><a href="https://github.com/dangthobach">GitHub</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../postscript.js" type="module" data-persist="true"></script></html>

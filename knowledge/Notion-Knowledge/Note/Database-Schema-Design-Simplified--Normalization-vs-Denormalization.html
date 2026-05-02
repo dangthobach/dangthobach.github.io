@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>Database Schema Design Simplified- Normalization vs Denormalization</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="Dang Tho Bach's Knowledge Base"/><meta property="og:title" content="Database Schema Design Simplified- Normalization vs Denormalization"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="Database Schema Design Simplified- Normalization vs Denormalization"/><meta name="twitter:description" content="Database schema design plays a crucial role in determining how quickly queries run, how easily features are implemented, and how well things perform at scale."/><meta property="og:description" content="Database schema design plays a crucial role in determining how quickly queries run, how easily features are implemented, and how well things perform at scale."/><meta property="og:image:alt" content="Database schema design plays a crucial role in determining how quickly queries run, how easily features are implemented, and how well things perform at scale."/><meta property="twitter:domain" content="dangthobach.github.io/knowledge"/><meta property="og:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Database-Schema-Design-Simplified--Normalization-vs-Denormalization"/><meta property="twitter:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Database-Schema-Design-Simplified--Normalization-vs-Denormalization"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="Database schema design plays a crucial role in determining how quickly queries run, how easily features are implemented, and how well things perform at scale."/><meta name="generator" content="Quartz"/><link href="../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiL2hvbWUvcnVubmVyL3dvcmsvZGFuZ3Rob2JhY2guZ2l0aHViLmlvL2Rhbmd0aG9iYWNoLmdpdGh1Yi5pby9xdWFydHovcXVhcnR6L2NvbXBvbmVudHMvc3R5bGVzIiwic291cmNlcyI6WyJtZXJtYWlkLmlubGluZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFHRjtFQUNFOzs7QUFLRjtFQUNFO0VBQ0E7OztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTs7QUFJRjtFQUNFO0VBQ0E7RUFDQSIsInNvdXJjZXNDb250ZW50IjpbIi5leHBhbmQtYnV0dG9uIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbG9hdDogcmlnaHQ7XG4gIHBhZGRpbmc6IDAuNHJlbTtcbiAgbWFyZ2luOiAwLjNyZW07XG4gIHJpZ2h0OiAwOyAvLyBOT1RFOiByaWdodCB3aWxsIGJlIHNldCBpbiBtZXJtYWlkLmlubGluZS50c1xuICBjb2xvcjogdmFyKC0tZ3JheSk7XG4gIGJvcmRlci1jb2xvcjogdmFyKC0tZGFyayk7XG4gIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgYm9yZGVyOiAxcHggc29saWQ7XG4gIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgb3BhY2l0eTogMDtcbiAgdHJhbnNpdGlvbjogMC4ycztcblxuICAmID4gc3ZnIHtcbiAgICBmaWxsOiB2YXIoLS1saWdodCk7XG4gICAgZmlsdGVyOiBjb250cmFzdCgwLjMpO1xuICB9XG5cbiAgJjpob3ZlciB7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIGJvcmRlci1jb2xvcjogdmFyKC0tc2Vjb25kYXJ5KTtcbiAgfVxuXG4gICY6Zm9jdXMge1xuICAgIG91dGxpbmU6IDA7XG4gIH1cbn1cblxucHJlIHtcbiAgJjpob3ZlciA+IC5leHBhbmQtYnV0dG9uIHtcbiAgICBvcGFjaXR5OiAxO1xuICAgIHRyYW5zaXRpb246IDAuMnM7XG4gIH1cbn1cblxuI21lcm1haWQtY29udGFpbmVyIHtcbiAgcG9zaXRpb246IGZpeGVkO1xuICBjb250YWluOiBsYXlvdXQ7XG4gIHotaW5kZXg6IDk5OTtcbiAgbGVmdDogMDtcbiAgdG9wOiAwO1xuICB3aWR0aDogMTAwdnc7XG4gIGhlaWdodDogMTAwdmg7XG4gIG92ZXJmbG93OiBoaWRkZW47XG4gIGRpc3BsYXk6IG5vbmU7XG4gIGJhY2tkcm9wLWZpbHRlcjogYmx1cig0cHgpO1xuICBiYWNrZ3JvdW5kOiByZ2JhKDAsIDAsIDAsIDAuNSk7XG5cbiAgJi5hY3RpdmUge1xuICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgfVxuXG4gICYgPiAjbWVybWFpZC1zcGFjZSB7XG4gICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gICAgYm9yZGVyLXJhZGl1czogNXB4O1xuICAgIHBvc2l0aW9uOiBmaXhlZDtcbiAgICB0b3A6IDUwJTtcbiAgICBsZWZ0OiA1MCU7XG4gICAgdHJhbnNmb3JtOiB0cmFuc2xhdGUoLTUwJSwgLTUwJSk7XG4gICAgaGVpZ2h0OiA4MHZoO1xuICAgIHdpZHRoOiA4MHZ3O1xuICAgIG92ZXJmbG93OiBoaWRkZW47XG5cbiAgICAmID4gLm1lcm1haWQtY29udGVudCB7XG4gICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgICB0cmFuc2Zvcm0tb3JpZ2luOiAwIDA7XG4gICAgICB0cmFuc2l0aW9uOiB0cmFuc2Zvcm0gMC4xcyBlYXNlO1xuICAgICAgb3ZlcmZsb3c6IHZpc2libGU7XG4gICAgICBtaW4taGVpZ2h0OiAyMDBweDtcbiAgICAgIG1pbi13aWR0aDogMjAwcHg7XG5cbiAgICAgIHByZSB7XG4gICAgICAgIG1hcmdpbjogMDtcbiAgICAgICAgYm9yZGVyOiBub25lO1xuICAgICAgfVxuXG4gICAgICBzdmcge1xuICAgICAgICBtYXgtd2lkdGg6IG5vbmU7XG4gICAgICAgIGhlaWdodDogYXV0bztcbiAgICAgIH1cbiAgICB9XG5cbiAgICAmID4gLm1lcm1haWQtY29udHJvbHMge1xuICAgICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgICAgYm90dG9tOiAyMHB4O1xuICAgICAgcmlnaHQ6IDIwcHg7XG4gICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgZ2FwOiA4cHg7XG4gICAgICBwYWRkaW5nOiA4cHg7XG4gICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgYm9yZGVyLXJhZGl1czogNnB4O1xuICAgICAgYm94LXNoYWRvdzogMCAycHggNHB4IHJnYmEoMCwgMCwgMCwgMC4xKTtcbiAgICAgIHotaW5kZXg6IDI7XG5cbiAgICAgIC5tZXJtYWlkLWNvbnRyb2wtYnV0dG9uIHtcbiAgICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgIHdpZHRoOiAzMnB4O1xuICAgICAgICBoZWlnaHQ6IDMycHg7XG4gICAgICAgIHBhZGRpbmc6IDA7XG4gICAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgICAgY29sb3I6IHZhcigtLWRhcmspO1xuICAgICAgICBib3JkZXItcmFkaXVzOiA0cHg7XG4gICAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICAgICAgZm9udC1zaXplOiAxNnB4O1xuICAgICAgICBmb250LWZhbWlseTogdmFyKC0tYm9keUZvbnQpO1xuICAgICAgICB0cmFuc2l0aW9uOiBhbGwgMC4ycyBlYXNlO1xuXG4gICAgICAgICY6aG92ZXIge1xuICAgICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIH1cblxuICAgICAgICAmOmFjdGl2ZSB7XG4gICAgICAgICAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKDFweCk7XG4gICAgICAgIH1cblxuICAgICAgICAvLyBTdHlsZSB0aGUgcmVzZXQgYnV0dG9uIGRpZmZlcmVudGx5XG4gICAgICAgICY6bnRoLWNoaWxkKDIpIHtcbiAgICAgICAgICB3aWR0aDogYXV0bztcbiAgICAgICAgICBwYWRkaW5nOiAwIDEycHg7XG4gICAgICAgICAgZm9udC1zaXplOiAxNHB4O1xuICAgICAgICB9XG4gICAgICB9XG4gICAgfVxuICB9XG59XG4iXX0= */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://dangthobach.github.io/knowledge/index.xml"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Database-Schema-Design-Simplified--Normalization-vs-Denormalization-og-image.webp"/><meta property="og:image:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Database-Schema-Design-Simplified--Normalization-vs-Denormalization-og-image.webp"/><meta name="twitter:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Database-Schema-Design-Simplified--Normalization-vs-Denormalization-og-image.webp"/><meta property="og:image:type" content="image/.webp"/></head><body data-slug="Notion-Knowledge/Note/Database-Schema-Design-Simplified--Normalization-vs-Denormalization"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../..">Dang Tho Bach's Knowledge Base</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-315"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-315" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/">Notion Knowledge</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/Note/">Note</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>Database Schema Design Simplified  Normalization vs Denormalization</a></div></nav><h1 class="article-title">Database Schema Design Simplified- Normalization vs Denormalization</h1><p show-comma="true" class="content-meta"><time datetime="2026-05-02T04:58:37.000Z">May 02, 2026</time><span>17 min read</span></p></div></div><article class="popover-hint"><p>Database schema design plays a crucial role in determining how quickly queries run, how easily features are implemented, and how well things perform at scale. Schema design is never static. What works at 10K users might collapse at 10 million. The best architects revisit schema choices, adapting structure to scale, shape, and current system goals.</p>
+<p>Done right, schema design can become a great asset for the system. It accelerates product velocity, reduces data duplication debt, and shields teams from late-stage refactors. Done wrong, it bottlenecks everything: performance, evolution, and sometimes entire features.</p>
+<p>Every engineering team hits the same fork in the road: normalize the schema for clean structure and consistency, or denormalize for speed and simplicity. The wrong choice doesn’t necessarily cause immediate issues. However, problems creep in through slow queries, fragile migrations, and data bugs that surface months later during a traffic spike or product pivot.</p>
+<p>In truth, normalization and denormalization aren’t rival approaches, but just tools to get the job done. Each solves a different kind of problem. Normalization focuses on data integrity, minimal redundancy, and long-term maintainability. Denormalization prioritizes read efficiency, simplicity of access, and performance under load.</p>
+<p>In this article, we’ll look into both of them in detail. We’ll start with the foundations: normal forms and how they shape normalized schemas. We will then explore denormalization and the common strategies for implementing it. From there, we will map the trade-offs between normalization and denormalization</p>
+<p>The goal isn’t to declare one approach as the winner. It’s to understand their mechanics, consequences, and ideal use cases.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!U2WP!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fcb8b771f-baa7-4504-ae79-4aa69adf0f5a_2250x2624.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!U2WP!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fcb8b771f-baa7-4504-ae79-4aa69adf0f5a_2250x2624.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h2 id="foundations-of-schema-design"><strong>Foundations of Schema Design</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#foundations-of-schema-design" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Schema design sets the foundation for how a system stores, relates, and retrieves data. Let’s understand a few key aspects about it in detail.</p>
+<h3 id="what-is-schema-design"><strong>What Is Schema Design?</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#what-is-schema-design" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Schema design is the structural blueprint of a relational database.</p>
+<p>It defines what tables exist, how they relate to each other, and what rules govern their data.</p>
+<p>A well-designed schema enforces integrity, reduces duplication, and enables efficient querying. The best schema designs reflect both the business domain and the access patterns of the application.</p>
+<h3 id="the-role-of-entity-relationship-modeling"><strong>The Role of Entity-Relationship Modeling</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#the-role-of-entity-relationship-modeling" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Before defining tables, schema design typically starts with Entity-Relationship (ER) modeling.</p>
+<p>This high-level design process maps out entities (real-world objects or concepts), their attributes (data fields), and the relationships between them.</p>
+<p>ER models help clarify cardinality (one-to-many, many-to-many) and participation constraints (mandatory vs. optional relationships). These details drive the eventual table structure and foreign key decisions. Most importantly, ER modeling sets the stage for normalization by identifying the core units of meaning in the data model.</p>
+<h3 id="logical-vs-physical-schema"><strong>Logical vs. Physical Schema</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#logical-vs-physical-schema" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The logical schema defines the data model at a conceptual level (tables, columns, keys, and relationships) without worrying about how the database engine will implement it. The physical schema, on the other hand, involves indexes, partitioning strategies, storage engines, and disk layout.</p>
+<p>That separation matters.</p>
+<p>A schema might look clean on paper, but perform poorly in production. Performance tuning often begins with the logical schema, but ends in the physical layer. Understanding both is critical when navigating trade-offs between normalization and denormalization later in the stack. For this article, we’ll stay in the logical space.</p>
+<h2 id="normalization"><strong>Normalization</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#normalization" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Normalization sits at the heart of relational database design. It’s a methodical process that shapes how data is structured, stored, and maintained.</p>
+<p>At its core, normalization aims to eliminate data redundancy. Storing the same information in multiple places might seem convenient at first, but it invites inconsistencies and increases storage needs. A normalized schema stores each piece of information exactly once, then references it wherever needed.</p>
+<p>The second goal is to prevent update anomalies. Without normalization, modifying a single data point (like changing a product name or a user email) might require updating multiple rows in different tables. Miss one, and the data becomes inconsistent. Normalization ensures that updates propagate correctly and predictably.</p>
+<p>Finally, normalization enforces logical data dependencies. It ensures that every column in a table relates directly to the primary key, not indirectly through some unrelated field. This clarity makes the data model easier to reason about, test, and evolve.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!eYU2!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Ff84d5d17-3953-4961-a816-a61c5c047c88_2832x1968.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!eYU2!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Ff84d5d17-3953-4961-a816-a61c5c047c88_2832x1968.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>In short, normalization brings structure. When applied correctly, normalization makes schemas lean, predictable, and resilient to change. When ignored or misused, it can lead to bloated tables, hidden dependencies, and a maintenance nightmare.</p>
+<h3 id="the-normal-forms"><strong>The Normal Forms</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#the-normal-forms" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Normal forms are a set of rules used to improve database design. Each form targets a specific kind of redundancy or anomaly.</p>
+<p>Let’s look at different normal forms with examples.</p>
+<h3 id="1---first-normal-form-1nf"><strong>1 - First Normal Form (1NF)</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1---first-normal-form-1nf" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>1NF requires that:</p>
+<ul>
+<li>
+<p>Each column contains a single, atomic value.</p>
+</li>
+<li>
+<p>No column contains a set, list, or repeating group. In other words, each column in a table must contain only one value in a cell. For example, a value like “productA, productB” in one column violates the first normal form.</p>
+</li>
+</ul>
+<p>Consider a raw orders table as shown in the diagram below.</p>
+<p>The problem here is clear. Multiple products live in separate columns. This design violates 1NF because it contains multiple columns (Product1, Product2, and Product3) that refer to the same type of data. To fix it, break out each product into a separate row as shown in the diagram below:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!2PYq!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fdbd43815-0718-45ad-92f4-71d1e463a9ef_2814x1800.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!2PYq!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fdbd43815-0718-45ad-92f4-71d1e463a9ef_2814x1800.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Now the table is in 1NF. Each column holds a single value, and the product data is no longer spread across multiple fields.</p>
+<h3 id="2---second-normal-form-2nf"><strong>2 - Second Normal Form (2NF)</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2---second-normal-form-2nf" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>2NF builds on 1NF by requiring that all non-key columns depend on the entire primary key, not just part of it. In other words, it eliminates partial dependencies.</p>
+<p>Assume the primary key here is a composite of (OrderID + Product) in the current structure. In that case, columns like CustomerName and CustomerEmail depend only on OrderID, not the full key. That’s a partial dependency.</p>
+<p>To adhere to 2NF, split the data into two tables as shown in the diagram below:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!BxMW!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F595209b9-96da-4ce2-a692-7ae297466edc_2814x1800.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!BxMW!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F595209b9-96da-4ce2-a692-7ae297466edc_2814x1800.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Now, every non-key column in each table depends fully on the primary key. The schema is in 2NF.</p>
+<h3 id="3---third-normal-form-3nf"><strong>3 - Third Normal Form (3NF)</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3---third-normal-form-3nf" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The third normal form is a key concept of database normalization. 3NF eliminates transitive dependencies when a non-key column depends on another non-key column.</p>
+<p>Let’s say the system adds a Region column inferred from the email domain.  Here, Region is indirectly dependent on CustomerEmail and not directly on OrderID. That’s a transitive dependency.</p>
+<p>To bring this into 3NF, break the customer information into a separate table as shown in the diagram below:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!heew!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F92ca22cd-4411-4655-bfdc-989ddc089a33_3348x1600.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!heew!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F92ca22cd-4411-4655-bfdc-989ddc089a33_3348x1600.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Now, each non-key column depends only on the primary key in the respective table. The schema satisfies 3NF.</p>
+<h3 id="4---boyce-codd-normal-form-bcnf"><strong>4 - Boyce-Codd Normal Form (BCNF)</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4---boyce-codd-normal-form-bcnf" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>BCNF addresses a rare edge case where 3NF passes, but anomalies still exist due to overlapping candidate keys.</p>
+<p>Imagine a table where each row represents a course being taught in a specific room. It looks something like this:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!aVXb!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fd5b2643c-80cf-4d6d-9f8f-8d52a0d09faf_1926x1260.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!aVXb!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fd5b2643c-80cf-4d6d-9f8f-8d52a0d09faf_1926x1260.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Now, based on how this system works, there are two facts to know:</p>
+<ul>
+<li>
+<p>Each course is always taught by the same instructor, no matter which room it’s scheduled in. For example, CS101 is always taught by Dr Adams, whether it happens in Room A or Room B.</p>
+</li>
+<li>
+<p>Each room can only be used for one course at a time. So if Room A is booked at a certain time, it can only be used for one course in that slot (for example, CS101).</p>
+</li>
+</ul>
+<p>In other words, there are two key relationships here:</p>
+<ul>
+<li>
+<p>If the Course ID is known, the Instructor can be looked up. In other words, the identity of the course fully determines which instructor is teaching it.</p>
+</li>
+<li>
+<p>If the Room Number is known (during a specific time), the Course ID being taught there can be determined. That is, the room tells us which course is being taught in it.</p>
+</li>
+</ul>
+<p>At first glance, this might seem fine. But imagine what happens if someone updates the instructor for CS101 in only one of the rows and forgets the other. Suddenly, CS101 appears to be taught by two different people.</p>
+<p>This is because the Instructor depends only on the Course ID, not on the combination of the Course ID and the Room Number. Therefore, storing the instructor repeatedly across multiple rows opens the door for inconsistencies. The moment the same course shows up in different rooms, there’s a risk that someone might assign different instructors by mistake.</p>
+<p>This violates BCNF.</p>
+<p>In relational design terms, the primary key of this table is a combination of Course ID and Room Number because each row is meant to describe a specific pairing of a course in a room. However, the problem is that one of the columns, Instructor, doesn’t depend on both of those values. It depends only on the Course ID.</p>
+<p>That’s a mismatch.</p>
+<p>BCNF says that if a column depends on some other column, then that “other column” must be enough to identify each row on its own uniquely. In other words, it must be a key.</p>
+<p>In this case, Course ID determines the Instructor, but Course ID is not the table’s key. The key is the Course ID and Room Number. Therefore, we’ve a dependency that doesn’t align with the key.</p>
+<p>The fix is to split the table into two separate ones that reflect the actual relationships in the data. See the diagram below, where we have two tables: Course Instructor and Course Room Mapping. The Course Room Mapping table has R101 (Room A) and R102 (Room B) to map the Course ID with the time slot.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!ERK5!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F3a46ff53-d617-46b5-a476-dbecd4acc20a_2402x1260.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!ERK5!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F3a46ff53-d617-46b5-a476-dbecd4acc20a_2402x1260.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h3 id="5---fourth-normal-form-4nf"><strong>5 - Fourth Normal Form (4NF)</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5---fourth-normal-form-4nf" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>4NF comes into play when a single table tries to represent two or more independent one-to-many relationships for the same entity. It ends up generating all possible combinations, resulting in a Cartesian explosion.</p>
+<p>For example, let’s say there is an employee E001 who knows two skills: Java and Python. Also, E001 is working on two projects: ProjectX and ProjectY.</p>
+<p><em>How many rows are needed to represent all this in one table with three columns: EmployeeID, Skill, and Project?</em></p>
+<p>The answer is 4 rows because the table doesn’t know whether a skill applies to a specific project or not. Therefore, it assumes every skill is used in every project, resulting in the Cartesian explosion. The situation only gets worse with more skills and projects.</p>
+<p>This structure seems to suggest that an employee is using Java on ProjectY and Python on ProjectX. However, it may not be true, and the company never recorded which skill is used on which project, and doesn’t even care. However, the table is implying relationships that may not exist, which may be incorrect and also a waste of storage.</p>
+<p>The skills of an employee and the project an employee is working on are two independent dimensions. And hence, it’s better to model them in independent tables.</p>
+<p>See the diagram below:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!qRiy!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F36329683-1fa2-4575-a656-328e1c68f622_2344x2094.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!qRiy!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F36329683-1fa2-4575-a656-328e1c68f622_2344x2094.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>This is the 4NF approach that eliminates redundant combinations from multi-valued dependencies.</p>
+<h3 id="takeaway"><strong>Takeaway</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#takeaway" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The first three forms (1NF, 2NF, and 3NF) handle 95% of real-world use cases.</p>
+<p>They ensure data is stored logically, with minimal redundancy and maximum integrity. BCNF adds guardrails for edge cases, while 4NF and other higher normal forms deal with complex many-to-many and join-heavy designs.</p>
+<h2 id="denormalization"><strong>Denormalization</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#denormalization" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Denormalization flips the principles of normalization on their head.</p>
+<p>While normalization brings structure and integrity, it often comes at a performance cost. Denormalization introduces controlled redundancy to reduce that cost, especially in read-heavy systems where query speed matters more than strict normalization rules.</p>
+<p>Normalized schemas often require multiple joins to fetch a complete data object. This works fine at a low scale. But as traffic grows, or query complexity deepens, those joins can become bottlenecks.</p>
+<p>Consider a product dashboard that pulls:</p>
+<ul>
+<li>
+<p>User details from a Users table.</p>
+</li>
+<li>
+<p>Product data from Products.</p>
+</li>
+<li>
+<p>Order info from Orders.</p>
+</li>
+<li>
+<p>Discount info from a Promotions table.</p>
+</li>
+</ul>
+<p>A normalized schema requires four joins to assemble the view. At scale, these joins hit disk, strain indexes, and increase query latency.</p>
+<p>Denormalization addresses this by pre-joining or duplicating data. It puts everything the application needs into a single place, so the database has to do less work during reads. In other words, denormalization trades write complexity for read performance.</p>
+<h3 id="common-denormalization-techniques"><strong>Common Denormalization Techniques</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#common-denormalization-techniques" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Denormalization isn’t one-size-fits-all.</p>
+<p>It takes different forms depending on access patterns, performance goals, and database constraints.</p>
+<p>Below are common patterns used in production systems:</p>
+<h3 id="1---merging-related-tables"><strong>1 - Merging Related Tables</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1---merging-related-tables" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The simplest approach is to combine two frequently joined tables into one. For example, if every order needs customer data, consider merging Orders and Customers.</p>
+<p>See the diagram below for reference:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!GAFj!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F76d1984c-8574-4664-8c3e-4c7d158f16a3_3162x1684.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!GAFj!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F76d1984c-8574-4664-8c3e-4c7d158f16a3_3162x1684.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Now, reading an order no longer requires a join. But updating a customer’s name means touching every order they’ve placed.</p>
+<p>The trade-off is that this approach is great for read speed. However, it can be problematic if customer details change frequently.</p>
+<h3 id="2---add-redundant-columns"><strong>2 - Add Redundant Columns</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2---add-redundant-columns" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Sometimes, full merging isn’t needed, and just selective duplication is sufficient.</p>
+<p>For example, storing ProductName in the OrderItems table, even though Products already holds that information.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!EjGP!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F392c3f7f-ba79-4d3a-a986-79f42cb7b1c5_2552x1578.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!EjGP!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F392c3f7f-ba79-4d3a-a986-79f42cb7b1c5_2552x1578.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>This avoids a join at query time, especially useful in reporting or data export scenarios. However, if product names change (for example, due to branding), every reference needs an update.</p>
+<p>The trade-off here is faster reads, but at the risk of stale or inconsistent data.</p>
+<h3 id="3---creating-summary-tables"><strong>3 - Creating Summary Tables</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3---creating-summary-tables" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Summary tables pre-aggregate data to avoid expensive computations during reads.</p>
+<p>This structure is ideal for dashboards and analytics tools. Updates are handled via scheduled jobs, event triggers, or batch pipelines.</p>
+<p>The trade-off here is fast queries at the cost of freshness. However, it needs orchestration to stay accurate.</p>
+<h3 id="4---using-materialized-views"><strong>4 - Using Materialized Views</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4---using-materialized-views" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Materialized views store the output of a query, not just the query itself. They’re maintained by the database and can be refreshed periodically or incrementally.</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>CREATE MATERIALIZED VIEW TopProducts AS</span></span>
+<span data-line><span>SELECT ProductID, COUNT(*) AS OrderCount</span></span>
+<span data-line><span>FROM OrderItems</span></span>
+<span data-line><span>GROUP BY ProductID;</span></span></code></pre></figure>
+<p>Now, getting top-selling products becomes a simple “select” query. Most relational databases (for example, PostgreSQL, Oracle) support this.</p>
+<p>See the diagram below that shows the basic concept of a materialized view with another example where a specific value can be calculated and stored for quick and efficient queries:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!fKIl!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F99cb48d8-bd6f-413a-af3b-3f044c866950_3162x2236.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!fKIl!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F99cb48d8-bd6f-413a-af3b-3f044c866950_3162x2236.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>The trade-off is that materialized views simplify queries and offload computation, but they need careful refresh logic. Stale views can mislead consumers.</p>
+<h2 id="trade-offs-between-normalization-and-denormalization"><strong>Trade-Offs Between Normalization and Denormalization</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#trade-offs-between-normalization-and-denormalization" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Let’s look at some of the key trade-offs involved when choosing between normalization and denormalization.</p>
+<h3 id="performance-considerations"><strong>Performance Considerations</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#performance-considerations" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Normalized schemas shine when it comes to write performance and data integrity. Since data lives in one place, insertions and updates are efficient and safe. There’s no need to write the same value into multiple tables or worry about consistency across redundant fields.</p>
+<p>However, reading normalized data often involves multiple joins, especially in feature-rich applications. That means:</p>
+<ul>
+<li>
+<p>More CPU cycles per query,</p>
+</li>
+<li>
+<p>More disk seeks for scattered rows,</p>
+</li>
+<li>
+<p>And more room for subtle performance regressions as the data grows.</p>
+</li>
+</ul>
+<p>Denormalized schemas flip the equation. By duplicating data or storing pre-joined structures, they eliminate joins at query time, dramatically reducing response times. This is especially useful for dashboards, search APIs, and mobile clients where latency is king.</p>
+<h3 id="maintenance-complexity"><strong>Maintenance Complexity</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#maintenance-complexity" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Normalized data models are easier to evolve and maintain. Changing a data attribute (like renaming a product or updating a user’s profile) happens in one place. Indexes and constraints stay lean. Also, refactoring a schema doesn’t involve hunting down duplicated logic or scattered dependencies.</p>
+<p>Denormalized schemas are harder to keep consistent. Data duplication means more places to update. Every new sync path introduces the risk of bugs, missed edge cases, or stale values leaking into production.</p>
+<p>In practice, keeping denormalized data clean requires:</p>
+<ul>
+<li>
+<p>Custom update logic.</p>
+</li>
+<li>
+<p>Scheduled jobs or triggers.</p>
+</li>
+<li>
+<p>Change-data-capture pipelines.</p>
+</li>
+</ul>
+<p>All of these add engineering overhead and failure points.</p>
+<h3 id="storage-and-redundancy"><strong>Storage and Redundancy</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#storage-and-redundancy" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Normalized schemas are space-efficient. Each data item is stored once, indexed as needed, and referenced by keys. In large-scale systems with high write volumes, like messaging apps or transaction logs, this efficiency compounds quickly.</p>
+<p>Denormalized schemas utilize more space by design. Redundant fields, summary tables, and precomputed joins all inflate disk usage. However, in read-optimized environments like OLAP systems or data warehouses, that trade-off is often acceptable.</p>
+<h3 id="use-case-driven-decision-making"><strong>Use-Case-Driven Decision Making</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#use-case-driven-decision-making" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>There’s no universal “correct” level of normalization. It depends entirely on how the system behaves.</p>
+<ul>
+<li>
+<p>OLTP systems (such as banking, e-commerce, and inventory management) deal with frequent writes, strict consistency, and transactional integrity. Here, normalization works best.</p>
+</li>
+<li>
+<p>OLAP systems (such as reporting dashboards, customer insights, and event analytics) prioritize fast reads and aggregations across large datasets. Denormalization, summaries, and precomputed joins help them scale.</p>
+</li>
+</ul>
+<p>In many cases, the answer lies somewhere in between. Teams normalize the core schema, then selectively denormalize read-critical paths either manually or through caching layers, materialized views, or downstream data platforms.</p>
+<h2 id="best-practices-for-developers"><strong>Best Practices For Developers</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#best-practices-for-developers" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Schema design isn’t a one-and-done task, but a continuous process. Workloads shift, access patterns evolve, and what worked at launch might struggle under growth.</p>
+<p>Some best practices that can help developers are as follows:</p>
+<h3 id="start-with-normalization-denormalize-later"><strong>Start with Normalization, Denormalize Later</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#start-with-normalization-denormalize-later" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Start with a clean, normalized schema. It clarifies intent, enforces consistency, and makes the data model easier to reason about. Early-stage systems benefit from this clarity, especially when the domain is still evolving or when correctness matters more than speed.</p>
+<p>Denormalize only in response to specific requirements. If a specific read path becomes a bottleneck and joins become costly, denormalize that slice of the model.</p>
+<h3 id="monitor-query-patterns-and-workload-behavior"><strong>Monitor Query Patterns and Workload Behavior</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#monitor-query-patterns-and-workload-behavior" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Schema design without observability is equivalent to guesswork. Use query logs, slow query analyzers, APM tools, and database profilers to spot the real hotspots.</p>
+<p>Look for patterns like:</p>
+<ul>
+<li>
+<p>Frequent joins across the same set of tables</p>
+</li>
+<li>
+<p>High latency on aggregate queries</p>
+</li>
+<li>
+<p>Heavy reads on fields that require lookups or subqueries</p>
+</li>
+</ul>
+<p>Use these signals to validate whether denormalization will improve performance.</p>
+<h3 id="automate-consistency-where-possible"><strong>Automate Consistency Where Possible</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#automate-consistency-where-possible" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Denormalization always introduces the risk of stale or inconsistent data. When choosing to duplicate data across tables or systems, automate consistency as much as possible.</p>
+<p>Some options include:</p>
+<ul>
+<li>
+<p><strong>Triggers:</strong> Use database-level triggers to propagate changes. This is effective for low-frequency updates but hard to maintain at scale.</p>
+</li>
+<li>
+<p><strong>Application logic:</strong> Centralized writes in well-defined service layers that update all relevant tables in sync.</p>
+</li>
+<li>
+<p><strong>Background jobs:</strong> Periodically refresh derived or summary data to correct drift in eventual consistency models.</p>
+</li>
+<li>
+<p><strong>Change Data Capture (CDC):</strong> Stream changes from the source of truth to downstream copies in real-time or near-real-time pipelines.</p>
+</li>
+</ul>
+<h2 id="summary"><strong>Summary</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#summary" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>We’ve now looked at database schema design with special focus on normalization and denormalization in detail.</p>
+<p>Here are the key learning points in brief:</p>
+<ul>
+<li>
+<p>Schema design defines how data is structured, related, and retrieved in a database, impacting performance, maintainability, and correctness.</p>
+</li>
+<li>
+<p>Entity-Relationship (ER) modeling helps identify entities, attributes, and relationships, forming the conceptual basis for table design.</p>
+</li>
+<li>
+<p>Logical schema focuses on data relationships and structure, whereas physical schema deals with how data is stored and optimized for performance.</p>
+</li>
+<li>
+<p>Normalization eliminates redundancy and enforces data integrity by organizing data into logical, dependency-driven forms.</p>
+</li>
+<li>
+<p>First Normal Form (1NF) removes repeating groups and ensures atomic values in each column.</p>
+</li>
+<li>
+<p>Second Normal Form (2NF) removes partial dependencies by ensuring all non-key columns depend on the full primary key.</p>
+</li>
+<li>
+<p>Third Normal Form (3NF) eliminates transitive dependencies, ensuring non-key columns depend only on primary keys.</p>
+</li>
+<li>
+<p>Boyce-Codd Normal Form (BCNF) resolves edge cases involving multiple overlapping candidate keys.</p>
+</li>
+<li>
+<p>Denormalization introduces controlled redundancy to optimize for read-heavy workloads by reducing joins and simplifying queries.</p>
+</li>
+<li>
+<p>Common denormalization techniques include merging tables, duplicating fields, creating summary tables, and using materialized views.</p>
+</li>
+<li>
+<p>Normalized schemas improve write performance and data consistency but often suffer from slower reads due to costly joins.</p>
+</li>
+<li>
+<p>Denormalized schemas optimize for read speed but introduce complexity in writes and data consistency management.</p>
+</li>
+<li>
+<p>Normalized models are easier to maintain, while denormalized ones require tooling or specific logic to keep redundant data accurate.</p>
+</li>
+<li>
+<p>Storage use is leaner in normalized schemas, whereas denormalization trades disk space for performance and developer convenience.</p>
+</li>
+<li>
+<p>OLTP systems favor normalization for consistency. On the other hand, OLAP systems lean on denormalization to serve complex, high-volume reads efficiently.</p>
+</li>
+</ul></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-137" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#foundations-of-schema-design" data-for="foundations-of-schema-design">Foundations of Schema Design</a></li><li class="depth-1"><a href="#what-is-schema-design" data-for="what-is-schema-design">What Is Schema Design?</a></li><li class="depth-1"><a href="#the-role-of-entity-relationship-modeling" data-for="the-role-of-entity-relationship-modeling">The Role of Entity-Relationship Modeling</a></li><li class="depth-1"><a href="#logical-vs-physical-schema" data-for="logical-vs-physical-schema">Logical vs. Physical Schema</a></li><li class="depth-0"><a href="#normalization" data-for="normalization">Normalization</a></li><li class="depth-1"><a href="#the-normal-forms" data-for="the-normal-forms">The Normal Forms</a></li><li class="depth-1"><a href="#1---first-normal-form-1nf" data-for="1---first-normal-form-1nf">1 - First Normal Form (1NF)</a></li><li class="depth-1"><a href="#2---second-normal-form-2nf" data-for="2---second-normal-form-2nf">2 - Second Normal Form (2NF)</a></li><li class="depth-1"><a href="#3---third-normal-form-3nf" data-for="3---third-normal-form-3nf">3 - Third Normal Form (3NF)</a></li><li class="depth-1"><a href="#4---boyce-codd-normal-form-bcnf" data-for="4---boyce-codd-normal-form-bcnf">4 - Boyce-Codd Normal Form (BCNF)</a></li><li class="depth-1"><a href="#5---fourth-normal-form-4nf" data-for="5---fourth-normal-form-4nf">5 - Fourth Normal Form (4NF)</a></li><li class="depth-1"><a href="#takeaway" data-for="takeaway">Takeaway</a></li><li class="depth-0"><a href="#denormalization" data-for="denormalization">Denormalization</a></li><li class="depth-1"><a href="#common-denormalization-techniques" data-for="common-denormalization-techniques">Common Denormalization Techniques</a></li><li class="depth-1"><a href="#1---merging-related-tables" data-for="1---merging-related-tables">1 - Merging Related Tables</a></li><li class="depth-1"><a href="#2---add-redundant-columns" data-for="2---add-redundant-columns">2 - Add Redundant Columns</a></li><li class="depth-1"><a href="#3---creating-summary-tables" data-for="3---creating-summary-tables">3 - Creating Summary Tables</a></li><li class="depth-1"><a href="#4---using-materialized-views" data-for="4---using-materialized-views">4 - Using Materialized Views</a></li><li class="depth-0"><a href="#trade-offs-between-normalization-and-denormalization" data-for="trade-offs-between-normalization-and-denormalization">Trade-Offs Between Normalization and Denormalization</a></li><li class="depth-1"><a href="#performance-considerations" data-for="performance-considerations">Performance Considerations</a></li><li class="depth-1"><a href="#maintenance-complexity" data-for="maintenance-complexity">Maintenance Complexity</a></li><li class="depth-1"><a href="#storage-and-redundancy" data-for="storage-and-redundancy">Storage and Redundancy</a></li><li class="depth-1"><a href="#use-case-driven-decision-making" data-for="use-case-driven-decision-making">Use-Case-Driven Decision Making</a></li><li class="depth-0"><a href="#best-practices-for-developers" data-for="best-practices-for-developers">Best Practices For Developers</a></li><li class="depth-1"><a href="#start-with-normalization-denormalize-later" data-for="start-with-normalization-denormalize-later">Start with Normalization, Denormalize Later</a></li><li class="depth-1"><a href="#monitor-query-patterns-and-workload-behavior" data-for="monitor-query-patterns-and-workload-behavior">Monitor Query Patterns and Workload Behavior</a></li><li class="depth-1"><a href="#automate-consistency-where-possible" data-for="automate-consistency-where-possible">Automate Consistency Where Possible</a></li><li class="depth-0"><a href="#summary" data-for="summary">Summary</a></li><li class="overflow-end"></li></ul></div><div class="backlinks"><h3>Backlinks</h3><ul id="list-2" class="overflow"><li><a href="../../Notion-Knowledge/Note" class="internal">Note</a></li><li><a href="../../_moc/MOC-Database" class="internal">MOC-Database</a></li><li><a href="../../_moc/MOC-Reading-List" class="internal">MOC-Reading-List</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://dangthobach.github.io/">Back to Portfolio</a></li><li><a href="https://github.com/dangthobach">GitHub</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../postscript.js" type="module" data-persist="true"></script></html>

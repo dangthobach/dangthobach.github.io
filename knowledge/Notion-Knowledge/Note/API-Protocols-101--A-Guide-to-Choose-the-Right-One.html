@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>API Protocols 101- A Guide to Choose the Right One</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="Dang Tho Bach's Knowledge Base"/><meta property="og:title" content="API Protocols 101- A Guide to Choose the Right One"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="API Protocols 101- A Guide to Choose the Right One"/><meta name="twitter:description" content="An API protocol is a set of rules and standards that define how different software applications communicate over a network."/><meta property="og:description" content="An API protocol is a set of rules and standards that define how different software applications communicate over a network."/><meta property="og:image:alt" content="An API protocol is a set of rules and standards that define how different software applications communicate over a network."/><meta property="twitter:domain" content="dangthobach.github.io/knowledge"/><meta property="og:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/API-Protocols-101--A-Guide-to-Choose-the-Right-One"/><meta property="twitter:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/API-Protocols-101--A-Guide-to-Choose-the-Right-One"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="An API protocol is a set of rules and standards that define how different software applications communicate over a network."/><meta name="generator" content="Quartz"/><link href="../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiL2hvbWUvcnVubmVyL3dvcmsvZGFuZ3Rob2JhY2guZ2l0aHViLmlvL2Rhbmd0aG9iYWNoLmdpdGh1Yi5pby9xdWFydHovcXVhcnR6L2NvbXBvbmVudHMvc3R5bGVzIiwic291cmNlcyI6WyJtZXJtYWlkLmlubGluZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFHRjtFQUNFOzs7QUFLRjtFQUNFO0VBQ0E7OztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTs7QUFJRjtFQUNFO0VBQ0E7RUFDQSIsInNvdXJjZXNDb250ZW50IjpbIi5leHBhbmQtYnV0dG9uIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbG9hdDogcmlnaHQ7XG4gIHBhZGRpbmc6IDAuNHJlbTtcbiAgbWFyZ2luOiAwLjNyZW07XG4gIHJpZ2h0OiAwOyAvLyBOT1RFOiByaWdodCB3aWxsIGJlIHNldCBpbiBtZXJtYWlkLmlubGluZS50c1xuICBjb2xvcjogdmFyKC0tZ3JheSk7XG4gIGJvcmRlci1jb2xvcjogdmFyKC0tZGFyayk7XG4gIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgYm9yZGVyOiAxcHggc29saWQ7XG4gIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgb3BhY2l0eTogMDtcbiAgdHJhbnNpdGlvbjogMC4ycztcblxuICAmID4gc3ZnIHtcbiAgICBmaWxsOiB2YXIoLS1saWdodCk7XG4gICAgZmlsdGVyOiBjb250cmFzdCgwLjMpO1xuICB9XG5cbiAgJjpob3ZlciB7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIGJvcmRlci1jb2xvcjogdmFyKC0tc2Vjb25kYXJ5KTtcbiAgfVxuXG4gICY6Zm9jdXMge1xuICAgIG91dGxpbmU6IDA7XG4gIH1cbn1cblxucHJlIHtcbiAgJjpob3ZlciA+IC5leHBhbmQtYnV0dG9uIHtcbiAgICBvcGFjaXR5OiAxO1xuICAgIHRyYW5zaXRpb246IDAuMnM7XG4gIH1cbn1cblxuI21lcm1haWQtY29udGFpbmVyIHtcbiAgcG9zaXRpb246IGZpeGVkO1xuICBjb250YWluOiBsYXlvdXQ7XG4gIHotaW5kZXg6IDk5OTtcbiAgbGVmdDogMDtcbiAgdG9wOiAwO1xuICB3aWR0aDogMTAwdnc7XG4gIGhlaWdodDogMTAwdmg7XG4gIG92ZXJmbG93OiBoaWRkZW47XG4gIGRpc3BsYXk6IG5vbmU7XG4gIGJhY2tkcm9wLWZpbHRlcjogYmx1cig0cHgpO1xuICBiYWNrZ3JvdW5kOiByZ2JhKDAsIDAsIDAsIDAuNSk7XG5cbiAgJi5hY3RpdmUge1xuICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgfVxuXG4gICYgPiAjbWVybWFpZC1zcGFjZSB7XG4gICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gICAgYm9yZGVyLXJhZGl1czogNXB4O1xuICAgIHBvc2l0aW9uOiBmaXhlZDtcbiAgICB0b3A6IDUwJTtcbiAgICBsZWZ0OiA1MCU7XG4gICAgdHJhbnNmb3JtOiB0cmFuc2xhdGUoLTUwJSwgLTUwJSk7XG4gICAgaGVpZ2h0OiA4MHZoO1xuICAgIHdpZHRoOiA4MHZ3O1xuICAgIG92ZXJmbG93OiBoaWRkZW47XG5cbiAgICAmID4gLm1lcm1haWQtY29udGVudCB7XG4gICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgICB0cmFuc2Zvcm0tb3JpZ2luOiAwIDA7XG4gICAgICB0cmFuc2l0aW9uOiB0cmFuc2Zvcm0gMC4xcyBlYXNlO1xuICAgICAgb3ZlcmZsb3c6IHZpc2libGU7XG4gICAgICBtaW4taGVpZ2h0OiAyMDBweDtcbiAgICAgIG1pbi13aWR0aDogMjAwcHg7XG5cbiAgICAgIHByZSB7XG4gICAgICAgIG1hcmdpbjogMDtcbiAgICAgICAgYm9yZGVyOiBub25lO1xuICAgICAgfVxuXG4gICAgICBzdmcge1xuICAgICAgICBtYXgtd2lkdGg6IG5vbmU7XG4gICAgICAgIGhlaWdodDogYXV0bztcbiAgICAgIH1cbiAgICB9XG5cbiAgICAmID4gLm1lcm1haWQtY29udHJvbHMge1xuICAgICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgICAgYm90dG9tOiAyMHB4O1xuICAgICAgcmlnaHQ6IDIwcHg7XG4gICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgZ2FwOiA4cHg7XG4gICAgICBwYWRkaW5nOiA4cHg7XG4gICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgYm9yZGVyLXJhZGl1czogNnB4O1xuICAgICAgYm94LXNoYWRvdzogMCAycHggNHB4IHJnYmEoMCwgMCwgMCwgMC4xKTtcbiAgICAgIHotaW5kZXg6IDI7XG5cbiAgICAgIC5tZXJtYWlkLWNvbnRyb2wtYnV0dG9uIHtcbiAgICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgIHdpZHRoOiAzMnB4O1xuICAgICAgICBoZWlnaHQ6IDMycHg7XG4gICAgICAgIHBhZGRpbmc6IDA7XG4gICAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgICAgY29sb3I6IHZhcigtLWRhcmspO1xuICAgICAgICBib3JkZXItcmFkaXVzOiA0cHg7XG4gICAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICAgICAgZm9udC1zaXplOiAxNnB4O1xuICAgICAgICBmb250LWZhbWlseTogdmFyKC0tYm9keUZvbnQpO1xuICAgICAgICB0cmFuc2l0aW9uOiBhbGwgMC4ycyBlYXNlO1xuXG4gICAgICAgICY6aG92ZXIge1xuICAgICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIH1cblxuICAgICAgICAmOmFjdGl2ZSB7XG4gICAgICAgICAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKDFweCk7XG4gICAgICAgIH1cblxuICAgICAgICAvLyBTdHlsZSB0aGUgcmVzZXQgYnV0dG9uIGRpZmZlcmVudGx5XG4gICAgICAgICY6bnRoLWNoaWxkKDIpIHtcbiAgICAgICAgICB3aWR0aDogYXV0bztcbiAgICAgICAgICBwYWRkaW5nOiAwIDEycHg7XG4gICAgICAgICAgZm9udC1zaXplOiAxNHB4O1xuICAgICAgICB9XG4gICAgICB9XG4gICAgfVxuICB9XG59XG4iXX0= */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://dangthobach.github.io/knowledge/index.xml"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/API-Protocols-101--A-Guide-to-Choose-the-Right-One-og-image.webp"/><meta property="og:image:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/API-Protocols-101--A-Guide-to-Choose-the-Right-One-og-image.webp"/><meta name="twitter:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/API-Protocols-101--A-Guide-to-Choose-the-Right-One-og-image.webp"/><meta property="og:image:type" content="image/.webp"/></head><body data-slug="Notion-Knowledge/Note/API-Protocols-101--A-Guide-to-Choose-the-Right-One"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../..">Dang Tho Bach's Knowledge Base</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-283"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-283" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/">Notion Knowledge</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/Note/">Note</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>API Protocols 101  A Guide to Choose the Right One</a></div></nav><h1 class="article-title">API Protocols 101- A Guide to Choose the Right One</h1><p show-comma="true" class="content-meta"><time datetime="2026-05-02T04:58:37.000Z">May 02, 2026</time><span>16 min read</span></p></div></div><article class="popover-hint"><p>An API protocol is a set of rules and standards that define how different software applications communicate over a network.</p>
+<p>Just like spoken languages help people understand each other, API protocols ensure that software systems can exchange data in a structured and predictable way. These protocols define aspects such as how requests are sent, how responses are formatted, and how errors are handled.</p>
+<p>Over the years, API protocols have evolved alongside software development, shifting from rigid, complex models to more flexible and efficient solutions.</p>
+<p>The right API protocol is critical for performance, security, and scalability. Developers need to consider the following factors:</p>
+<ul>
+<li>
+<p><strong>Performance Needs:</strong> gRPC is faster than REST but requires more setup. WebSockets provide real-time interactions, but SSE might be a simpler alternative for unidirectional updates.</p>
+</li>
+<li>
+<p><strong>Security Considerations:</strong> SOAP offers built-in security (WS-Security) to enforce confidentiality and authentication procedures for SOAP messaging. Webhooks require additional security mechanisms, such as signature validation.</p>
+</li>
+<li>
+<p><strong>Ease of Implementation:</strong> REST is easier to set up than GraphQL, but GraphQL provides more control over data fetching.</p>
+</li>
+<li>
+<p><strong>Scalability:</strong> REST and GraphQL scale well, but gRPC is more efficient for microservices due to its lower latency.</p>
+</li>
+</ul>
+<p>As these factors show, each protocol has specific strengths and weaknesses. In this article, we’ll learn about multiple API protocols and their advantages and disadvantages.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!V5ie!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fad16adef-3082-42bd-ac99-9a569ad2e33b_2250x2624.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!V5ie!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fad16adef-3082-42bd-ac99-9a569ad2e33b_2250x2624.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h2 id="rest"><strong>REST</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#rest" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Representational State Transfer (REST) is one of the most popular protocols for designing networked applications. It relies on a client-server model and uses standard HTTP methods to facilitate communication.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!LWgn!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Ff599ac4d-e378-4315-a940-ebdc18d2792c_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!LWgn!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Ff599ac4d-e378-4315-a940-ebdc18d2792c_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>REST is widely used because of its simplicity, scalability, and statelessness. It is one of the most dominant API protocols in modern web development.</p>
+<p>Unlike traditional protocols like SOAP, which enforce strict message structures, REST is more flexible and resource-oriented. It allows applications to interact with data over the Internet in a predictable and efficient manner.</p>
+<p>As mentioned, REST APIs operate over HTTP and use standard HTTP methods to perform CRUD (Create, Read, Update, Delete) operations on resources. These methods define how the client interacts with the server. The main methods are as follows:</p>
+<ol>
+<li>
+<p><strong>GET</strong>: Retrieves data from a resource. For example: GET /users/123 fetches user data with ID 123.</p>
+</li>
+<li>
+<p><strong>POST</strong>: Creates a new resource. For example: POST /users with a request body containing user information adds a new user.</p>
+</li>
+<li>
+<p><strong>PUT</strong>: Updates an existing resource or creates it if it does not exist. For example: PUT /users/123 updates user 123’s information.</p>
+</li>
+<li>
+<p><strong>DELETE</strong>: Removes a resource. For example: DELETE /users/123 deletes user 123 from the system.</p>
+</li>
+</ol>
+<p>These methods allow RESTful APIs to map operations to URLs, creating a standardized and predictable API structure.</p>
+<p>Some key RESTful principles are as follows:</p>
+<ul>
+<li>
+<p><strong>Statelessness:</strong> Each API request from a client must contain all the necessary information. The server does not store the client state between requests.</p>
+</li>
+<li>
+<p><strong>Client-Server Separation:</strong> The client (frontend) and server (backend) remain independent, allowing separate development, scaling, and updates.</p>
+</li>
+<li>
+<p><strong>Resource-Based Architecture:</strong> Everything in a REST API is treated as a resource, identified by unique URLs.</p>
+</li>
+<li>
+<p><strong>Uniform Interface:</strong> API interactions follow a consistent and predictable structure using standard HTTP methods, URIs, headers, and status codes.</p>
+</li>
+<li>
+<p><strong>Cacheability:</strong> Responses can be cached to reduce server load and improve performance.</p>
+</li>
+</ul>
+<h3 id="advantages-of-rest"><strong>Advantages of REST</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#advantages-of-rest" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The main advantages of REST are as follows:</p>
+<ul>
+<li>
+<p>REST APIs use standard HTTP methods, making them easy to implement and understand.</p>
+</li>
+<li>
+<p>Statelessness ensures that REST APIs can scale horizontally by adding more servers without maintaining session data.</p>
+</li>
+<li>
+<p>REST APIs can be consumed by web apps, mobile apps, IoT devices, and other backend systems, regardless of programming language.</p>
+</li>
+<li>
+<p>REST APIs can leverage caching to improve performance and reduce server load.</p>
+</li>
+<li>
+<p>REST is supported by almost every modern programming language and testing tools.</p>
+</li>
+</ul>
+<h3 id="disadvantages-of-rest"><strong>Disadvantages of REST</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#disadvantages-of-rest" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Despite its strengths, REST is not perfect and comes with certain drawbacks:</p>
+<ul>
+<li>
+<p>REST APIs return fixed data structures, which can lead to over-fetching (getting unnecessary data) or under-fetching (missing required data).</p>
+</li>
+<li>
+<p>REST follows a request-response model, making it inefficient for real-time applications.</p>
+</li>
+<li>
+<p>As an API grows, maintaining a RESTful structure becomes harder.</p>
+</li>
+<li>
+<p>REST APIs use human-readable formats like JSON, which require more parsing and processing time than binary protocols like gRPC’s Protocol Buffers.</p>
+</li>
+</ul>
+<h2 id="soap"><strong>SOAP</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#soap" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>SOAP (Simple Object Access Protocol) is a highly structured, XML-based protocol for exchanging information between applications over a network.</p>
+<p>Unlike REST, which follows an architectural style and uses simple HTTP methods, SOAP is a formal messaging protocol with strict standards for structuring messages, security, and error handling.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!jJRo!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fc992f3da-2329-4709-8627-071c9a2af47b_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!jJRo!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fc992f3da-2329-4709-8627-071c9a2af47b_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>SOAP and REST serve different purposes. SOAP is ideal for high-security, complex transactions (for example, banking and enterprise applications). In contrast, REST is lightweight, flexible, and widely used for web and mobile applications. Over the years, however, REST has seen far greater adoption in the industry.</p>
+<p>SOAP messages are formatted in XML (Extensible Markup Language) and follow a strict structure. A SOAP message consists of:</p>
+<ul>
+<li>
+<p><strong>Envelope</strong>: The root element that defines the entire message.</p>
+</li>
+<li>
+<p><strong>Header</strong>: Optional metadata, often for authentication and security.</p>
+</li>
+<li>
+<p><strong>Body</strong>: Contains the actual request or response data.</p>
+</li>
+<li>
+<p><strong>Fault</strong>: Defines errors and their details if an issue occurs.</p>
+</li>
+</ul>
+<p><a href="https://substackcdn.com/image/fetch/$s_!fH4x!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F67881ebc-af8e-4b8b-aa6d-c89d000f4f87_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!fH4x!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F67881ebc-af8e-4b8b-aa6d-c89d000f4f87_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Here’s an example of a SOAP Request:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot; xmlns:exa=&quot;http://example.com&quot;></span></span>
+<span data-line><span>   &lt;soapenv:Header/></span></span>
+<span data-line><span>   &lt;soapenv:Body></span></span>
+<span data-line><span>      &lt;exa:GetUser></span></span>
+<span data-line><span>         &lt;exa:UserId>123&lt;/exa:UserId></span></span>
+<span data-line><span>      &lt;/exa:GetUser></span></span>
+<span data-line><span>   &lt;/soapenv:Body></span></span>
+<span data-line><span>&lt;/soapenv:Envelope></span></span></code></pre></figure>
+<p>This structured format ensures that data is consistent, well-defined, and validated, making SOAP highly reliable in environments where strict data contracts are necessary.</p>
+<h3 id="advantages-of-soap"><strong>Advantages of SOAP</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#advantages-of-soap" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The main advantages of SOAP are as follows:</p>
+<ul>
+<li>
+<p>SOAP APIs can be developed in any programming language and run on any platform, making them highly interoperable.</p>
+</li>
+<li>
+<p>SOAP natively supports strong security mechanisms such as encryption, authentication, and digital signatures via WS-Security.</p>
+</li>
+<li>
+<p>SOAP has a structured error-handling mechanism using SOAP Fault messages.</p>
+</li>
+<li>
+<p>SOAP messages follow strict XML schema validation, ensuring consistent and predictable data structures.</p>
+</li>
+</ul>
+<h3 id="disadvantages-of-soap"><strong>Disadvantages of SOAP</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#disadvantages-of-soap" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>SOAP also has some disadvantages that should be considered:</p>
+<ul>
+<li>
+<p>SOAP messages are large and complex due to their verbose XML format.</p>
+</li>
+<li>
+<p>Due to verbose XML, SOAP requires more bandwidth than REST or gRPC. This makes SOAP less efficient for mobile applications or low-bandwidth environments.</p>
+</li>
+<li>
+<p>SOAP requires additional configurations, including WSDL (Web Services Description Language) and XML schema validation.</p>
+</li>
+<li>
+<p>SOAP only supports XML, whereas REST supports JSON, XML, YAML, and other formats.</p>
+</li>
+<li>
+<p>SOAP is not natively supported in web browsers, unlike REST APIs, which work with AJAX and JavaScript frameworks.</p>
+</li>
+</ul>
+<h2 id="grpc"><strong>gRPC</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#grpc" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>gRPC is a high-performance, open-source API protocol developed by Google that allows applications to communicate efficiently over a network.</p>
+<p>It replaces JSON/XML with Protocol Buffers (Protobuf), a binary serialization format that is:</p>
+<ul>
+<li>
+<p><strong>Compact</strong>: Protobuf messages are much smaller than JSON/XML, reducing bandwidth usage.</p>
+</li>
+<li>
+<p><strong>Faster</strong>: Parsing binary data is significantly faster than parsing text-based formats.</p>
+</li>
+<li>
+<p><strong>Schema-based</strong>: Enforces strong typing, reducing data inconsistencies.</p>
+</li>
+</ul>
+<p><a href="https://substackcdn.com/image/fetch/$s_!p3wk!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F444ebe56-e0a0-432e-a93f-45499173b1d1_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!p3wk!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F444ebe56-e0a0-432e-a93f-45499173b1d1_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Here’s an example Protobuf definition for a gRPC-based API:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>message User {</span></span>
+<span data-line><span>  int32 user_id = 1;</span></span>
+<span data-line><span>  string name = 2;</span></span>
+<span data-line><span>  string email = 3;</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>In binary form, the Protobuf message is significantly smaller, making it faster to transmit and parse.</p>
+<p>One of gRPC’s most powerful features is its support for bidirectional streaming, which allows clients and servers to exchange multiple messages continuously over a single connection.</p>
+<p>Multiple types of streaming supported by gRPC are as follows:</p>
+<ul>
+<li>
+<p><strong>Unary RPC</strong>: A simple request-response model (like REST).</p>
+</li>
+<li>
+<p><strong>Server Streaming RPC</strong>: The client sends one request, but the server sends multiple responses as a continuous stream. The client reads responses until the stream ends.</p>
+</li>
+<li>
+<p><strong>Client Streaming RPC:</strong> The client sends multiple messages to the server before receiving a response. The server waits until all client messages arrive before processing.</p>
+</li>
+<li>
+<p><strong>Bidirectional Streaming RPC:</strong> Both client and server send multiple messages simultaneously, creating a continuous communication channel.</p>
+</li>
+</ul>
+<h3 id="advantages-of-grpc"><strong>Advantages of gRPC</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#advantages-of-grpc" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The main advantages of gRPC are as follows:</p>
+<ul>
+<li>
+<p>Protobuf serialization is faster and more efficient than JSON and XML. Persistent HTTP/2 connections reduce network overhead. Multiplexing allows multiple requests/responses over a single connection, reducing latency.</p>
+</li>
+<li>
+<p>gRPC supports TLS encryption by default, ensuring secure communication.</p>
+</li>
+<li>
+<p>gRPC enforces strict type definitions via Protobuf, reducing data inconsistencies. Code generation tools ensure that API consumers always use the correct data structures.</p>
+</li>
+<li>
+<p>gRPC supports multiple programming languages, including Go, Python, Java, C++, Node.js, and Rust.</p>
+</li>
+</ul>
+<h3 id="disadvantages-of-grpc"><strong>Disadvantages of gRPC</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#disadvantages-of-grpc" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The main disadvantages of gRPC are as follows:</p>
+<ul>
+<li>
+<p>Developers must learn Protocol Buffers (Protobuf), which adds an extra layer of complexity.</p>
+</li>
+<li>
+<p>gRPC does not work natively in web browsers because it relies on HTTP/2 and binary encoding.</p>
+</li>
+<li>
+<p>Public APIs, like social media or payment gateways, typically use REST, as it is simpler, more human-readable, and widely adopted.</p>
+</li>
+</ul>
+<h2 id="graphql"><strong>GraphQL</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#graphql" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>GraphQL is not so much a protocol but a query language for APIs and a runtime for executing those queries. Developed by Facebook in 2015, it provides a flexible, efficient, and powerful alternative to traditional REST APIs by allowing clients to request only the data they need.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!qGYC!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Ff04a0fa1-c554-48d8-a3bf-0a064513cbb8_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!qGYC!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Ff04a0fa1-c554-48d8-a3bf-0a064513cbb8_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Unlike REST, where APIs expose fixed endpoints with predefined responses, GraphQL enables dynamic and customizable data retrieval using a single endpoint.</p>
+<p>For example, in the REST approach, an endpoint like GET /users/123 returns user details, but also unnecessary fields like createdAt, updatedAt, and profileImage. To fetch the user’s posts, a second request to GET /users/123/posts is required.</p>
+<p>However, in the GraphQL approach, a single request can retrieve the required fields:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>query {</span></span>
+<span data-line><span>  user(id: 123) {</span></span>
+<span data-line><span>    name</span></span>
+<span data-line><span>    email</span></span>
+<span data-line><span>    posts {</span></span>
+<span data-line><span>      title</span></span>
+<span data-line><span>      publishedDate</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>  }</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>This approach of GraphQL eliminates issues like over-fetching (retrieving unnecessary data) and under-fetching (not getting all required data in a single request) that can happen in REST.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!h7YO!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Ffb98f51b-2ad4-4e01-8650-9111ed5c1699_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!h7YO!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Ffb98f51b-2ad4-4e01-8650-9111ed5c1699_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>GraphQL APIs are built around a strongly typed schema, which defines the available data, relationships between entities, and the operations clients can perform. This schema acts as a contract between the client and server, ensuring consistency and predictability.</p>
+<p>See the example below:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>type User {</span></span>
+<span data-line><span>  id: ID!</span></span>
+<span data-line><span>  name: String!</span></span>
+<span data-line><span>  email: String!</span></span>
+<span data-line><span>  posts: [Post]</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>type Post {</span></span>
+<span data-line><span>  id: ID!</span></span>
+<span data-line><span>  title: String!</span></span>
+<span data-line><span>  content: String!</span></span>
+<span data-line><span>  publishedDate: String!</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>type Query {</span></span>
+<span data-line><span>  user(id: ID!): User</span></span>
+<span data-line><span>  allPosts: [Post]</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>This schema defines:</p>
+<ul>
+<li>
+<p>A User type with id, name, email, and a list of posts.</p>
+</li>
+<li>
+<p>A Post type with title, content, and publishedDate.</p>
+</li>
+<li>
+<p>Queries to fetch users and posts.</p>
+</li>
+</ul>
+<h3 id="advantages-of-graphql"><strong>Advantages of GraphQL</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#advantages-of-graphql" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The advantages of GraphQL are as follows:</p>
+<ul>
+<li>
+<p>Clients request exactly what they need, reducing network usage and response size.</p>
+</li>
+<li>
+<p>Unlike REST, which requires multiple endpoints (/users, /posts), GraphQL exposes only one endpoint (/graphql).</p>
+</li>
+<li>
+<p>The API schema defines data types and relationships, ensuring data consistency and preventing incorrect queries.</p>
+</li>
+<li>
+<p>Frontend developers can query data dynamically without needing backend modifications.</p>
+</li>
+</ul>
+<h3 id="disadvantages-of-graphql"><strong>Disadvantages of GraphQL</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#disadvantages-of-graphql" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>GraphQL also has some disadvantages:</p>
+<ul>
+<li>
+<p>GraphQL requires learning a new syntax (query language, resolvers, schema design).</p>
+</li>
+<li>
+<p>Backend implementation is more complex, requiring a GraphQL server to handle queries.</p>
+</li>
+<li>
+<p>Clients can send deeply nested queries, increasing server processing time.</p>
+</li>
+<li>
+<p>REST APIs use built-in HTTP caching (Cache-Control, ETag), making responses cacheable. GraphQL responses vary based on queries, making caching harder without tools like Apollo Client or Relay.</p>
+</li>
+<li>
+<p>Clients can request deeply nested data, causing denial-of-service (DoS) attacks. Developers must enforce maximum query complexity to prevent server overload.</p>
+</li>
+</ul>
+<h2 id="websockets"><strong>WebSockets</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#websockets" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>WebSockets is a full-duplex communication protocol that allows real-time, bidirectional data exchange between clients and servers over a single persistent connection.</p>
+<p>Unlike traditional HTTP-based APIs, which follow a request-response model, WebSockets enable continuous communication, making them ideal for real-time applications such as chat systems, stock market feeds, multiplayer gaming, and live notifications. Developed as part of HTML5, WebSockets offer an improvement over polling and long-polling techniques used in traditional web applications by eliminating unnecessary HTTP overhead and reducing latency.</p>
+<p>Here’s how WebSockets establish a persistent connection:</p>
+<ul>
+<li>
+<p>A WebSocket connection starts with an HTTP handshake between the client and server. The client sends a special HTTP request to initiate the connection. The server responds with an HTTP 101 Switching Protocols status, upgrading the connection to WebSockets.</p>
+</li>
+<li>
+<p>Once the handshake is complete, the connection remains open. The client and server can send and receive messages at any time without re-establishing the connection.</p>
+</li>
+<li>
+<p>WebSockets use a lightweight binary or text-based protocol, making them more efficient than traditional HTTP. Messages are sent as frames (text, binary, and ping/pong for health checks).</p>
+</li>
+<li>
+<p>Either the client or server can terminate the connection when communication is no longer needed. WebSockets support graceful closure, ensuring no data is lost.</p>
+</li>
+</ul>
+<p><a href="https://substackcdn.com/image/fetch/$s_!zCrI!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fefae0004-9bc2-4f31-b64c-75c0f8f8be7c_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!zCrI!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fefae0004-9bc2-4f31-b64c-75c0f8f8be7c_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h3 id="advantages-of-websockets"><strong>Advantages of WebSockets</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#advantages-of-websockets" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The main advantages of WebSockets are as follows:</p>
+<ul>
+<li>
+<p>WebSockets reduce network overhead by maintaining an open connection instead of creating new HTTP requests for every data exchange.</p>
+</li>
+<li>
+<p>Unlike HTTP, which follows a request-response model, WebSockets allow servers to push data to clients without waiting for a request. Traditional HTTP polling creates unnecessary requests, increasing server load and bandwidth usage.</p>
+</li>
+<li>
+<p>Chat applications require real-time message delivery. WebSockets provide instant communication without delays caused by HTTP polling.</p>
+</li>
+<li>
+<p>Games require real-time player actions, movement updates, and event synchronization. WebSockets enable seamless interaction between multiple players without noticeable lag.</p>
+</li>
+</ul>
+<h3 id="disadvantages-of-websockets"><strong>Disadvantages of WebSockets</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#disadvantages-of-websockets" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The disadvantages of WebSockets are as follows:</p>
+<ul>
+<li>
+<p>Since each client maintains a persistent connection, WebSockets can overload a server if thousands or millions of users are connected simultaneously.</p>
+</li>
+<li>
+<p>A malicious client could open thousands of WebSocket connections, consuming server resources.</p>
+</li>
+<li>
+<p>Some firewalls and corporate proxies block WebSockets because they differ from standard HTTP traffic.</p>
+</li>
+</ul>
+<h2 id="server-sent-events"><strong>Server-Sent Events</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#server-sent-events" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Server-sent events (SSE) is a unidirectional communication protocol that allows a server to push real-time updates to clients over a single persistent HTTP connection.</p>
+<p>Unlike traditional HTTP, where clients must repeatedly request updates, SSE keeps a long-lived connection open, enabling the server to send data updates automatically. SSE is built on top of HTTP and uses the EventSource API, making it easy to implement in modern web applications without requiring complex configurations.</p>
+<p>Here’s how SSE works:</p>
+<ul>
+<li>
+<p>The client creates an EventSource connection to the server using a simple HTTP request.</p>
+</li>
+<li>
+<p>The server responds with an HTTP 200 status and a Content-Type: text/event-stream header. The connection remains open indefinitely, allowing the server to send updates.</p>
+</li>
+<li>
+<p>The server sends events using a simple text-based format.</p>
+</li>
+<li>
+<p>The client listens for new events and updates the UI accordingly.</p>
+</li>
+<li>
+<p>If the connection drops, the browser automatically attempts to reconnect, reducing implementation complexity.</p>
+</li>
+</ul>
+<p><a href="https://substackcdn.com/image/fetch/$s_!it2P!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fdbe1eacf-73fb-4829-a74c-be9c33791ff6_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!it2P!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fdbe1eacf-73fb-4829-a74c-be9c33791ff6_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h3 id="advantages-of-sse"><strong>Advantages of SSE</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#advantages-of-sse" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Here are the advantages of SSE:</p>
+<ul>
+<li>
+<p>SSE uses HTTP, which is widely supported and easy to implement. It does not require special protocols or additional infrastructure.</p>
+</li>
+<li>
+<p>Since SSE only allows server-to-client communication, it consumes fewer resources than WebSockets. Ideal for applications that need push notifications without bidirectional messaging.</p>
+</li>
+<li>
+<p>If the connection drops, browsers automatically attempt to reconnect, making it more resilient to network interruptions. WebSockets may be blocked by firewalls or require additional configurations.</p>
+</li>
+<li>
+<p>Unlike basic HTTP polling, SSE allows developers to send custom event types for better organization.</p>
+</li>
+</ul>
+<h3 id="disadvantages-of-sse"><strong>Disadvantages of SSE</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#disadvantages-of-sse" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>
+<p>Only the server can send messages to the client. Clients cannot send messages back (unlike WebSockets, which support bidirectional communication).</p>
+</li>
+<li>
+<p>Older browsers and some mobile devices may not support SSE.</p>
+</li>
+<li>
+<p>Each SSE connection keeps an HTTP request open indefinitely, which can cause server resource exhaustion when handling thousands of clients.</p>
+</li>
+</ul>
+<h2 id="webhooks"><strong>Webhooks</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#webhooks" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Webhooks are a method for enabling event-driven communication between applications by automatically sending data to a client when a specific event occurs.</p>
+<p>Unlike traditional request-response APIs, where a client or service must continuously poll the server for updates, Webhooks allow the server to push data to the client or service in real time as soon as an event is triggered.</p>
+<p>This makes Webhooks ideal for automating workflows and integrating services, especially in scenarios like:</p>
+<ul>
+<li>
+<p>Payment notifications (for example, Stripe or PayPal transactions)</p>
+</li>
+<li>
+<p>CRM updates (for example, Salesforce notifying a system when a lead is created)</p>
+</li>
+<li>
+<p>CI/CD pipelines (for example, GitHub triggering deployments on code pushes)</p>
+</li>
+<li>
+<p>E-commerce notifications (for example, sending order status updates to third-party apps)</p>
+</li>
+</ul>
+<p>Here’s how Webhooks work:</p>
+<ul>
+<li>
+<p>An event occurs in Service A (for example, a new payment is received in Stripe).</p>
+</li>
+<li>
+<p>Service A sends an HTTP POST request with event details to a pre-configured Webhook URL in Service B.</p>
+</li>
+<li>
+<p>Service B receives the data and processes it accordingly (for example, updating an order status in an e-commerce system).</p>
+</li>
+<li>
+<p>Service B can respond with a 2XX HTTP status to confirm successful receipt, or return an error code if something went wrong.</p>
+</li>
+</ul>
+<p><a href="https://substackcdn.com/image/fetch/$s_!5_ib!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F0019bf3e-4d75-4d5c-9be6-b33a2430b371_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!5_ib!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F0019bf3e-4d75-4d5c-9be6-b33a2430b371_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Some important things to keep in mind while using webhooks are as follows:</p>
+<ul>
+<li>
+<p>The server should sign each Webhook request using a shared secret key. The receiving service should verify the signature before processing the data.</p>
+</li>
+<li>
+<p>Always use HTTPS instead of HTTP to encrypt the data in transit, preventing man-in-the-middle attacks.</p>
+</li>
+<li>
+<p>Allow requests only from trusted IP addresses to prevent unauthorized sources from sending webhooks.</p>
+</li>
+<li>
+<p>Prevent attackers from spamming your Webhook endpoint by limiting the number of requests per minute. If an event fails, Webhook providers like Stripe automatically retry failed Webhook deliveries.</p>
+</li>
+</ul>
+<h2 id="choosing-the-right-protocol"><strong>Choosing the Right Protocol</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#choosing-the-right-protocol" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Choosing the right API protocol depends on factors like performance, security, data format, real-time capabilities, scalability, and complexity.</p>
+<p>Below is a detailed comparison of REST, SOAP, gRPC, GraphQL, WebSockets, SSE, and Webhooks:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!2zeV!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F8f611b68-cbb4-48fd-9865-51c0ecb3adba_2220x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!2zeV!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F8f611b68-cbb4-48fd-9865-51c0ecb3adba_2220x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Here are some pointers to keep in mind on a general level:</p>
+<ul>
+<li>
+<p>Use REST if you need a simple and scalable API for CRUD operations that is also widely supported.</p>
+</li>
+<li>
+<p>Use SOAP if you require high security, strict validation, and ACID compliance (such as banking APIs).</p>
+</li>
+<li>
+<p>Use gRPC for microservices and performance-critical applications, especially if you need bidirectional streaming.</p>
+</li>
+<li>
+<p>Use GraphQL when clients need control over the data they request, such as in modern front-end apps.</p>
+</li>
+<li>
+<p>Use WebSockets for real-time, bidirectional communication (live chat and gaming).</p>
+</li>
+<li>
+<p>Use SSE for one-way real-time updates (such as live stock market feeds and sports scores).</p>
+</li>
+<li>
+<p>Use Webhooks for event-driven automation (such as payment notifications and CI/CD triggers).</p>
+</li>
+</ul>
+<h2 id="summary"><strong>Summary</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#summary" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>In this article, we have looked at the various API protocols along with their advantages and disadvantages.</p>
+<p>Let’s summarize the key learning points in brief:</p>
+<ul>
+<li>
+<p>API protocols set the rules for data exchange between software systems, ensuring interoperability and reliability across different platforms.</p>
+</li>
+<li>
+<p>REST follows a stateless, resource-based architecture using HTTP methods (GET, POST, PUT, DELETE), making it simple and scalable for web applications.</p>
+</li>
+<li>
+<p>SOAP uses XML-based messaging and works over multiple transport protocols, offering strong security (WS-Security).</p>
+</li>
+<li>
+<p>gRPC uses Protocol Buffers (Protobuf) for efficient binary serialization, supports bidirectional streaming, and is highly optimized for microservices communication.</p>
+</li>
+<li>
+<p>GraphQL allows clients to fetch exactly the data they need, solving over-fetching and under-fetching issues, but requires schema management for optimization.</p>
+</li>
+<li>
+<p>WebSockets establish a persistent, bidirectional connection between clients and servers, making them ideal for real-time applications like chat, gaming, and live notifications.</p>
+</li>
+<li>
+<p>SSE allows servers to push real-time updates to clients over HTTP, providing a simpler, lower-overhead alternative to WebSockets for unidirectional data streams.</p>
+</li>
+<li>
+<p>Webhooks enable event-driven communication by pushing data to clients when an event occurs, reducing the need for constant polling and improving automation workflows.</p>
+</li>
+<li>
+<p>Developers should select an API protocol based on security needs, data format, real-time requirements, and ease of implementation to optimize system performance and efficiency.</p>
+</li>
+</ul></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-123" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#rest" data-for="rest">REST</a></li><li class="depth-1"><a href="#advantages-of-rest" data-for="advantages-of-rest">Advantages of REST</a></li><li class="depth-1"><a href="#disadvantages-of-rest" data-for="disadvantages-of-rest">Disadvantages of REST</a></li><li class="depth-0"><a href="#soap" data-for="soap">SOAP</a></li><li class="depth-1"><a href="#advantages-of-soap" data-for="advantages-of-soap">Advantages of SOAP</a></li><li class="depth-1"><a href="#disadvantages-of-soap" data-for="disadvantages-of-soap">Disadvantages of SOAP</a></li><li class="depth-0"><a href="#grpc" data-for="grpc">gRPC</a></li><li class="depth-1"><a href="#advantages-of-grpc" data-for="advantages-of-grpc">Advantages of gRPC</a></li><li class="depth-1"><a href="#disadvantages-of-grpc" data-for="disadvantages-of-grpc">Disadvantages of gRPC</a></li><li class="depth-0"><a href="#graphql" data-for="graphql">GraphQL</a></li><li class="depth-1"><a href="#advantages-of-graphql" data-for="advantages-of-graphql">Advantages of GraphQL</a></li><li class="depth-1"><a href="#disadvantages-of-graphql" data-for="disadvantages-of-graphql">Disadvantages of GraphQL</a></li><li class="depth-0"><a href="#websockets" data-for="websockets">WebSockets</a></li><li class="depth-1"><a href="#advantages-of-websockets" data-for="advantages-of-websockets">Advantages of WebSockets</a></li><li class="depth-1"><a href="#disadvantages-of-websockets" data-for="disadvantages-of-websockets">Disadvantages of WebSockets</a></li><li class="depth-0"><a href="#server-sent-events" data-for="server-sent-events">Server-Sent Events</a></li><li class="depth-1"><a href="#advantages-of-sse" data-for="advantages-of-sse">Advantages of SSE</a></li><li class="depth-1"><a href="#disadvantages-of-sse" data-for="disadvantages-of-sse">Disadvantages of SSE</a></li><li class="depth-0"><a href="#webhooks" data-for="webhooks">Webhooks</a></li><li class="depth-0"><a href="#choosing-the-right-protocol" data-for="choosing-the-right-protocol">Choosing the Right Protocol</a></li><li class="depth-0"><a href="#summary" data-for="summary">Summary</a></li><li class="overflow-end"></li></ul></div><div class="backlinks"><h3>Backlinks</h3><ul id="list-2" class="overflow"><li><a href="../../Notion-Knowledge/Note" class="internal">Note</a></li><li><a href="../../_moc/MOC-API-Design" class="internal">MOC-API-Design</a></li><li><a href="../../_moc/MOC-Reading-List" class="internal">MOC-Reading-List</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://dangthobach.github.io/">Back to Portfolio</a></li><li><a href="https://github.com/dangthobach">GitHub</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../postscript.js" type="module" data-persist="true"></script></html>

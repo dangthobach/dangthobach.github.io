@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>A Crash Course in Database Sharding</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="Dang Tho Bach's Knowledge Base"/><meta property="og:title" content="A Crash Course in Database Sharding"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="A Crash Course in Database Sharding"/><meta name="twitter:description" content="As an application grows in popularity, it attracts more active users and incorporates additional features."/><meta property="og:description" content="As an application grows in popularity, it attracts more active users and incorporates additional features."/><meta property="og:image:alt" content="As an application grows in popularity, it attracts more active users and incorporates additional features."/><meta property="twitter:domain" content="dangthobach.github.io/knowledge"/><meta property="og:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Crash-Course-in-Database-Sharding"/><meta property="twitter:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Crash-Course-in-Database-Sharding"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="As an application grows in popularity, it attracts more active users and incorporates additional features."/><meta name="generator" content="Quartz"/><link href="../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiL2hvbWUvcnVubmVyL3dvcmsvZGFuZ3Rob2JhY2guZ2l0aHViLmlvL2Rhbmd0aG9iYWNoLmdpdGh1Yi5pby9xdWFydHovcXVhcnR6L2NvbXBvbmVudHMvc3R5bGVzIiwic291cmNlcyI6WyJtZXJtYWlkLmlubGluZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFHRjtFQUNFOzs7QUFLRjtFQUNFO0VBQ0E7OztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTs7QUFJRjtFQUNFO0VBQ0E7RUFDQSIsInNvdXJjZXNDb250ZW50IjpbIi5leHBhbmQtYnV0dG9uIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbG9hdDogcmlnaHQ7XG4gIHBhZGRpbmc6IDAuNHJlbTtcbiAgbWFyZ2luOiAwLjNyZW07XG4gIHJpZ2h0OiAwOyAvLyBOT1RFOiByaWdodCB3aWxsIGJlIHNldCBpbiBtZXJtYWlkLmlubGluZS50c1xuICBjb2xvcjogdmFyKC0tZ3JheSk7XG4gIGJvcmRlci1jb2xvcjogdmFyKC0tZGFyayk7XG4gIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgYm9yZGVyOiAxcHggc29saWQ7XG4gIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgb3BhY2l0eTogMDtcbiAgdHJhbnNpdGlvbjogMC4ycztcblxuICAmID4gc3ZnIHtcbiAgICBmaWxsOiB2YXIoLS1saWdodCk7XG4gICAgZmlsdGVyOiBjb250cmFzdCgwLjMpO1xuICB9XG5cbiAgJjpob3ZlciB7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIGJvcmRlci1jb2xvcjogdmFyKC0tc2Vjb25kYXJ5KTtcbiAgfVxuXG4gICY6Zm9jdXMge1xuICAgIG91dGxpbmU6IDA7XG4gIH1cbn1cblxucHJlIHtcbiAgJjpob3ZlciA+IC5leHBhbmQtYnV0dG9uIHtcbiAgICBvcGFjaXR5OiAxO1xuICAgIHRyYW5zaXRpb246IDAuMnM7XG4gIH1cbn1cblxuI21lcm1haWQtY29udGFpbmVyIHtcbiAgcG9zaXRpb246IGZpeGVkO1xuICBjb250YWluOiBsYXlvdXQ7XG4gIHotaW5kZXg6IDk5OTtcbiAgbGVmdDogMDtcbiAgdG9wOiAwO1xuICB3aWR0aDogMTAwdnc7XG4gIGhlaWdodDogMTAwdmg7XG4gIG92ZXJmbG93OiBoaWRkZW47XG4gIGRpc3BsYXk6IG5vbmU7XG4gIGJhY2tkcm9wLWZpbHRlcjogYmx1cig0cHgpO1xuICBiYWNrZ3JvdW5kOiByZ2JhKDAsIDAsIDAsIDAuNSk7XG5cbiAgJi5hY3RpdmUge1xuICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgfVxuXG4gICYgPiAjbWVybWFpZC1zcGFjZSB7XG4gICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gICAgYm9yZGVyLXJhZGl1czogNXB4O1xuICAgIHBvc2l0aW9uOiBmaXhlZDtcbiAgICB0b3A6IDUwJTtcbiAgICBsZWZ0OiA1MCU7XG4gICAgdHJhbnNmb3JtOiB0cmFuc2xhdGUoLTUwJSwgLTUwJSk7XG4gICAgaGVpZ2h0OiA4MHZoO1xuICAgIHdpZHRoOiA4MHZ3O1xuICAgIG92ZXJmbG93OiBoaWRkZW47XG5cbiAgICAmID4gLm1lcm1haWQtY29udGVudCB7XG4gICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgICB0cmFuc2Zvcm0tb3JpZ2luOiAwIDA7XG4gICAgICB0cmFuc2l0aW9uOiB0cmFuc2Zvcm0gMC4xcyBlYXNlO1xuICAgICAgb3ZlcmZsb3c6IHZpc2libGU7XG4gICAgICBtaW4taGVpZ2h0OiAyMDBweDtcbiAgICAgIG1pbi13aWR0aDogMjAwcHg7XG5cbiAgICAgIHByZSB7XG4gICAgICAgIG1hcmdpbjogMDtcbiAgICAgICAgYm9yZGVyOiBub25lO1xuICAgICAgfVxuXG4gICAgICBzdmcge1xuICAgICAgICBtYXgtd2lkdGg6IG5vbmU7XG4gICAgICAgIGhlaWdodDogYXV0bztcbiAgICAgIH1cbiAgICB9XG5cbiAgICAmID4gLm1lcm1haWQtY29udHJvbHMge1xuICAgICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgICAgYm90dG9tOiAyMHB4O1xuICAgICAgcmlnaHQ6IDIwcHg7XG4gICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgZ2FwOiA4cHg7XG4gICAgICBwYWRkaW5nOiA4cHg7XG4gICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgYm9yZGVyLXJhZGl1czogNnB4O1xuICAgICAgYm94LXNoYWRvdzogMCAycHggNHB4IHJnYmEoMCwgMCwgMCwgMC4xKTtcbiAgICAgIHotaW5kZXg6IDI7XG5cbiAgICAgIC5tZXJtYWlkLWNvbnRyb2wtYnV0dG9uIHtcbiAgICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgIHdpZHRoOiAzMnB4O1xuICAgICAgICBoZWlnaHQ6IDMycHg7XG4gICAgICAgIHBhZGRpbmc6IDA7XG4gICAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgICAgY29sb3I6IHZhcigtLWRhcmspO1xuICAgICAgICBib3JkZXItcmFkaXVzOiA0cHg7XG4gICAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICAgICAgZm9udC1zaXplOiAxNnB4O1xuICAgICAgICBmb250LWZhbWlseTogdmFyKC0tYm9keUZvbnQpO1xuICAgICAgICB0cmFuc2l0aW9uOiBhbGwgMC4ycyBlYXNlO1xuXG4gICAgICAgICY6aG92ZXIge1xuICAgICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIH1cblxuICAgICAgICAmOmFjdGl2ZSB7XG4gICAgICAgICAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKDFweCk7XG4gICAgICAgIH1cblxuICAgICAgICAvLyBTdHlsZSB0aGUgcmVzZXQgYnV0dG9uIGRpZmZlcmVudGx5XG4gICAgICAgICY6bnRoLWNoaWxkKDIpIHtcbiAgICAgICAgICB3aWR0aDogYXV0bztcbiAgICAgICAgICBwYWRkaW5nOiAwIDEycHg7XG4gICAgICAgICAgZm9udC1zaXplOiAxNHB4O1xuICAgICAgICB9XG4gICAgICB9XG4gICAgfVxuICB9XG59XG4iXX0= */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://dangthobach.github.io/knowledge/index.xml"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Crash-Course-in-Database-Sharding-og-image.webp"/><meta property="og:image:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Crash-Course-in-Database-Sharding-og-image.webp"/><meta name="twitter:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Crash-Course-in-Database-Sharding-og-image.webp"/><meta property="og:image:type" content="image/.webp"/></head><body data-slug="Notion-Knowledge/Note/A-Crash-Course-in-Database-Sharding"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../..">Dang Tho Bach's Knowledge Base</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-235"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-235" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/">Notion Knowledge</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/Note/">Note</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>A Crash Course in Database Sharding</a></div></nav><h1 class="article-title">A Crash Course in Database Sharding</h1><p show-comma="true" class="content-meta"><time datetime="2026-05-02T04:58:37.000Z">May 02, 2026</time><span>21 min read</span></p></div></div><article class="popover-hint"><p>As an application grows in popularity, it attracts more active users and incorporates additional features. This growth leads to a daily increase in data generation, which is a positive indicator from a business perspective.</p>
+<p>However, it can also pose challenges to the application’s architecture, particularly in terms of database scalability.</p>
+<p>The database is a critical component of any application, but it is also one of the most difficult components to scale horizontally. When an application receives increased traffic and data volume, the database can become a performance bottleneck, impacting the user experience.</p>
+<p>Sharding is a technique that addresses the challenges of horizontal database scaling. It involves partitioning the database into smaller, more manageable units called shards.</p>
+<p>In this post, we’ll cover the fundamentals of database sharding, exploring its various approaches, technical considerations, and real-world case studies showcasing how companies have implemented sharding to scale their databases.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!9clv!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F571827ac-b3da-44a3-886a-8ca9770bb443_1337x1600.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!9clv!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F571827ac-b3da-44a3-886a-8ca9770bb443_1337x1600.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h2 id="what-is-sharding"><strong>What is Sharding?</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#what-is-sharding" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Sharding is an architectural pattern that addresses the challenges of managing and querying large datasets in databases. It involves splitting a large database into smaller, more manageable parts called shards.</p>
+<p>Sharing builds upon the concept of horizontal partitioning, which involves dividing a table’s rows into multiple tables based on a partition key. These tables are known as partitions. Distributing the data across partitions reduces the effort required to query and manipulate the data.</p>
+<p>The diagram below illustrates an example of horizontal partitioning.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!GHis!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F51d536d2-7071-4ad5-a26d-34e3a14f7f4b_1600x1002.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!GHis!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F51d536d2-7071-4ad5-a26d-34e3a14f7f4b_1600x1002.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Database sharding takes horizontal partitioning to the next level. While partitioning stores all the data groups within the same computer, sharding distributes them across different computers or nodes. This approach enables better scalability and performance by leveraging the resources of multiple machines.</p>
+<p>It’s worth noting that the terminology used for sharding varies across different databases.</p>
+<ul>
+<li>
+<p>In MongoDB, a partition is referred to as a shard.</p>
+</li>
+<li>
+<p>Couchbase uses the term vBucket to represent a shard.</p>
+</li>
+<li>
+<p>Cassandra refers to a shard as a vNode.</p>
+</li>
+</ul>
+<p>Despite the differences in terminology, the underlying concept remains the same: dividing the data into smaller, manageable units to improve query performance and scalability.</p>
+<h3 id="benefits-of-database-sharding"><strong>Benefits of Database Sharding</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#benefits-of-database-sharding" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Database sharding offers several key benefits:</p>
+<ul>
+<li>
+<p><strong>Scalability:</strong> The primary motivation behind sharding is to achieve scalability. By distributing a large dataset across multiple shards, the query load can be spread across multiple nodes. For queries that operate on a single shard, each node can independently execute the queries for its assigned data. Moreover, new shards can be added dynamically at runtime without the need to shut down the application for maintenance.</p>
+</li>
+<li>
+<p><strong>Improved Performance:</strong> Retrieving data from a single large database can be time-consuming. The query needs to search through a vast number of rows to locate the required data. In contrast, shards contain a smaller subset of rows compared to the entire database. This reduced search space results in faster data retrieval, as the query has fewer rows to process.</p>
+</li>
+<li>
+<p><strong>Availability:</strong> In a monolithic database architecture, if the node hosting the database fails, the dependent application also experiences downtime. Database sharding mitigates this risk by distributing the data across multiple nodes. In the event of a node failure, the application can continue to operate using the remaining shards.</p>
+</li>
+</ul>
+<h3 id="sharding-and-replication"><strong>Sharding and Replication</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#sharding-and-replication" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Sharding is often used with replication to achieve high availability and fault tolerance in distributed database systems.</p>
+<p>Replication involves creating multiple copies of data and storing them on different nodes. In a leader-follower replication model, one node acts as the leader and handles write operations, while follower nodes replicate the leader’s data and handle read operations.</p>
+<p>By replicating each shard across multiple nodes, the system ensures that data remains accessible even if individual nodes fail. A node can store multiple shards, each of which may be a leader or a follower in a leader-follower replication model.</p>
+<p>The diagram below illustrates an arrangement where each shard’s leader is assigned to one node, and its followers are distributed across other nodes:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!UKE6!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fc3faeaed-057a-4055-863b-49baa0346440_1600x1005.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!UKE6!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fc3faeaed-057a-4055-863b-49baa0346440_1600x1005.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>In this setup, a node can simultaneously serve as the leader for some partitions and a follower for others. This distributed architecture allows the system to maintain data availability and resilience in case of node failures or network disruptions.</p>
+<h2 id="types-of-sharding"><strong>Types of Sharding</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#types-of-sharding" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>The primary objective of database sharding is to evenly distribute the data and the query load across multiple nodes.</p>
+<p>However, if the data partitioning is not balanced, some shards may end up handling a disproportionately higher amount of data or queries compared to others. This scenario is known as a skewed shard, and it diminishes the benefits of sharding.</p>
+<p>In extreme cases, a poorly designed sharding strategy can result in a single shard bearing the entire load while the remaining shards remain idle.</p>
+<p>This situation is referred to as a hot spot, where one node becomes overwhelmed with a disproportionately high load.</p>
+<p>To mitigate the risks of skewed shards and hot spots, it is crucial to select an appropriate sharding strategy that ensures an even distribution of data and queries across the shards.</p>
+<p>Let’s understand some commonly used sharding strategies:</p>
+<h3 id="range-based-sharding"><strong>Range-Based Sharding</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#range-based-sharding" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Range-based sharding is a technique that splits database rows based on a range of values.</p>
+<p>In this approach, each shard is assigned a continuous range of keys, spanning from a minimum to a maximum value. The keys within each shard are maintained in a sorted order to enable efficient range scans.</p>
+<p>To illustrate this concept, let’s consider a product database that stores product information.</p>
+<p>Range-based sharding can be applied to split the database into different shards based on the price range of the products. For instance, one shard can store all products within the price range of <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0</span><span class="mord mathnormal">t</span><span class="mord mathnormal">o</span></span></span></span>75, while another shard can contain products within the price range of <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">76</span><span class="mord mathnormal">t</span><span class="mord mathnormal">o</span></span></span></span>150.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!a3kB!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F1b1d52ae-ebbc-4b26-b767-2c4bbf7f9ca3_1600x1001.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!a3kB!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F1b1d52ae-ebbc-4b26-b767-2c4bbf7f9ca3_1600x1001.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>It’s important to note that the ranges of keys do not necessarily need to be evenly spaced. In real-world applications, data distribution may not be uniform, and the key ranges can be adjusted accordingly to achieve a balanced data distribution across the shards.</p>
+<p>However, range-based sharding has a potential drawback.</p>
+<p>Certain access patterns can lead to the formation of hot spots. For example, if a significant portion of the products in the database falls within a specific price range, the shard responsible for storing that range may experience a disproportionately high load, while other shards remain underutilized.</p>
+<h3 id="key-or-hash-based-sharding"><strong>Key or Hash-Based Sharding</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#key-or-hash-based-sharding" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Key-based sharding, also known as hash-based sharding, is a technique that assigns a particular key to a shard using a hash function.</p>
+<p>A well-designed hash function plays a crucial role in achieving a balanced distribution of keys. Instead of assigning a range of keys to each shard, hash-based sharding assigns a range of hashes to each shard. Consistent Hashing is one technique that’s often used to implement hash-based sharding.</p>
+<p>The diagram below illustrates the basic concept of key or hash-based sharding:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!SyC_!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F3e1bfd20-ed30-4720-9f6d-a9914c650dd1_1600x1002.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!SyC_!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F3e1bfd20-ed30-4720-9f6d-a9914c650dd1_1600x1002.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>One of the main advantages of hash-based sharding is its ability to distribute keys fairly among the shards. By applying a hash function to the keys, the technique helps mitigate the risk of hot spots.</p>
+<p>However, hash-based sharding comes with a trade-off. By using the hash of the key instead of the key itself, we lose the ability to perform efficient range queries. This is because adjacent keys may be scattered across different partitions, and their natural sort order is lost in the process.</p>
+<p>It’s important to note that while hash-based sharding helps reduce hot spots, it cannot eliminate them. In extreme cases where all reads and writes are concentrated on a single key, all requests may still be routed to the same partition. For example, on a social media website, a celebrity user can post content that generates a large volume of writes to the same key.</p>
+<h3 id="directory-based-sharding"><strong>Directory Based Sharding</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#directory-based-sharding" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Directory-based sharding is an approach that relies on a lookup table to determine the distribution of records across shards.</p>
+<p>The lookup table serves as a directory or an address book, mapping the relationship between the data and the specific shard where it resides. This table is stored separately from the shards themselves.</p>
+<p>The diagram below illustrates the concept of directory-based sharding, using the “Location” field as the shard key:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!YPPB!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Ff351498c-9c36-4175-a0f0-e741f90b0c8c_1600x1002.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!YPPB!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Ff351498c-9c36-4175-a0f0-e741f90b0c8c_1600x1002.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>One of the main advantages of directory-based sharding is its flexibility compared to other sharding strategies. It allows for greater control over the placement of data across shards, as the mapping between data and shards is explicitly defined in the lookup table.</p>
+<p>However, directory-based sharding also has a significant drawback: it heavily relies on the lookup table. Any issues or failures related to the lookup table can impact the overall performance and availability of the database.</p>
+<h2 id="factors-to-consider-when-selecting-a-shard-key"><strong>Factors to Consider When Selecting a Shard Key</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#factors-to-consider-when-selecting-a-shard-key" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Choosing an appropriate shard key is crucial for implementing an effective sharding strategy. Database designers should take into account several key factors when making this decision:</p>
+<h3 id="cardinality"><strong>Cardinality</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#cardinality" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Cardinality refers to the number of possible values that a shard key can have. It determines the maximum number of shards that can be created.</p>
+<p>For example, if a boolean data field is chosen as the shard key, the system will be limited to only two shards.</p>
+<p>To maximize the benefit of horizontal scaling, it is generally recommended to select a shard key with high cardinality.</p>
+<h3 id="frequency"><strong>Frequency</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#frequency" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The frequency of a shard key represents how often a particular shard key value appears in the dataset.</p>
+<p>If a significant portion of the records contains only a subset of the possible shard key values, the shard responsible for storing that subset may become a hotspot.</p>
+<p>For instance, if a fitness website’s database uses age as the shard key, most records may end up in the shard containing subscribers between the ages of 30 and 45, leading to an uneven distribution of data.</p>
+<h3 id="monotonic-change"><strong>Monotonic Change</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#monotonic-change" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Monotonic change refers to the shard key value increasing or decreasing over time for a given record.</p>
+<p>If a shard key is based on a value that increases or decreases monotonically, it can result in unbalanced shards.</p>
+<p>Consider a sharding scheme for a database that stores user comments.</p>
+<ul>
+<li>
+<p>Shard A stores data for users with less than 10 comments.</p>
+</li>
+<li>
+<p>Shard B stores data for users with 11-20 comments.</p>
+</li>
+<li>
+<p>Shard C stores data for users with more than 30 comments.</p>
+</li>
+</ul>
+<p>As users continue to add comments over time, they will gradually migrate to Shard C, making it more unbalanced than Shards A and B.</p>
+<h2 id="rebalancing-the-shards"><strong>Rebalancing the Shards</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#rebalancing-the-shards" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Over time, a database undergoes various changes that necessitate the redistribution of data and workload across the nodes. These changes include:</p>
+<ul>
+<li>
+<p>Increased query throughput requires additional CPU resources.</p>
+</li>
+<li>
+<p>Growth in dataset size demands more storage capacity.</p>
+</li>
+<li>
+<p>Failure of a particular machine results in other machines taking over its responsibilities.</p>
+</li>
+</ul>
+<p>All these scenarios share a common theme: the need to move data and requests from one node to another within the cluster. This process is known as shard rebalancing.</p>
+<p>Shard rebalancing aims to achieve several key goals:</p>
+<ul>
+<li>
+<p><strong>Fair Load Distribution:</strong> After the rebalancing process, the workload should be evenly distributed among the nodes in the cluster.</p>
+</li>
+<li>
+<p><strong>Minimal Disruption:</strong> The database should continue accepting read and write operations during the rebalancing process.</p>
+</li>
+<li>
+<p><strong>Efficient Data Movement:</strong> The amount of data moved between nodes should be kept to a minimum.</p>
+</li>
+</ul>
+<p>Considering these objectives, several approaches can be employed for shard rebalancing, each with its trade-offs and considerations.</p>
+<h3 id="fixed-number-of-shards"><strong>Fixed Number of Shards</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#fixed-number-of-shards" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>In a fixed partition configuration, the number of shards is determined when the database is initially set up and typically remains unchanged thereafter.</p>
+<p>For instance, consider a database running on a cluster of 10 nodes. It can be split into 100 shards, with 10 shards assigned to each node. The total number of shards (100 in this case) remains fixed.</p>
+<p>If a new node is added to the cluster, the system can rebalance the shards by migrating a few shards from the existing nodes to the new node to maintain a fair distribution.</p>
+<p>The diagram below illustrates the concept of fixed partitioning:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!zgk0!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F320fe4cb-49b9-4cfd-953b-6e2608d2536a_1600x1002.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!zgk0!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F320fe4cb-49b9-4cfd-953b-6e2608d2536a_1600x1002.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>It’s important to note that in this approach, neither the number of shards nor the assignment of keys to shards changes. Only entire shards are moved between nodes during the rebalancing process.</p>
+<p>However, the fixed partition approach presents a challenge in choosing the appropriate number of shards if the total size of the data is highly variable.</p>
+<p>Also, deciding the size of a single shard requires some consideration:</p>
+<ul>
+<li>
+<p>If the shards are too large, rebalancing and recovery from node failures can become time-consuming and resource-intensive.</p>
+</li>
+<li>
+<p>On the other hand, if the shards are too small, there is an increased overhead in maintaining and managing them.</p>
+</li>
+</ul>
+<h3 id="dynamic-shards"><strong>Dynamic Shards</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#dynamic-shards" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Dynamic sharding is an approach that adjusts the number of shards based on the total volume of data stored in the database.</p>
+<p>When the dataset is relatively small, dynamic sharding maintains a low number of shards, minimizing the overhead associated with shard management and maintenance.</p>
+<p>As the dataset grows and reaches a significant size, dynamic sharding automatically increases the number of shards to accommodate the expanded data volume. The size of each partition is typically limited to a configurable maximum threshold.</p>
+<p>When adding new shards, the system redistributes a portion of the data from existing shards to the newly created ones. This process ensures that the data remains evenly distributed across all shards.</p>
+<p>One key advantage of dynamic sharding is its flexibility. It can be applied to both range-based sharding and hash-based sharding strategies.</p>
+<h2 id="request-routing-in-a-sharded-database"><strong>Request Routing in a Sharded Database</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#request-routing-in-a-sharded-database" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>After sharding the dataset, the most critical consideration is determining how a client knows which node to connect to for an incoming request.</p>
+<p>This problem becomes challenging because shards can be rebalanced, and the assignment of shards to nodes can change dynamically.</p>
+<p>There are three main approaches to address this challenge:</p>
+<ul>
+<li>
+<p><strong>Shard-Aware Node:</strong> In this approach, the clients can contact any node using a round-robin load balancer. If the contacted node owns the shard relevant to the request, it can handle the request directly. Otherwise, it forwards the request to the appropriate shard and routes the response back to the client.</p>
+</li>
+<li>
+<p><strong>Routing Tier:</strong> With this approach, client requests are sent to a dedicated routing tier that determines the node responsible for handling each request. The routing tier forwards the request to the appropriate node and returns the response to the client. The application communicates with the routing tier, not the nodes directly.</p>
+</li>
+<li>
+<p><strong>Shard-Aware Client:</strong> In this approach, clients are aware of the shard distribution across nodes. The client first contacts a configuration server to obtain the current shard-to-node mapping. Using this knowledge, the clients can then directly connect to the appropriate node for each request.</p>
+</li>
+</ul>
+<p>The diagram below shows the three approaches:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!XQjK!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F94e08994-acf5-4c2a-ba87-898189970e07_1273x1600.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!XQjK!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F94e08994-acf5-4c2a-ba87-898189970e07_1273x1600.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Regardless of the approach chosen, there is a common decision to make: how to keep the component making the routing decision updated about the shard-to-node mapping.</p>
+<p>Different databases employ different mechanisms to achieve this:</p>
+<ul>
+<li>
+<p>LinkedIn’s Espresso uses Helix for cluster management, which relies on Zookeeper to store the configuration information.</p>
+</li>
+<li>
+<p>MongoDB utilizes a separate configuration server and a dedicated routing tier.</p>
+</li>
+<li>
+<p>Cassandra employs a gossip protocol among the nodes to propagate any changes to the mapping across all nodes.</p>
+</li>
+</ul>
+<h2 id="mongodbs-sharding-architecture---a-case-study"><strong>MongoDB’s Sharding Architecture - A Case Study</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#mongodbs-sharding-architecture---a-case-study" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>After exploring the concepts of sharding, let’s explore how popular databases implement sharding in practice.</p>
+<p>We’ll use MongoDB, one of the most widely used document databases, as our example. MongoDB’s sharding architecture demonstrates how the components we’ve discussed (shards, routing, and configuration) work together to create a scalable distributed database.</p>
+<p>MongoDB’s sharding architecture relies on a cluster of interconnected servers, also known as nodes. This cluster, referred to as the sharded cluster, consists of three key components:</p>
+<ul>
+<li>
+<p>Shard</p>
+</li>
+<li>
+<p>Mongos Router</p>
+</li>
+<li>
+<p>Config Servers</p>
+</li>
+</ul>
+<p>The diagram below shows the interconnection between these three components:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!lKCg!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fa270d062-cdd5-41af-8a74-ee284e64f0a2_1600x1001.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!lKCg!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fa270d062-cdd5-41af-8a74-ee284e64f0a2_1600x1001.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h3 id="shard"><strong>Shard</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#shard" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>A shard is a subset of the data in the cluster.</p>
+<p>Each shard is implemented as a replica set, which is a cluster of individual MongoDB instances.</p>
+<p>By deploying each shard as a replica set, MongoDB enables data replication within the shard. This design choice ensures high availability and fault tolerance.</p>
+<h3 id="mongos-router"><strong>Mongos Router</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#mongos-router" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The Mongos Router is the heart of the cluster. It serves as the central component that orchestrates the interaction between the client application and the shards.</p>
+<p>The Mongos Router performs two essential functions:</p>
+<ul>
+<li>
+<p><strong>Query Routing and Load Balancing:</strong> The router acts as the single entry point for the client application. It receives incoming queries and routes them to the appropriate shards based on the shard key and the data distribution.</p>
+</li>
+<li>
+<p><strong>Metadata Caching:</strong> The router also maintains a cache of the metadata that maps the data to the corresponding shards. It retrieves this metadata from the config servers and caches it locally for better performance.</p>
+</li>
+</ul>
+<h3 id="config-servers"><strong>Config Servers</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#config-servers" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The Config Server stores and manages the metadata for the entire cluster.</p>
+<p>The metadata stored in the config servers include details such as:</p>
+<ul>
+<li>
+<p><strong>Shard configuration:</strong> Information about each shard, including its name, host, and port.</p>
+</li>
+<li>
+<p><strong>Chunk distribution:</strong> Mapping data chunks to specific shards, enabling efficient data retrieval.</p>
+</li>
+<li>
+<p><strong>Cluster state:</strong> Current state and health of the sharded cluster, including the status of individual shards and Mongos instances.</p>
+</li>
+</ul>
+<p>The Mongos instances heavily rely on the config servers to make the correct routing decisions.</p>
+<p>This architecture provides several benefits:</p>
+<ul>
+<li>
+<p><strong>Scalability:</strong> By distributing data across multiple shards, MongoDB can handle large datasets and high query volumes.</p>
+</li>
+<li>
+<p><strong>High Availability:</strong> Replicating data within each shard ensures data redundancy and fault tolerance.</p>
+</li>
+<li>
+<p><strong>Load Balancing:</strong> The Mongos router distributes queries across the shards, ensuring an even workload distribution.</p>
+</li>
+</ul>
+<h2 id="real-world-industry-case-studies-of-sharding"><strong>Real-World Industry Case Studies of Sharding</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#real-world-industry-case-studies-of-sharding" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Let’s examine a couple of real-world case studies of organizations using sharding to scale their databases and the issues they face.</p>
+<h3 id="notion"><strong>Notion</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#notion" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>In mid-2020, Notion, a popular productivity and collaboration platform, was facing an existential threat.</p>
+<p>The company had relied on a monolithic PostgreSQL database for five years, which had supported its tremendous growth through several orders of magnitude. However, as Notion continued to expand rapidly, the database struggled to keep pace.</p>
+<p>Several indicators pointed to the growing strain on the database:</p>
+<ul>
+<li>
+<p>Frequent CPU spikes in the database nodes.</p>
+</li>
+<li>
+<p>Unsafe migrations.</p>
+</li>
+<li>
+<p>A high volume of on-call requests.</p>
+</li>
+</ul>
+<p>Moreover, two major issues came to the forefront:</p>
+<ul>
+<li>
+<p><strong>VACUUM Stalling:</strong> The PostgreSQL VACUUM process, responsible for cleaning up and reclaiming disk space, began to stall. This meant that the database was not effectively managing its storage, leading to performance degradation.</p>
+</li>
+<li>
+<p><strong>TXID Wraparound:</strong> Notion encountered an existential threat in the form of TXID wraparound. This issue occurs when the transaction ID counter in PostgreSQL reaches its maximum value and wraps around to zero. If not addressed, it can lead to data corruption and failure.</p>
+</li>
+</ul>
+<p>Faced with these challenges, Notion’s engineering team decided to implement database sharding.</p>
+<p>While they explored vertical scaling as an option, it proved to be cost-prohibitive at their scale.</p>
+<p>However, to ensure the success of the sharding process, Notion needed to develop a good sharding strategy.</p>
+<p>Some key considerations included:</p>
+<h3 id="1---selecting-the-table-to-shard"><strong>1 - Selecting the Table to Shard</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1---selecting-the-table-to-shard" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Notion’s data model revolves around the concept of blocks, where each item on a Notion page is represented as a block. Larger blocks can be composed of smaller blocks, forming a hierarchical structure.</p>
+<p>The Block table emerged as the top candidate for sharding due to its significance in Notion’s data model.</p>
+<p>However, the Block table had dependencies on other tables, such as Workspace and Discussions. To maintain data integrity and avoid complex cross-shard queries (which can impact performance), Notion decided to shard all tables that were transitively related to the Block table.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!Ugtw!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F6553e5bc-0640-4973-8f78-d1337f3bc5f2_1600x971.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!Ugtw!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F6553e5bc-0640-4973-8f78-d1337f3bc5f2_1600x971.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h3 id="2---choosing-the-sharding-key"><strong>2 - Choosing the Sharding Key</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2---choosing-the-sharding-key" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>A good sharding key is critical for efficient sharding.</p>
+<p>Since Notion is a team-based product where a Block belongs to a Workspace, they decided to use the Workspace ID as the partitioning key.</p>
+<p>This decision aimed to minimize cross-shard joins when fetching data, as blocks associated with the same Workspace would be stored within the same shard.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!jbvf!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F848215b1-5ff3-4fdb-b5ad-5ee363b09e24_1600x973.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!jbvf!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F848215b1-5ff3-4fdb-b5ad-5ee363b09e24_1600x973.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h3 id="3---the-number-of-shards"><strong>3 - The Number of Shards</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3---the-number-of-shards" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Determining the optimal number of shards was another critical decision because it directly impacted Notion’s scalability. The goal was to accommodate the existing data volume while considering a 2-year usage projection.</p>
+<p>After analysis, Notion arrived at the following configuration:</p>
+<ul>
+<li>
+<p>480 shards were distributed across 32 nodes, resulting in 15 shards per node. This approach aligned with the fixed number of shards strategy, where the number of shards is predetermined in advance.</p>
+</li>
+<li>
+<p>An upper bound storage limit of 500 GB per table.</p>
+</li>
+</ul>
+<h3 id="lessons-learned"><strong>Lessons Learned</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#lessons-learned" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Ultimately, Notion pulled off a successful migration to the sharded database. A few valuable lessons they learned in the process were as follows:</p>
+<ul>
+<li>
+<p>Premature optimization is bad. However, waiting too long before sharding can also create constraints.</p>
+</li>
+<li>
+<p>Aiming for a zero downtime migration is critical for a good user experience.</p>
+</li>
+<li>
+<p>Choosing the appropriate sharding key is the most important ingredient for a favorable outcome.</p>
+</li>
+</ul>
+<h3 id="discord"><strong>Discord</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#discord" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Discord, the social platform for instant messaging, had an interesting problem with its database sharding that is worth discussing.</p>
+<p>In 2017, Discord was storing billions of messages from users worldwide and decided to migrate from MongoDB to Cassandra in pursuit of a scalable, fault-tolerant, and low-maintenance database solution.</p>
+<p>As Discord’s user base and message volume grew over the next few years, they found themselves storing trillions of messages. Their database cluster expanded from 12 to 177 Cassandra nodes. However, despite the increased number of nodes, the cluster encountered severe performance issues.</p>
+<p>While several factors contributed to the performance degradation, the primary reason was Discord’s sharding strategy.</p>
+<p>In their database schema, every message belonged to a specific channel and was stored in a table called “messages.” The messages table was partitioned based on two fields: “channel_id” and “bucket.” The “bucket” field represented a static time window to which the message belonged.</p>
+<p>Source: <a href="https://discord.com/blog/how-discord-stores-trillions-of-messages" class="external">Discord Engineering Blog<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!5E0W!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fabbfa81e-64b8-44c0-9218-321e975c6475_430x193.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!5E0W!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fabbfa81e-64b8-44c0-9218-321e975c6475_430x193.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>The implication was that all messages within a given channel and period (bucket) were stored on the same partition. Consequently, a popular Discord server with hundreds of thousands of active users could potentially generate a massive volume of messages in a short time, overwhelming a particular shard.</p>
+<p>Since Cassandra’s LSM-Tree structure makes read operations typically more expensive than writes, concurrent reads in high-volume Discord channels could create hotspots on specific shards. These hotspots led to cascading latency issues across the entire database cluster, ultimately impacting the end-user experience.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!lVk4!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F0c8ed7c5-4a9f-4ae3-bd43-41746cfade65_1600x1039.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!lVk4!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F0c8ed7c5-4a9f-4ae3-bd43-41746cfade65_1600x1039.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>To address these challenges, Discord made several changes to its architecture, including:</p>
+<ul>
+<li>
+<p><strong>Migration to ScyllaDB:</strong> Discord migrated from Cassandra to ScyllaDB, a Cassandra-compatible database that promised better performance and resource isolation.</p>
+</li>
+<li>
+<p><strong>Optimizing Data Access:</strong> Discord introduced intermediary services called data services between its API and the database clusters. These services implemented request coalescing and consistent hash-based routing to minimize the load on the database and distribute the traffic more evenly across shards.</p>
+</li>
+</ul>
+<p>Discord’s experience highlights that a good sharding strategy under a specific access pattern can create unexpected performance problems in an application. By optimizing its sharding strategy and data access patterns, Discord successfully mitigated the hotspot issues and improved the performance and scalability of its message storage system.</p>
+<h2 id="summary"><strong>Summary</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#summary" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>In this article, we’ve explored database sharding in great detail, covering it from various aspects.</p>
+<p>Here’s a quick recap of the main points:</p>
+<ul>
+<li>
+<p><strong>Sharding Fundamentals:</strong> Database sharding is a technique for horizontally scaling a database by partitioning it across multiple nodes.</p>
+</li>
+<li>
+<p><strong>Sharding Strategies:</strong> There are three main types of sharding strategies: range-based, key or hash-based, and directory-based sharding. Each strategy has advantages and disadvantages, with hash-based sharding being the most commonly used approach due to its ability to evenly distribute data across shards.</p>
+</li>
+<li>
+<p><strong>Shard Key Selection:</strong> Database designers should consider factors such as cardinality, frequency, and monotonic change when selecting the shard key. A well-chosen shard key is crucial to ensure even distribution and minimize hotspots.</p>
+</li>
+<li>
+<p><strong>Shard Rebalancing:</strong> The database is not static and keeps changing, resulting in the need to rebalance the shards. Various approaches such as fixed partitioning and dynamic sharding can be employed to handle the rebalancing.</p>
+</li>
+<li>
+<p><strong>Request Routing:</strong> There are multiple approaches to route requests to the appropriate shard: partition-aware client, central router, and partition-aware nodes.</p>
+</li>
+<li>
+<p><strong>MongoDB’s Sharding Architecture:</strong> It consists of a central router and an independent configuration server for routing the requests to the correct shard.</p>
+</li>
+<li>
+<p><strong>Real-World Case Studies:</strong> Notion’s journey from a monolithic database to a sharded architecture highlighted the importance of sharding to support rapid growth. Discord’s experience demonstrated how a sharding strategy can result in hotspots due to specific access patterns.</p>
+</li>
+</ul>
+<p>References:</p>
+<ul>
+<li>
+<p><a href="https://discord.com/blog/how-discord-stores-trillions-of-messages" class="external">How Discord Stores Trillions of Messages?<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+</li>
+<li>
+<p><a href="https://www.notion.so/blog/sharding-postgres-at-notion" class="external">Herding elephants: Lessons learned from sharding Postgres at Notion<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+</li>
+<li>
+<p><a href="https://www.mongodb.com/resources/products/capabilities/sharding" class="external">Sharding in MongoDB<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+</li>
+</ul></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-99" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#what-is-sharding" data-for="what-is-sharding">What is Sharding?</a></li><li class="depth-1"><a href="#benefits-of-database-sharding" data-for="benefits-of-database-sharding">Benefits of Database Sharding</a></li><li class="depth-1"><a href="#sharding-and-replication" data-for="sharding-and-replication">Sharding and Replication</a></li><li class="depth-0"><a href="#types-of-sharding" data-for="types-of-sharding">Types of Sharding</a></li><li class="depth-1"><a href="#range-based-sharding" data-for="range-based-sharding">Range-Based Sharding</a></li><li class="depth-1"><a href="#key-or-hash-based-sharding" data-for="key-or-hash-based-sharding">Key or Hash-Based Sharding</a></li><li class="depth-1"><a href="#directory-based-sharding" data-for="directory-based-sharding">Directory Based Sharding</a></li><li class="depth-0"><a href="#factors-to-consider-when-selecting-a-shard-key" data-for="factors-to-consider-when-selecting-a-shard-key">Factors to Consider When Selecting a Shard Key</a></li><li class="depth-1"><a href="#cardinality" data-for="cardinality">Cardinality</a></li><li class="depth-1"><a href="#frequency" data-for="frequency">Frequency</a></li><li class="depth-1"><a href="#monotonic-change" data-for="monotonic-change">Monotonic Change</a></li><li class="depth-0"><a href="#rebalancing-the-shards" data-for="rebalancing-the-shards">Rebalancing the Shards</a></li><li class="depth-1"><a href="#fixed-number-of-shards" data-for="fixed-number-of-shards">Fixed Number of Shards</a></li><li class="depth-1"><a href="#dynamic-shards" data-for="dynamic-shards">Dynamic Shards</a></li><li class="depth-0"><a href="#request-routing-in-a-sharded-database" data-for="request-routing-in-a-sharded-database">Request Routing in a Sharded Database</a></li><li class="depth-0"><a href="#mongodbs-sharding-architecture---a-case-study" data-for="mongodbs-sharding-architecture---a-case-study">MongoDB’s Sharding Architecture - A Case Study</a></li><li class="depth-1"><a href="#shard" data-for="shard">Shard</a></li><li class="depth-1"><a href="#mongos-router" data-for="mongos-router">Mongos Router</a></li><li class="depth-1"><a href="#config-servers" data-for="config-servers">Config Servers</a></li><li class="depth-0"><a href="#real-world-industry-case-studies-of-sharding" data-for="real-world-industry-case-studies-of-sharding">Real-World Industry Case Studies of Sharding</a></li><li class="depth-1"><a href="#notion" data-for="notion">Notion</a></li><li class="depth-1"><a href="#1---selecting-the-table-to-shard" data-for="1---selecting-the-table-to-shard">1 - Selecting the Table to Shard</a></li><li class="depth-1"><a href="#2---choosing-the-sharding-key" data-for="2---choosing-the-sharding-key">2 - Choosing the Sharding Key</a></li><li class="depth-1"><a href="#3---the-number-of-shards" data-for="3---the-number-of-shards">3 - The Number of Shards</a></li><li class="depth-1"><a href="#lessons-learned" data-for="lessons-learned">Lessons Learned</a></li><li class="depth-1"><a href="#discord" data-for="discord">Discord</a></li><li class="depth-0"><a href="#summary" data-for="summary">Summary</a></li><li class="overflow-end"></li></ul></div><div class="backlinks"><h3>Backlinks</h3><ul id="list-2" class="overflow"><li><a href="../../Notion-Knowledge/Note" class="internal">Note</a></li><li><a href="../../_moc/MOC-Database" class="internal">MOC-Database</a></li><li><a href="../../_moc/MOC-Reading-List" class="internal">MOC-Reading-List</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://dangthobach.github.io/">Back to Portfolio</a></li><li><a href="https://github.com/dangthobach">GitHub</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../postscript.js" type="module" data-persist="true"></script></html>

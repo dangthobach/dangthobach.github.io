@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>OOP Design Patterns and Anti-Patterns- What Works and What Fails</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="Dang Tho Bach's Knowledge Base"/><meta property="og:title" content="OOP Design Patterns and Anti-Patterns- What Works and What Fails"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="OOP Design Patterns and Anti-Patterns- What Works and What Fails"/><meta name="twitter:description" content="Writing clean, maintainable, and scalable code sounds easy as a requirement, but is a constant challenge when developing real-world applications."/><meta property="og:description" content="Writing clean, maintainable, and scalable code sounds easy as a requirement, but is a constant challenge when developing real-world applications."/><meta property="og:image:alt" content="Writing clean, maintainable, and scalable code sounds easy as a requirement, but is a constant challenge when developing real-world applications."/><meta property="twitter:domain" content="dangthobach.github.io/knowledge"/><meta property="og:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/OOP-Design-Patterns-and-Anti-Patterns--What-Works-and-What-Fails"/><meta property="twitter:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/OOP-Design-Patterns-and-Anti-Patterns--What-Works-and-What-Fails"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="Writing clean, maintainable, and scalable code sounds easy as a requirement, but is a constant challenge when developing real-world applications."/><meta name="generator" content="Quartz"/><link href="../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiL2hvbWUvcnVubmVyL3dvcmsvZGFuZ3Rob2JhY2guZ2l0aHViLmlvL2Rhbmd0aG9iYWNoLmdpdGh1Yi5pby9xdWFydHovcXVhcnR6L2NvbXBvbmVudHMvc3R5bGVzIiwic291cmNlcyI6WyJtZXJtYWlkLmlubGluZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFHRjtFQUNFOzs7QUFLRjtFQUNFO0VBQ0E7OztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTs7QUFJRjtFQUNFO0VBQ0E7RUFDQSIsInNvdXJjZXNDb250ZW50IjpbIi5leHBhbmQtYnV0dG9uIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbG9hdDogcmlnaHQ7XG4gIHBhZGRpbmc6IDAuNHJlbTtcbiAgbWFyZ2luOiAwLjNyZW07XG4gIHJpZ2h0OiAwOyAvLyBOT1RFOiByaWdodCB3aWxsIGJlIHNldCBpbiBtZXJtYWlkLmlubGluZS50c1xuICBjb2xvcjogdmFyKC0tZ3JheSk7XG4gIGJvcmRlci1jb2xvcjogdmFyKC0tZGFyayk7XG4gIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgYm9yZGVyOiAxcHggc29saWQ7XG4gIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgb3BhY2l0eTogMDtcbiAgdHJhbnNpdGlvbjogMC4ycztcblxuICAmID4gc3ZnIHtcbiAgICBmaWxsOiB2YXIoLS1saWdodCk7XG4gICAgZmlsdGVyOiBjb250cmFzdCgwLjMpO1xuICB9XG5cbiAgJjpob3ZlciB7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIGJvcmRlci1jb2xvcjogdmFyKC0tc2Vjb25kYXJ5KTtcbiAgfVxuXG4gICY6Zm9jdXMge1xuICAgIG91dGxpbmU6IDA7XG4gIH1cbn1cblxucHJlIHtcbiAgJjpob3ZlciA+IC5leHBhbmQtYnV0dG9uIHtcbiAgICBvcGFjaXR5OiAxO1xuICAgIHRyYW5zaXRpb246IDAuMnM7XG4gIH1cbn1cblxuI21lcm1haWQtY29udGFpbmVyIHtcbiAgcG9zaXRpb246IGZpeGVkO1xuICBjb250YWluOiBsYXlvdXQ7XG4gIHotaW5kZXg6IDk5OTtcbiAgbGVmdDogMDtcbiAgdG9wOiAwO1xuICB3aWR0aDogMTAwdnc7XG4gIGhlaWdodDogMTAwdmg7XG4gIG92ZXJmbG93OiBoaWRkZW47XG4gIGRpc3BsYXk6IG5vbmU7XG4gIGJhY2tkcm9wLWZpbHRlcjogYmx1cig0cHgpO1xuICBiYWNrZ3JvdW5kOiByZ2JhKDAsIDAsIDAsIDAuNSk7XG5cbiAgJi5hY3RpdmUge1xuICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgfVxuXG4gICYgPiAjbWVybWFpZC1zcGFjZSB7XG4gICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gICAgYm9yZGVyLXJhZGl1czogNXB4O1xuICAgIHBvc2l0aW9uOiBmaXhlZDtcbiAgICB0b3A6IDUwJTtcbiAgICBsZWZ0OiA1MCU7XG4gICAgdHJhbnNmb3JtOiB0cmFuc2xhdGUoLTUwJSwgLTUwJSk7XG4gICAgaGVpZ2h0OiA4MHZoO1xuICAgIHdpZHRoOiA4MHZ3O1xuICAgIG92ZXJmbG93OiBoaWRkZW47XG5cbiAgICAmID4gLm1lcm1haWQtY29udGVudCB7XG4gICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgICB0cmFuc2Zvcm0tb3JpZ2luOiAwIDA7XG4gICAgICB0cmFuc2l0aW9uOiB0cmFuc2Zvcm0gMC4xcyBlYXNlO1xuICAgICAgb3ZlcmZsb3c6IHZpc2libGU7XG4gICAgICBtaW4taGVpZ2h0OiAyMDBweDtcbiAgICAgIG1pbi13aWR0aDogMjAwcHg7XG5cbiAgICAgIHByZSB7XG4gICAgICAgIG1hcmdpbjogMDtcbiAgICAgICAgYm9yZGVyOiBub25lO1xuICAgICAgfVxuXG4gICAgICBzdmcge1xuICAgICAgICBtYXgtd2lkdGg6IG5vbmU7XG4gICAgICAgIGhlaWdodDogYXV0bztcbiAgICAgIH1cbiAgICB9XG5cbiAgICAmID4gLm1lcm1haWQtY29udHJvbHMge1xuICAgICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgICAgYm90dG9tOiAyMHB4O1xuICAgICAgcmlnaHQ6IDIwcHg7XG4gICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgZ2FwOiA4cHg7XG4gICAgICBwYWRkaW5nOiA4cHg7XG4gICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgYm9yZGVyLXJhZGl1czogNnB4O1xuICAgICAgYm94LXNoYWRvdzogMCAycHggNHB4IHJnYmEoMCwgMCwgMCwgMC4xKTtcbiAgICAgIHotaW5kZXg6IDI7XG5cbiAgICAgIC5tZXJtYWlkLWNvbnRyb2wtYnV0dG9uIHtcbiAgICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgIHdpZHRoOiAzMnB4O1xuICAgICAgICBoZWlnaHQ6IDMycHg7XG4gICAgICAgIHBhZGRpbmc6IDA7XG4gICAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgICAgY29sb3I6IHZhcigtLWRhcmspO1xuICAgICAgICBib3JkZXItcmFkaXVzOiA0cHg7XG4gICAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICAgICAgZm9udC1zaXplOiAxNnB4O1xuICAgICAgICBmb250LWZhbWlseTogdmFyKC0tYm9keUZvbnQpO1xuICAgICAgICB0cmFuc2l0aW9uOiBhbGwgMC4ycyBlYXNlO1xuXG4gICAgICAgICY6aG92ZXIge1xuICAgICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIH1cblxuICAgICAgICAmOmFjdGl2ZSB7XG4gICAgICAgICAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKDFweCk7XG4gICAgICAgIH1cblxuICAgICAgICAvLyBTdHlsZSB0aGUgcmVzZXQgYnV0dG9uIGRpZmZlcmVudGx5XG4gICAgICAgICY6bnRoLWNoaWxkKDIpIHtcbiAgICAgICAgICB3aWR0aDogYXV0bztcbiAgICAgICAgICBwYWRkaW5nOiAwIDEycHg7XG4gICAgICAgICAgZm9udC1zaXplOiAxNHB4O1xuICAgICAgICB9XG4gICAgICB9XG4gICAgfVxuICB9XG59XG4iXX0= */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://dangthobach.github.io/knowledge/index.xml"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/OOP-Design-Patterns-and-Anti-Patterns--What-Works-and-What-Fails-og-image.webp"/><meta property="og:image:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/OOP-Design-Patterns-and-Anti-Patterns--What-Works-and-What-Fails-og-image.webp"/><meta name="twitter:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/OOP-Design-Patterns-and-Anti-Patterns--What-Works-and-What-Fails-og-image.webp"/><meta property="og:image:type" content="image/.webp"/></head><body data-slug="Notion-Knowledge/Note/OOP-Design-Patterns-and-Anti-Patterns--What-Works-and-What-Fails"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../..">Dang Tho Bach's Knowledge Base</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-388"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-388" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/">Notion Knowledge</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/Note/">Note</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>OOP Design Patterns and Anti Patterns  What Works and What Fails</a></div></nav><h1 class="article-title">OOP Design Patterns and Anti-Patterns- What Works and What Fails</h1><p show-comma="true" class="content-meta"><time datetime="2026-05-02T04:58:37.000Z">May 02, 2026</time><span>25 min read</span></p></div></div><article class="popover-hint"><p>Writing clean, maintainable, and scalable code sounds easy as a requirement, but is a constant challenge when developing real-world applications.</p>
+<p>As projects grow, the task becomes more complex. One way to simplify it is by identifying recurring design problems, which can be solved using appropriate design patterns.</p>
+<p>Design patterns are proven, reusable solutions to common software design problems. They provide best practices and structured approaches for solving recurring challenges. These patterns are not concrete implementations but templates or guidelines that can be adapted to specific use cases.</p>
+<p>But what makes design patterns important? Here are a few basic reasons:</p>
+<ul>
+<li>
+<p>Patterns often encourage modular and reusable code.</p>
+</li>
+<li>
+<p>Well-structured designs make the codebase easier to understand, modify, and extend.</p>
+</li>
+<li>
+<p>Patterns allow new features to be added without major rewrites.</p>
+</li>
+<li>
+<p>Design patterns provide a common vocabulary for discussing software architecture, improving collaboration among developers.</p>
+</li>
+</ul>
+<p>However, anti-patterns also exist. They are often bad practices that lead to unmaintainable, inefficient, and overly complex code.</p>
+<p>From a developer’s perspective, understanding both design patterns and anti-patterns is essential for writing high-quality software. Knowing design patterns helps developers apply the right solutions to common problems while recognizing anti-patterns allows them to avoid common mistakes that lead to bad architecture.</p>
+<p>In this article, we’ll first look at the most popular OOP Design Patterns. Then, we will also investigate the common anti-patterns that should be avoided.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!R3Tn!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F65279cf0-3266-445d-852b-a45d6ac9afa4_2250x2862.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!R3Tn!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F65279cf0-3266-445d-852b-a45d6ac9afa4_2250x2862.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h2 id="popular-oop-design-patterns"><strong>Popular OOP Design Patterns</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#popular-oop-design-patterns" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Let us now examine the most popular OOP Design Patterns. For each pattern, we will understand its core meaning, describe the pattern with an example, and discuss its benefits and potential pitfalls.</p>
+<h3 id="factory-pattern"><strong>Factory Pattern</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#factory-pattern" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The factory pattern is a creational design pattern that provides a centralized mechanism for creating objects.</p>
+<p>Creating objects using the new keyword can lead to tight coupling between the client code and specific implementations. See the example below:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>// Shape Interface</span></span>
+<span data-line><span>interface Shape {</span></span>
+<span data-line><span>    void draw();</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Concrete Implementations</span></span>
+<span data-line><span>class Circle implements Shape {</span></span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    public void draw() {</span></span>
+<span data-line><span>        System.out.println(&quot;Drawing a Circle&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>class Square implements Shape {</span></span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    public void draw() {</span></span>
+<span data-line><span>        System.out.println(&quot;Drawing a Square&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Client Code (Violating OCP &amp; Creating Hardcoded Dependencies)</span></span>
+<span data-line><span>public class DrawingApp {</span></span>
+<span data-line><span>    public static void main(String[] args) {</span></span>
+<span data-line><span>        // Direct object creation using 'new' keyword</span></span>
+<span data-line><span>        Shape shape1 = new Circle();</span></span>
+<span data-line><span>        shape1.draw(); // Output: Drawing a Circle</span></span>
+<span data-line> </span>
+<span data-line><span>        Shape shape2 = new Square();</span></span>
+<span data-line><span>        shape2.draw(); // Output: Drawing a Square</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>Here, the DrawingApp class directly depends on the Circle and Square classes. If a new shape is introduced, the client must be modified to accommodate it. It violates the open/closed principle. Also, changing implementations requires modifying all occurrences of the previous class.</p>
+<p>The factory pattern helps centralize object creation, ensuring the client code remains unaware of concrete implementations. New types can be added with minimal modifications. The factory pattern can be thought of as a restaurant kitchen. Customers do not cook their food. Instead, they place an order, and the kitchen prepares the dish and provides it to them.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!UNsv!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F8946dffe-55b9-49a1-b8bb-af4b3194d798_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!UNsv!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F8946dffe-55b9-49a1-b8bb-af4b3194d798_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>See the code example below of a simple factory class for creating shape objects and its usage in the main class (which acts as the client code) in the example:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>class ShapeFactory {</span></span>
+<span data-line><span>    // Factory method to create Shape objects based on input type</span></span>
+<span data-line><span>    public static Shape getShape(String shapeType) {</span></span>
+<span data-line><span>        if (shapeType == null) {</span></span>
+<span data-line><span>            throw new IllegalArgumentException(&quot;Shape type cannot be null&quot;);</span></span>
+<span data-line><span>        }</span></span>
+<span data-line><span>        if (shapeType.equalsIgnoreCase(&quot;Circle&quot;)) {</span></span>
+<span data-line><span>            return new Circle();</span></span>
+<span data-line><span>        } else if (shapeType.equalsIgnoreCase(&quot;Square&quot;)) {</span></span>
+<span data-line><span>            return new Square();</span></span>
+<span data-line><span>        }</span></span>
+<span data-line><span>        throw new IllegalArgumentException(&quot;Unknown shape type: &quot; + shapeType);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>public class Main {</span></span>
+<span data-line><span>    public static void main(String[] args) {</span></span>
+<span data-line><span>        // Creating shapes using the factory</span></span>
+<span data-line><span>        Shape shape1 = ShapeFactory.getShape(&quot;Circle&quot;);</span></span>
+<span data-line><span>        shape1.draw();  // Output: Drawing a Circle</span></span>
+<span data-line> </span>
+<span data-line><span>        Shape shape2 = ShapeFactory.getShape(&quot;Square&quot;);</span></span>
+<span data-line><span>        shape2.draw();  // Output: Drawing a Square</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>Note that this is just a basic code example to demonstrate the concept.</p>
+<p>As mentioned, the factory pattern helps reduce coupling and encapsulate the complexity of creating an object. The instantiation logic is now in one place, making it easier to manage. When dealing with families of related objects, the abstract factory pattern extends this idea by centralizing the creation of entire groups of objects, ensuring consistency and reducing duplication.</p>
+<p>However, the factory pattern also has some downsides that should be considered:</p>
+<ul>
+<li>
+<p>For simple object creation, a factory may be an unnecessary overhead.</p>
+</li>
+<li>
+<p>If a single factory manages too many different object types, the factory class can become too large and difficult to maintain.</p>
+</li>
+<li>
+<p>If a new shape is added, the factory needs to be changed. Thus, the open/closed principle is not completely avoided, but its violation is restricted to the factory class. Techniques to prevent this violation in factory classes, such as using a registry-based factory, are also available.</p>
+</li>
+</ul>
+<h3 id="singleton-pattern"><strong>Singleton Pattern</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#singleton-pattern" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The singleton pattern is a creational design pattern that ensures a class has only one instance throughout an application’s lifecycle.</p>
+<p>See the diagram below that shows the concept of this pattern:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!OUat!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F89ff8072-d674-4144-8a75-947c9ea70dfa_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!OUat!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F89ff8072-d674-4144-8a75-947c9ea70dfa_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>In many scenarios, multiple instances of a class can cause issues, such as redundant memory usage, race conditions, or inconsistent states. The singleton pattern helps side-step such problems.</p>
+<p>Some common use cases of this pattern are in database connection objects, logging instances, and configuration manager instances.</p>
+<p>To properly implement a singleton, it must satisfy a few basic conditions:</p>
+<ul>
+<li>
+<p>Restrict object creation.</p>
+</li>
+<li>
+<p>Provide a global access method.</p>
+</li>
+<li>
+<p>Ensure thread safety in multi-threaded environments.</p>
+</li>
+</ul>
+<p>Here’s a code example of a basic singleton, which is not thread-safe.</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>class BasicSingleton {</span></span>
+<span data-line><span>    private static BasicSingleton instance;</span></span>
+<span data-line> </span>
+<span data-line><span>    private BasicSingleton() {} // Private constructor prevents direct instantiation</span></span>
+<span data-line> </span>
+<span data-line><span>    public static BasicSingleton getInstance() {</span></span>
+<span data-line><span>        if (instance == null) {</span></span>
+<span data-line><span>            instance = new BasicSingleton();</span></span>
+<span data-line><span>        }</span></span>
+<span data-line><span>        return instance;</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>To make the singleton thread safe, we use double-checked locking with the volatile keyword.</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>class Singleton {</span></span>
+<span data-line><span>    private static volatile Singleton instance; // Volatile ensures visibility across threads</span></span>
+<span data-line> </span>
+<span data-line><span>    private Singleton() {} // Private constructor to prevent instantiation</span></span>
+<span data-line> </span>
+<span data-line><span>    public static Singleton getInstance() {</span></span>
+<span data-line><span>        if (instance == null) { // First check</span></span>
+<span data-line><span>            synchronized (Singleton.class) {</span></span>
+<span data-line><span>                if (instance == null) { // Second check (after acquiring lock)</span></span>
+<span data-line><span>                    instance = new Singleton();</span></span>
+<span data-line><span>                }</span></span>
+<span data-line><span>            }</span></span>
+<span data-line><span>        }</span></span>
+<span data-line><span>        return instance;</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>The synchronized block ensures only one thread can initialize the instance at a time and the volatile keyword provides visibility of the instance across threads. Double-checking is helpful to avoid synchronizing the method every time because synchronization can be costly if done repeatedly.</p>
+<p>On a side note, this singleton implementation can be broken using reflection in Java. To avoid that, another way of creating singletons is by using Enums in Java. However, the Enum approach does not support lazy initialization.</p>
+<p>Overall, the singleton pattern is a great way to manage shared resources within an application context. Since a singleton is initialized only when required, it also potentially saves memory.</p>
+<p>However, the pattern also has downsides:</p>
+<ul>
+<li>
+<p>Singletons introduce a global state, which can lead to unexpected side effects in large applications.</p>
+</li>
+<li>
+<p>Since singletons cannot be easily replaced or mocked, they make unit testing harder.</p>
+</li>
+<li>
+<p>Since singletons live throughout the application lifecycle, poorly designed singletons can cause memory leaks.</p>
+</li>
+</ul>
+<h3 id="strategy-pattern"><strong>Strategy Pattern</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#strategy-pattern" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The strategy pattern is a behavioral design pattern that allows an object’s behavior to be selected dynamically at runtime without modifying the existing code.</p>
+<p>In many applications, different behaviors need to be selected at runtime. Without the strategy pattern, developers often rely on conditional logic (if-else or switch-case), which violates OCP and makes the code difficult to extend and maintain.</p>
+<p>Imagine an e-commerce website where customers can pay using different payment methods such as Credit Card or PayPal. Instead of hardcoding every possible payment method into the system, the strategy pattern allows each payment method to be implemented independently and selected at runtime. The diagram below shows the strategy pattern scenario.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!X98C!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F90c27bcd-bed5-45e1-a326-393234796905_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!X98C!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F90c27bcd-bed5-45e1-a326-393234796905_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Also, see the code example below for a basic implementation of the strategy pattern:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>// Step 1: Define the Strategy Interface</span></span>
+<span data-line><span>interface PaymentStrategy {</span></span>
+<span data-line><span>    void pay(int amount);</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Step 2: Implement Concrete Payment Strategies</span></span>
+<span data-line> </span>
+<span data-line><span>// Credit Card Payment Strategy</span></span>
+<span data-line><span>class CreditCardPayment implements PaymentStrategy {</span></span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    public void pay(int amount) {</span></span>
+<span data-line><span>        System.out.println(&quot;Paid $&quot; + amount + &quot; using Credit Card.&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// PayPal Payment Strategy</span></span>
+<span data-line><span>class PayPalPayment implements PaymentStrategy {</span></span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    public void pay(int amount) {</span></span>
+<span data-line><span>        System.out.println(&quot;Paid $&quot; + amount + &quot; using PayPal.&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Step 3: Implement the Context Class</span></span>
+<span data-line><span>// ShoppingCart class uses different payment strategies</span></span>
+<span data-line><span>class ShoppingCart {</span></span>
+<span data-line><span>    private PaymentStrategy paymentStrategy;</span></span>
+<span data-line> </span>
+<span data-line><span>    // Allows setting a payment method dynamically</span></span>
+<span data-line><span>    public void setPaymentMethod(PaymentStrategy strategy) {</span></span>
+<span data-line><span>        this.paymentStrategy = strategy;</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    public void checkout(int amount) {</span></span>
+<span data-line><span>        if (paymentStrategy == null) {</span></span>
+<span data-line><span>            throw new IllegalStateException(&quot;Payment method not set.&quot;);</span></span>
+<span data-line><span>        }</span></span>
+<span data-line><span>        paymentStrategy.pay(amount);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Step 4: Demonstration of the Strategy Pattern</span></span>
+<span data-line><span>public class Main {</span></span>
+<span data-line><span>    public static void main(String[] args) {</span></span>
+<span data-line><span>        ShoppingCart cart = new ShoppingCart();</span></span>
+<span data-line> </span>
+<span data-line><span>        // Selecting Credit Card Payment at runtime</span></span>
+<span data-line><span>        cart.setPaymentMethod(new CreditCardPayment());</span></span>
+<span data-line><span>        cart.checkout(100); // Output: Paid $100 using Credit Card.</span></span>
+<span data-line> </span>
+<span data-line><span>        // Switching to PayPal Payment dynamically</span></span>
+<span data-line><span>        cart.setPaymentMethod(new PayPalPayment());</span></span>
+<span data-line><span>        cart.checkout(200); // Output: Paid $200 using PayPal.</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>In this example, new payment methods can be added without modifying the existing ShoppingCart class. The existing code remains unchanged, reducing risk and improving maintainability.</p>
+<p>One thing to note is that the Main class is still tightly coupled to the CreditCardPayment and the PayPalPayment class in this example. This isn’t ideal as we saw earlier and can be improved by using a factory or registry to provide the instances dynamically.</p>
+<p>While the strategy pattern improves flexibility and promotes open/closed principle, it can also increase the complexity of maintaining multiple strategy classes.</p>
+<h3 id="observer-pattern"><strong>Observer Pattern</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#observer-pattern" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The observer pattern is a behavioral design pattern that automatically allows one object (the subject) to notify multiple dependent objects (observers) about state changes.</p>
+<p>See the diagram below for reference:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!kIFa!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F3a875bfa-ca51-4dd3-bf7c-0032d58100aa_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!kIFa!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F3a875bfa-ca51-4dd3-bf7c-0032d58100aa_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Common use cases of the observer pattern are notification systems, event listeners, stock market feeds, and message broadcast systems.</p>
+<p>Here’s a simple example of the observer pattern implementation in Java.</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>import java.util.ArrayList;</span></span>
+<span data-line><span>import java.util.List;</span></span>
+<span data-line> </span>
+<span data-line><span>// Step 1: Define the Observer Interface</span></span>
+<span data-line><span>interface Subscriber {</span></span>
+<span data-line><span>    void update(String videoTitle);</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Step 2: Implement Concrete Observers (Users)</span></span>
+<span data-line><span>class User implements Subscriber {</span></span>
+<span data-line><span>    private String userName;</span></span>
+<span data-line> </span>
+<span data-line><span>    public User(String name) {</span></span>
+<span data-line><span>        this.userName = name;</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    public void update(String videoTitle) {</span></span>
+<span data-line><span>        System.out.println(userName + &quot; received notification: New video uploaded - &quot; + videoTitle);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Step 3: Implement the Subject (Observable)</span></span>
+<span data-line><span>class Channel {</span></span>
+<span data-line><span>    private List&lt;Subscriber> subscribers = new ArrayList&lt;>();</span></span>
+<span data-line><span>    private String channelName;</span></span>
+<span data-line> </span>
+<span data-line><span>    public Channel(String name) {</span></span>
+<span data-line><span>        this.channelName = name;</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    // Method to subscribe users</span></span>
+<span data-line><span>    public void subscribe(Subscriber subscriber) {</span></span>
+<span data-line><span>        subscribers.add(subscriber);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    // Method to unsubscribe users</span></span>
+<span data-line><span>    public void unsubscribe(Subscriber subscriber) {</span></span>
+<span data-line><span>        subscribers.remove(subscriber);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    // Notify all subscribers when new content is uploaded</span></span>
+<span data-line><span>    public void uploadVideo(String videoTitle) {</span></span>
+<span data-line><span>        System.out.println(channelName + &quot; uploaded a new video: &quot; + videoTitle);</span></span>
+<span data-line><span>        notifySubscribers(videoTitle);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    // Notify each subscriber</span></span>
+<span data-line><span>    private void notifySubscribers(String videoTitle) {</span></span>
+<span data-line><span>        for (Subscriber subscriber : subscribers) {</span></span>
+<span data-line><span>            subscriber.update(videoTitle);</span></span>
+<span data-line><span>        }</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Step 4: Demonstrate the Observer Pattern in Action</span></span>
+<span data-line><span>public class Main {</span></span>
+<span data-line><span>    public static void main(String[] args) {</span></span>
+<span data-line><span>        // Create a YouTube Channel (Subject)</span></span>
+<span data-line><span>        Channel techChannel = new Channel(&quot;ByteByteGo&quot;);</span></span>
+<span data-line> </span>
+<span data-line><span>        // Create Users (Observers)</span></span>
+<span data-line><span>        User alice = new User(&quot;Alice&quot;);</span></span>
+<span data-line><span>        User bob = new User(&quot;Bob&quot;);</span></span>
+<span data-line><span>        User charlie = new User(&quot;Charlie&quot;);</span></span>
+<span data-line> </span>
+<span data-line><span>        // Users subscribe to the channel</span></span>
+<span data-line><span>        techChannel.subscribe(alice);</span></span>
+<span data-line><span>        techChannel.subscribe(bob);</span></span>
+<span data-line><span>        techChannel.subscribe(charlie);</span></span>
+<span data-line> </span>
+<span data-line><span>        // The channel uploads a new video</span></span>
+<span data-line><span>        techChannel.uploadVideo(&quot;Observer Pattern Explained&quot;);</span></span>
+<span data-line> </span>
+<span data-line><span>        // Bob unsubscribes</span></span>
+<span data-line><span>        techChannel.unsubscribe(bob);</span></span>
+<span data-line> </span>
+<span data-line><span>        // Another video is uploaded</span></span>
+<span data-line><span>        techChannel.uploadVideo(&quot;Strategy Pattern in Java&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>The main parts of this code are as follows:</p>
+<ul>
+<li>
+<p><strong>Subscriber Interface</strong>: Defines the observer contract (how subscribers react to updates).</p>
+</li>
+<li>
+<p><strong>User Class (Concrete Observer)</strong>: Implements Subscriber and defines how users react to video uploads.</p>
+</li>
+<li>
+<p><strong>Channel Class (Subject/Observable)</strong>: Maintains a list of subscribers and notifies them when new content is uploaded.</p>
+</li>
+<li>
+<p><strong>Main Class (Client Code)</strong>: Demonstrates the pattern in action.</p>
+</li>
+</ul>
+<p>The observer pattern helps reduce coupling and enhances scalability. It also encapsulates the behavior of each observer, which can be customized independently of other observers.</p>
+<p>However, the observer pattern also has downsides such as:</p>
+<ul>
+<li>
+<p>If a subject has hundreds or thousands of observers, notifying all of them can cause performance bottlenecks.</p>
+</li>
+<li>
+<p>Since observers react to changes automatically, debugging becomes harder because it’s not always clear which objects are triggering updates.</p>
+</li>
+<li>
+<p>If an observer modifies shared data during an update, it may lead to unexpected behavior.</p>
+</li>
+</ul>
+<h3 id="decorator-pattern"><strong>Decorator Pattern</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#decorator-pattern" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The decorator pattern is a structural design pattern that allows dynamically adding behavior to objects without modifying their existing code.</p>
+<p>See the diagram below that show this pattern:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!MGKM!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F41ddec80-91c9-418c-af4a-67e729e9dfbe_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!MGKM!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F41ddec80-91c9-418c-af4a-67e729e9dfbe_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Imagine ordering coffee at a restaurant. After starting with a basic coffee, we want to customize it with milk, sugar, caramel, or extra shots of espresso. Without the decorator pattern, the restaurant would need separate classes like MilkCoffee, SugarCoffee, MilkSugarCoffee, CaramelCoffee, and so on. However, with the decorator pattern, the base Coffee remains the same, and additional features are added dynamically at runtime.</p>
+<p>Here’s a basic example of the decorator pattern implementation.</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>// Step 1: Define the Coffee Interface (Component)</span></span>
+<span data-line><span>interface Coffee {</span></span>
+<span data-line><span>    String getDescription();</span></span>
+<span data-line><span>    double cost();</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Step 2: Implement the Base Coffee Class (Concrete Component)</span></span>
+<span data-line><span>class SimpleCoffee implements Coffee {</span></span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    public String getDescription() {</span></span>
+<span data-line><span>        return &quot;Plain Coffee&quot;;</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    public double cost() {</span></span>
+<span data-line><span>        return 5.0;</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Step 3: Create an Abstract Decorator Class</span></span>
+<span data-line><span>abstract class CoffeeDecorator implements Coffee {</span></span>
+<span data-line><span>    protected Coffee decoratedCoffee; // Composition: Wraps another Coffee object</span></span>
+<span data-line> </span>
+<span data-line><span>    public CoffeeDecorator(Coffee coffee) {</span></span>
+<span data-line><span>        this.decoratedCoffee = coffee;</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    public String getDescription() {</span></span>
+<span data-line><span>        return decoratedCoffee.getDescription();</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    public double cost() {</span></span>
+<span data-line><span>        return decoratedCoffee.cost();</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Step 4: Implement Concrete Decorators</span></span>
+<span data-line> </span>
+<span data-line><span>// Adds Milk to Coffee</span></span>
+<span data-line><span>class MilkDecorator extends CoffeeDecorator {</span></span>
+<span data-line><span>    public MilkDecorator(Coffee coffee) {</span></span>
+<span data-line><span>        super(coffee);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    public String getDescription() {</span></span>
+<span data-line><span>        return decoratedCoffee.getDescription() + &quot;, Milk&quot;;</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    public double cost() {</span></span>
+<span data-line><span>        return decoratedCoffee.cost() + 1.5;</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Adds Sugar to Coffee</span></span>
+<span data-line><span>class SugarDecorator extends CoffeeDecorator {</span></span>
+<span data-line><span>    public SugarDecorator(Coffee coffee) {</span></span>
+<span data-line><span>        super(coffee);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    public String getDescription() {</span></span>
+<span data-line><span>        return decoratedCoffee.getDescription() + &quot;, Sugar&quot;;</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    public double cost() {</span></span>
+<span data-line><span>        return decoratedCoffee.cost() + 0.5;</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Step 5: Demonstrate the Decorator Pattern in Action</span></span>
+<span data-line><span>public class Main {</span></span>
+<span data-line><span>    public static void main(String[] args) {</span></span>
+<span data-line><span>        // Start with Plain Coffee</span></span>
+<span data-line><span>        Coffee myCoffee = new SimpleCoffee();</span></span>
+<span data-line><span>        System.out.println(myCoffee.getDescription() + &quot; - $&quot; + myCoffee.cost());</span></span>
+<span data-line> </span>
+<span data-line><span>        // Add Milk</span></span>
+<span data-line><span>        myCoffee = new MilkDecorator(myCoffee);</span></span>
+<span data-line><span>        System.out.println(myCoffee.getDescription() + &quot; - $&quot; + myCoffee.cost());</span></span>
+<span data-line> </span>
+<span data-line><span>        // Add Sugar</span></span>
+<span data-line><span>        myCoffee = new SugarDecorator(myCoffee);</span></span>
+<span data-line><span>        System.out.println(myCoffee.getDescription() + &quot; - $&quot; + myCoffee.cost());</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>The decorator pattern makes it easy to add or remove features. It also lets us extend functionality without modifying existing code and adding deep inheritance hierarchies.</p>
+<p>Some downsides of the decorator pattern are as follows:</p>
+<ul>
+<li>
+<p>Instead of one large class, there are many small decorator classes. If too many decorators are used, it can become difficult to manage.</p>
+</li>
+<li>
+<p>Since behavior is distributed across multiple small classes, debugging may take more effort.</p>
+</li>
+</ul>
+<h3 id="adapter-pattern"><strong>Adapter Pattern</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#adapter-pattern" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The adapter pattern is a structural design pattern that allows two incompatible interfaces to work together without modifying their existing code.</p>
+<p>Some common use cases of the adapter pattern are as follows:</p>
+<ul>
+<li>
+<p>Connecting legacy systems to new applications.</p>
+</li>
+<li>
+<p>Integrating third-party APIs that have different data formats.</p>
+</li>
+<li>
+<p>Making different hardware components communicate.</p>
+</li>
+</ul>
+<p>See the code example below that shows the adapter pattern in action using the analogy of a USB to HDMI adapter:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>// Step 1: Define the HDMI Monitor Interface (Target)</span></span>
+<span data-line><span>interface HDMIMonitor {</span></span>
+<span data-line><span>    void displayHDMI(String content);</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Step 2: Implement the Concrete HDMI Monitor</span></span>
+<span data-line><span>class MyHDMIMonitor implements HDMIMonitor {</span></span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    public void displayHDMI(String content) {</span></span>
+<span data-line><span>        System.out.println(&quot;Displaying on HDMI Monitor: &quot; + content);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Step 3: Define the USB Device Interface (Incompatible Interface)</span></span>
+<span data-line><span>interface USBDevice {</span></span>
+<span data-line><span>    void sendUSB(String data);</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Step 4: Implement the Concrete USB Device</span></span>
+<span data-line><span>class FlashDrive implements USBDevice {</span></span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    public void sendUSB(String data) {</span></span>
+<span data-line><span>        System.out.println(&quot;USB Device sending data: &quot; + data);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Step 5: Implement the Adapter (USB to HDMI)</span></span>
+<span data-line><span>class USBToHDMIAdapter implements HDMIMonitor {</span></span>
+<span data-line><span>    private USBDevice usbDevice;</span></span>
+<span data-line> </span>
+<span data-line><span>    // Constructor accepts a USB device</span></span>
+<span data-line><span>    public USBToHDMIAdapter(USBDevice usbDevice) {</span></span>
+<span data-line><span>        this.usbDevice = usbDevice;</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    public void displayHDMI(String content) {</span></span>
+<span data-line><span>        System.out.println(&quot;Adapter converting USB data to HDMI format...&quot;);</span></span>
+<span data-line><span>        usbDevice.sendUSB(content); // Converts USB data to HDMI</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Step 6: Demonstrate the Adapter Pattern in Client Code</span></span>
+<span data-line><span>public class Main {</span></span>
+<span data-line><span>    public static void main(String[] args) {</span></span>
+<span data-line><span>        // Directly using an HDMI Monitor</span></span>
+<span data-line><span>        HDMIMonitor hdmiMonitor = new MyHDMIMonitor();</span></span>
+<span data-line><span>        hdmiMonitor.displayHDMI(&quot;Direct HDMI Signal&quot;);</span></span>
+<span data-line> </span>
+<span data-line><span>        // Using a USB Device (Incompatible)</span></span>
+<span data-line><span>        USBDevice usbFlashDrive = new FlashDrive();</span></span>
+<span data-line> </span>
+<span data-line><span>        // Using an Adapter to connect USB to HDMI Monitor</span></span>
+<span data-line><span>        HDMIMonitor adapter = new USBToHDMIAdapter(usbFlashDrive);</span></span>
+<span data-line><span>        adapter.displayHDMI(&quot;USB Data Stream&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>The various parts of this code example are as follows:</p>
+<ul>
+<li>
+<p><strong>HDMIMonitor Interface (Target)</strong>: Represents HDMI monitors that accept HDMI input.</p>
+</li>
+<li>
+<p><strong>MyHDMIMonitor Class (Concrete Target)</strong>: A real HDMI monitor that displays content.</p>
+</li>
+<li>
+<p><strong>USBDevice Interface (Incompatible Interface)</strong>: Represents USB devices that send USB signals.</p>
+</li>
+<li>
+<p><strong>FlashDrive Class (Concrete Adaptee)</strong>: A USB flash drive that sends USB data.</p>
+</li>
+<li>
+<p><strong>USBToHDMIAdapter Class (Adapter)</strong>: Converts USB signals into HDMI-compatible format.</p>
+</li>
+<li>
+<p><strong>Main Class (Client)</strong>: Demonstrates how adapter allows a USB device to work with an HDMI monitor.</p>
+</li>
+</ul>
+<p><a href="https://substackcdn.com/image/fetch/$s_!BElo!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F3fa6c66c-1aa1-47c5-854b-bfa44d7fb527_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!BElo!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F3fa6c66c-1aa1-47c5-854b-bfa44d7fb527_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>The adapter pattern helps support different input and output formats. It also follows the open/closed principle and single responsibility principle.</p>
+<p>However, the adapter pattern also has some downsides:</p>
+<ul>
+<li>
+<p>It introduces extra classes, which can increase code complexity.</p>
+</li>
+<li>
+<p>If the adapter requires significant data transformation, it may introduce processing delays.</p>
+</li>
+<li>
+<p>If we control the original class, it may be better to refactor it instead of using an adapter.</p>
+</li>
+</ul>
+<h3 id="command-pattern"><strong>Command Pattern</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#command-pattern" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The command pattern is a behavioral design pattern that encapsulates operations as objects.</p>
+<p>When a system directly calls methods on objects, it creates tight coupling between the invoker (caller) and the receiver (actual object performing the action).</p>
+<p>The command pattern solves this by encapsulating each operation as a command object. This pattern can be understood by looking at the remote control where each button on the remote is a command.</p>
+<p>The diagram shows this example:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!fr3x!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F7a9964f7-1cae-4a46-b253-e94bcc240f49_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!fr3x!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F7a9964f7-1cae-4a46-b253-e94bcc240f49_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>See the code example below for a sample implementation of the command pattern:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>// Step 1: Define the Command Interface</span></span>
+<span data-line><span>interface Command {</span></span>
+<span data-line><span>    void execute();</span></span>
+<span data-line><span>    void undo();</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Step 2: Create the Receiver (Light)</span></span>
+<span data-line><span>class Light {</span></span>
+<span data-line><span>    public void turnOn() {</span></span>
+<span data-line><span>        System.out.println(&quot;Light is ON&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    public void turnOff() {</span></span>
+<span data-line><span>        System.out.println(&quot;Light is OFF&quot;);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Step 3: Implement Concrete Commands</span></span>
+<span data-line><span>// Command to Turn Light On</span></span>
+<span data-line><span>class TurnOnCommand implements Command {</span></span>
+<span data-line><span>    private Light light;</span></span>
+<span data-line> </span>
+<span data-line><span>    public TurnOnCommand(Light light) {</span></span>
+<span data-line><span>        this.light = light;</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    public void execute() {</span></span>
+<span data-line><span>        light.turnOn();</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    public void undo() {</span></span>
+<span data-line><span>        light.turnOff();</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Command to Turn Light Off</span></span>
+<span data-line><span>class TurnOffCommand implements Command {</span></span>
+<span data-line><span>    private Light light;</span></span>
+<span data-line> </span>
+<span data-line><span>    public TurnOffCommand(Light light) {</span></span>
+<span data-line><span>        this.light = light;</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    public void execute() {</span></span>
+<span data-line><span>        light.turnOff();</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    public void undo() {</span></span>
+<span data-line><span>        light.turnOn();</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Step 4: Implement the Invoker (Remote Control)</span></span>
+<span data-line><span>class RemoteControl {</span></span>
+<span data-line><span>    private Command lastCommand;</span></span>
+<span data-line> </span>
+<span data-line><span>    public void pressButton(Command command) {</span></span>
+<span data-line><span>        command.execute();</span></span>
+<span data-line><span>        lastCommand = command; // Store last command for undo</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    public void pressUndo() {</span></span>
+<span data-line><span>        if (lastCommand != null) {</span></span>
+<span data-line><span>            lastCommand.undo();</span></span>
+<span data-line><span>        } else {</span></span>
+<span data-line><span>            System.out.println(&quot;No command to undo.&quot;);</span></span>
+<span data-line><span>        }</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Step 5: Demonstrate the Command Pattern in Client Code</span></span>
+<span data-line><span>public class Main {</span></span>
+<span data-line><span>    public static void main(String[] args) {</span></span>
+<span data-line><span>        // Create Receiver (Light)</span></span>
+<span data-line><span>        Light livingRoomLight = new Light();</span></span>
+<span data-line> </span>
+<span data-line><span>        // Create Commands</span></span>
+<span data-line><span>        Command turnOn = new TurnOnCommand(livingRoomLight);</span></span>
+<span data-line><span>        Command turnOff = new TurnOffCommand(livingRoomLight);</span></span>
+<span data-line> </span>
+<span data-line><span>        // Create Invoker (Remote Control)</span></span>
+<span data-line><span>        RemoteControl remote = new RemoteControl();</span></span>
+<span data-line> </span>
+<span data-line><span>        // Execute Commands</span></span>
+<span data-line><span>        remote.pressButton(turnOn);  // Output: Light is ON</span></span>
+<span data-line><span>        remote.pressUndo();          // Output: Light is OFF</span></span>
+<span data-line> </span>
+<span data-line><span>        remote.pressButton(turnOff); // Output: Light is OFF</span></span>
+<span data-line><span>        remote.pressUndo();          // Output: Light is ON</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>Here’s what each part of the code is doing:</p>
+<ul>
+<li>
+<p><strong>Command Interface</strong>: Defines the structure for executing and undoing actions.</p>
+</li>
+<li>
+<p><strong>Light Class (Receiver)</strong>: The actual object being controlled.</p>
+</li>
+<li>
+<p><strong>TurnOnCommand &amp; TurnOffCommand (Concrete Commands)</strong>: Encapsulate the logic for turning the light on/off.</p>
+</li>
+<li>
+<p><strong>RemoteControl (Invoker)</strong>: Triggers commands and supports undo functionality.</p>
+</li>
+<li>
+<p><strong>Main (Client Code)</strong>: Demonstrates the Command Pattern in action.</p>
+</li>
+</ul>
+<p>As mentioned, the command pattern helps decouple command execution from the sender and is easy to extend.</p>
+<p>However, it can also increase complexity since it requires multiple extra classes for different commands.</p>
+<h3 id="proxy-pattern"><strong>Proxy Pattern</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#proxy-pattern" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The proxy pattern is a structural design pattern that provides a substitute or placeholder for another object.</p>
+<p>Sometimes, direct access to an object is costly or risky. The proxy pattern solves this by intercepting requests and deciding when and how the real object should be accessed.</p>
+<p>Common use cases are security proxy, virtual proxy (loading heavy objects when needed), remote proxy (handling network communication between objects), caching proxy, and logging proxy.</p>
+<p>See the example below for a basic proxy pattern implementation:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>// Step 1: Define the Image Interface (Subject)</span></span>
+<span data-line><span>interface Image {</span></span>
+<span data-line><span>    void display();</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Step 2: Implement the RealImage Class (Actual Heavy Object)</span></span>
+<span data-line><span>class RealImage implements Image {</span></span>
+<span data-line><span>    private String fileName;</span></span>
+<span data-line> </span>
+<span data-line><span>    public RealImage(String fileName) {</span></span>
+<span data-line><span>        this.fileName = fileName;</span></span>
+<span data-line><span>        loadImageFromDisk(); // Simulate expensive operation</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    private void loadImageFromDisk() {</span></span>
+<span data-line><span>        System.out.println(&quot;Loading high-resolution image: &quot; + fileName);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    public void display() {</span></span>
+<span data-line><span>        System.out.println(&quot;Displaying image: &quot; + fileName);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Step 3: Implement the Proxy Class</span></span>
+<span data-line><span>class ImageProxy implements Image {</span></span>
+<span data-line><span>    private RealImage realImage;</span></span>
+<span data-line><span>    private String fileName;</span></span>
+<span data-line> </span>
+<span data-line><span>    public ImageProxy(String fileName) {</span></span>
+<span data-line><span>        this.fileName = fileName;</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    public void display() {</span></span>
+<span data-line><span>        if (realImage == null) {</span></span>
+<span data-line><span>            realImage = new RealImage(fileName); // Load only when needed</span></span>
+<span data-line><span>        }</span></span>
+<span data-line><span>        realImage.display();</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Step 4: Demonstrate the Proxy Pattern in Client Code</span></span>
+<span data-line><span>public class Main {</span></span>
+<span data-line><span>    public static void main(String[] args) {</span></span>
+<span data-line><span>        // Using Proxy instead of directly creating RealImage</span></span>
+<span data-line><span>        Image image1 = new ImageProxy(&quot;Photo1.jpg&quot;);</span></span>
+<span data-line><span>        Image image2 = new ImageProxy(&quot;Photo2.jpg&quot;);</span></span>
+<span data-line> </span>
+<span data-line><span>        // The images are not loaded yet</span></span>
+<span data-line><span>        System.out.println(&quot;Proxy created, but images are not loaded yet.&quot;);</span></span>
+<span data-line> </span>
+<span data-line><span>        // Now we display the image (this triggers loading)</span></span>
+<span data-line><span>        image1.display(); // Loads and displays</span></span>
+<span data-line><span>        image1.display(); // Displays instantly (no loading again)</span></span>
+<span data-line> </span>
+<span data-line><span>        // Display another image</span></span>
+<span data-line><span>        image2.display(); // Loads and displays</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>The main parts of this code are as follows:</p>
+<ul>
+<li>
+<p><strong>Image Interface (Subject)</strong>: Defines the contract for displaying images.</p>
+</li>
+<li>
+<p><strong>RealImage Class (Heavy Object)</strong>: Simulates a high-resolution image that is slow to load.</p>
+</li>
+<li>
+<p><strong>ImageProxy Class (Proxy)</strong>: Delays image loading until display() is called.</p>
+</li>
+<li>
+<p><strong>Main Class (Client Code)</strong>: Uses the proxy to manage image loading.</p>
+</li>
+</ul>
+<p>The diagram below shows this setup:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!rbMd!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F0ad980a4-75fc-43d2-9604-491097e6fa5f_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!rbMd!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F0ad980a4-75fc-43d2-9604-491097e6fa5f_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>The proxy pattern helps delay expensive operations until they are needed. Also, it allows developers to add functionality (such as logging and caching) without modifying code.</p>
+<p>As usual, the downsides of the proxy pattern include increased code complexity, potential increase in latency, and hidden dependencies.</p>
+<h3 id="builder-pattern"><strong>Builder Pattern</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#builder-pattern" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The builder pattern is a creational design pattern that simplifies the construction of complex objects by separating the object creation process from its representation.</p>
+<p>When creating objects with multiple parameters, we often face two issues:</p>
+<ul>
+<li>
+<p>Too many constructor overloads</p>
+</li>
+<li>
+<p>Unclear parameter order</p>
+</li>
+</ul>
+<p>The builder pattern solves this by providing a step-by-step object construction process.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!NLht!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fa27155bb-b051-447b-85b9-123847c3ded5_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!NLht!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fa27155bb-b051-447b-85b9-123847c3ded5_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Let’s implement a Car customization system, where:</p>
+<ul>
+<li>
+<p><strong>Car (Product):</strong> Represents the final car object.</p>
+</li>
+<li>
+<p><strong>CarBuilder (Builder):</strong> Constructs Car step by step.</p>
+</li>
+<li>
+<p><strong>Main (Client Code):</strong> Uses CarBuilder to create different car configurations.</p>
+</li>
+</ul>
+<p>See the example below:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>// Product: Car</span></span>
+<span data-line><span>class Car {</span></span>
+<span data-line><span>    private String engine;</span></span>
+<span data-line><span>    private int wheels;</span></span>
+<span data-line><span>    private boolean hasSunroof;</span></span>
+<span data-line><span>    private String color;</span></span>
+<span data-line> </span>
+<span data-line><span>    // Private constructor to enforce object creation via Builder</span></span>
+<span data-line><span>    private Car(CarBuilder builder) {</span></span>
+<span data-line><span>        this.engine = builder.engine;</span></span>
+<span data-line><span>        this.wheels = builder.wheels;</span></span>
+<span data-line><span>        this.hasSunroof = builder.hasSunroof;</span></span>
+<span data-line><span>        this.color = builder.color;</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    public String toString() {</span></span>
+<span data-line><span>        return &quot;Car [Engine: &quot; + engine + &quot;, Wheels: &quot; + wheels + &quot;, Sunroof: &quot; + hasSunroof + &quot;, Color: &quot; + color + &quot;]&quot;;</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    // Builder Class</span></span>
+<span data-line><span>    public static class CarBuilder {</span></span>
+<span data-line><span>        private String engine;</span></span>
+<span data-line><span>        private int wheels;</span></span>
+<span data-line><span>        private boolean hasSunroof;</span></span>
+<span data-line><span>        private String color;</span></span>
+<span data-line> </span>
+<span data-line><span>        // Step-by-step methods to set attributes</span></span>
+<span data-line><span>        public CarBuilder setEngine(String engine) {</span></span>
+<span data-line><span>            this.engine = engine;</span></span>
+<span data-line><span>            return this; // Enables method chaining</span></span>
+<span data-line><span>        }</span></span>
+<span data-line> </span>
+<span data-line><span>        public CarBuilder setWheels(int wheels) {</span></span>
+<span data-line><span>            this.wheels = wheels;</span></span>
+<span data-line><span>            return this;</span></span>
+<span data-line><span>        }</span></span>
+<span data-line> </span>
+<span data-line><span>        public CarBuilder setSunroof(boolean hasSunroof) {</span></span>
+<span data-line><span>            this.hasSunroof = hasSunroof;</span></span>
+<span data-line><span>            return this;</span></span>
+<span data-line><span>        }</span></span>
+<span data-line> </span>
+<span data-line><span>        public CarBuilder setColor(String color) {</span></span>
+<span data-line><span>            this.color = color;</span></span>
+<span data-line><span>            return this;</span></span>
+<span data-line><span>        }</span></span>
+<span data-line> </span>
+<span data-line><span>        // Method to construct the final Car object</span></span>
+<span data-line><span>        public Car build() {</span></span>
+<span data-line><span>            return new Car(this);</span></span>
+<span data-line><span>        }</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>public class Main {</span></span>
+<span data-line><span>    public static void main(String[] args) {</span></span>
+<span data-line><span>        // Building a sports car with a sunroof</span></span>
+<span data-line><span>        Car sportsCar = new Car.CarBuilder()</span></span>
+<span data-line><span>                .setEngine(&quot;V8&quot;)</span></span>
+<span data-line><span>                .setWheels(4)</span></span>
+<span data-line><span>                .setSunroof(true)</span></span>
+<span data-line><span>                .setColor(&quot;Red&quot;)</span></span>
+<span data-line><span>                .build();</span></span>
+<span data-line> </span>
+<span data-line><span>        System.out.println(sportsCar);</span></span>
+<span data-line> </span>
+<span data-line><span>        // Building a basic sedan with only an engine and wheels</span></span>
+<span data-line><span>        Car basicCar = new Car.CarBuilder()</span></span>
+<span data-line><span>                .setEngine(&quot;V4&quot;)</span></span>
+<span data-line><span>                .setWheels(4)</span></span>
+<span data-line><span>                .build();</span></span>
+<span data-line> </span>
+<span data-line><span>        System.out.println(basicCar);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>The builder pattern improves code readability and eliminates constructor overload issues. If new attributes are added, no changes are needed in the existing client code.</p>
+<p>However, the potential downside is the increased complexity if the object is already simple. Therefore, this pattern is more suitable in the case of complex object construction.</p>
+<h3 id="composite-pattern"><strong>Composite Pattern</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#composite-pattern" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The composite pattern is a structural design pattern that allows individual objects (leaf nodes) and groups of objects (composites) to be treated uniformly.</p>
+<p>It is useful when objects are organized in a tree structure, such as company hierarchies and file systems. The problem with handling hierarchies manually is that objects can have sub-objects and are difficult to manage without a unified interface.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!NtTK!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fdd367b23-e3c3-471b-a7eb-e6285ee607f1_1938x1246.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!NtTK!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fdd367b23-e3c3-471b-a7eb-e6285ee607f1_1938x1246.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>The composite pattern provides a unified interface. To demonstrate the same, we will implement a basic file system with the following classes:</p>
+<ul>
+<li>
+<p><strong>FileSystemComponent (Component):</strong> Defines common operations for Files and Folders.</p>
+</li>
+<li>
+<p><strong>File (Leaf Node):</strong> Represents individual files.</p>
+</li>
+<li>
+<p><strong>Folder (Composite Node):</strong> Represents directories that contain files and subfolders.</p>
+</li>
+</ul>
+<p>See the code example below:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>import java.util.ArrayList;</span></span>
+<span data-line><span>import java.util.List;</span></span>
+<span data-line> </span>
+<span data-line><span>// Step 1: Define the Component Interface</span></span>
+<span data-line><span>interface FileSystemComponent {</span></span>
+<span data-line><span>    void showDetails();</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Step 2: Implement the File Class (Leaf Node)</span></span>
+<span data-line><span>class File implements FileSystemComponent {</span></span>
+<span data-line><span>    private String name;</span></span>
+<span data-line> </span>
+<span data-line><span>    public File(String name) {</span></span>
+<span data-line><span>        this.name = name;</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    public void showDetails() {</span></span>
+<span data-line><span>        System.out.println(&quot;File: &quot; + name);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Step 3: Implement the Folder Class (Composite Node)</span></span>
+<span data-line><span>class Folder implements FileSystemComponent {</span></span>
+<span data-line><span>    private String name;</span></span>
+<span data-line><span>    private List&lt;FileSystemComponent> components = new ArrayList&lt;>();</span></span>
+<span data-line> </span>
+<span data-line><span>    public Folder(String name) {</span></span>
+<span data-line><span>        this.name = name;</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    public void addComponent(FileSystemComponent component) {</span></span>
+<span data-line><span>        components.add(component);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    public void removeComponent(FileSystemComponent component) {</span></span>
+<span data-line><span>        components.remove(component);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    @Override</span></span>
+<span data-line><span>    public void showDetails() {</span></span>
+<span data-line><span>        System.out.println(&quot;Folder: &quot; + name);</span></span>
+<span data-line><span>        for (FileSystemComponent component : components) {</span></span>
+<span data-line><span>            component.showDetails(); // Recursively call on sub-components</span></span>
+<span data-line><span>        }</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span>
+<span data-line> </span>
+<span data-line><span>// Step 4: Demonstrate the Composite Pattern in Client Code</span></span>
+<span data-line><span>public class Main {</span></span>
+<span data-line><span>    public static void main(String[] args) {</span></span>
+<span data-line><span>        // Create Files</span></span>
+<span data-line><span>        FileSystemComponent file1 = new File(&quot;Document.pdf&quot;);</span></span>
+<span data-line><span>        FileSystemComponent file2 = new File(&quot;Photo.jpg&quot;);</span></span>
+<span data-line><span>        FileSystemComponent file3 = new File(&quot;Video.mp4&quot;);</span></span>
+<span data-line> </span>
+<span data-line><span>        // Create a Folder and add Files</span></span>
+<span data-line><span>        Folder folder1 = new Folder(&quot;My Folder&quot;);</span></span>
+<span data-line><span>        folder1.addComponent(file1);</span></span>
+<span data-line><span>        folder1.addComponent(file2);</span></span>
+<span data-line> </span>
+<span data-line><span>        // Create another Folder and add a File</span></span>
+<span data-line><span>        Folder folder2 = new Folder(&quot;Sub Folder&quot;);</span></span>
+<span data-line><span>        folder2.addComponent(file3);</span></span>
+<span data-line> </span>
+<span data-line><span>        // Add subfolder to parent folder</span></span>
+<span data-line><span>        folder1.addComponent(folder2);</span></span>
+<span data-line> </span>
+<span data-line><span>        // Display File System Structure</span></span>
+<span data-line><span>        folder1.showDetails();</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>The composite pattern helps encapsulate complex hierarchies and follows the open/closed principle.</p>
+<p>However, potential downsides include overhead and managing parent-child relationships.</p>
+<h2 id="oop-anti-patterns"><strong>OOP Anti-Patterns</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#oop-anti-patterns" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>While the design patterns make a developer’s life easier, a developer should also be careful about avoiding anti-patterns.</p>
+<p>Anti-patterns in OOP lead to poor software design, making code harder to maintain, test, and extend. Some common anti-patterns are as follows:</p>
+<h3 id="1---god-object"><strong>1 - God Object</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1---god-object" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>A God object is a class that takes on too many responsibilities, violating the single responsibility principle.</p>
+<p>Instead of delegating tasks, it controls multiple aspects of the system, making it difficult to modify or test. Here’s an example of a class that acts like a God object.</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>class GodObject {</span></span>
+<span data-line><span>    void processPayroll() { /* Payroll logic */ }</span></span>
+<span data-line><span>    void handleCustomerService() { /* Customer support */ }</span></span>
+<span data-line><span>    void manageHR() { /* Employee records */ }</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>This class is responsible for multiple concerns, making the system fragile.</p>
+<h3 id="2---circular-dependencies"><strong>2 - Circular Dependencies</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2---circular-dependencies" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Circular dependencies occur when two or more classes depend on each other, creating a dependency loop.</p>
+<p>This can lead to runtime errors, infinite loops, or difficulty in dependency injection frameworks like Spring. See the example below of a piece of code that creates an infinite loop when initializing objects.</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>class ClassA { private ClassB b; ClassA(ClassB b) { this.b = b; } }</span></span>
+<span data-line><span>class ClassB { private ClassA a; ClassB(ClassA a) { this.a = a; } }</span></span></code></pre></figure>
+<h2 id="3---tight-coupling"><strong>3 - Tight Coupling</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3---tight-coupling" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Tight coupling occurs when one class is highly dependent on another, making changes difficult and violating the open/closed principle.</p>
+<p>See the example below:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="Plain" data-theme="github-light github-dark"><code data-language="Plain" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>class Car {</span></span>
+<span data-line><span>   private Engine engine = new Engine();</span></span>
+<span data-line><span>   void start() { engine.start();</span></span>
+<span data-line><span>   }</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<h2 id="summary"><strong>Summary</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#summary" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>In this article, we have looked at OOP design-patterns and anti-patterns in detail with appropriate examples:</p>
+<p>Let’s summarize the key learning points in brief:</p>
+<ul>
+<li>
+<p>Design patterns provide reusable solutions to common software design problems, making code more scalable, maintainable, and flexible.</p>
+</li>
+<li>
+<p>Factory pattern encapsulates object creation to reduce tight coupling and improve code extensibility.</p>
+</li>
+<li>
+<p>Singleton pattern ensures only one instance of a class exists within the context of an application.</p>
+</li>
+<li>
+<p>Strategy pattern allows dynamic selection of behaviors at runtime without modifying existing code.</p>
+</li>
+<li>
+<p>Observer pattern enables event-driven communication, where multiple observers react to changes in a subject.</p>
+</li>
+<li>
+<p>Decorator pattern dynamically adds behavior to objects at runtime without modifying their structure.</p>
+</li>
+<li>
+<p>Adapter pattern bridges incompatible interfaces, allowing reuse of existing code with new systems.</p>
+</li>
+<li>
+<p>Command pattern encapsulates operations as objects.</p>
+</li>
+<li>
+<p>Proxy pattern controls access to objects, improving security, performance, and lazy loading.</p>
+</li>
+<li>
+<p>Builder pattern constructs complex objects step by step, improving readability and avoiding constructor overloads.</p>
+</li>
+<li>
+<p>Composite pattern treats individual and grouped objects uniformly, simplifying hierarchical structures.</p>
+</li>
+</ul></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-168" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#popular-oop-design-patterns" data-for="popular-oop-design-patterns">Popular OOP Design Patterns</a></li><li class="depth-1"><a href="#factory-pattern" data-for="factory-pattern">Factory Pattern</a></li><li class="depth-1"><a href="#singleton-pattern" data-for="singleton-pattern">Singleton Pattern</a></li><li class="depth-1"><a href="#strategy-pattern" data-for="strategy-pattern">Strategy Pattern</a></li><li class="depth-1"><a href="#observer-pattern" data-for="observer-pattern">Observer Pattern</a></li><li class="depth-1"><a href="#decorator-pattern" data-for="decorator-pattern">Decorator Pattern</a></li><li class="depth-1"><a href="#adapter-pattern" data-for="adapter-pattern">Adapter Pattern</a></li><li class="depth-1"><a href="#command-pattern" data-for="command-pattern">Command Pattern</a></li><li class="depth-1"><a href="#proxy-pattern" data-for="proxy-pattern">Proxy Pattern</a></li><li class="depth-1"><a href="#builder-pattern" data-for="builder-pattern">Builder Pattern</a></li><li class="depth-1"><a href="#composite-pattern" data-for="composite-pattern">Composite Pattern</a></li><li class="depth-0"><a href="#oop-anti-patterns" data-for="oop-anti-patterns">OOP Anti-Patterns</a></li><li class="depth-1"><a href="#1---god-object" data-for="1---god-object">1 - God Object</a></li><li class="depth-1"><a href="#2---circular-dependencies" data-for="2---circular-dependencies">2 - Circular Dependencies</a></li><li class="depth-0"><a href="#3---tight-coupling" data-for="3---tight-coupling">3 - Tight Coupling</a></li><li class="depth-0"><a href="#summary" data-for="summary">Summary</a></li><li class="overflow-end"></li></ul></div><div class="backlinks"><h3>Backlinks</h3><ul id="list-2" class="overflow"><li><a href="../../Notion-Knowledge/Note" class="internal">Note</a></li><li><a href="../../_moc/MOC-Reading-List" class="internal">MOC-Reading-List</a></li><li><a href="../../_moc/MOC-System-Design" class="internal">MOC-System-Design</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://dangthobach.github.io/">Back to Portfolio</a></li><li><a href="https://github.com/dangthobach">GitHub</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../postscript.js" type="module" data-persist="true"></script></html>

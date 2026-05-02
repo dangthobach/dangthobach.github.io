@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>SQL vs NoSQL- Choosing the Right Database for An Application</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="Dang Tho Bach's Knowledge Base"/><meta property="og:title" content="SQL vs NoSQL- Choosing the Right Database for An Application"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="SQL vs NoSQL- Choosing the Right Database for An Application"/><meta name="twitter:description" content="Every modern application, from a ride-hailing service to an e-commerce platform, relies on data, and behind that data sits a database."/><meta property="og:description" content="Every modern application, from a ride-hailing service to an e-commerce platform, relies on data, and behind that data sits a database."/><meta property="og:image:alt" content="Every modern application, from a ride-hailing service to an e-commerce platform, relies on data, and behind that data sits a database."/><meta property="twitter:domain" content="dangthobach.github.io/knowledge"/><meta property="og:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/SQL-vs-NoSQL--Choosing-the-Right-Database-for-An-Application"/><meta property="twitter:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/SQL-vs-NoSQL--Choosing-the-Right-Database-for-An-Application"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="Every modern application, from a ride-hailing service to an e-commerce platform, relies on data, and behind that data sits a database."/><meta name="generator" content="Quartz"/><link href="../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiL2hvbWUvcnVubmVyL3dvcmsvZGFuZ3Rob2JhY2guZ2l0aHViLmlvL2Rhbmd0aG9iYWNoLmdpdGh1Yi5pby9xdWFydHovcXVhcnR6L2NvbXBvbmVudHMvc3R5bGVzIiwic291cmNlcyI6WyJtZXJtYWlkLmlubGluZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFHRjtFQUNFOzs7QUFLRjtFQUNFO0VBQ0E7OztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTs7QUFJRjtFQUNFO0VBQ0E7RUFDQSIsInNvdXJjZXNDb250ZW50IjpbIi5leHBhbmQtYnV0dG9uIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbG9hdDogcmlnaHQ7XG4gIHBhZGRpbmc6IDAuNHJlbTtcbiAgbWFyZ2luOiAwLjNyZW07XG4gIHJpZ2h0OiAwOyAvLyBOT1RFOiByaWdodCB3aWxsIGJlIHNldCBpbiBtZXJtYWlkLmlubGluZS50c1xuICBjb2xvcjogdmFyKC0tZ3JheSk7XG4gIGJvcmRlci1jb2xvcjogdmFyKC0tZGFyayk7XG4gIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgYm9yZGVyOiAxcHggc29saWQ7XG4gIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgb3BhY2l0eTogMDtcbiAgdHJhbnNpdGlvbjogMC4ycztcblxuICAmID4gc3ZnIHtcbiAgICBmaWxsOiB2YXIoLS1saWdodCk7XG4gICAgZmlsdGVyOiBjb250cmFzdCgwLjMpO1xuICB9XG5cbiAgJjpob3ZlciB7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIGJvcmRlci1jb2xvcjogdmFyKC0tc2Vjb25kYXJ5KTtcbiAgfVxuXG4gICY6Zm9jdXMge1xuICAgIG91dGxpbmU6IDA7XG4gIH1cbn1cblxucHJlIHtcbiAgJjpob3ZlciA+IC5leHBhbmQtYnV0dG9uIHtcbiAgICBvcGFjaXR5OiAxO1xuICAgIHRyYW5zaXRpb246IDAuMnM7XG4gIH1cbn1cblxuI21lcm1haWQtY29udGFpbmVyIHtcbiAgcG9zaXRpb246IGZpeGVkO1xuICBjb250YWluOiBsYXlvdXQ7XG4gIHotaW5kZXg6IDk5OTtcbiAgbGVmdDogMDtcbiAgdG9wOiAwO1xuICB3aWR0aDogMTAwdnc7XG4gIGhlaWdodDogMTAwdmg7XG4gIG92ZXJmbG93OiBoaWRkZW47XG4gIGRpc3BsYXk6IG5vbmU7XG4gIGJhY2tkcm9wLWZpbHRlcjogYmx1cig0cHgpO1xuICBiYWNrZ3JvdW5kOiByZ2JhKDAsIDAsIDAsIDAuNSk7XG5cbiAgJi5hY3RpdmUge1xuICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgfVxuXG4gICYgPiAjbWVybWFpZC1zcGFjZSB7XG4gICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gICAgYm9yZGVyLXJhZGl1czogNXB4O1xuICAgIHBvc2l0aW9uOiBmaXhlZDtcbiAgICB0b3A6IDUwJTtcbiAgICBsZWZ0OiA1MCU7XG4gICAgdHJhbnNmb3JtOiB0cmFuc2xhdGUoLTUwJSwgLTUwJSk7XG4gICAgaGVpZ2h0OiA4MHZoO1xuICAgIHdpZHRoOiA4MHZ3O1xuICAgIG92ZXJmbG93OiBoaWRkZW47XG5cbiAgICAmID4gLm1lcm1haWQtY29udGVudCB7XG4gICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgICB0cmFuc2Zvcm0tb3JpZ2luOiAwIDA7XG4gICAgICB0cmFuc2l0aW9uOiB0cmFuc2Zvcm0gMC4xcyBlYXNlO1xuICAgICAgb3ZlcmZsb3c6IHZpc2libGU7XG4gICAgICBtaW4taGVpZ2h0OiAyMDBweDtcbiAgICAgIG1pbi13aWR0aDogMjAwcHg7XG5cbiAgICAgIHByZSB7XG4gICAgICAgIG1hcmdpbjogMDtcbiAgICAgICAgYm9yZGVyOiBub25lO1xuICAgICAgfVxuXG4gICAgICBzdmcge1xuICAgICAgICBtYXgtd2lkdGg6IG5vbmU7XG4gICAgICAgIGhlaWdodDogYXV0bztcbiAgICAgIH1cbiAgICB9XG5cbiAgICAmID4gLm1lcm1haWQtY29udHJvbHMge1xuICAgICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgICAgYm90dG9tOiAyMHB4O1xuICAgICAgcmlnaHQ6IDIwcHg7XG4gICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgZ2FwOiA4cHg7XG4gICAgICBwYWRkaW5nOiA4cHg7XG4gICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgYm9yZGVyLXJhZGl1czogNnB4O1xuICAgICAgYm94LXNoYWRvdzogMCAycHggNHB4IHJnYmEoMCwgMCwgMCwgMC4xKTtcbiAgICAgIHotaW5kZXg6IDI7XG5cbiAgICAgIC5tZXJtYWlkLWNvbnRyb2wtYnV0dG9uIHtcbiAgICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgIHdpZHRoOiAzMnB4O1xuICAgICAgICBoZWlnaHQ6IDMycHg7XG4gICAgICAgIHBhZGRpbmc6IDA7XG4gICAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgICAgY29sb3I6IHZhcigtLWRhcmspO1xuICAgICAgICBib3JkZXItcmFkaXVzOiA0cHg7XG4gICAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICAgICAgZm9udC1zaXplOiAxNnB4O1xuICAgICAgICBmb250LWZhbWlseTogdmFyKC0tYm9keUZvbnQpO1xuICAgICAgICB0cmFuc2l0aW9uOiBhbGwgMC4ycyBlYXNlO1xuXG4gICAgICAgICY6aG92ZXIge1xuICAgICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIH1cblxuICAgICAgICAmOmFjdGl2ZSB7XG4gICAgICAgICAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKDFweCk7XG4gICAgICAgIH1cblxuICAgICAgICAvLyBTdHlsZSB0aGUgcmVzZXQgYnV0dG9uIGRpZmZlcmVudGx5XG4gICAgICAgICY6bnRoLWNoaWxkKDIpIHtcbiAgICAgICAgICB3aWR0aDogYXV0bztcbiAgICAgICAgICBwYWRkaW5nOiAwIDEycHg7XG4gICAgICAgICAgZm9udC1zaXplOiAxNHB4O1xuICAgICAgICB9XG4gICAgICB9XG4gICAgfVxuICB9XG59XG4iXX0= */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://dangthobach.github.io/knowledge/index.xml"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/SQL-vs-NoSQL--Choosing-the-Right-Database-for-An-Application-og-image.webp"/><meta property="og:image:url" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/SQL-vs-NoSQL--Choosing-the-Right-Database-for-An-Application-og-image.webp"/><meta name="twitter:image" content="https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/SQL-vs-NoSQL--Choosing-the-Right-Database-for-An-Application-og-image.webp"/><meta property="og:image:type" content="image/.webp"/></head><body data-slug="Notion-Knowledge/Note/SQL-vs-NoSQL--Choosing-the-Right-Database-for-An-Application"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../..">Dang Tho Bach's Knowledge Base</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-396"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-396" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/">Notion Knowledge</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Notion-Knowledge/Note/">Note</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>SQL vs NoSQL  Choosing the Right Database for An Application</a></div></nav><h1 class="article-title">SQL vs NoSQL- Choosing the Right Database for An Application</h1><p show-comma="true" class="content-meta"><time datetime="2026-05-02T04:58:37.000Z">May 02, 2026</time><span>18 min read</span></p></div></div><article class="popover-hint"><p>Every modern application, from a ride-hailing service to an e-commerce platform, relies on data, and behind that data sits a database. Whether it’s storing customer profiles, tracking inventory, or logging user actions, the database is more than just a storage engine. It’s the core system that holds an application’s state together. When the database fails, everything else (APIs, front-end, business logic) comes tumbling down.</p>
+<p>Therefore, choosing the right kind of database is critical, but it isn’t a one-size-fits-all decision.</p>
+<p>Relational databases, such as MySQL and PostgreSQL, have been the default for decades. They offer strong consistency, well-understood query languages, and battle-tested reliability. However, as systems scale and use cases diversify, traditional SQL starts to exhibit problems.</p>
+<p>That’s where NoSQL enters the picture with a flexible schema design, horizontal scalability, and models tailored to specific access patterns. The promise is to scale fast and iterate freely. However, there are trade-offs in consistency, structure, and operations.</p>
+<p>Then there’s a growing third category: NewSQL systems such as Google Spanner and CockroachDB. These attempt to bridge the gap by retaining SQL semantics and ACID guarantees, while scaling like NoSQL across regions and nodes. There are also specialized databases that push performance in specific directions. In-memory stores like Redis blur the line between cache and persistence. Search engines like Elasticsearch offer lightning-fast text search and analytics capabilities that relational databases were never built for.</p>
+<p>The wrong database choice can throttle performance, slow down development, or break under scale. The right one can unlock speed, agility, and reliability.</p>
+<p>In this article, we break down the core database paradigms, such as SQL and NoSQL, along with specialized database types and how developers can choose the appropriate database for their requirements.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!qCF1!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F074eba32-d415-4ed1-a60e-d193918f0df2_2250x2624.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!qCF1!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F074eba32-d415-4ed1-a60e-d193918f0df2_2250x2624.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h2 id="core-models-acid-vs-base"><strong>Core Models: ACID vs BASE</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#core-models-acid-vs-base" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Every database promises to store and retrieve data, but how it handles correctness, concurrency, and failure defines its trustworthiness.</p>
+<p>At the heart of this are two contrasting models: ACID and BASE. One prioritizes consistency and correctness while the other leans into scalability and resilience.</p>
+<h3 id="acid"><strong>ACID</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#acid" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>The ACID model governs how most traditional relational databases operate. The term stands for:</p>
+<ul>
+<li>
+<p><strong>Atomicity</strong>: Transactions either complete in full or not at all. If a bank transfer debits one account but fails to credit another, the whole transaction rolls back.</p>
+</li>
+<li>
+<p><strong>Consistency:</strong> A transaction moves the database from one valid state to another, enforcing constraints and rules. For instance, a column expecting a positive integer won’t accept a string or a negative number, even under concurrency.</p>
+</li>
+<li>
+<p><strong>Isolation:</strong> Transactions don’t interfere with each other. Even if two users try to book the last seat on a flight simultaneously, only one succeeds. Isolation levels (like Serializable or Read Committed) control how concurrent transactions interact.</p>
+</li>
+<li>
+<p><strong>Durability:</strong> Once a transaction commits, its changes persist even if the server crashes the next moment. The data is flushed to disk or replicated before acknowledgment.</p>
+</li>
+</ul>
+<p>ACID is non-negotiable in systems where correctness is the most important property. Think banking, e-commerce checkout flows, or healthcare records. These applications cannot afford to show stale or partial data, even under heavy load or failure. See the diagram below:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!xlRM!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F15cfe790-b9ff-4948-8700-9fca9c8e6893_1796x1742.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!xlRM!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F15cfe790-b9ff-4948-8700-9fca9c8e6893_1796x1742.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h3 id="base-designed-for-distribution"><strong>BASE: Designed for Distribution</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#base-designed-for-distribution" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>On the other side is BASE, the model adopted by many NoSQL systems operating at internet scale. BASE stands for:</p>
+<ul>
+<li>
+<p><strong>Basically Available:</strong> The system stays up and responsive, even if some parts are unreachable or inconsistent.</p>
+</li>
+<li>
+<p><strong>Soft state:</strong> The state of the system may change over time, even without new inputs, due to background processes like replication or repair.</p>
+</li>
+<li>
+<p><strong>Eventually consistent:</strong> Data replicas may diverge temporarily but converge over time. If a user posts a comment, it might appear immediately on one device and a few seconds later on another.</p>
+</li>
+</ul>
+<p><a href="https://substackcdn.com/image/fetch/$s_!WJ8l!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F722e57e2-2737-43bc-a1c2-d6b047476c44_2546x1294.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!WJ8l!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F722e57e2-2737-43bc-a1c2-d6b047476c44_2546x1294.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>BASE relaxes the rigidity of ACID to accommodate high availability and partition tolerance. This makes sense in systems that prioritize uptime and scale, such as social media timelines, real-time analytics, and IoT ingestion pipelines. These systems can tolerate temporary inconsistency as long as they never go down.</p>
+<h3 id="the-trade-offs"><strong>The Trade-Offs</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#the-trade-offs" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>To understand trade-offs, let’s consider two real-world examples:</p>
+<ul>
+<li>
+<p>A banking transaction transferring $100 from Account A to Account B demands ACID. Atomicity ensures funds don’t vanish or duplicate. Consistency enforces business rules. Isolation prevents race conditions during concurrent transfers. Durability guarantees the transaction survives hardware failures.</p>
+</li>
+<li>
+<p>A social media feed, by contrast, can’t afford to block rendering just because one replica is catching up. If a friend posts a photo, and it doesn’t immediately show up on every device, the world doesn’t end. Users expect low latency and high availability, even if it means reading slightly stale data. Here, BASE appears as the better choice.</p>
+</li>
+</ul>
+<p>However, there are things to consider in both cases. ACID simplifies correctness but doesn’t scale effortlessly across distributed regions. BASE scales wide but puts the burden of eventual correctness on application logic or user tolerance.</p>
+<p>The challenge is not choosing a “better” model, but choosing the right model based on the guarantees the application must uphold and the failures it must handle.</p>
+<h2 id="sql-databases-the-relational-foundation"><strong>SQL Databases: The Relational Foundation</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#sql-databases-the-relational-foundation" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Relational databases sit at the heart of most traditional software systems for good reason.</p>
+<p>They organize data into structured tables (rows and columns) with explicitly defined schemas. Each table represents a distinct entity: users, orders, products, and transactions. Columns define attributes, while relationships between tables are enforced using foreign keys. The result is a predictable, tabular structure where data fits neatly into a grid.</p>
+<p>At the center of relational databases is SQL (Structured Query Language). SQL offers a declarative way to interact with data: insert, update, fetch, and read. Developers write queries that describe what they want, not how to compute it. The database engine takes care of optimization, planning, and execution.</p>
+<h3 id="why-rdbms-still-matters"><strong>Why RDBMS Still Matters?</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#why-rdbms-still-matters" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Despite the rise of NoSQL, relational databases remain the default choice for a large number of applications. They bring decades of maturity, tooling, and operational knowledge.</p>
+<p>Their strengths include:</p>
+<ul>
+<li>
+<p><strong>Transactional Safety:</strong> Full ACID compliance ensures data integrity under concurrent access and failure scenarios. This matters deeply for applications like banking, inventory management, or accounting.</p>
+</li>
+<li>
+<p><strong>Schema:</strong> The rigid schema model enforces data shape at the database layer, not just in application code. This avoids corruption and makes migrations explicit.</p>
+</li>
+<li>
+<p><strong>JOIN Capabilities:</strong> Relational databases excel at joining normalized data across tables, something that NoSQL systems typically avoid or push to the application layer.</p>
+</li>
+<li>
+<p><strong>Tooling Ecosystem:</strong> From query planners and performance profilers to replication setups and failover strategies, the ecosystem around RDBMSs is rich and well-understood.</p>
+</li>
+</ul>
+<h3 id="mysql-vs-postgresql"><strong>MySQL vs. PostgreSQL</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#mysql-vs-postgresql" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Among open-source RDBMSs, MySQL and PostgreSQL dominate.</p>
+<ul>
+<li>
+<p>MySQL is valued for its simplicity and speed, especially in read-heavy workloads. It powers massive platforms like WordPress and Facebook’s early infrastructure. Its replication capabilities and LAMP-stack friendliness made it ubiquitous in web applications.</p>
+</li>
+<li>
+<p>PostgreSQL, on the other hand, offers rich data types, full-text search, stored procedures, user-defined functions, and powerful extensions like PostGIS (for geospatial data) and TimescaleDB (for time-series). It embraces SQL standards more rigorously and supports advanced features like transactional DDL and window functions.</p>
+</li>
+</ul>
+<h3 id="technical-considerations"><strong>Technical Considerations</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#technical-considerations" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Working with relational databases demands knowledge of certain structural and performance design patterns:</p>
+<ul>
+<li>
+<p><strong>Indexing:</strong> Proper indexing on primary keys, foreign keys, and frequently queried fields can speed up queries dramatically. However, over-indexing can slow down writes and increase storage overhead.</p>
+</li>
+<li>
+<p><strong>Normalization Versus Denormalization:</strong> Normalization reduces redundancy by splitting data into multiple related tables. It keeps the data clean but increases JOIN complexity. Denormalization duplicates some data to simplify queries or improve performance. It’s a trade-off: normalized schemas are elegant but sometimes slower; denormalized schemas are faster but harder to maintain.</p>
+</li>
+<li>
+<p><strong>JOIN Operations:</strong> JOINs are a double-edged sword. They enable powerful queries across multiple tables but can become performance bottlenecks if not backed by proper indexes or if executed on large datasets.</p>
+</li>
+</ul>
+<p><a href="https://substackcdn.com/image/fetch/$s_!dmLE!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fb1e48fc5-7274-42ef-887f-e0285ff3f8de_2538x1934.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!dmLE!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fb1e48fc5-7274-42ef-887f-e0285ff3f8de_2538x1934.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h2 id="nosql-databases"><strong>NoSQL Databases</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#nosql-databases" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Relational databases offer structure and safety, but they weren’t designed for the scale, speed, and data diversity that modern applications demand.</p>
+<p>As systems grew to support billions of users, distributed architectures, and real-time interactivity, cracks began to show. Schema migrations became painful. JOINs slowed things down. Scaling vertically hit a wall. That’s where NoSQL databases entered the picture.</p>
+<p>NoSQL is a category of data stores designed to address the shortcomings of relational models in large-scale, distributed environments. These databases throw off rigid schemas in favor of flexibility, prioritize high availability, and scale horizontally from the ground up. What they sacrifice in consistency or query richness, they gain in scalability, speed, and operational resilience.</p>
+<p>There are multiple types of NoSQL databases that can be considered:</p>
+<h3 id="key-value-stores"><strong>Key-Value Stores</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#key-value-stores" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Key-value databases follow the most straightforward model: store a value, retrieve it later using a key. There’s no query language, no relational structure, and minimal overhead.</p>
+<ul>
+<li>
+<p>Redis and DynamoDB are among the most popular in this category. Redis keeps everything in memory for ultra-fast access, making it ideal for caching, leaderboards, session tokens, and rate-limiting. DynamoDB persists data and offers global distribution, with strong integration into AWS workflows.</p>
+</li>
+<li>
+<p>These databases scale horizontally with relative ease. Partitioning (or sharding) keys across multiple nodes distributes the load automatically.</p>
+</li>
+<li>
+<p>The trade-off is no built-in support for secondary indexes or complex queries. For example, if there is a requirement to filter values or sort by a field inside a JSON blob, the logic typically lives in application code or adjacent services.</p>
+</li>
+</ul>
+<p><a href="https://substackcdn.com/image/fetch/$s_!0-Yl!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fe4c88d16-cc3d-446c-9dce-6c2077ae15dd_1938x1158.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!0-Yl!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fe4c88d16-cc3d-446c-9dce-6c2077ae15dd_1938x1158.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Key-value stores work well when access patterns are predictable and performance is critical.</p>
+<h3 id="document-stores"><strong>Document Stores</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#document-stores" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Document databases take a more nuanced approach. Instead of rows and columns, they store entire documents typically in JSON, BSON, or similar formats.</p>
+<p>Each document is self-contained and may have its own schema.</p>
+<ul>
+<li>
+<p>MongoDB and Couchbase lead this category. They allow deeply nested, hierarchical data and support rich querying on any document field. A user document might contain embedded addresses, orders, and preferences, all retrievable with a single query.</p>
+</li>
+<li>
+<p>These databases thrive in systems where data shapes evolve: content management systems, product catalogs, mobile backends, or any domain where flexibility outweighs rigid enforcement.</p>
+</li>
+<li>
+<p>They scale horizontally through automatic sharding and replication. Consistency can be tuned: MongoDB, for example, lets clients specify read/write concern levels, trading off between speed and accuracy.</p>
+</li>
+<li>
+<p>JOINs across collections are discouraged or absent. Instead, data is denormalized and duplicated across documents for performance. This makes writing more complex, but it reads blazingly fast.</p>
+</li>
+</ul>
+<p>Document stores shine when working with semi-structured data, evolving schemas, or domains where read performance dominates.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!A8fA!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F45d03492-bb25-4e7b-aa5f-6edb62197092_2160x1352.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!A8fA!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F45d03492-bb25-4e7b-aa5f-6edb62197092_2160x1352.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h3 id="column-family-stores"><strong>Column-Family Stores</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#column-family-stores" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Column-family databases store data in a fundamentally different way. Instead of rows, they group related columns into families, optimized for wide and sparse datasets. Think of them as multi-dimensional key-value stores.</p>
+<p>Some key features are as follows:</p>
+<ul>
+<li>
+<p>They are built for write-heavy workloads with low-latency read guarantees, making them popular for telemetry, logging, time-series data, and real-time analytics.</p>
+</li>
+<li>
+<p>These databases scale linearly. Add nodes, and throughput increases. There’s no single point of failure, and replication strategies are highly configurable.</p>
+</li>
+<li>
+<p>Queries are based on a primary key pattern. Design the schema around access paths. There’s no ad hoc querying like in SQL. If the pattern shifts, the schema must shift too.</p>
+</li>
+<li>
+<p>Consistency is tunable. For example, in certain databases, it’s possible to choose between strong consistency (read from quorum) and eventual consistency (read from any node).</p>
+</li>
+</ul>
+<p>See the diagram below to understand the concept of a column-oriented database.</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!XFbS!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fbbc6c7f1-9dfd-4746-8f3d-b0e950ffb8a9_2678x1410.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!XFbS!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fbbc6c7f1-9dfd-4746-8f3d-b0e950ffb8a9_2678x1410.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h3 id="graph-databases"><strong>Graph Databases</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#graph-databases" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Some problems aren’t about records, but about relationships.</p>
+<p>Who follows whom? Which product leads to which recommendations? How are fraud networks connected? These are the typical domains of graph databases.</p>
+<p>Some key features of graph databases are as follows:</p>
+<ul>
+<li>
+<p>Graph databases model data as nodes (entities) and edges (relationships), with both capable of holding properties. This structure makes them ideal for traversing complex networks.</p>
+</li>
+<li>
+<p>Neo4j and Amazon Neptune are widely used graph engines. Neo4j uses the Cypher query language to express path-based queries cleanly. For example, finding “all users who liked a post liked by someone I follow” becomes a simple graph traversal.</p>
+</li>
+<li>
+<p>These databases prioritize relationship depth and query flexibility over raw throughput. Traditional RDBMS JOINs can simulate some of this, but they degrade quickly with recursive depth.</p>
+</li>
+<li>
+<p>Scaling graph databases is hard. Most operate best on large, vertically scaled instances. Distributed graphs exist, but they introduce non-trivial partitioning challenges.</p>
+</li>
+</ul>
+<p>See the diagram below for reference:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!v3dx!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fc5c8d039-9f5d-4948-adde-2f86faf24227_2490x1524.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!v3dx!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fc5c8d039-9f5d-4948-adde-2f86faf24227_2490x1524.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h2 id="newsql"><strong>NewSQL</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#newsql" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Relational databases offer strong guarantees but struggle to scale horizontally.</p>
+<p>NoSQL systems scale beautifully but compromise on consistency and query richness. Somewhere in between lies a third path: NewSQL.</p>
+<p>NewSQL databases aim to retain the relational model and full ACID guarantees while delivering the horizontal scalability, fault tolerance, and availability typically associated with NoSQL systems. They do this by redesigning the storage engine, query planner, and consensus layer from the ground up to work in distributed environments.</p>
+<p>The result is a system that looks and feels like traditional SQL, but under the hood, it’s built to span data centers, regions, and even continents.</p>
+<p>NewSQL databases shine in the following areas:</p>
+<ul>
+<li>
+<p><strong>Global transactional workloads:</strong> Applications that need to write across regions and maintain ACID guarantees.</p>
+</li>
+<li>
+<p><strong>High availability with consistency:</strong> Systems that cannot afford to lose transactions or tolerate inconsistent reads.</p>
+</li>
+<li>
+<p><strong>PostgreSQL compatibility:</strong> This allows many existing tools and ORMs to work out of the box.</p>
+</li>
+<li>
+<p><strong>Operational simplicity at scale:</strong> Compared to managing manual sharding in legacy RDBMS clusters.</p>
+</li>
+</ul>
+<p>The issue with NewSQL is as follows:</p>
+<ul>
+<li>
+<p><strong>Latency overhead:</strong> Distributed consensus isn’t free. Write paths, especially across regions, are slower than local RDBMS writes.</p>
+</li>
+<li>
+<p><strong>Operational maturity:</strong> While the systems abstract away a lot, debugging performance in distributed SQL systems can get complex quickly.</p>
+</li>
+<li>
+<p><strong>Cloud dependency:</strong> Managed versions of NewSQL databases come at a premium cost.</p>
+</li>
+<li>
+<p><strong>Learning curve:</strong> Understanding how data is partitioned, replicated, and queried in a distributed SQL system often requires a shift in mental models.</p>
+</li>
+</ul>
+<p>Let’s look at one popular NewSQL database in more detail.</p>
+<h3 id="google-spanner"><strong>Google Spanner</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#google-spanner" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Google Spanner is one of the first databases to offer global consistency, high availability, and horizontal scalability, all with SQL.</p>
+<p>Spanner’s secret sauce is TrueTime, a globally synchronized clock API that uses atomic clocks and GPS receivers to bound uncertainty in distributed transactions. This allows Spanner to coordinate writes across the globe with tight consistency guarantees. See the diagram below for reference:</p>
+<p><a href="https://substackcdn.com/image/fetch/$s_!nVgK!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fb6869755-fa88-4860-b230-be5f7a881756_2378x1376.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!nVgK!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fb6869755-fa88-4860-b230-be5f7a881756_2378x1376.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>It also relies on Paxos-based replication to maintain consensus and tolerate node or region failures without losing availability or correctness.</p>
+<p>Spanner supports ANSI SQL and operates like a relational database, but one that scales across continents. It’s used inside Google for services like AdWords and external-facing systems like Firebase and Cloud Spanner.</p>
+<p>This level of consistency isn’t cheap. Writes incur coordination delays, and cross-region latency can’t be ignored. However, for systems like multi-region financial ledgers, customer data platforms, or critical SaaS backends, it’s often worth it.</p>
+<h2 id="specialized-database-categories"><strong>Specialized Database Categories</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#specialized-database-categories" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Not all databases are built to store general-purpose application data.</p>
+<p>Some are optimized for speed, temporal trends, or textual search. These specialized databases don’t always fit into the SQL vs. NoSQL debate, but they solve critical problems in modern systems.</p>
+<p>Often, they don’t replace a primary database but augment it, powering specific workloads that would otherwise bottleneck or overload a traditional system.</p>
+<h3 id="in-memory-databases"><strong>In-Memory Databases</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#in-memory-databases" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Sometimes, speed matters more than durability.</p>
+<p>That’s where in-memory databases come in. These systems keep data in RAM instead of disk, enabling sub-millisecond latency for reads and writes. They’re perfect for use cases like:</p>
+<ul>
+<li>
+<p>Caching frequently accessed data</p>
+</li>
+<li>
+<p>Session stores for web applications</p>
+</li>
+<li>
+<p>Real-time leaderboarr counters</p>
+</li>
+<li>
+<p>Pub-sub messaging and distributed locks</p>
+</li>
+</ul>
+<p><a href="https://substackcdn.com/image/fetch/$s_!-24Z!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F8d8d449b-e123-4f52-ab95-eba5325ad8cd_2344x1410.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!-24Z!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F8d8d449b-e123-4f52-ab95-eba5325ad8cd_2344x1410.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>The two most widely used in-memory databases are Redis and Memcached.</p>
+<ul>
+<li>
+<p>Redis is more than a simple cache. It supports complex data structures—lists, sets, hashes, sorted sets, and operations like atomic increments, expirations, and Lua scripting. It also supports persistence (RDB and AOF modes), replication, clustering, and pub-sub messaging, making it suitable for more than just transient data.</p>
+</li>
+<li>
+<p>Memcached, in contrast, is simpler and faster for pure key-value caching. It has no persistence or advanced data types, but its memory management is efficient for small, volatile caches.</p>
+</li>
+</ul>
+<p>In-memory databases come with trade-offs:</p>
+<ul>
+<li>
+<p><strong>Volatility:</strong> Unless configured to persist data (as with Redis), all data is lost on crash or restart.</p>
+</li>
+<li>
+<p><strong>Memory pressure:</strong> RAM is expensive. Careless use of large objects or unbounded key growth can result in eviction or node failure.</p>
+</li>
+<li>
+<p><strong>Scaling:</strong> Horizontal scaling is possible but comes with operational overhead, especially if data consistency or durability is a concern.</p>
+</li>
+</ul>
+<p><a href="https://substackcdn.com/image/fetch/$s_!GE_D!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F66d9acb6-a57d-43ed-839d-e17577c94151_2344x1410.png" class="external"><img src="https://substackcdn.com/image/fetch/$s_!GE_D!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F66d9acb6-a57d-43ed-839d-e17577c94151_2344x1410.png" alt/><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>Used wisely, in-memory databases act as performance amplifiers. They can shield primary databases from repetitive queries and slash overall response times.</p>
+<h3 id="time-series-databases"><strong>Time-Series Databases</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#time-series-databases" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>When the data model revolves around timestamps, general-purpose databases start to have problems. Monitoring systems, financial tickers, IoT devices, and user telemetry produce massive streams of time-ordered data. That’s the realm of time-series databases (TSDBs).</p>
+<p>Key TSDB features include:</p>
+<ul>
+<li>
+<p>Automatic downsampling to control storage growth over time.</p>
+</li>
+<li>
+<p>Efficient range queries optimized for time-based filters and aggregations.</p>
+</li>
+<li>
+<p>Retention and eviction policies to automatically discard old data.</p>
+</li>
+</ul>
+<p>As an example, a database like InfluxDB excels in pure telemetry pipelines where performance is everything. On the other hand, TimescaleDB works better when time-series data coexists with relational context.</p>
+<h3 id="search-databases"><strong>Search Databases</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#search-databases" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Traditional databases aren’t built for text search. Ask them to match against unstructured strings, fuzzy phrases, or analyze millions of logs, and they’ll face challenges. That’s where search databases like Elasticsearch and Apache Solr shine.</p>
+<p>Both are built on inverted indexes. This allows extremely fast retrieval of relevant documents based on tokens, filters, and scoring algorithms.</p>
+<ul>
+<li>
+<p>Elasticsearch is the more popular of the two, widely used in log analytics, site search, product catalogs, and observability platforms like the ELK stack (Elasticsearch, Logstash, and Kibana). It offers tokenization, stemming, relevance scoring, and aggregations out of the box.</p>
+</li>
+<li>
+<p>Solr, built on Apache Lucene like Elasticsearch, offers similar capabilities but is preferred in some enterprise contexts for its XML-based configurations and mature plugin architecture.</p>
+</li>
+</ul>
+<p>Common use cases of search databases include:</p>
+<ul>
+<li>
+<p>Full-text search with ranking.</p>
+</li>
+<li>
+<p>Faceted navigation for e-commerce or dashboards.</p>
+</li>
+<li>
+<p>Log aggregation and analytics (for example, Kibana on top of Elasticsearch).</p>
+</li>
+<li>
+<p>Alerting and anomaly detection on textual or semi-structured data.</p>
+</li>
+</ul>
+<p>These aren’t general-purpose databases. They don’t enforce ACID guarantees, and they aren’t optimized for transactional workloads. But as secondary engines layered on top of SQL or NoSQL systems, they open up powerful query capabilities that traditional databases find difficult to apply.</p>
+<h2 id="when-to-use-which-database"><strong>When to Use Which Database?</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#when-to-use-which-database" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>No single database fits every workload. The right choice depends on what the system needs to guarantee, how the data evolves, and where the performance bottlenecks lie.</p>
+<p>Here are some points that can help developers make the right choice:</p>
+<ul>
+<li>
+<p>Use SQL when correctness is non-negotiable. Systems that rely on transactional integrity, strict schemas, and relational querying, like banking platforms, benefit from the structure and reliability of relational databases.</p>
+</li>
+<li>
+<p>Use NoSQL when the application needs to move fast and scale wide. In systems where schemas change frequently, data volume grows unpredictably, or uptime is more important than immediate consistency, such as social feeds, mobile backends, or analytics pipelines, NoSQL databases offer the flexibility and resilience needed.</p>
+</li>
+<li>
+<p>Use NewSQL when global scale and ACID guarantees must coexist. Multi-tenant SaaS platforms, financial systems spanning regions, and enterprise platforms with strong relational logic but distributed infrastructure all benefit from NewSQL’s blend of transactional safety and horizontal scalability.</p>
+</li>
+<li>
+<p>Use in-memory databases when speed matters more than persistence. Leaderboards, live counters, rate-limiters, or anything that demands microsecond latency fits well with Redis or Memcached.</p>
+</li>
+<li>
+<p>Use time-series databases when tracking data over time is the core workload. Metrics, sensor readings, uptime logs, and telemetry streams are best handled by engines designed to slice, downsample, and aggregate time-indexed data.</p>
+</li>
+<li>
+<p>Use search databases when the system requires full-text search, filtering, or fuzzy matching. Product discovery in e-commerce, log analysis in observability stacks, and document retrieval all depend on the kind of indexing and scoring that Elasticsearch or Solr provides.</p>
+</li>
+</ul>
+<h2 id="summary"><strong>Summary</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#summary" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>In this article, we have looked at various database types and their pros and cons.</p>
+<p>Here are the key learning points in brief:</p>
+<ul>
+<li>
+<p>Relational databases follow the ACID model to ensure strict data integrity, making them ideal for transactional systems where correctness matters more than scale.</p>
+</li>
+<li>
+<p>NoSQL databases adopt the BASE model to prioritize availability and partition tolerance, often at the cost of immediate consistency.</p>
+</li>
+<li>
+<p>SQL databases like MySQL and PostgreSQL provide mature tooling, robust transaction support, and rich querying through JOINs and aggregations.</p>
+</li>
+<li>
+<p>MySQL offers simplicity and speed for read-heavy workloads, while PostgreSQL excels in extensibility and standards compliance.</p>
+</li>
+<li>
+<p>NoSQL databases come in four main types: key-value stores (for example, Redis, DynamoDB), document stores (for example, MongoDB), column-family stores, and graph databases (for example, Neo4j), each optimized for different data models and access patterns.</p>
+</li>
+<li>
+<p>Key-value stores deliver ultra-fast lookups for simple data access but lack query flexibility.</p>
+</li>
+<li>
+<p>Document stores support semi-structured data with flexible schemas and are suited for rapidly evolving applications like content platforms.</p>
+</li>
+<li>
+<p>Column-family databases handle high write throughput and time-series-like access patterns, trading off ad-hoc query support.</p>
+</li>
+<li>
+<p>Graph databases model relationships natively and work well for complex network queries, though they can be harder to scale.</p>
+</li>
+<li>
+<p>NewSQL databases like Google Spanner try to offer SQL semantics and ACID guarantees with distributed scalability, making them suitable for global, transactional workloads.</p>
+</li>
+<li>
+<p>In-memory databases like Redis and Memcached deliver low-latency performance for caching, pub-sub, and real-time counters, but may lose data on a crash unless persistence is configured.</p>
+</li>
+<li>
+<p>Time-series databases are built for high-ingestion, time-indexed data and support features like downsampling and retention policies.</p>
+</li>
+<li>
+<p>Search databases like Elasticsearch and Solr enable full-text search, relevance scoring, and log analytics through inverted indexes, complementing primary databases in search-heavy workloads.</p>
+</li>
+</ul></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-170" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#core-models-acid-vs-base" data-for="core-models-acid-vs-base">Core Models: ACID vs BASE</a></li><li class="depth-1"><a href="#acid" data-for="acid">ACID</a></li><li class="depth-1"><a href="#base-designed-for-distribution" data-for="base-designed-for-distribution">BASE: Designed for Distribution</a></li><li class="depth-1"><a href="#the-trade-offs" data-for="the-trade-offs">The Trade-Offs</a></li><li class="depth-0"><a href="#sql-databases-the-relational-foundation" data-for="sql-databases-the-relational-foundation">SQL Databases: The Relational Foundation</a></li><li class="depth-1"><a href="#why-rdbms-still-matters" data-for="why-rdbms-still-matters">Why RDBMS Still Matters?</a></li><li class="depth-1"><a href="#mysql-vs-postgresql" data-for="mysql-vs-postgresql">MySQL vs. PostgreSQL</a></li><li class="depth-1"><a href="#technical-considerations" data-for="technical-considerations">Technical Considerations</a></li><li class="depth-0"><a href="#nosql-databases" data-for="nosql-databases">NoSQL Databases</a></li><li class="depth-1"><a href="#key-value-stores" data-for="key-value-stores">Key-Value Stores</a></li><li class="depth-1"><a href="#document-stores" data-for="document-stores">Document Stores</a></li><li class="depth-1"><a href="#column-family-stores" data-for="column-family-stores">Column-Family Stores</a></li><li class="depth-1"><a href="#graph-databases" data-for="graph-databases">Graph Databases</a></li><li class="depth-0"><a href="#newsql" data-for="newsql">NewSQL</a></li><li class="depth-1"><a href="#google-spanner" data-for="google-spanner">Google Spanner</a></li><li class="depth-0"><a href="#specialized-database-categories" data-for="specialized-database-categories">Specialized Database Categories</a></li><li class="depth-1"><a href="#in-memory-databases" data-for="in-memory-databases">In-Memory Databases</a></li><li class="depth-1"><a href="#time-series-databases" data-for="time-series-databases">Time-Series Databases</a></li><li class="depth-1"><a href="#search-databases" data-for="search-databases">Search Databases</a></li><li class="depth-0"><a href="#when-to-use-which-database" data-for="when-to-use-which-database">When to Use Which Database?</a></li><li class="depth-0"><a href="#summary" data-for="summary">Summary</a></li><li class="overflow-end"></li></ul></div><div class="backlinks"><h3>Backlinks</h3><ul id="list-2" class="overflow"><li><a href="../../Notion-Knowledge/Note" class="internal">Note</a></li><li><a href="../../_moc/MOC-Database" class="internal">MOC-Database</a></li><li><a href="../../_moc/MOC-Reading-List" class="internal">MOC-Reading-List</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://dangthobach.github.io/">Back to Portfolio</a></li><li><a href="https://github.com/dangthobach">GitHub</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../postscript.js" type="module" data-persist="true"></script></html>
