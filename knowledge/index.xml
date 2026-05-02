@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+    <channel>
+      <title>Dang Tho Bach&#039;s Knowledge Base</title>
+      <link>https://dangthobach.github.io/knowledge</link>
+      <description>Last 10 notes on Dang Tho Bach&#039;s Knowledge Base</description>
+      <generator>Quartz -- quartz.jzhao.xyz</generator>
+      <item>
+    <title>Welcome to my Knowledge Base</title>
+    <link>https://dangthobach.github.io/knowledge/</link>
+    <guid>https://dangthobach.github.io/knowledge/</guid>
+    <description><![CDATA[ Chào mừng bạn đến với vườn tri thức của tôi! Đây là nơi tôi lưu trữ các ghi chú từ Obsidian. ]]></description>
+    <pubDate>Sat, 02 May 2026 03:59:03 GMT</pubDate>
+  </item>
+    </channel>
+  </rss>
