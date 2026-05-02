@@ -10,19 +10,25 @@
     <link>https://dangthobach.github.io/knowledge/_templates/template-til</link>
     <guid>https://dangthobach.github.io/knowledge/_templates/template-til</guid>
     <description><![CDATA[ TIL: {{title}} 💡 Insight 🔍 Context 🔗 Liên quan . ]]></description>
-    <pubDate>Sat, 02 May 2026 04:59:24 GMT</pubDate>
+    <pubDate>Sat, 02 May 2026 05:08:30 GMT</pubDate>
   </item><item>
     <title>template-pattern</title>
     <link>https://dangthobach.github.io/knowledge/_templates/template-pattern</link>
     <guid>https://dangthobach.github.io/knowledge/_templates/template-pattern</guid>
     <description><![CDATA[ Pattern: {{title}} 🎯 Problem 💡 Solution 🔄 Flow &lt;!-- Diagram text hoặc steps --&gt; ✅ Pros / ❌ Cons ProsCons 📍 Applied In MOC-PDMS — 🔗 Related Patterns . ]]></description>
-    <pubDate>Sat, 02 May 2026 04:59:24 GMT</pubDate>
+    <pubDate>Sat, 02 May 2026 05:08:30 GMT</pubDate>
   </item><item>
     <title>template-concept</title>
     <link>https://dangthobach.github.io/knowledge/_templates/template-concept</link>
     <guid>https://dangthobach.github.io/knowledge/_templates/template-concept</guid>
     <description><![CDATA[ {{title}} 📌 One-liner Concept này là gì trong một câu 🧠 Core Idea 🔁 Java / Rust Analog JavaRustEquivalentKey difference 💡 Khi nào dùng ⚠️ Pitfalls 🔗 Liên quan 📖 Nguồn . ]]></description>
-    <pubDate>Sat, 02 May 2026 04:59:24 GMT</pubDate>
+    <pubDate>Sat, 02 May 2026 05:08:30 GMT</pubDate>
+  </item><item>
+    <title>index</title>
+    <link>https://dangthobach.github.io/knowledge/</link>
+    <guid>https://dangthobach.github.io/knowledge/</guid>
+    <description><![CDATA[ This is your new vault. Make a note of something, create a link, or try the Importer! When you’re ready, delete this note and make the vault your own. ]]></description>
+    <pubDate>Sat, 02 May 2026 05:07:51 GMT</pubDate>
   </item><item>
     <title>00-Hub-Database-Persistence</title>
     <link>https://dangthobach.github.io/knowledge/Database-Patterns/00-Hub-Database-Persistence</link>
@@ -58,12 +64,6 @@
     <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-1-Go-Mindset</link>
     <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-1-Go-Mindset</guid>
     <description><![CDATA[ Bài 1: Go Mindset — Chuyển tư duy từ Java/Rust sang Go Mục tiêu: Hiểu triết lý thiết kế của Go, so sánh với Java và Rust, setup workspace chuẩn. 1. ]]></description>
-    <pubDate>Sat, 02 May 2026 04:58:37 GMT</pubDate>
-  </item><item>
-    <title>Bai-10-GORM-PostgreSQL</title>
-    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-10-GORM-PostgreSQL</link>
-    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-10-GORM-PostgreSQL</guid>
-    <description><![CDATA[ Bài 10: GORM &amp; PostgreSQL Integration Mục tiêu: Làm chủ GORM — ORM phổ biến nhất trong Go ecosystem. ]]></description>
     <pubDate>Sat, 02 May 2026 04:58:37 GMT</pubDate>
   </item>
     </channel>
