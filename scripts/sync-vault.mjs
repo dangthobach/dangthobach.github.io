@@ -43,6 +43,27 @@ async function sync() {
       }
     });
 
+    // 4. Đảm bảo có file index.md (Quartz yêu cầu để tạo trang chủ)
+    const indexDest = path.join(CONTENT_PATH, 'index.md');
+    if (!fs.existsSync(indexDest)) {
+        console.log('📝 Không tìm thấy index.md, đang tạo từ file fallback...');
+        const fallbacks = ['Welcome.md', 'HOME.md', 'home.md', 'README.md'];
+        let foundFallback = false;
+        for (const fallback of fallbacks) {
+            const fallbackPath = path.join(CONTENT_PATH, fallback);
+            if (fs.existsSync(fallbackPath)) {
+                fs.copyFileSync(fallbackPath, indexDest);
+                console.log(`✅ Đã tạo index.md từ ${fallback}`);
+                foundFallback = true;
+                break;
+            }
+        }
+        if (!foundFallback) {
+            fs.writeFileSync(indexDest, '---\ntitle: Home\n---\n# Welcome to my Knowledge Base');
+            console.log('✅ Đã tạo index.md mặc định.');
+        }
+    }
+
     console.log('✅ Đồng bộ hoàn tất!');
     console.log('💡 Bây giờ bạn có thể kiểm tra lại và chạy "git add . && git commit -m \'Sync notes\' && git push"');
   } catch (error) {
