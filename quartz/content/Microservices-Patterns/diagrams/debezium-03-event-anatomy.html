@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Debezium Event Anatomy — Interactive</title>
+<style>
+  :root {
+    --bg: #1e1e2e; --text: #cdd6f4; --text2: #a6adc8; --text3: #6c7086;
+    --surface: #2a2a3e; --surface2: #313145; --border: #45475a;
+    --green: #a6e3a1; --green-bg: #1e3a2e; --green-border: #2d5a3d;
+    --red: #f38ba8; --red-bg: #3a1e2a; --red-border: #5a2d3d;
+    --blue: #89b4fa; --blue-bg: #1e2d4a; --blue-border: #2d4a7a;
+    --amber: #f9e2af; --amber-bg: #3a2e10; --amber-border: #6a5018;
+    --teal: #94e2d5; --mono: 'JetBrains Mono', 'Fira Code', monospace;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #eff1f5; --text: #4c4f69; --text2: #6c6f85; --text3: #9ca0b0;
+      --surface: #e6e9ef; --surface2: #dce0e8; --border: #ccd0da;
+      --green: #40a02b; --green-bg: #e8f5e0; --green-border: #b5d9a0;
+      --red: #d20f39; --red-bg: #fce8ee; --red-border: #f0a0b5;
+      --blue: #1e66f5; --blue-bg: #ddeeff; --blue-border: #89b4fa;
+      --amber: #df8e1d; --amber-bg: #fef3d8; --amber-border: #f9e2af;
+      --teal: #179299;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system,'Segoe UI',sans-serif; font-size:13px; padding:14px; line-height:1.5; }
+  h3 { font-size:13px; font-weight:500; color:var(--text2); margin-bottom:10px; }
+  .hint { font-size:12px; color:var(--text3); margin-bottom:10px; }
+  .op-row { display:flex; gap:6px; margin-bottom:12px; flex-wrap:wrap; align-items:center; }
+  .op-label { font-size:12px; color:var(--text3); align-self:center; }
+  .op-btn { padding:4px 12px; border-radius:20px; border:1.5px solid var(--border); background:var(--surface); color:var(--text2); cursor:pointer; font-size:12px; transition:all .15s; font-family:inherit; }
+  .op-btn.active { border-color:var(--blue-border); background:var(--blue-bg); color:var(--blue); }
+  .blocks { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .block { flex:1; min-width:120px; padding:10px 12px; border-radius:10px; cursor:pointer; transition:opacity .15s; border:1.5px solid; }
+  .block:hover { opacity:.85; }
+  .block-label { font-size:10px; font-weight:500; letter-spacing:.05em; text-transform:uppercase; margin-bottom:5px; }
+  .block-val { font-family:var(--mono); font-size:11px; }
+  .block-hint { font-size:10px; margin-top:4px; }
+  .block-before { background:var(--surface); border-color:var(--border); }
+  .block-before .block-label,.block-before .block-hint { color:var(--text3); }
+  .block-before .block-val { color:var(--text2); }
+  .block-after { background:var(--blue-bg); border-color:var(--blue-border); }
+  .block-after .block-label,.block-after .block-hint { color:var(--blue); }
+  .block-after .block-val { color:var(--blue); }
+  .block-op { flex:0 0 72px; background:var(--green-bg); border-color:var(--green-border); }
+  .block-op .block-label { color:var(--green); }
+  .block-op .op-big { font-family:var(--mono); font-size:22px; font-weight:500; color:var(--green); }
+  .block-source { background:var(--amber-bg); border-color:var(--amber-border); }
+  .block-source .block-label,.block-source .block-hint { color:var(--amber); }
+  .block-source .block-val { color:var(--amber); }
+  .detail { display:none; padding:10px 12px; border-radius:8px; margin-bottom:8px; font-size:12px; }
+  .detail.open { display:block; }
+  .detail-before { background:var(--surface); border:1px solid var(--border); }
+  .detail-after { background:var(--blue-bg); border:1px solid var(--blue-border); }
+  .detail-op { background:var(--green-bg); border:1px solid var(--green-border); }
+  .detail-source { background:var(--amber-bg); border:1px solid var(--amber-border); }
+  .detail-title { font-weight:500; margin-bottom:6px; }
+  .detail-before .detail-title { color:var(--text2); }
+  .detail-after .detail-title { color:var(--blue); }
+  .detail-op .detail-title { color:var(--green); }
+  .detail-source .detail-title { color:var(--amber); }
+  .mono { font-family:var(--mono); }
+  .fn { color:var(--text2); } .fv { color:var(--blue); } .fnull { color:var(--text3); }
+  .op-table { width:100%; border-collapse:collapse; }
+  .op-table td { padding:3px 8px; }
+  .op-table td:first-child { font-family:var(--mono); font-size:12px; color:var(--green); }
+  .op-table td:last-child { color:var(--text2); font-size:12px; }
+  .smt-box { margin-top:10px; padding:10px 12px; border-radius:8px; background:var(--surface2); border:1px dashed var(--border); }
+  .smt-title { font-size:11px; color:var(--text3); margin-bottom:5px; }
+  .smt-code { font-family:var(--mono); font-size:11px; color:var(--text2); white-space:pre-wrap; line-height:1.7; }
+</style>
+</head>
+<body>
+<h3>Anatomy của một Debezium Change Event</h3>
+<p class="hint">Click vào từng block để xem chi tiết. Chọn operation type để thấy before/after thay đổi.</p>
+
+<div class="op-row">
+  <span class="op-label">Op type:</span>
+  <button class="op-btn active" onclick="setOp('c',this)">c — INSERT</button>
+  <button class="op-btn" onclick="setOp('u',this)">u — UPDATE</button>
+  <button class="op-btn" onclick="setOp('d',this)">d — DELETE</button>
+  <button class="op-btn" onclick="setOp('r',this)">r — SNAPSHOT</button>
+</div>
+
+<div class="blocks">
+  <div class="block block-before" onclick="toggle('d-before')">
+    <div class="block-label">"before"</div>
+    <div class="block-val" id="bv">null</div>
+    <div class="block-hint">↓ click để xem</div>
+  </div>
+  <div class="block block-after" onclick="toggle('d-after')">
+    <div class="block-label">"after"</div>
+    <div class="block-val" id="av">{ id:1, status:"APPROVED" }</div>
+    <div class="block-hint">↓ click để xem</div>
+  </div>
+  <div class="block block-op" onclick="toggle('d-op')">
+    <div class="block-label">"op"</div>
+    <div class="op-big" id="ov">"c"</div>
+  </div>
+  <div class="block block-source" onclick="toggle('d-source')">
+    <div class="block-label">"source"</div>
+    <div class="block-val">lsn, txId, ts_ms...</div>
+    <div class="block-hint">↓ click để xem</div>
+  </div>
+</div>
+
+<div class="detail detail-before" id="d-before">
+  <div class="detail-title">before — Row state TRƯỚC khi thay đổi</div>
+  <div class="mono" id="bc"></div>
+</div>
+<div class="detail detail-after" id="d-after">
+  <div class="detail-title">after — Row state SAU khi thay đổi</div>
+  <div class="mono" id="ac"></div>
+</div>
+<div class="detail detail-op" id="d-op">
+  <div class="detail-title">op — Operation type</div>
+  <table class="op-table">
+    <tr><td>c</td><td>CREATE / INSERT — row mới được tạo</td></tr>
+    <tr><td>u</td><td>UPDATE — row được cập nhật</td></tr>
+    <tr><td>d</td><td>DELETE — row bị xóa</td></tr>
+    <tr><td>r</td><td>READ — từ initial snapshot</td></tr>
+    <tr><td>t</td><td>TRUNCATE — table bị truncate</td></tr>
+  </table>
+</div>
+<div class="detail detail-source" id="d-source">
+  <div class="detail-title">source — Metadata về nơi event xuất phát</div>
+  <div class="mono" style="font-size:12px;line-height:1.8;color:var(--text2)">
+    <span class="fn">"connector"</span>: <span class="fv">"postgresql"</span><br>
+    <span class="fn">"db"</span>: <span class="fv">"pdms_db"</span><br>
+    <span class="fn">"table"</span>: <span class="fv">"documents"</span><br>
+    <span class="fn">"lsn"</span>: <span class="fv">24023424</span> <span style="color:var(--text3)">← WAL position, dùng làm idempotency key</span><br>
+    <span class="fn">"txId"</span>: <span class="fv">756</span> <span style="color:var(--text3)">← PostgreSQL transaction ID</span><br>
+    <span class="fn">"ts_ms"</span>: <span class="fv">1713168000000</span> <span style="color:var(--text3)">← Timestamp của transaction trong DB</span><br>
+    <span class="fn">"snapshot"</span>: <span class="fv">"false"</span>
+  </div>
+</div>
+
+<div class="smt-box">
+  <div class="smt-title">Sau ExtractNewRecordState SMT (unwrap) — flat structure, dễ consume hơn:</div>
+  <div class="smt-code" id="smt"></div>
+</div>
+
+<script>
+const ops = {
+  c: {
+    label:'"c"',
+    bv:'null',
+    av:'{ id:1, document_code:"DOC-2024-001", status:"PENDING" }',
+    bc:'<span class="fnull">null — INSERT không có before state</span>',
+    ac:'<span class="fn">"id"</span>: <span class="fv">1</span><br><span class="fn">"document_code"</span>: <span class="fv">"DOC-2024-001"</span><br><span class="fn">"status"</span>: <span class="fv">"PENDING"</span><br><span class="fn">"customer_id"</span>: <span class="fv">42</span>',
+    smt:'{ "id": 1, "document_code": "DOC-2024-001", "status": "PENDING",\n  "__op": "c", "__table": "documents", "__lsn": 24023424 }'
+  },
+  u: {
+    label:'"u"',
+    bv:'{ id:1, status:"PENDING" }',
+    av:'{ id:1, status:"APPROVED" }',
+    bc:'<span class="fn">"id"</span>: <span class="fv">1</span><br><span class="fn">"status"</span>: <span class="fv">"PENDING"</span><br><span style="color:var(--text3);font-size:11px">→ REPLICA IDENTITY FULL → toàn bộ row</span>',
+    ac:'<span class="fn">"id"</span>: <span class="fv">1</span><br><span class="fn">"status"</span>: <span class="fv">"APPROVED"</span>',
+    smt:'{ "id": 1, "status": "APPROVED",\n  "__op": "u", "__table": "documents", "__lsn": 24023425 }'
+  },
+  d: {
+    label:'"d"',
+    bv:'{ id:1, status:"APPROVED" }',
+    av:'null',
+    bc:'<span class="fn">"id"</span>: <span class="fv">1</span><br><span class="fn">"status"</span>: <span class="fv">"APPROVED"</span><br><span style="color:var(--text3);font-size:11px">→ Data trước khi bị xóa</span>',
+    ac:'<span class="fnull">null — DELETE không có after state</span>',
+    smt:'{ "id": 1, "__op": "d", "__deleted": "true", "__lsn": 24023426 }\n// + tombstone (key=1, value=null) để Kafka log compaction xóa record'
+  },
+  r: {
+    label:'"r"',
+    bv:'null',
+    av:'{ id:1, status:"APPROVED" }',
+    bc:'<span class="fnull">null — Snapshot read không có before</span>',
+    ac:'<span class="fn">"id"</span>: <span class="fv">1</span><br><span class="fn">"status"</span>: <span class="fv">"APPROVED"</span><br><span style="color:var(--text3);font-size:11px">→ Current state lúc snapshot</span>',
+    smt:'{ "id": 1, "status": "APPROVED",\n  "__op": "r", "__table": "documents" }'
+  }
+};
+let cur = 'c'; const open = new Set();
+function setOp(op, btn) {
+  cur = op;
+  document.querySelectorAll('.op-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const d = ops[op];
+  document.getElementById('ov').textContent = d.label;
+  document.getElementById('bv').textContent = d.bv;
+  document.getElementById('av').textContent = d.av;
+  document.getElementById('bc').innerHTML = d.bc;
+  document.getElementById('ac').innerHTML = d.ac;
+  document.getElementById('smt').textContent = d.smt;
+}
+function toggle(id) {
+  const el = document.getElementById(id);
+  if (open.has(id)) { el.classList.remove('open'); open.delete(id); }
+  else { el.classList.add('open'); open.add(id); const d=ops[cur]; document.getElementById('bc').innerHTML=d.bc; document.getElementById('ac').innerHTML=d.ac; }
+}
+setOp('c', document.querySelector('.op-btn.active'));
+</script>
+</body>
+</html>

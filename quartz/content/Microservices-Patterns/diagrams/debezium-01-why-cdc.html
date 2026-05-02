@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tại sao CDC? — So sánh Polling vs Dual Write vs CDC</title>
+<style>
+  :root {
+    --bg: #1e1e2e; --bg2: #2a2a3e; --bg3: #313145;
+    --text: #cdd6f4; --text2: #a6adc8; --text3: #6c7086;
+    --green: #a6e3a1; --green-bg: #1e3a2e; --green-border: #2d5a3d;
+    --red: #f38ba8; --red-bg: #3a1e2a; --red-border: #5a2d3d;
+    --blue: #89b4fa; --amber: #f9e2af; --teal: #94e2d5;
+    --gray-fill: #313145; --gray-border: #45475a;
+    --border: #45475a;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #eff1f5; --bg2: #e6e9ef; --bg3: #dce0e8;
+      --text: #4c4f69; --text2: #6c6f85; --text3: #9ca0b0;
+      --green: #40a02b; --green-bg: #e8f5e0; --green-border: #b5d9a0;
+      --red: #d20f39; --red-bg: #fce8ee; --red-border: #f0a0b5;
+      --blue: #1e66f5; --amber: #df8e1d; --teal: #179299;
+      --gray-fill: #e6e9ef; --gray-border: #ccd0da;
+      --border: #ccd0da;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, 'Segoe UI', sans-serif; font-size: 13px; padding: 16px; }
+  svg { width: 100%; height: auto; display: block; }
+  .t  { font: 400 14px/1.4 -apple-system,'Segoe UI',sans-serif; fill: var(--text); }
+  .ts { font: 400 12px/1.4 -apple-system,'Segoe UI',sans-serif; fill: var(--text2); }
+  .th { font: 500 14px/1.4 -apple-system,'Segoe UI',sans-serif; fill: var(--text); }
+  .box { fill: var(--gray-fill); stroke: var(--gray-border); }
+  .arr { stroke: var(--text3); fill: none; stroke-width: 1.5; marker-end: url(#arrow); }
+  .c-gray rect, .c-gray circle { fill: var(--gray-fill); stroke: var(--gray-border); }
+  .c-gray .t, .c-gray .th, .c-gray .ts { fill: var(--text); }
+  .c-blue rect { fill: #1e2d4a; stroke: #2d4a7a; }
+  .c-blue .th, .c-blue .ts { fill: var(--blue); }
+  .c-teal rect { fill: #1a3535; stroke: #2a5555; }
+  .c-teal .th, .c-teal .ts { fill: var(--teal); }
+  .c-amber rect { fill: #3a2e10; stroke: #6a5018; }
+  .c-amber .th, .c-amber .ts { fill: var(--amber); }
+  .c-red rect { fill: var(--red-bg); stroke: var(--red-border); }
+  .c-red .th, .c-red .ts { fill: var(--red); }
+  .c-green rect { fill: var(--green-bg); stroke: var(--green-border); }
+  .c-green .th, .c-green .ts { fill: var(--green); }
+  @media (prefers-color-scheme: light) {
+    .c-blue rect { fill: #ddeeff; stroke: #89b4fa; }
+    .c-blue .th, .c-blue .ts { fill: #1e66f5; }
+    .c-teal rect { fill: #d8f5f3; stroke: #94e2d5; }
+    .c-teal .th, .c-teal .ts { fill: #179299; }
+    .c-amber rect { fill: #fef3d8; stroke: #f9e2af; }
+    .c-amber .th, .c-amber .ts { fill: #df8e1d; }
+    .c-red rect { fill: var(--red-bg); stroke: var(--red-border); }
+    .c-green rect { fill: var(--green-bg); stroke: var(--green-border); }
+  }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 680 520" role="img" xmlns="http://www.w3.org/2000/svg">
+<title>Tại sao CDC? So sánh 3 cách detect DB changes</title>
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</marker>
+</defs>
+<text class="th" x="340" y="30" text-anchor="middle" font-size="15">Làm sao biết DB thay đổi gì?</text>
+<!-- Cách 1 -->
+<text class="ts" x="110" y="60" text-anchor="middle" fill="#f38ba8">Cách 1 — Polling</text>
+<g class="c-gray"><rect x="20" y="70" width="110" height="44" rx="8" stroke-width="0.5"/><text class="th" x="75" y="92" text-anchor="middle" dominant-baseline="central">Service A</text></g>
+<g class="c-gray"><rect x="20" y="145" width="110" height="44" rx="8" stroke-width="0.5"/><text class="th" x="75" y="167" text-anchor="middle" dominant-baseline="central">Database</text></g>
+<line x1="75" y1="114" x2="75" y2="143" class="arr" marker-end="url(#arrow)"/>
+<text class="ts" x="108" y="130" text-anchor="start">SELECT WHERE</text>
+<text class="ts" x="108" y="143" text-anchor="start">updated_at &gt; ?</text>
+<line x1="75" y1="145" x2="75" y2="118" class="arr" marker-end="url(#arrow)" stroke-dasharray="3 3"/>
+<g class="c-red"><rect x="15" y="205" width="180" height="70" rx="8" stroke-width="0.5"/>
+<text class="ts" x="105" y="222" text-anchor="middle">Miss soft deletes</text>
+<text class="ts" x="105" y="238" text-anchor="middle">Tốn CPU (constant poll)</text>
+<text class="ts" x="105" y="254" text-anchor="middle">Delay không thể tránh</text>
+<text class="ts" x="105" y="270" text-anchor="middle">updated_at phải có sẵn</text></g>
+<!-- Cách 2 -->
+<text class="ts" x="340" y="60" text-anchor="middle" fill="#f38ba8">Cách 2 — Dual Write</text>
+<g class="c-gray"><rect x="250" y="70" width="110" height="44" rx="8" stroke-width="0.5"/><text class="th" x="305" y="85" text-anchor="middle" dominant-baseline="central">Service A</text><text class="ts" x="305" y="103" text-anchor="middle">write DB + Kafka</text></g>
+<g class="c-gray"><rect x="230" y="150" width="90" height="44" rx="8" stroke-width="0.5"/><text class="th" x="275" y="172" text-anchor="middle" dominant-baseline="central">Database</text></g>
+<g class="c-gray"><rect x="340" y="150" width="80" height="44" rx="8" stroke-width="0.5"/><text class="th" x="380" y="172" text-anchor="middle" dominant-baseline="central">Kafka</text></g>
+<line x1="275" y1="114" x2="260" y2="148" class="arr" marker-end="url(#arrow)"/>
+<line x1="330" y1="114" x2="370" y2="148" class="arr" marker-end="url(#arrow)"/>
+<text class="ts" x="305" y="132" text-anchor="middle">Step 1</text>
+<text class="ts" x="380" y="132" text-anchor="middle">Step 2</text>
+<text x="290" y="145" font-size="16" text-anchor="middle" fill="#f38ba8">⚡</text>
+<g class="c-red"><rect x="215" y="205" width="180" height="70" rx="8" stroke-width="0.5"/>
+<text class="ts" x="305" y="222" text-anchor="middle">Race condition</text>
+<text class="ts" x="305" y="238" text-anchor="middle">DB ok, Kafka fail</text>
+<text class="ts" x="305" y="254" text-anchor="middle">→ Data inconsistency</text>
+<text class="ts" x="305" y="270" text-anchor="middle">Không atomic!</text></g>
+<!-- Cách 3 -->
+<text class="ts" x="575" y="60" text-anchor="middle" fill="#a6e3a1">Cách 3 — CDC ✓</text>
+<g class="c-gray"><rect x="490" y="70" width="100" height="44" rx="8" stroke-width="0.5"/><text class="th" x="540" y="85" text-anchor="middle" dominant-baseline="central">Service A</text><text class="ts" x="540" y="103" text-anchor="middle">chỉ write DB</text></g>
+<g class="c-blue"><rect x="480" y="145" width="120" height="44" rx="8" stroke-width="0.5"/><text class="th" x="540" y="160" text-anchor="middle" dominant-baseline="central">PostgreSQL</text><text class="ts" x="540" y="178" text-anchor="middle">WAL (log)</text></g>
+<g class="c-teal"><rect x="490" y="215" width="100" height="44" rx="8" stroke-width="0.5"/><text class="th" x="540" y="237" text-anchor="middle" dominant-baseline="central">Debezium</text></g>
+<g class="c-amber"><rect x="490" y="285" width="100" height="44" rx="8" stroke-width="0.5"/><text class="th" x="540" y="307" text-anchor="middle" dominant-baseline="central">Kafka</text></g>
+<line x1="540" y1="114" x2="540" y2="143" class="arr" marker-end="url(#arrow)"/>
+<line x1="540" y1="189" x2="540" y2="213" class="arr" marker-end="url(#arrow)"/>
+<line x1="540" y1="259" x2="540" y2="283" class="arr" marker-end="url(#arrow)"/>
+<text class="ts" x="612" y="130" text-anchor="start">automatic</text>
+<text class="ts" x="612" y="203" text-anchor="start">reads WAL</text>
+<text class="ts" x="612" y="273" text-anchor="start">streams</text>
+<g class="c-green"><rect x="468" y="350" width="180" height="80" rx="8" stroke-width="0.5"/>
+<text class="ts" x="558" y="367" text-anchor="middle">Zero application change</text>
+<text class="ts" x="558" y="383" text-anchor="middle">Không miss event nào</text>
+<text class="ts" x="558" y="399" text-anchor="middle">INSERT / UPDATE / DELETE</text>
+<text class="ts" x="558" y="415" text-anchor="middle">Real-time, low overhead</text></g>
+<!-- Dividers -->
+<line x1="213" y1="45" x2="213" y2="295" stroke="#45475a" stroke-width="0.5" stroke-dasharray="4 4"/>
+<line x1="450" y1="45" x2="450" y2="295" stroke="#45475a" stroke-width="0.5" stroke-dasharray="4 4"/>
+<!-- Bottom bar -->
+<rect x="20" y="445" width="180" height="60" rx="8" fill="var(--red-bg)" stroke="var(--red-border)" stroke-width="0.5"/>
+<text class="ts" x="110" y="468" text-anchor="middle" fill="#f38ba8">Polling</text>
+<text class="ts" x="110" y="484" text-anchor="middle" fill="#f38ba8">Delay + Miss deletes</text>
+<text class="ts" x="110" y="498" text-anchor="middle" fill="#f38ba8">CPU overhead</text>
+<rect x="215" y="445" width="180" height="60" rx="8" fill="var(--red-bg)" stroke="var(--red-border)" stroke-width="0.5"/>
+<text class="ts" x="305" y="468" text-anchor="middle" fill="#f38ba8">Dual Write</text>
+<text class="ts" x="305" y="484" text-anchor="middle" fill="#f38ba8">Not atomic</text>
+<text class="ts" x="305" y="498" text-anchor="middle" fill="#f38ba8">Inconsistency risk</text>
+<rect x="468" y="445" width="180" height="60" rx="8" fill="var(--green-bg)" stroke="var(--green-border)" stroke-width="0.5"/>
+<text class="ts" x="558" y="468" text-anchor="middle" fill="#a6e3a1">CDC (Debezium)</text>
+<text class="ts" x="558" y="484" text-anchor="middle" fill="#a6e3a1">Zero loss, real-time</text>
+<text class="ts" x="558" y="498" text-anchor="middle" fill="#a6e3a1">No code change needed</text>
+</svg>
+</body>
+</html>

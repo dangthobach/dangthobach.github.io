@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PG → MongoDB: Interactive Migration Guide</title>
+<style>
+:root {
+  --bg:#1e1e2e;--bg2:#2a2a3e;--bg3:#313145;--text:#cdd6f4;--text2:#a6adc8;--text3:#6c7086;
+  --border:#45475a;--green:#a6e3a1;--green-bg:#1e3a2e;--green-bd:#2d5a3d;
+  --red:#f38ba8;--red-bg:#3a1e2a;--blue:#89b4fa;--blue-bg:#1e2d4a;--blue-bd:#2d4a7a;
+  --amber:#f9e2af;--amber-bg:#3a2e10;--teal:#94e2d5;--teal-bg:#1a3535;
+  --purple:#cba6f7;--purple-bg:#2d1a4a;--coral:#fab387;--coral-bg:#3a2010;
+  --gray:#313145;--warn:#f9e2af;--warn-bg:#3a2e10;--success:#a6e3a1;--success-bg:#1e3a2e;
+  --mono:'JetBrains Mono','Fira Code',monospace;
+}
+@media(prefers-color-scheme:light){
+  :root{
+    --bg:#eff1f5;--bg2:#e6e9ef;--bg3:#dce0e8;--text:#4c4f69;--text2:#6c6f85;--text3:#9ca0b0;
+    --border:#ccd0da;--green:#40a02b;--green-bg:#e8f5e0;--green-bd:#b5d9a0;
+    --red:#d20f39;--red-bg:#fce8ee;--blue:#1e66f5;--blue-bg:#ddeeff;--blue-bd:#89b4fa;
+    --amber:#df8e1d;--amber-bg:#fef3d8;--teal:#179299;--teal-bg:#d8f5f3;
+    --purple:#8839ef;--purple-bg:#efe8ff;--coral:#fe640b;--coral-bg:#ffe8d8;
+    --gray:#e6e9ef;--warn:#df8e1d;--warn-bg:#fef3d8;--success:#40a02b;--success-bg:#e8f5e0;
+  }
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,'Segoe UI',sans-serif;font-size:13px;padding:16px}
+.phase-nav{display:flex;gap:0;margin-bottom:14px;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.pnav-btn{flex:1;padding:8px 4px;font-size:11px;background:var(--bg2);border:none;color:var(--text2);cursor:pointer;transition:all .15s;border-right:1px solid var(--border);font-family:inherit}
+.pnav-btn:last-child{border-right:none}
+.pnav-btn.active{background:var(--blue-bg);color:var(--blue);font-weight:500}
+.pnav-btn .pnum{display:block;font-size:15px;font-weight:500;margin-bottom:2px}
+.phase-panel{border:1px solid var(--border);border-radius:10px;padding:16px;background:var(--bg)}
+.phase-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.phase-badge{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;flex-shrink:0}
+.phase-title{font-size:15px;font-weight:500}
+.phase-eta{font-size:11px;color:var(--text3);margin-left:auto}
+.step-list{list-style:none;padding:0;margin:0 0 14px}
+.step-item{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)}
+.step-item:last-child{border-bottom:none}
+.step-check{width:20px;height:20px;border:1.5px solid var(--border);border-radius:4px;flex-shrink:0;margin-top:1px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.step-check.done{background:var(--success-bg);border-color:var(--success)}
+.step-check.done::after{content:'';display:block;width:10px;height:6px;border-left:2px solid var(--success);border-bottom:2px solid var(--success);transform:rotate(-45deg) translate(1px,-1px)}
+.step-label{font-size:13px;line-height:1.4}
+.step-code{font-family:var(--mono);font-size:11px;color:var(--text2);background:var(--bg3);padding:6px 8px;border-radius:6px;margin-top:5px;white-space:pre-wrap;line-height:1.6}
+.step-warn{font-size:11px;color:var(--warn);background:var(--warn-bg);padding:4px 8px;border-radius:4px;margin-top:4px}
+.step-tip{font-size:11px;color:var(--success);background:var(--success-bg);padding:4px 8px;border-radius:4px;margin-top:4px}
+.nav-row{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+.nav-btn{padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:var(--bg2);color:var(--text2);cursor:pointer;font-size:12px;font-family:inherit}
+.nav-btn.primary{background:var(--blue-bg);color:var(--blue);border-color:var(--blue-bd)}
+.progress-bar{height:3px;background:var(--bg3);border-radius:2px;margin-bottom:14px;overflow:hidden}
+.progress-fill{height:100%;background:var(--blue);border-radius:2px;transition:width .3s}
+</style>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="phase-nav" id="pnav"></div>
+<div class="phase-panel" id="panel"></div>
+
+<script>
+const phases=[
+{label:"Kiến trúc",time:"15 phút",color:"#89b4fa",bg:"#1e2d4a",
+steps:[
+  {label:"Hiểu luồng: PG → WAL → Debezium → Kafka → Mongo Sink",tip:"2 plugins cần: Debezium Source (built-in) + MongoDB Sink (cài thêm)"},
+  {label:"Tại sao cần Kafka ở giữa?",code:"- Durability: connector down 2h → không mất data\n- Fan-out: 1 event → nhiều consumers\n- Join: Kafka Streams join nhiều topics\n- Backpressure: buffer khi burst traffic"},
+  {label:"2 connector mode khác nhau:",code:"Source: PG WAL → Kafka (Debezium)\nSink:   Kafka → MongoDB (Mongo Sink)\nCả 2 chạy trong cùng Kafka Connect cluster"}
+]},
+{label:"Dev Setup",time:"30 phút",color:"#94e2d5",bg:"#1a3535",
+steps:[
+  {label:"docker-compose với 7 services",code:"postgres:15  → 5432\nzookeeper   → 2181\nkafka       → 9092\nschema-reg  → 8081\nkafka-conn  → 8083  ← Debezium runs here\nmongodb:7   → 27017\nkafka-ui    → 8080"},
+  {label:"Config PostgreSQL logical replication",code:"# Qua docker command args:\n-c wal_level=logical\n-c max_replication_slots=4\n-c max_wal_senders=4"},
+  {label:"Cài MongoDB Kafka Connector JAR",code:"mkdir -p ./kafka-plugins/mongodb\ncurl -L https://search.maven.org/.../\n  mongo-kafka-connect-1.13.0-all.jar \\\n  -o ./kafka-plugins/mongodb/\n\n# Mount trong docker-compose:\nvolumes:\n  - ./kafka-plugins/mongodb:/kafka/connect/mongodb"},
+  {label:"Verify plugins",code:"curl http://localhost:8083/connector-plugins | jq .[].class\n# Phải thấy:\n# io.debezium.connector.postgresql.PostgresConnector\n# com.mongodb.kafka.connect.MongoSinkConnector",warn:"Chờ 30s sau docker compose up -d"}
+]},
+{label:"Init PG",time:"15 phút",color:"#cba6f7",bg:"#2d1a4a",
+steps:[
+  {label:"REPLICA IDENTITY FULL (bắt buộc!)",code:"ALTER TABLE documents  REPLICA IDENTITY FULL;\nALTER TABLE customers  REPLICA IDENTITY FULL;\nALTER TABLE branches   REPLICA IDENTITY FULL;\nALTER TABLE contracts  REPLICA IDENTITY FULL;",warn:"Thiếu cái này: UPDATE không có 'before' data, DELETE chỉ có PK"},
+  {label:"Tạo Publication + User",code:"CREATE PUBLICATION debezium_pub\n  FOR TABLE documents, customers, branches, contracts;\n\nCREATE ROLE debezium_user REPLICATION LOGIN\n  PASSWORD 'debezium_pass';\nGRANT SELECT ON ALL TABLES IN SCHEMA public\n  TO debezium_user;"},
+  {label:"Verify",code:"SELECT relname, relreplident FROM pg_class\nWHERE relname IN ('documents','customers');\n-- 'f' = FULL ✓  |  'd' = default PK only ✗"}
+]},
+{label:"Simple Sync",time:"45 phút",color:"#f9e2af",bg:"#3a2e10",
+steps:[
+  {label:"Source Connector config",code:'POST :8083/connectors\n{\n  "connector.class": "...PostgresConnector",\n  "database.hostname": "postgres",\n  "plugin.name": "pgoutput",\n  "table.include.list": "public.documents",\n  "transforms": "unwrap",\n  "transforms.unwrap.type": "...ExtractNewRecordState",\n  "transforms.unwrap.add.fields": "op,source.ts_ms"\n}'},
+  {label:"MongoDB Sink Connector config",code:'POST :8083/connectors\n{\n  "connector.class": "...MongoSinkConnector",\n  "connection.uri": "mongodb://admin:admin@mongodb:27017",\n  "database": "pdms_mongo",\n  "collection": "documents",\n  "topics": "pdms.public.documents",\n  "writemodel.strategy": "...ReplaceOneBusinessKeyStrategy",\n  "delete.on.null.values": "true"\n}'},
+  {label:"Test live sync",code:"# INSERT vào PG\npsql -c \"INSERT INTO documents VALUES (...)\"\n\n# Check MongoDB sau 2s\nmongosh --eval \"db.getSiblingDB('pdms_mongo').documents.find()\"",tip:"Kafka UI: http://localhost:8080 | Mongo UI: http://localhost:8082"}
+]},
+{label:"Complex Join",time:"2-3 giờ",color:"#fab387",bg:"#3a2010",
+steps:[
+  {label:"Vấn đề: PG normalize → Mongo cần denormalized",code:"PG: documents + customers FK + branches FK + contracts[] + tags[]\n\nMongo target:\n{ title, customer:{}, branch:{}, contracts:[], tags:[] }"},
+  {label:"Aggregation Service — consumer nhiều topics",code:"@KafkaListener('pdms.public.documents')\nvoid onDoc(String payload) { upsertDocument(event); }\n\n@KafkaListener('pdms.public.customers')\nvoid onCustomer(String payload) {\n  mongoTemplate.updateMulti(\n    where('customerId').is(id),\n    set('customer.fullName', name), 'documents'\n  );\n}"},
+  {label:"Contracts array (1:N) — push/pull per event",code:"if ('d'.equals(op)) {\n  update.pull('contracts', {contractNo: no});\n} else {\n  update.push('contracts', contractDoc);\n}"},
+  {label:"Race condition: dùng upsert + setOnInsert",code:"mongoTemplate.upsert(\n  where('pgId').is(docId),\n  new Update()\n    .push('contracts', contractDoc)\n    .setOnInsert('pgId', docId)\n    .setOnInsert('syncedAt', now),\n  'documents'\n);",warn:"Đây là pitfall quan trọng nhất của join pattern"}
+]},
+{label:"Edge Cases",time:"1-2 giờ",color:"#f38ba8",bg:"#3a1e2a",
+steps:[
+  {label:"7 edge cases cần handle",code:"1. Tombstone (DELETE → null value)\n2. Schema change (ADD COLUMN → Map not POJO)\n3. TRUNCATE (op='t' → alert, no auto-clear)\n4. Large tx (100K rows → batch write)\n5. Snapshot race (contract trước document)\n6. Duplicate (at-least-once → idempotent)\n7. Mongo write fail (transient vs permanent)"},
+  {label:"Tombstone: @Payload(required=false)",code:"void consume(@Payload(required=false) String payload) {\n  if (payload == null) {\n    handleDelete(key); return;\n  }\n}"},
+  {label:"Idempotent: LSN làm key",code:"String key = 'doc:' + pgId + ':lsn:' + lsn;\nif (redis.exists(key)) return;\nprocess(event);\nredis.setex(key, 7_DAYS, '1');",tip:"LSN là unique per WAL event = idempotency key hoàn hảo"}
+]},
+{label:"Production",time:"1 ngày",color:"#a6e3a1",bg:"#1e3a2e",
+steps:[
+  {label:"DLQ config",code:"\"errors.tolerance\": \"all\",\n\"errors.log.enable\": \"true\",\n\"errors.deadletterqueue.topic.name\": \"pdms.dlq.source\""},
+  {label:"Heartbeat config",code:"\"heartbeat.interval.ms\": \"10000\",\n\"heartbeat.action.query\": \n  \"UPDATE debezium_heartbeat SET ts = now() WHERE id = 1\""},
+  {label:"Monitor WAL lag",code:"SELECT slot_name,\n  pg_size_pretty(pg_wal_lsn_diff(\n    pg_current_wal_lsn(),\n    confirmed_flush_lsn)) AS lag\nFROM pg_replication_slots;\n-- Alert: lag > 5GB"},
+  {label:"Runbook: FAILED connector",code:"# 1. curl :8083/connectors/{name}/status | jq '.tasks[].trace'\n# 2. curl -X POST :8083/connectors/{name}/tasks/0/restart\n# 3. curl -X POST :8083/connectors/{name}/restart\n# 4. Xóa + tạo lại với snapshot.mode=never (nếu slot còn)",tip:"Slot còn trong PG = data an toàn, sẽ resume từ đúng LSN"}
+]}
+];
+
+let cur=0;
+const checked=phases.map(p=>new Array(p.steps.length).fill(false));
+function totalDone(){return checked.flat().filter(Boolean).length}
+function totalSteps(){return phases.reduce((s,p)=>s+p.steps.length,0)}
+
+function renderNav(){
+  document.getElementById('pnav').innerHTML=phases.map((p,i)=>`
+    <button class="pnav-btn${i===cur?' active':''}" onclick="goto(${i})">
+      <span class="pnum">${i+1}</span>${p.label}
+    </button>`).join('');
+}
+function renderPanel(){
+  const p=phases[cur],done=checked[cur].filter(Boolean).length;
+  document.getElementById('panel').innerHTML=`
+    <div class="phase-header">
+      <div class="phase-badge" style="background:${p.bg};color:${p.color}">${cur+1}</div>
+      <div class="phase-title">${p.label}</div>
+      <div class="phase-eta">${p.time} · ${done}/${p.steps.length} xong</div>
+    </div>
+    <ul class="step-list">
+      ${p.steps.map((s,i)=>`
+        <li class="step-item">
+          <div class="step-check${checked[cur][i]?' done':''}" onclick="toggle(${i})"></div>
+          <div style="flex:1">
+            <div class="step-label" style="${checked[cur][i]?'opacity:.5;text-decoration:line-through':''}">${s.label}</div>
+            ${s.code?`<div class="step-code">${s.code}</div>`:''}
+            ${s.warn?`<div class="step-warn">⚠ ${s.warn}</div>`:''}
+            ${s.tip?`<div class="step-tip">✓ ${s.tip}</div>`:''}
+          </div>
+        </li>`).join('')}
+    </ul>
+    <div class="nav-row">
+      ${cur>0?`<button class="nav-btn" onclick="goto(${cur-1})">← Phase ${cur}</button>`:''}
+      ${cur<phases.length-1?`<button class="nav-btn primary" onclick="goto(${cur+1})">Phase ${cur+2}: ${phases[cur+1].label} →</button>`:'<span style="font-size:12px;color:var(--success)">✓ Hoàn thành tất cả phases!</span>'}
+    </div>`;
+  const pct=Math.round(totalDone()/totalSteps()*100);
+  document.getElementById('prog').style.width=pct+'%';
+}
+function goto(i){cur=i;renderNav();renderPanel()}
+function toggle(i){checked[cur][i]=!checked[cur][i];renderNav();renderPanel()}
+goto(0);
+</script>
+</body>
+</html>

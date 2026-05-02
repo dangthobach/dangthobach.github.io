@@ -1,0 +1,18 @@
+[
+  {
+    "icon": "search",
+    "text": "Summarize the differences between Project Loom and Project Reactor based on my deep dive notes in the RxJava folder"
+  },
+  {
+    "icon": "file-plus",
+    "text": "Create a technical summary of the Axum middleware and error handling patterns found in the Rust-Zero-To-Hero folder"
+  },
+  {
+    "icon": "globe",
+    "text": "Research the Saga pattern for long-running transactions and draft a new pattern note using the template-pattern for my Microservices-Patterns folder"
+  },
+  {
+    "icon": "folder-tree",
+    "text": "Analyze my notes on concurrency and suggest updates for the MOC-Concurrency file to better link the recent Project Loom and Backpressure notes"
+  }
+]
