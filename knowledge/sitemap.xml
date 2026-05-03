@@ -14,6 +14,57 @@
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/Spring-Data-R2DBC-Deep-Dive</loc>
     <lastmod>2026-05-02T04:58:37.000Z</lastmod>
   </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Design-Patterns-Go/00-Overview</loc>
+    <lastmod>2026-05-03T15:08:26.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Design-Patterns-Go/01-Creational</loc>
+    <lastmod>2026-05-03T15:08:26.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Design-Patterns-Go/02-Structural</loc>
+    <lastmod>2026-05-03T15:08:26.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Design-Patterns-Go/03-Behavioral</loc>
+    <lastmod>2026-05-03T15:08:26.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Design-Patterns-Go/04-Go-Idiomatic-Overview</loc>
+    <lastmod>2026-05-03T15:08:26.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Design-Patterns-Go/05-Level1-Foundations</loc>
+    <lastmod>2026-05-03T15:08:26.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Design-Patterns-Go/06-Level2-Level3</loc>
+    <lastmod>2026-05-03T15:08:26.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Design-Patterns-Go/08-Level4-Architecture</loc>
+    <lastmod>2026-05-03T15:08:26.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Design-Patterns-Rust/00-Overview</loc>
+    <lastmod>2026-05-03T15:08:26.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Design-Patterns-Rust/01-Creational</loc>
+    <lastmod>2026-05-03T15:08:26.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Design-Patterns-Rust/02-Structural</loc>
+    <lastmod>2026-05-03T15:08:26.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Design-Patterns-Rust/03-Behavioral</loc>
+    <lastmod>2026-05-03T15:08:26.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Design-Patterns-Rust/04-Rust-Idiomatic-Overview</loc>
+    <lastmod>2026-05-03T15:08:26.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Design-Patterns-Rust/05-Level1-Foundations</loc>
+    <lastmod>2026-05-03T15:08:26.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Design-Patterns-Rust/06-Level2-Idiomatic</loc>
+    <lastmod>2026-05-03T15:08:26.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Design-Patterns-Rust/07-Level3-Architecture</loc>
+    <lastmod>2026-05-03T15:08:26.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Design-Patterns-Rust/08-Level4-TypeSystem</loc>
+    <lastmod>2026-05-03T15:08:26.000Z</lastmod>
+  </url><url>
     <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-1-Go-Mindset</loc>
     <lastmod>2026-05-02T04:58:37.000Z</lastmod>
   </url><url>
@@ -88,6 +139,9 @@
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/L%E1%BB%99-tr%C3%ACnh-T%E1%BB%95ng-quan</loc>
     <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Performance-Pitfalls-Go</loc>
+    <lastmod>2026-05-03T15:08:26.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/HOME</loc>
     <lastmod>2026-04-13T00:00:00.000Z</lastmod>
@@ -740,6 +794,9 @@
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/L%E1%BB%99-tr%C3%ACnh-T%E1%BB%95ng-quan</loc>
     <lastmod>2026-05-02T04:58:37.000Z</lastmod>
   </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Performance-Pitfalls-Rust</loc>
+    <lastmod>2026-05-03T15:08:26.000Z</lastmod>
+  </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Plan-Framework-Mastery</loc>
     <lastmod>2026-05-02T04:58:37.000Z</lastmod>
   </url><url>
@@ -804,16 +861,16 @@
     <lastmod>2026-05-02T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/_templates/template-concept</loc>
-    <lastmod>2026-05-02T09:27:58.383Z</lastmod>
+    <lastmod>2026-05-03T15:09:07.354Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/_templates/template-framework-concept</loc>
     <lastmod>2026-05-02T04:58:37.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/_templates/template-pattern</loc>
-    <lastmod>2026-05-02T09:27:58.406Z</lastmod>
+    <lastmod>2026-05-03T15:09:07.387Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/_templates/template-til</loc>
-    <lastmod>2026-05-02T09:27:58.416Z</lastmod>
+    <lastmod>2026-05-03T15:09:07.395Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/concepts/README</loc>
     <lastmod>2026-05-02T04:58:37.000Z</lastmod>
