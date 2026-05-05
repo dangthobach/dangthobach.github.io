@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>Framework-Landscape-2026</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="Dang Tho Bach's Knowledge Base"/><meta property="og:title" content="Framework-Landscape-2026"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="Framework-Landscape-2026"/><meta name="twitter:description" content="Java Framework Landscape 2026 Cập nhật: 2026-05 | Scope: Spring Boot, Quarkus, Micronaut, Helidon, Jakarta EE, MicroProfile Tags: framework, spring-boot, quarkus, micronaut, helidon, jakarta-ee, microprofile Bức Tranh Tổng Thể — Roles Không Cạnh Tranh Nhau Jakarta EE = SPECIFICATION (chuẩn) → CDI, J..."/><meta property="og:description" content="Java Framework Landscape 2026 Cập nhật: 2026-05 | Scope: Spring Boot, Quarkus, Micronaut, Helidon, Jakarta EE, MicroProfile Tags: framework, spring-boot, quarkus, micronaut, helidon, jakarta-ee, microprofile Bức Tranh Tổng Thể — Roles Không Cạnh Tranh Nhau Jakarta EE = SPECIFICATION (chuẩn) → CDI, J..."/><meta property="og:image:alt" content="Java Framework Landscape 2026 Cập nhật: 2026-05 | Scope: Spring Boot, Quarkus, Micronaut, Helidon, Jakarta EE, MicroProfile Tags: framework, spring-boot, quarkus, micronaut, helidon, jakarta-ee, microprofile Bức Tranh Tổng Thể — Roles Không Cạnh Tranh Nhau Jakarta EE = SPECIFICATION (chuẩn) → CDI, J..."/><meta property="twitter:domain" content="dangthobach.github.io/knowledge"/><meta property="og:url" content="https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/Framework-Landscape-2026"/><meta property="twitter:url" content="https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/Framework-Landscape-2026"/><link rel="icon" href="../static/icon.png"/><meta name="description" content="Java Framework Landscape 2026 Cập nhật: 2026-05 | Scope: Spring Boot, Quarkus, Micronaut, Helidon, Jakarta EE, MicroProfile Tags: framework, spring-boot, quarkus, micronaut, helidon, jakarta-ee, microprofile Bức Tranh Tổng Thể — Roles Không Cạnh Tranh Nhau Jakarta EE = SPECIFICATION (chuẩn) → CDI, J..."/><meta name="generator" content="Quartz"/><link href="../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiL2hvbWUvcnVubmVyL3dvcmsvZGFuZ3Rob2JhY2guZ2l0aHViLmlvL2Rhbmd0aG9iYWNoLmdpdGh1Yi5pby9xdWFydHovcXVhcnR6L2NvbXBvbmVudHMvc3R5bGVzIiwic291cmNlcyI6WyJtZXJtYWlkLmlubGluZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFHRjtFQUNFOzs7QUFLRjtFQUNFO0VBQ0E7OztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTs7QUFJRjtFQUNFO0VBQ0E7RUFDQSIsInNvdXJjZXNDb250ZW50IjpbIi5leHBhbmQtYnV0dG9uIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbG9hdDogcmlnaHQ7XG4gIHBhZGRpbmc6IDAuNHJlbTtcbiAgbWFyZ2luOiAwLjNyZW07XG4gIHJpZ2h0OiAwOyAvLyBOT1RFOiByaWdodCB3aWxsIGJlIHNldCBpbiBtZXJtYWlkLmlubGluZS50c1xuICBjb2xvcjogdmFyKC0tZ3JheSk7XG4gIGJvcmRlci1jb2xvcjogdmFyKC0tZGFyayk7XG4gIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgYm9yZGVyOiAxcHggc29saWQ7XG4gIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgb3BhY2l0eTogMDtcbiAgdHJhbnNpdGlvbjogMC4ycztcblxuICAmID4gc3ZnIHtcbiAgICBmaWxsOiB2YXIoLS1saWdodCk7XG4gICAgZmlsdGVyOiBjb250cmFzdCgwLjMpO1xuICB9XG5cbiAgJjpob3ZlciB7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIGJvcmRlci1jb2xvcjogdmFyKC0tc2Vjb25kYXJ5KTtcbiAgfVxuXG4gICY6Zm9jdXMge1xuICAgIG91dGxpbmU6IDA7XG4gIH1cbn1cblxucHJlIHtcbiAgJjpob3ZlciA+IC5leHBhbmQtYnV0dG9uIHtcbiAgICBvcGFjaXR5OiAxO1xuICAgIHRyYW5zaXRpb246IDAuMnM7XG4gIH1cbn1cblxuI21lcm1haWQtY29udGFpbmVyIHtcbiAgcG9zaXRpb246IGZpeGVkO1xuICBjb250YWluOiBsYXlvdXQ7XG4gIHotaW5kZXg6IDk5OTtcbiAgbGVmdDogMDtcbiAgdG9wOiAwO1xuICB3aWR0aDogMTAwdnc7XG4gIGhlaWdodDogMTAwdmg7XG4gIG92ZXJmbG93OiBoaWRkZW47XG4gIGRpc3BsYXk6IG5vbmU7XG4gIGJhY2tkcm9wLWZpbHRlcjogYmx1cig0cHgpO1xuICBiYWNrZ3JvdW5kOiByZ2JhKDAsIDAsIDAsIDAuNSk7XG5cbiAgJi5hY3RpdmUge1xuICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgfVxuXG4gICYgPiAjbWVybWFpZC1zcGFjZSB7XG4gICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gICAgYm9yZGVyLXJhZGl1czogNXB4O1xuICAgIHBvc2l0aW9uOiBmaXhlZDtcbiAgICB0b3A6IDUwJTtcbiAgICBsZWZ0OiA1MCU7XG4gICAgdHJhbnNmb3JtOiB0cmFuc2xhdGUoLTUwJSwgLTUwJSk7XG4gICAgaGVpZ2h0OiA4MHZoO1xuICAgIHdpZHRoOiA4MHZ3O1xuICAgIG92ZXJmbG93OiBoaWRkZW47XG5cbiAgICAmID4gLm1lcm1haWQtY29udGVudCB7XG4gICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgICB0cmFuc2Zvcm0tb3JpZ2luOiAwIDA7XG4gICAgICB0cmFuc2l0aW9uOiB0cmFuc2Zvcm0gMC4xcyBlYXNlO1xuICAgICAgb3ZlcmZsb3c6IHZpc2libGU7XG4gICAgICBtaW4taGVpZ2h0OiAyMDBweDtcbiAgICAgIG1pbi13aWR0aDogMjAwcHg7XG5cbiAgICAgIHByZSB7XG4gICAgICAgIG1hcmdpbjogMDtcbiAgICAgICAgYm9yZGVyOiBub25lO1xuICAgICAgfVxuXG4gICAgICBzdmcge1xuICAgICAgICBtYXgtd2lkdGg6IG5vbmU7XG4gICAgICAgIGhlaWdodDogYXV0bztcbiAgICAgIH1cbiAgICB9XG5cbiAgICAmID4gLm1lcm1haWQtY29udHJvbHMge1xuICAgICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgICAgYm90dG9tOiAyMHB4O1xuICAgICAgcmlnaHQ6IDIwcHg7XG4gICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgZ2FwOiA4cHg7XG4gICAgICBwYWRkaW5nOiA4cHg7XG4gICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgYm9yZGVyLXJhZGl1czogNnB4O1xuICAgICAgYm94LXNoYWRvdzogMCAycHggNHB4IHJnYmEoMCwgMCwgMCwgMC4xKTtcbiAgICAgIHotaW5kZXg6IDI7XG5cbiAgICAgIC5tZXJtYWlkLWNvbnRyb2wtYnV0dG9uIHtcbiAgICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgIHdpZHRoOiAzMnB4O1xuICAgICAgICBoZWlnaHQ6IDMycHg7XG4gICAgICAgIHBhZGRpbmc6IDA7XG4gICAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgICAgY29sb3I6IHZhcigtLWRhcmspO1xuICAgICAgICBib3JkZXItcmFkaXVzOiA0cHg7XG4gICAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICAgICAgZm9udC1zaXplOiAxNnB4O1xuICAgICAgICBmb250LWZhbWlseTogdmFyKC0tYm9keUZvbnQpO1xuICAgICAgICB0cmFuc2l0aW9uOiBhbGwgMC4ycyBlYXNlO1xuXG4gICAgICAgICY6aG92ZXIge1xuICAgICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIH1cblxuICAgICAgICAmOmFjdGl2ZSB7XG4gICAgICAgICAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKDFweCk7XG4gICAgICAgIH1cblxuICAgICAgICAvLyBTdHlsZSB0aGUgcmVzZXQgYnV0dG9uIGRpZmZlcmVudGx5XG4gICAgICAgICY6bnRoLWNoaWxkKDIpIHtcbiAgICAgICAgICB3aWR0aDogYXV0bztcbiAgICAgICAgICBwYWRkaW5nOiAwIDEycHg7XG4gICAgICAgICAgZm9udC1zaXplOiAxNHB4O1xuICAgICAgICB9XG4gICAgICB9XG4gICAgfVxuICB9XG59XG4iXX0= */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://dangthobach.github.io/knowledge/index.xml"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image" content="https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/Framework-Landscape-2026-og-image.webp"/><meta property="og:image:url" content="https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/Framework-Landscape-2026-og-image.webp"/><meta name="twitter:image" content="https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/Framework-Landscape-2026-og-image.webp"/><meta property="og:image:type" content="image/.webp"/></head><body data-slug="JVM-Frameworks-2026/Framework-Landscape-2026"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="..">Dang Tho Bach's Knowledge Base</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-244"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-244" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../JVM-Frameworks-2026/">JVM Frameworks 2026</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>Framework Landscape 2026</a></div></nav><h1 class="article-title">Framework-Landscape-2026</h1><p show-comma="true" class="content-meta"><time datetime="2026-05-05T14:33:32.000Z">May 05, 2026</time><span>5 min read</span></p></div></div><article class="popover-hint"><h1 id="java-framework-landscape-2026">Java Framework Landscape 2026<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#java-framework-landscape-2026" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<blockquote>
+<p><strong>Cập nhật:</strong> 2026-05 | <strong>Scope:</strong> Spring Boot, Quarkus, Micronaut, Helidon, Jakarta EE, MicroProfile
+<strong>Tags:</strong> framework, spring-boot, quarkus, micronaut, helidon, jakarta-ee, microprofile</p>
+</blockquote>
+<hr/>
+<h2 id="bức-tranh-tổng-thể--roles-không-cạnh-tranh-nhau">Bức Tranh Tổng Thể — Roles Không Cạnh Tranh Nhau<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#bức-tranh-tổng-thể--roles-không-cạnh-tranh-nhau" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><code>Jakarta EE    = SPECIFICATION (chuẩn)
+                → CDI, JAX-RS, JPA, Data, Security...
+                → Vendors implement
+
+MicroProfile  = SPECIFICATION (microservices extension)
+                → Config, Fault Tolerance, Health, JWT, OpenAPI...
+                → Built ON TOP OF Jakarta EE
+
+Spring Boot   = FRAMEWORK (không implement Jakarta EE)
+                → Ecosystem riêng, alternative approach
+                → Vay mượn concept nhưng không follow spec
+
+Quarkus       = RUNTIME (implement Jakarta EE + MicroProfile)
+                → &quot;Jakarta EE for cloud-native&quot;
+                → Red Hat backed
+
+Helidon       = RUNTIME (implement Jakarta EE + MicroProfile)
+                → Oracle backed
+                → JVP certified
+
+Micronaut     = FRAMEWORK (CDI-compatible, không full Jakarta EE)
+                → AOT compilation pioneer
+                → Object Computing backed
+</code></pre>
+<hr/>
+<h2 id="1-spring-boot--vẫn-dominant">1. Spring Boot — Vẫn Dominant<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-spring-boot--vẫn-dominant" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p><strong>Thị phần 2026:</strong> Vẫn là lựa chọn số 1 về job market và adoption.</p>
+<p><strong>Spring Boot 4.0 (11/2025):</strong></p>
+<ul>
+<li>JDK 21 minimum</li>
+<li>JSpecify null-safety</li>
+<li>API versioning native</li>
+<li>Spring Framework 7.0 baseline</li>
+</ul>
+<p><strong>Ưu điểm:</strong></p>
+<ul>
+<li>Ecosystem khổng lồ — Data, Security, Cloud, Batch, AI</li>
+<li>Team familiarity cao</li>
+<li>Auto-configuration giảm boilerplate</li>
+<li>Actuator, test support phong phú</li>
+</ul>
+<p><strong>Nhược điểm:</strong></p>
+<ul>
+<li>Không TCK certified (vendor lock-in Broadcom)</li>
+<li>Startup chậm hơn Quarkus (dù đang cải thiện với AOT)</li>
+<li>License risk sau Broadcom acquisition</li>
+</ul>
+<p><strong>Verdict cho PDMS:</strong> Tiếp tục dùng Spring Boot — không có lý do migrate ngay.</p>
+<hr/>
+<h2 id="2-quarkus--cloud-native-leader">2. Quarkus — Cloud-Native Leader<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-quarkus--cloud-native-leader" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p><strong>Backed by:</strong> Red Hat (IBM)
+<strong>Implements:</strong> Jakarta EE Core Profile + MicroProfile</p>
+<p><strong>2026 highlights:</strong></p>
+<ul>
+<li>Build-time optimization (ArC CDI, Hibernate ORM, REST)</li>
+<li>Dev Mode với live reload + Dev UI</li>
+<li>Native image với GraalVM</li>
+<li>@RunOnVirtualThread cho blocking endpoints</li>
+</ul>
+<p><strong>Performance comparison (JDK 25, JVM mode):</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Framework</th><th>Startup</th><th>Memory (idle)</th></tr></thead><tbody><tr><td>Spring Boot 3.x</td><td>~1.9s</td><td>~250MB</td></tr><tr><td>Quarkus (JVM)</td><td>~0.8s</td><td>~150MB</td></tr><tr><td>Quarkus (Native)</td><td>~0.02s</td><td>~50MB</td></tr><tr><td>Micronaut (JVM)</td><td>~0.65s</td><td>~120MB</td></tr></tbody></table></div>
+<p><strong>Verdict:</strong> Best choice nếu evaluate runtime mới cho microservice cần cloud-native perf.</p>
+<hr/>
+<h2 id="3-micronaut--minimal-footprint">3. Micronaut — Minimal Footprint<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-micronaut--minimal-footprint" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p><strong>Backed by:</strong> Object Computing</p>
+<p><strong>Đặc điểm:</strong></p>
+<ul>
+<li>AOT compilation pioneer (trước Quarkus)</li>
+<li>Jakarta EE-compatible annotations (dễ migrate từ EE)</li>
+<li>GraalVM native image support tốt</li>
+<li>Micronaut Data — compile-time query generation</li>
+</ul>
+<p><strong>Nhược điểm:</strong></p>
+<ul>
+<li>Ecosystem nhỏ nhất trong 3 big frameworks</li>
+<li>Ít extension/plugin hơn Quarkus</li>
+<li>Community nhỏ hơn Spring và Quarkus</li>
+</ul>
+<p><strong>Verdict:</strong> Phù hợp minimal footprint use case, nhưng Quarkus có community tốt hơn nhiều.</p>
+<hr/>
+<h2 id="4-helidon--oracles-strategic-bet">4. Helidon — Oracle’s Strategic Bet<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-helidon--oracles-strategic-bet" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p><strong>Backed by:</strong> Oracle</p>
+<p><strong>Helidon 4.4 (3/2026) — Thay Đổi Chiến Lược:</strong></p>
+<ul>
+<li>Vào <strong>Java Verified Portfolio (JVP)</strong> — Oracle commercial support</li>
+<li>Align release cadence với JDK roadmap</li>
+<li>Đề xuất trở thành OpenJDK project</li>
+<li>Từ JDK 27: đổi versioning → Helidon 27 (theo JDK)</li>
+</ul>
+<p><strong>Tính năng 4.4:</strong></p>
+<ul>
+<li>Declarative APIs, Helidon JSON</li>
+<li>OpenTelemetry metrics &amp; logs</li>
+<li>AI: LangChain4j agentic support + MCP spec</li>
+</ul>
+<p><strong>Hai flavor:</strong></p>
+<pre><code>Helidon SE  = Reactive, functional, no CDI
+              → Minimal, maximum control
+
+Helidon MP  = MicroProfile implementation
+              → Similar to Quarkus MP flavor
+</code></pre>
+<p><strong>Verdict:</strong> “Oracle’s Quarkus” — theo dõi nếu stack là OCI. Không cần invest học riêng khi Quarkus có community tốt hơn nhiều.</p>
+<hr/>
+<h2 id="5-jakarta-ee--spec-không-phải-framework">5. Jakarta EE — Spec, Không Phải Framework<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5-jakarta-ee--spec-không-phải-framework" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="tại-sao-vẫn-update-liên-tục-dù-không-trending">Tại sao vẫn update liên tục dù không trending?<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#tại-sao-vẫn-update-liên-tục-dù-không-trending" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Jakarta EE là <strong>specification</strong>, không phải framework. Nó định nghĩa chuẩn — các runtime implement. Khi Quarkus “hot”, thực ra nó implement Jakarta EE bên dưới.</p>
+<p><strong>Jakarta EE phục vụ:</strong></p>
+<ul>
+<li>Heavily regulated industries (banking, defense, government)</li>
+<li>Organizations yêu cầu TCK-certified implementation</li>
+<li>Procurement contracts yêu cầu standards compliance</li>
+</ul>
+<p><strong>Ai implement Jakarta EE:</strong></p>
+<ul>
+<li>Quarkus (Core Profile, một phần Web Profile)</li>
+<li>WildFly / JBoss EAP (Full Platform) — Red Hat</li>
+<li>Open Liberty (Full Platform) — IBM</li>
+<li>Payara (Full Platform)</li>
+<li>GlassFish (Reference Implementation)</li>
+<li>Helidon MP (MicroProfile + Jakarta EE subset)</li>
+</ul>
+<p><strong>Jakarta EE 12 (H2 2026):</strong></p>
+<ul>
+<li>24 specifications</li>
+<li>JDK 21 minimum</li>
+<li>Jakarta Query 1.0 ⭐ NEW</li>
+<li>Jakarta Data 1.1 ⭐ NEW</li>
+<li>Jakarta NoSQL 1.1 ⭐ NEW</li>
+</ul>
+<p>→ Chi tiết: <a href="../05-Jakarta-EE-12/00-Overview" class="internal" data-slug="05-Jakarta-EE-12/00-Overview">00-Overview</a></p>
+<hr/>
+<h2 id="6-microprofile--sandbox-cho-innovation">6. MicroProfile — Sandbox Cho Innovation<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#6-microprofile--sandbox-cho-innovation" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="role-thực-sự">Role thực sự<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#role-thực-sự" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>MicroProfile = &quot;Innovation sandbox&quot; của Jakarta EE ecosystem
+             → Test new ideas nhanh
+             → Nếu thành công → merge vào Jakarta EE
+             → Nếu có alternative tốt hơn → deprecated
+</code></pre>
+<h3 id="status-2026--losing-territory">Status 2026 — Losing Territory<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#status-2026--losing-territory" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Spec</th><th>Status</th><th>Thay thế bởi</th></tr></thead><tbody><tr><td>MP OpenTracing</td><td>❌ Deprecated</td><td>OpenTelemetry (CNCF)</td></tr><tr><td>MP Metrics</td><td>⚠ Thu nhỏ</td><td>Micrometer + OTEL</td></tr><tr><td>MP Rest Client</td><td>✅ Active</td><td>Quarkus REST Client</td></tr><tr><td>MP Config</td><td>✅ Strong</td><td>Chưa có thay thế tốt hơn</td></tr><tr><td>MP Fault Tolerance</td><td>✅ Active</td><td>Resilience4J cạnh tranh</td></tr><tr><td>MP Health</td><td>✅ Active</td><td>Kubernetes standard</td></tr><tr><td>MP JWT Auth</td><td>✅ Active</td><td>Relevant với banking auth</td></tr><tr><td>MP OpenAPI</td><td>✅ Active</td><td>Swagger/OpenAPI standard</td></tr></tbody></table></div>
+<p><strong>MicroProfile 7.1 (6/2025):</strong> Update MP Telemetry và MP OpenAPI.</p>
+<h3 id="microprofile-có-giá-trị-khi">MicroProfile Có Giá Trị Khi<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#microprofile-có-giá-trị-khi" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>Dùng Quarkus hoặc Helidon (implement MP natively)</li>
+<li>Cần vendor-neutral fault tolerance, config, health</li>
+<li>Không muốn lock-in vào Spring Resilience4J</li>
+</ul>
+<h3 id="không-cần-học-sâu-khi">Không Cần Học Sâu Khi<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#không-cần-học-sâu-khi" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>Stack là Spring Boot (đã có tương đương: Actuator, Resilience4J, Config)</li>
+<li>Không dùng Quarkus/Helidon/Open Liberty</li>
+</ul>
+<hr/>
+<h2 id="decision-matrix--chọn-runtimeframework">Decision Matrix — Chọn Runtime/Framework<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#decision-matrix--chọn-runtimeframework" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><code>Câu hỏi                         Recommendation
+─────────────────────────────────────────────────────────
+Greenfield enterprise service?  Spring Boot 4 (safe choice)
+Cần startup &lt; 200ms?            Quarkus JVM
+Cần memory &lt; 100MB?             Quarkus Native / Micronaut
+Đang trên OCI?                  Helidon (Oracle JVP support)
+Cần TCK compliance?             Quarkus / Open Liberty
+Team mạnh Java, yếu cloud?      Spring Boot (ecosystem quen)
+Học Jakarta EE spec?            Quarkus (best doc, 1:1 spec)
+Legacy EJB migration?           WildFly → Quarkus path
+</code></pre>
+<hr/>
+<h2 id="mối-quan-hệ--quick-reference">Mối Quan Hệ — Quick Reference<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#mối-quan-hệ--quick-reference" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><code>Red Hat ecosystem:   Quarkus ── implements ──→ Jakarta EE + MicroProfile
+                     WildFly  ── implements ──→ Jakarta EE Full Platform
+
+Oracle ecosystem:    Helidon  ── implements ──→ Jakarta EE + MicroProfile
+                     GlassFish ── reference ──→ Jakarta EE
+
+IBM ecosystem:       Open Liberty ── implements ──→ Jakarta EE + MicroProfile
+
+VMware/Broadcom:     Spring Boot ── alternative ──→ (not Jakarta EE)
+                                 ── borrows concepts from Jakarta EE
+
+OC ecosystem:        Micronaut ── CDI-compatible ──→ (partial Jakarta EE)
+</code></pre>
+<hr/>
+<p><em>Track: JVM-Frameworks-2026 | Related: <a href="../JVM-Frameworks-2026/Java-2026-Trends" class="internal" data-slug="JVM-Frameworks-2026/Java-2026-Trends">Java-2026-Trends</a>, <a href="../JVM-Frameworks-2026/Helidon-2026" class="internal" data-slug="JVM-Frameworks-2026/Helidon-2026">Helidon-2026</a>, <a href="../JVM-Frameworks-2026/MicroProfile-2026-Status" class="internal" data-slug="JVM-Frameworks-2026/MicroProfile-2026-Status">MicroProfile-2026-Status</a></em>
+<em>Xem series Jakarta EE 12: <a href="../05-Jakarta-EE-12/00-Overview" class="internal" data-slug="05-Jakarta-EE-12/00-Overview">00-Overview</a></em></p></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-100" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#java-framework-landscape-2026" data-for="java-framework-landscape-2026">Java Framework Landscape 2026</a></li><li class="depth-1"><a href="#bức-tranh-tổng-thể--roles-không-cạnh-tranh-nhau" data-for="bức-tranh-tổng-thể--roles-không-cạnh-tranh-nhau">Bức Tranh Tổng Thể — Roles Không Cạnh Tranh Nhau</a></li><li class="depth-1"><a href="#1-spring-boot--vẫn-dominant" data-for="1-spring-boot--vẫn-dominant">1. Spring Boot — Vẫn Dominant</a></li><li class="depth-1"><a href="#2-quarkus--cloud-native-leader" data-for="2-quarkus--cloud-native-leader">2. Quarkus — Cloud-Native Leader</a></li><li class="depth-1"><a href="#3-micronaut--minimal-footprint" data-for="3-micronaut--minimal-footprint">3. Micronaut — Minimal Footprint</a></li><li class="depth-1"><a href="#4-helidon--oracles-strategic-bet" data-for="4-helidon--oracles-strategic-bet">4. Helidon — Oracle’s Strategic Bet</a></li><li class="depth-1"><a href="#5-jakarta-ee--spec-không-phải-framework" data-for="5-jakarta-ee--spec-không-phải-framework">5. Jakarta EE — Spec, Không Phải Framework</a></li><li class="depth-2"><a href="#tại-sao-vẫn-update-liên-tục-dù-không-trending" data-for="tại-sao-vẫn-update-liên-tục-dù-không-trending">Tại sao vẫn update liên tục dù không trending?</a></li><li class="depth-1"><a href="#6-microprofile--sandbox-cho-innovation" data-for="6-microprofile--sandbox-cho-innovation">6. MicroProfile — Sandbox Cho Innovation</a></li><li class="depth-2"><a href="#role-thực-sự" data-for="role-thực-sự">Role thực sự</a></li><li class="depth-2"><a href="#status-2026--losing-territory" data-for="status-2026--losing-territory">Status 2026 — Losing Territory</a></li><li class="depth-2"><a href="#microprofile-có-giá-trị-khi" data-for="microprofile-có-giá-trị-khi">MicroProfile Có Giá Trị Khi</a></li><li class="depth-2"><a href="#không-cần-học-sâu-khi" data-for="không-cần-học-sâu-khi">Không Cần Học Sâu Khi</a></li><li class="depth-1"><a href="#decision-matrix--chọn-runtimeframework" data-for="decision-matrix--chọn-runtimeframework">Decision Matrix — Chọn Runtime/Framework</a></li><li class="depth-1"><a href="#mối-quan-hệ--quick-reference" data-for="mối-quan-hệ--quick-reference">Mối Quan Hệ — Quick Reference</a></li><li class="overflow-end"></li></ul></div><div class="backlinks"><h3>Backlinks</h3><ul id="list-2" class="overflow"><li><a href="../JVM-Frameworks-2026/00-Weekly-Study-Log" class="internal">00 Weekly Study Log</a></li><li><a href="../JVM-Frameworks-2026/Helidon-2026" class="internal">Helidon-2026</a></li><li><a href="../JVM-Frameworks-2026/Java-2026-Trends" class="internal">Java-2026-Trends</a></li><li><a href="../JVM-Frameworks-2026/MicroProfile-2026-Status" class="internal">MicroProfile-2026-Status</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://dangthobach.github.io/">Back to Portfolio</a></li><li><a href="https://github.com/dangthobach">GitHub</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../postscript.js" type="module" data-persist="true"></script></html>

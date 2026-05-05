@@ -10,61 +10,61 @@
     <link>https://dangthobach.github.io/knowledge/_templates/template-til</link>
     <guid>https://dangthobach.github.io/knowledge/_templates/template-til</guid>
     <description><![CDATA[ TIL: {{title}} 💡 Insight 🔍 Context 🔗 Liên quan . ]]></description>
-    <pubDate>Mon, 04 May 2026 19:31:35 GMT</pubDate>
+    <pubDate>Tue, 05 May 2026 14:34:24 GMT</pubDate>
   </item><item>
     <title>template-pattern</title>
     <link>https://dangthobach.github.io/knowledge/_templates/template-pattern</link>
     <guid>https://dangthobach.github.io/knowledge/_templates/template-pattern</guid>
     <description><![CDATA[ Pattern: {{title}} 🎯 Problem 💡 Solution 🔄 Flow &lt;!-- Diagram text hoặc steps --&gt; ✅ Pros / ❌ Cons ProsCons 📍 Applied In MOC-PDMS — 🔗 Related Patterns . ]]></description>
-    <pubDate>Mon, 04 May 2026 19:31:35 GMT</pubDate>
+    <pubDate>Tue, 05 May 2026 14:34:24 GMT</pubDate>
   </item><item>
     <title>template-concept</title>
     <link>https://dangthobach.github.io/knowledge/_templates/template-concept</link>
     <guid>https://dangthobach.github.io/knowledge/_templates/template-concept</guid>
     <description><![CDATA[ {{title}} 📌 One-liner Concept này là gì trong một câu 🧠 Core Idea 🔁 Java / Rust Analog JavaRustEquivalentKey difference 💡 Khi nào dùng ⚠️ Pitfalls 🔗 Liên quan 📖 Nguồn . ]]></description>
-    <pubDate>Mon, 04 May 2026 19:31:35 GMT</pubDate>
-  </item><item>
-    <title>00-Overview</title>
-    <link>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/05-Jakarta-EE-12/00-Overview</link>
-    <guid>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/05-Jakarta-EE-12/00-Overview</guid>
-    <description><![CDATA[ Jakarta EE 12 — Full Feature Learning Track Mục tiêu: Spring Boot expert → Jakarta EE architect, spec-first approach Phiên bản: Jakarta EE 12 (GA target H2 2026, JDK 21 minimum) Runtime prototype: Quarkus (best Jakarta EE implementation for learning) Tại sao học Jakarta EE theo hướng này? Spring Boo... ]]></description>
-    <pubDate>Mon, 04 May 2026 19:30:49 GMT</pubDate>
+    <pubDate>Tue, 05 May 2026 14:34:24 GMT</pubDate>
   </item><item>
     <title>CDI-vs-Spring-IoC-Thread-Deep-Dive</title>
     <link>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/05-Jakarta-EE-12/CDI-vs-Spring-IoC-Thread-Deep-Dive</link>
     <guid>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/05-Jakarta-EE-12/CDI-vs-Spring-IoC-Thread-Deep-Dive</guid>
-    <description><![CDATA[ CDI vs Spring IoC Container — Deep Dive Chủ đề: So sánh kiến trúc CDI container với Spring IoC Container + Thread Management Level: Advanced Tags: CDI, Spring, IoC, DI, Threading, Virtual Threads, Context Propagation Phần 1 — IoC Container Architecture 1.1 Triết lý thiết kế khác nhau từ gốc Spring I... ]]></description>
-    <pubDate>Mon, 04 May 2026 19:30:49 GMT</pubDate>
+    <description><![CDATA[ CDI vs Spring IoC — Deep Dive + Thread Management Mục tiêu: Hiểu rõ sự khác biệt kiến trúc giữa CDI Container và Spring IoC, cùng cơ chế quản lý thread Visual reference: Xem widget trong Claude conversation để thấy sơ đồ tương tác Phần 1 — IoC Container: Triết Lý Khác Nhau Spring IoC: &quot;Quản lý ... ]]></description>
+    <pubDate>Tue, 05 May 2026 14:33:32 GMT</pubDate>
   </item><item>
-    <title>01-CDI-Contexts-DI</title>
-    <link>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/05-Jakarta-EE-12/Phase-1-Core-Profile/01-CDI-Contexts-DI</link>
-    <guid>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/05-Jakarta-EE-12/Phase-1-Core-Profile/01-CDI-Contexts-DI</guid>
-    <description><![CDATA[ 01 — CDI 5.0: Contexts &amp; Dependency Injection Spec: Jakarta CDI 5.0 | Profile: Core Spring equivalent: Spring DI (@Component, @Autowired, @Bean, Spring AOP) Prototype runtime: Quarkus 1. ]]></description>
-    <pubDate>Mon, 04 May 2026 19:30:49 GMT</pubDate>
+    <title>Framework-Landscape-2026</title>
+    <link>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/Framework-Landscape-2026</link>
+    <guid>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/Framework-Landscape-2026</guid>
+    <description><![CDATA[ Java Framework Landscape 2026 Cập nhật: 2026-05 | Scope: Spring Boot, Quarkus, Micronaut, Helidon, Jakarta EE, MicroProfile Tags: framework, spring-boot, quarkus, micronaut, helidon, jakarta-ee, microprofile Bức Tranh Tổng Thể — Roles Không Cạnh Tranh Nhau Jakarta EE = SPECIFICATION (chuẩn) → CDI, J... ]]></description>
+    <pubDate>Tue, 05 May 2026 14:33:32 GMT</pubDate>
   </item><item>
-    <title>02-Jakarta-REST</title>
-    <link>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/05-Jakarta-EE-12/Phase-1-Core-Profile/02-Jakarta-REST</link>
-    <guid>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/05-Jakarta-EE-12/Phase-1-Core-Profile/02-Jakarta-REST</guid>
-    <description><![CDATA[ 02 — Jakarta REST 5.0 (JAX-RS) Spec: Jakarta RESTful Web Services 5.0 | Profile: Core Spring equivalent: Spring MVC (@RestController, @RequestMapping) Prototype runtime: Quarkus + RESTEasy Reactive 1. ]]></description>
-    <pubDate>Mon, 04 May 2026 19:30:49 GMT</pubDate>
+    <title>Helidon-2026</title>
+    <link>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/Helidon-2026</link>
+    <guid>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/Helidon-2026</guid>
+    <description><![CDATA[ Helidon 2026 — Oracle’s Strategic Framework Cập nhật: 2026-05 | Backed by: Oracle Tags: helidon, oracle, jakarta-ee, microprofile, JVP, cloud-native 1. ]]></description>
+    <pubDate>Tue, 05 May 2026 14:33:32 GMT</pubDate>
   </item><item>
-    <title>03-JSON-P-JSON-B</title>
-    <link>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/05-Jakarta-EE-12/Phase-1-Core-Profile/03-JSON-P-JSON-B</link>
-    <guid>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/05-Jakarta-EE-12/Phase-1-Core-Profile/03-JSON-P-JSON-B</guid>
-    <description><![CDATA[ 03 — Jakarta JSON-P 2.2 + JSON-B 3.x Specs: Jakarta JSON Processing 2.2 + Jakarta JSON Binding 3.x | Profile: Core Spring equivalent: Jackson (JsonNode + ObjectMapper) Prototype runtime: Quarkus (dùng JSON-P/JSON-B mặc định) 1. ]]></description>
-    <pubDate>Mon, 04 May 2026 19:30:49 GMT</pubDate>
+    <title>Java-2026-Trends</title>
+    <link>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/Java-2026-Trends</link>
+    <guid>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/Java-2026-Trends</guid>
+    <description><![CDATA[ Java 2026 — Điểm Nhấn Xu Hướng Cập nhật: 2026-05 | Context: Enterprise / Spring Boot / Banking Tags: java, jdk26, loom, valhalla, spring-boot-4, jakarta-ee-12 1. ]]></description>
+    <pubDate>Tue, 05 May 2026 14:33:32 GMT</pubDate>
   </item><item>
-    <title>04-Bean-Validation</title>
-    <link>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/05-Jakarta-EE-12/Phase-1-Core-Profile/04-Bean-Validation</link>
-    <guid>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/05-Jakarta-EE-12/Phase-1-Core-Profile/04-Bean-Validation</guid>
-    <description><![CDATA[ 04 — Jakarta Validation 4.0 Spec: Jakarta Bean Validation 4.0 | Profile: Core Spring equivalent: Spring Validation + Hibernate Validator Ghi chú: Spring Boot implement spec này — anh đã dùng rồi, chỉ cần học phần nâng cao 1. ]]></description>
-    <pubDate>Mon, 04 May 2026 19:30:49 GMT</pubDate>
+    <title>MicroProfile-2026-Status</title>
+    <link>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/MicroProfile-2026-Status</link>
+    <guid>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/MicroProfile-2026-Status</guid>
+    <description><![CDATA[ MicroProfile 2026 — Status &amp; Relevance Cập nhật: 2026-05 Tags: microprofile, quarkus, helidon, open-liberty, fault-tolerance, config, health 1. ]]></description>
+    <pubDate>Tue, 05 May 2026 14:33:32 GMT</pubDate>
   </item><item>
-    <title>05-JPA-Deep-Dive</title>
-    <link>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/05-Jakarta-EE-12/Phase-2-Persistence-Data/05-JPA-Deep-Dive</link>
-    <guid>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/05-Jakarta-EE-12/Phase-2-Persistence-Data/05-JPA-Deep-Dive</guid>
-    <description><![CDATA[ 05 — Jakarta Persistence 4.0 (JPA) Spec: Jakarta Persistence 4.0 | Profile: Web Profile Spring equivalent: Spring Data JPA (abstraction trên spec này) Prototype runtime: Quarkus + Hibernate ORM 6.x 1. ]]></description>
-    <pubDate>Mon, 04 May 2026 19:30:49 GMT</pubDate>
+    <title>Bai-29-Leptos</title>
+    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-29-Leptos</link>
+    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-29-Leptos</guid>
+    <description><![CDATA[ Bài 29: Leptos — Fullstack Rust Web (SSR + CSR + Hydration) Prerequisite: Bài 24 (Axum Advanced) + Bài 26 (SQLx Advanced) Mục tiêu: Build fullstack web app bằng Rust thuần — từ Component, Signals, Server Functions đến SSR+Hydration. ]]></description>
+    <pubDate>Tue, 05 May 2026 14:33:32 GMT</pubDate>
+  </item><item>
+    <title>Bai-36-Dioxus-Core</title>
+    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-36-Dioxus-Core</link>
+    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-36-Dioxus-Core</guid>
+    <description><![CDATA[ Bài 36: Dioxus — Cross-Platform UI Framework (Core) Prerequisite: Bài 29 (Leptos) — hiểu RSX syntax, component model cơ bản Mục tiêu: Nắm vững Dioxus component model, signals, routing, async — nền tảng cho mọi platform target 🗺️ Bức Tranh Tổng Quan Dioxus — &quot;React của Rust&quot; Cùng codebase ... ]]></description>
+    <pubDate>Tue, 05 May 2026 14:33:32 GMT</pubDate>
   </item>
     </channel>
   </rss>

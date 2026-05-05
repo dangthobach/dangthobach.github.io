@@ -147,7 +147,7 @@
     <lastmod>2026-04-13T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/00-Weekly-Study-Log</loc>
-    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
+    <lastmod>2026-05-01T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/01-Quarkus/00-Quarkus-Overview</loc>
     <lastmod>2026-04-12T00:00:00.000Z</lastmod>
@@ -237,7 +237,7 @@
     <lastmod>2026-05-04T19:30:49.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/05-Jakarta-EE-12/CDI-vs-Spring-IoC-Thread-Deep-Dive</loc>
-    <lastmod>2026-05-04T19:30:49.000Z</lastmod>
+    <lastmod>2026-05-05T14:33:32.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/05-Jakarta-EE-12/Phase-1-Core-Profile/01-CDI-Contexts-DI</loc>
     <lastmod>2026-05-04T19:30:49.000Z</lastmod>
@@ -298,6 +298,18 @@
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/Framework-Decision-Matrix</loc>
     <lastmod>2026-04-13T00:00:00.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/Framework-Landscape-2026</loc>
+    <lastmod>2026-05-05T14:33:32.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/Helidon-2026</loc>
+    <lastmod>2026-05-05T14:33:32.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/Java-2026-Trends</loc>
+    <lastmod>2026-05-05T14:33:32.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/MicroProfile-2026-Status</loc>
+    <lastmod>2026-05-05T14:33:32.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/Spring-to-Micronaut-Cheatsheet</loc>
     <lastmod>2026-04-13T00:00:00.000Z</lastmod>
@@ -801,7 +813,7 @@
     <lastmod>2026-05-02T04:58:37.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-29-Leptos</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-05-05T14:33:32.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-3-Struct-Enum-Trait</loc>
     <lastmod>2026-05-02T04:58:37.000Z</lastmod>
@@ -823,6 +835,15 @@
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-35-Resilience</loc>
     <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-36-Dioxus-Core</loc>
+    <lastmod>2026-05-05T14:33:32.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-37-Dioxus-Advanced</loc>
+    <lastmod>2026-05-05T14:33:32.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-38-Dioxus-Desktop-Mobile</loc>
+    <lastmod>2026-05-05T14:33:32.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-4-Error-Handling-Collections</loc>
     <lastmod>2026-05-02T04:58:37.000Z</lastmod>
@@ -921,16 +942,16 @@
     <lastmod>2026-05-02T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/_templates/template-concept</loc>
-    <lastmod>2026-05-04T19:31:35.138Z</lastmod>
+    <lastmod>2026-05-05T14:34:24.269Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/_templates/template-framework-concept</loc>
     <lastmod>2026-05-02T04:58:37.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/_templates/template-pattern</loc>
-    <lastmod>2026-05-04T19:31:35.164Z</lastmod>
+    <lastmod>2026-05-05T14:34:24.287Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/_templates/template-til</loc>
-    <lastmod>2026-05-04T19:31:35.171Z</lastmod>
+    <lastmod>2026-05-05T14:34:24.293Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/concepts/README</loc>
     <lastmod>2026-05-02T04:58:37.000Z</lastmod>
