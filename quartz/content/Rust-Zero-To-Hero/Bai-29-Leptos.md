@@ -1020,3 +1020,109 @@ pub fn DocumentListPage() -> impl IntoView {
 - [[Rust-Zero-To-Hero/Bai-24-Axum-Advanced|Bài 24: Axum Advanced]] — backend foundation
 - [[Rust-Zero-To-Hero/Bai-26-SQLx-Advanced|Bài 26: SQLx Advanced]] — DB integration
 - [[Rust-Zero-To-Hero/Plan-Framework-Mastery|Plan: Framework Mastery]] — tổng quan
+
+---
+
+## ⚔️ Leptos vs Dioxus — Chọn Framework Nào?
+
+> Đây là câu hỏi thực tế khi bắt đầu project Rust frontend mới.
+
+### So sánh tổng quan
+
+| Tiêu chí | Leptos | Dioxus |
+|---|---|---|
+| **Phiên bản ổn định** | 0.7 (stable) | 0.6 (stable) |
+| **Mental model** | SolidJS — fine-grained reactivity | React — Virtual DOM |
+| **Reactivity** | Signal-level (chỉ update exact DOM node) | Component-level re-render |
+| **SSR** | ✅ First-class, built-in với Axum | ✅ Fullstack mode |
+| **Hydration** | ✅ SSR → CSR seamless | ✅ Có nhưng phức tạp hơn |
+| **Desktop** | ❌ Web-only | ✅ Native window (Tauri/WRY) |
+| **Mobile** | ❌ | ✅ iOS & Android (beta) |
+| **TUI** | ❌ | ✅ Experimental |
+| **Bundle size (WASM)** | ~200KB | ~500KB |
+| **Server functions** | ✅ `#[server]` macro | ✅ `#[server_fn]` |
+| **SEO** | ✅ SSR → tốt cho SEO | ⚠️ Cần cấu hình |
+| **Performance** | ⚡ Cực nhanh (fine-grained) | ✅ Tốt (Virtual DOM) |
+| **Community** | Smaller, focused | Lớn hơn, active |
+| **Learning curve** | Cao hơn (mô hình mới) | Thấp hơn (React-like) |
+| **Java analog** | Không có analog trực tiếp | React (JSX → RSX) |
+
+### Reactivity Model — Khác biệt cốt lõi
+
+```
+Leptos — Fine-grained (SolidJS model):
+  Signal thay đổi → chỉ cập nhật exact DOM nodes subscribe signal đó
+  Không re-render toàn bộ component tree
+
+  signal_count = 5 → thay đổi thành 6
+  Chỉ update: <p>{count}</p>  ← exact DOM node đọc signal này
+
+Dioxus — Virtual DOM (React model):
+  State thay đổi → re-render component → diff Virtual DOM → patch real DOM
+
+  count = 5 → thay đổi thành 6
+  Re-render Counter component → diff → update DOM
+```
+
+### Khi nào chọn Leptos?
+
+```
+✅ Dùng Leptos khi:
+  - Web-only, không cần desktop/mobile
+  - SEO quan trọng (blog, landing page, e-commerce)
+  - Cần SSR + hydration tốt nhất
+  - Performance critical (fine-grained = ít re-render hơn)
+  - Tích hợp sâu với Axum backend (cùng binary)
+
+❌ Không chọn Leptos khi:
+  - Cần deploy lên desktop hoặc mobile
+  - Team background React muốn migration dễ hơn
+  - Cần TUI
+```
+
+### Khi nào chọn Dioxus?
+
+```
+✅ Dùng Dioxus khi:
+  - Cần cross-platform (web + desktop + mobile cùng codebase)
+  - Team background React → learning curve thấp hơn
+  - Build desktop app native
+  - Build mobile app iOS/Android
+  - Cần TUI admin tool
+
+❌ Không chọn Dioxus khi:
+  - SEO là ưu tiên hàng đầu
+  - Bundle size web cực kỳ quan trọng (~500KB vs ~200KB)
+  - Fine-grained performance tuyệt đối
+```
+
+### Decision Tree
+
+```
+Cần Desktop hoặc Mobile?
+├── Có → Dioxus
+└── Không
+    ├── SEO/SSR quan trọng?
+    │   ├── Rất quan trọng → Leptos
+    │   └── Bình thường → cả hai đều được
+    ├── Background React?
+    │   ├── Có → Dioxus (learning curve thấp hơn)
+    │   └── Không → Leptos (model tốt hơn về performance)
+    └── Performance critical?
+        ├── Có → Leptos (fine-grained wins)
+        └── Không → Dioxus (developer experience tốt hơn)
+```
+
+### PDMS Context
+
+```
+PDMS là internal banking tool:
+  Web Portal (manager dashboard) → Leptos (tích hợp tốt với Axum)
+  Desktop Client (chi nhánh)     → Dioxus Desktop
+  Shared business logic          → Rust library crate (không phụ thuộc framework)
+```
+
+### 🔗 Tiếp theo — Dioxus Series
+- [[Rust-Zero-To-Hero/Bai-36-Dioxus-Core|Bài 36: Dioxus Core]] — components, signals, hooks, router
+- [[Rust-Zero-To-Hero/Bai-37-Dioxus-Advanced|Bài 37: Dioxus Advanced]] — global state, coroutines, performance
+- [[Rust-Zero-To-Hero/Bai-38-Dioxus-Desktop-Mobile|Bài 38: Dioxus Desktop & Mobile]] — cross-platform
