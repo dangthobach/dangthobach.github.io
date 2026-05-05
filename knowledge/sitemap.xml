@@ -845,8 +845,29 @@
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-38-Dioxus-Desktop-Mobile</loc>
     <lastmod>2026-05-05T14:33:32.000Z</lastmod>
   </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-39-Security-Production</loc>
+    <lastmod>2026-05-05T18:03:24.000Z</lastmod>
+  </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-4-Error-Handling-Collections</loc>
     <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-40-Global-State</loc>
+    <lastmod>2026-05-05T18:03:24.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-41-Auth-SSR</loc>
+    <lastmod>2026-05-05T18:03:24.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-42-JS-Interop</loc>
+    <lastmod>2026-05-05T18:03:24.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-43-Form-Validation</loc>
+    <lastmod>2026-05-05T18:03:24.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-44-Styling-Pipeline</loc>
+    <lastmod>2026-05-05T18:03:24.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-45-Background-Caching</loc>
+    <lastmod>2026-05-05T18:03:24.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-5-Lifetimes</loc>
     <lastmod>2026-05-02T04:58:37.000Z</lastmod>
@@ -942,16 +963,16 @@
     <lastmod>2026-05-02T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/_templates/template-concept</loc>
-    <lastmod>2026-05-05T14:34:24.269Z</lastmod>
+    <lastmod>2026-05-05T18:04:45.515Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/_templates/template-framework-concept</loc>
     <lastmod>2026-05-02T04:58:37.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/_templates/template-pattern</loc>
-    <lastmod>2026-05-05T14:34:24.287Z</lastmod>
+    <lastmod>2026-05-05T18:04:45.534Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/_templates/template-til</loc>
-    <lastmod>2026-05-05T14:34:24.293Z</lastmod>
+    <lastmod>2026-05-05T18:04:45.540Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/concepts/README</loc>
     <lastmod>2026-05-02T04:58:37.000Z</lastmod>

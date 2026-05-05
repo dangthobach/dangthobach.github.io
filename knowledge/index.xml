@@ -10,61 +10,61 @@
     <link>https://dangthobach.github.io/knowledge/_templates/template-til</link>
     <guid>https://dangthobach.github.io/knowledge/_templates/template-til</guid>
     <description><![CDATA[ TIL: {{title}} 💡 Insight 🔍 Context 🔗 Liên quan . ]]></description>
-    <pubDate>Tue, 05 May 2026 14:34:24 GMT</pubDate>
+    <pubDate>Tue, 05 May 2026 18:04:45 GMT</pubDate>
   </item><item>
     <title>template-pattern</title>
     <link>https://dangthobach.github.io/knowledge/_templates/template-pattern</link>
     <guid>https://dangthobach.github.io/knowledge/_templates/template-pattern</guid>
     <description><![CDATA[ Pattern: {{title}} 🎯 Problem 💡 Solution 🔄 Flow &lt;!-- Diagram text hoặc steps --&gt; ✅ Pros / ❌ Cons ProsCons 📍 Applied In MOC-PDMS — 🔗 Related Patterns . ]]></description>
-    <pubDate>Tue, 05 May 2026 14:34:24 GMT</pubDate>
+    <pubDate>Tue, 05 May 2026 18:04:45 GMT</pubDate>
   </item><item>
     <title>template-concept</title>
     <link>https://dangthobach.github.io/knowledge/_templates/template-concept</link>
     <guid>https://dangthobach.github.io/knowledge/_templates/template-concept</guid>
     <description><![CDATA[ {{title}} 📌 One-liner Concept này là gì trong một câu 🧠 Core Idea 🔁 Java / Rust Analog JavaRustEquivalentKey difference 💡 Khi nào dùng ⚠️ Pitfalls 🔗 Liên quan 📖 Nguồn . ]]></description>
-    <pubDate>Tue, 05 May 2026 14:34:24 GMT</pubDate>
+    <pubDate>Tue, 05 May 2026 18:04:45 GMT</pubDate>
   </item><item>
-    <title>CDI-vs-Spring-IoC-Thread-Deep-Dive</title>
-    <link>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/05-Jakarta-EE-12/CDI-vs-Spring-IoC-Thread-Deep-Dive</link>
-    <guid>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/05-Jakarta-EE-12/CDI-vs-Spring-IoC-Thread-Deep-Dive</guid>
-    <description><![CDATA[ CDI vs Spring IoC — Deep Dive + Thread Management Mục tiêu: Hiểu rõ sự khác biệt kiến trúc giữa CDI Container và Spring IoC, cùng cơ chế quản lý thread Visual reference: Xem widget trong Claude conversation để thấy sơ đồ tương tác Phần 1 — IoC Container: Triết Lý Khác Nhau Spring IoC: &quot;Quản lý ... ]]></description>
-    <pubDate>Tue, 05 May 2026 14:33:32 GMT</pubDate>
+    <title>Bai-39-Security-Production</title>
+    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-39-Security-Production</link>
+    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-39-Security-Production</guid>
+    <description><![CDATA[ Bài 39: Security &amp; Traffic Control — Production-Ready Áp dụng cho: Axum (backend) · Leptos (fullstack) · Dioxus (fullstack) Mục tiêu: CORS đúng chuẩn, Rate Limiting, Input Validation — 3 lớp bảo vệ không thể thiếu 🗺️ Bức Tranh Tổng Quan INTERNET │ ▼ ┌───────────────────────┐ │ LAYER 1: CORS │ ←... ]]></description>
+    <pubDate>Tue, 05 May 2026 18:03:24 GMT</pubDate>
   </item><item>
-    <title>Framework-Landscape-2026</title>
-    <link>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/Framework-Landscape-2026</link>
-    <guid>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/Framework-Landscape-2026</guid>
-    <description><![CDATA[ Java Framework Landscape 2026 Cập nhật: 2026-05 | Scope: Spring Boot, Quarkus, Micronaut, Helidon, Jakarta EE, MicroProfile Tags: framework, spring-boot, quarkus, micronaut, helidon, jakarta-ee, microprofile Bức Tranh Tổng Thể — Roles Không Cạnh Tranh Nhau Jakarta EE = SPECIFICATION (chuẩn) → CDI, J... ]]></description>
-    <pubDate>Tue, 05 May 2026 14:33:32 GMT</pubDate>
+    <title>Bai-40-Global-State</title>
+    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-40-Global-State</link>
+    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-40-Global-State</guid>
+    <description><![CDATA[ Bài 40: Global State Management — Tránh Prop Drilling Áp dụng cho: Leptos · Dioxus (patterns khác nhau, bản chất giống nhau) Mục tiêu: Share state qua component tree mà không cần truyền props qua từng cấp 🗺️ Bức Tranh Tổng Quan Vấn đề Prop Drilling: App (có user state) └── Dashboard └── Sidebar └──... ]]></description>
+    <pubDate>Tue, 05 May 2026 18:03:24 GMT</pubDate>
   </item><item>
-    <title>Helidon-2026</title>
-    <link>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/Helidon-2026</link>
-    <guid>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/Helidon-2026</guid>
-    <description><![CDATA[ Helidon 2026 — Oracle’s Strategic Framework Cập nhật: 2026-05 | Backed by: Oracle Tags: helidon, oracle, jakarta-ee, microprofile, JVP, cloud-native 1. ]]></description>
-    <pubDate>Tue, 05 May 2026 14:33:32 GMT</pubDate>
+    <title>Bai-41-Auth-SSR</title>
+    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-41-Auth-SSR</link>
+    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-41-Auth-SSR</guid>
+    <description><![CDATA[ Bài 41: Auth Flow — Cookie, SSR Hydration &amp; Protected Routes Áp dụng cho: Axum (backend) · Leptos (SSR fullstack) · Dioxus (fullstack) Mục tiêu: Auth đúng chuẩn trong mô hình SSR — set cookie, hydrate state, bảo vệ routes 🗺️ Bức Tranh Tổng Quan Auth trong CSR (React truyền thống) vs SSR (Leptos... ]]></description>
+    <pubDate>Tue, 05 May 2026 18:03:24 GMT</pubDate>
   </item><item>
-    <title>Java-2026-Trends</title>
-    <link>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/Java-2026-Trends</link>
-    <guid>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/Java-2026-Trends</guid>
-    <description><![CDATA[ Java 2026 — Điểm Nhấn Xu Hướng Cập nhật: 2026-05 | Context: Enterprise / Spring Boot / Banking Tags: java, jdk26, loom, valhalla, spring-boot-4, jakarta-ee-12 1. ]]></description>
-    <pubDate>Tue, 05 May 2026 14:33:32 GMT</pubDate>
+    <title>Bai-42-JS-Interop</title>
+    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-42-JS-Interop</link>
+    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-42-JS-Interop</guid>
+    <description><![CDATA[ Bài 42: JS Interop — wasm-bindgen, web-sys &amp; Gọi Chart.js / D3 Áp dụng cho: Leptos · Dioxus (cả 2 đều compile sang WASM) Mục tiêu: Gọi JS libraries từ Rust, dùng Web APIs, tích hợp Chart.js &amp; D3.js 🗺️ Bức Tranh Tổng Quan Tại sao cần JS Interop? WASM (Rust) KHÔNG thể trực tiếp: ├── Gọi JavaS... ]]></description>
+    <pubDate>Tue, 05 May 2026 18:03:24 GMT</pubDate>
   </item><item>
-    <title>MicroProfile-2026-Status</title>
-    <link>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/MicroProfile-2026-Status</link>
-    <guid>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/MicroProfile-2026-Status</guid>
-    <description><![CDATA[ MicroProfile 2026 — Status &amp; Relevance Cập nhật: 2026-05 Tags: microprofile, quarkus, helidon, open-liberty, fault-tolerance, config, health 1. ]]></description>
-    <pubDate>Tue, 05 May 2026 14:33:32 GMT</pubDate>
+    <title>Bai-43-Form-Validation</title>
+    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-43-Form-Validation</link>
+    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-43-Form-Validation</guid>
+    <description><![CDATA[ Bài 43: Form Handling &amp; Isomorphic Validation Áp dụng cho: Leptos · Dioxus Mục tiêu: Forms phức tạp (nested, dynamic fields), file upload UX, isomorphic validation 🗺️ Bức Tranh Tổng Quan Form Complexity Spectrum: Simple Medium Complex ───────────────────────────────────────────────────── Login ... ]]></description>
+    <pubDate>Tue, 05 May 2026 18:03:24 GMT</pubDate>
   </item><item>
-    <title>Bai-29-Leptos</title>
-    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-29-Leptos</link>
-    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-29-Leptos</guid>
-    <description><![CDATA[ Bài 29: Leptos — Fullstack Rust Web (SSR + CSR + Hydration) Prerequisite: Bài 24 (Axum Advanced) + Bài 26 (SQLx Advanced) Mục tiêu: Build fullstack web app bằng Rust thuần — từ Component, Signals, Server Functions đến SSR+Hydration. ]]></description>
-    <pubDate>Tue, 05 May 2026 14:33:32 GMT</pubDate>
+    <title>Bai-44-Styling-Pipeline</title>
+    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-44-Styling-Pipeline</link>
+    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-44-Styling-Pipeline</guid>
+    <description><![CDATA[ Bài 44: Styling Pipeline — Tailwind + Leptos/Dioxus Áp dụng cho: Leptos (cargo-leptos) · Dioxus (dx CLI) Mục tiêu: Setup Tailwind đúng cách, CSS-in-Rust patterns, dark mode, responsive design 🗺️ Bức Tranh Tổng Quan Styling trong Rust frontend — các lựa chọn: Option 1: Plain CSS / SCSS ├── File .css... ]]></description>
+    <pubDate>Tue, 05 May 2026 18:03:24 GMT</pubDate>
   </item><item>
-    <title>Bai-36-Dioxus-Core</title>
-    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-36-Dioxus-Core</link>
-    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-36-Dioxus-Core</guid>
-    <description><![CDATA[ Bài 36: Dioxus — Cross-Platform UI Framework (Core) Prerequisite: Bài 29 (Leptos) — hiểu RSX syntax, component model cơ bản Mục tiêu: Nắm vững Dioxus component model, signals, routing, async — nền tảng cho mọi platform target 🗺️ Bức Tranh Tổng Quan Dioxus — &quot;React của Rust&quot; Cùng codebase ... ]]></description>
-    <pubDate>Tue, 05 May 2026 14:33:32 GMT</pubDate>
+    <title>Bai-45-Background-Caching</title>
+    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-45-Background-Caching</link>
+    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-45-Background-Caching</guid>
+    <description><![CDATA[ Bài 45: Background Jobs &amp; Caching — Production Scale Áp dụng cho: Axum (backend) · Leptos · Dioxus Mục tiêu: Job queues, HTTP caching, Redis cache layer, in-memory cache — không để server chết vì load 🗺️ Bức Tranh Tổng Quan Tại sao cần Background Jobs &amp; Caching? Không có → Mọi thứ xảy ra sy... ]]></description>
+    <pubDate>Tue, 05 May 2026 18:03:24 GMT</pubDate>
   </item>
     </channel>
   </rss>
