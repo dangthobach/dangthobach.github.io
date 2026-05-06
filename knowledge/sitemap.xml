@@ -1,6 +1,6 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml"><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/00-Hub-Database-Persistence</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-05-06T17:06:07.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/Hibernate-Performance-Deep-Dive</loc>
     <lastmod>2026-05-02T04:58:37.000Z</lastmod>
@@ -10,6 +10,60 @@
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/JDBC-vs-R2DBC-vs-VirtualThreads</loc>
     <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/00-PostgreSQL-Hub</loc>
+    <lastmod>2026-05-06T18:24:09.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/01-ACID-Internals</loc>
+    <lastmod>2026-05-06T17:06:07.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/02-MVCC-Concurrency</loc>
+    <lastmod>2026-05-06T17:06:07.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/03-Concurrency-Patterns</loc>
+    <lastmod>2026-05-06T17:06:07.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/04-Index-Internals</loc>
+    <lastmod>2026-05-06T17:06:07.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/05-Performance-Tuning</loc>
+    <lastmod>2026-05-06T17:06:07.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/06-Query-Planner</loc>
+    <lastmod>2026-05-06T17:06:07.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/07-Count-Star-vs-Count-Column</loc>
+    <lastmod>2026-05-06T18:24:09.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/08-MVCC-MySQL-PostgreSQL-Oracle</loc>
+    <lastmod>2026-05-06T18:24:09.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/09-Temporal-Data-Types</loc>
+    <lastmod>2026-05-06T18:24:09.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/10-Sharding-When-Why-Pitfalls</loc>
+    <lastmod>2026-05-06T18:24:09.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/11-PostgreSQL-Redis-Consistency</loc>
+    <lastmod>2026-05-06T18:24:09.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/12-UNION-and-LIKE-Optimization</loc>
+    <lastmod>2026-05-06T18:24:09.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/13-Grouping-and-Aggregation</loc>
+    <lastmod>2026-05-06T18:24:09.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/14-CTE-Recursive-Advanced-SQL</loc>
+    <lastmod>2026-05-06T18:24:09.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/15-Transaction-Isolation-Levels-Compared</loc>
+    <lastmod>2026-05-06T18:24:09.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/16-JSON-JSONB-Complete-Guide</loc>
+    <lastmod>2026-05-06T18:24:09.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/17-Time-Series-Complete-Guide</loc>
+    <lastmod>2026-05-06T18:24:09.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/Spring-Data-R2DBC-Deep-Dive</loc>
     <lastmod>2026-05-02T04:58:37.000Z</lastmod>
@@ -924,7 +978,7 @@
     <lastmod>2026-05-01T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/_moc/MOC-Database</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-05-06T17:06:07.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/_moc/MOC-Distributed-Systems</loc>
     <lastmod>2026-05-02T04:58:37.000Z</lastmod>
@@ -963,16 +1017,16 @@
     <lastmod>2026-05-02T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/_templates/template-concept</loc>
-    <lastmod>2026-05-05T18:04:45.515Z</lastmod>
+    <lastmod>2026-05-06T18:25:01.222Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/_templates/template-framework-concept</loc>
     <lastmod>2026-05-02T04:58:37.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/_templates/template-pattern</loc>
-    <lastmod>2026-05-05T18:04:45.534Z</lastmod>
+    <lastmod>2026-05-06T18:25:01.250Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/_templates/template-til</loc>
-    <lastmod>2026-05-05T18:04:45.540Z</lastmod>
+    <lastmod>2026-05-06T18:25:01.252Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/concepts/README</loc>
     <lastmod>2026-05-02T04:58:37.000Z</lastmod>

@@ -10,61 +10,61 @@
     <link>https://dangthobach.github.io/knowledge/_templates/template-til</link>
     <guid>https://dangthobach.github.io/knowledge/_templates/template-til</guid>
     <description><![CDATA[ TIL: {{title}} 💡 Insight 🔍 Context 🔗 Liên quan . ]]></description>
-    <pubDate>Tue, 05 May 2026 18:04:45 GMT</pubDate>
+    <pubDate>Wed, 06 May 2026 18:25:01 GMT</pubDate>
   </item><item>
     <title>template-pattern</title>
     <link>https://dangthobach.github.io/knowledge/_templates/template-pattern</link>
     <guid>https://dangthobach.github.io/knowledge/_templates/template-pattern</guid>
     <description><![CDATA[ Pattern: {{title}} 🎯 Problem 💡 Solution 🔄 Flow &lt;!-- Diagram text hoặc steps --&gt; ✅ Pros / ❌ Cons ProsCons 📍 Applied In MOC-PDMS — 🔗 Related Patterns . ]]></description>
-    <pubDate>Tue, 05 May 2026 18:04:45 GMT</pubDate>
+    <pubDate>Wed, 06 May 2026 18:25:01 GMT</pubDate>
   </item><item>
     <title>template-concept</title>
     <link>https://dangthobach.github.io/knowledge/_templates/template-concept</link>
     <guid>https://dangthobach.github.io/knowledge/_templates/template-concept</guid>
     <description><![CDATA[ {{title}} 📌 One-liner Concept này là gì trong một câu 🧠 Core Idea 🔁 Java / Rust Analog JavaRustEquivalentKey difference 💡 Khi nào dùng ⚠️ Pitfalls 🔗 Liên quan 📖 Nguồn . ]]></description>
-    <pubDate>Tue, 05 May 2026 18:04:45 GMT</pubDate>
+    <pubDate>Wed, 06 May 2026 18:25:01 GMT</pubDate>
   </item><item>
-    <title>Bai-39-Security-Production</title>
-    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-39-Security-Production</link>
-    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-39-Security-Production</guid>
-    <description><![CDATA[ Bài 39: Security &amp; Traffic Control — Production-Ready Áp dụng cho: Axum (backend) · Leptos (fullstack) · Dioxus (fullstack) Mục tiêu: CORS đúng chuẩn, Rate Limiting, Input Validation — 3 lớp bảo vệ không thể thiếu 🗺️ Bức Tranh Tổng Quan INTERNET │ ▼ ┌───────────────────────┐ │ LAYER 1: CORS │ ←... ]]></description>
-    <pubDate>Tue, 05 May 2026 18:03:24 GMT</pubDate>
+    <title>00-PostgreSQL-Hub</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/00-PostgreSQL-Hub</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/00-PostgreSQL-Hub</guid>
+    <description><![CDATA[ 🐘 PostgreSQL — Hub Entry point duy nhất cho mọi thứ liên quan PostgreSQL trong vault này. ]]></description>
+    <pubDate>Wed, 06 May 2026 18:24:09 GMT</pubDate>
   </item><item>
-    <title>Bai-40-Global-State</title>
-    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-40-Global-State</link>
-    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-40-Global-State</guid>
-    <description><![CDATA[ Bài 40: Global State Management — Tránh Prop Drilling Áp dụng cho: Leptos · Dioxus (patterns khác nhau, bản chất giống nhau) Mục tiêu: Share state qua component tree mà không cần truyền props qua từng cấp 🗺️ Bức Tranh Tổng Quan Vấn đề Prop Drilling: App (có user state) └── Dashboard └── Sidebar └──... ]]></description>
-    <pubDate>Tue, 05 May 2026 18:03:24 GMT</pubDate>
+    <title>07-Count-Star-vs-Count-Column</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/07-Count-Star-vs-Count-Column</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/07-Count-Star-vs-Count-Column</guid>
+    <description><![CDATA[ 07 — COUNT(*) vs COUNT(column): Hiểu Đúng Để Dùng Đúng Audience: Backend engineers hay dùng COUNT mà không rõ sự khác biệt về semantic và performance. ]]></description>
+    <pubDate>Wed, 06 May 2026 18:24:09 GMT</pubDate>
   </item><item>
-    <title>Bai-41-Auth-SSR</title>
-    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-41-Auth-SSR</link>
-    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-41-Auth-SSR</guid>
-    <description><![CDATA[ Bài 41: Auth Flow — Cookie, SSR Hydration &amp; Protected Routes Áp dụng cho: Axum (backend) · Leptos (SSR fullstack) · Dioxus (fullstack) Mục tiêu: Auth đúng chuẩn trong mô hình SSR — set cookie, hydrate state, bảo vệ routes 🗺️ Bức Tranh Tổng Quan Auth trong CSR (React truyền thống) vs SSR (Leptos... ]]></description>
-    <pubDate>Tue, 05 May 2026 18:03:24 GMT</pubDate>
+    <title>08-MVCC-MySQL-PostgreSQL-Oracle</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/08-MVCC-MySQL-PostgreSQL-Oracle</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/08-MVCC-MySQL-PostgreSQL-Oracle</guid>
+    <description><![CDATA[ 08 — MVCC So Sánh: MySQL vs PostgreSQL vs Oracle Audience: Senior engineers cần hiểu sâu concurrency control để thiết kế hệ thống đúng, hoặc chuẩn bị phỏng vấn system design. ]]></description>
+    <pubDate>Wed, 06 May 2026 18:24:09 GMT</pubDate>
   </item><item>
-    <title>Bai-42-JS-Interop</title>
-    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-42-JS-Interop</link>
-    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-42-JS-Interop</guid>
-    <description><![CDATA[ Bài 42: JS Interop — wasm-bindgen, web-sys &amp; Gọi Chart.js / D3 Áp dụng cho: Leptos · Dioxus (cả 2 đều compile sang WASM) Mục tiêu: Gọi JS libraries từ Rust, dùng Web APIs, tích hợp Chart.js &amp; D3.js 🗺️ Bức Tranh Tổng Quan Tại sao cần JS Interop? WASM (Rust) KHÔNG thể trực tiếp: ├── Gọi JavaS... ]]></description>
-    <pubDate>Tue, 05 May 2026 18:03:24 GMT</pubDate>
+    <title>09-Temporal-Data-Types</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/09-Temporal-Data-Types</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/09-Temporal-Data-Types</guid>
+    <description><![CDATA[ 09 — Kiểu Dữ Liệu Thời Gian Tối Ưu trong PostgreSQL Audience: Backend engineers hay gặp bug timezone, lúng túng khi chọn giữa timestamp/timestamptz/date. ]]></description>
+    <pubDate>Wed, 06 May 2026 18:24:09 GMT</pubDate>
   </item><item>
-    <title>Bai-43-Form-Validation</title>
-    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-43-Form-Validation</link>
-    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-43-Form-Validation</guid>
-    <description><![CDATA[ Bài 43: Form Handling &amp; Isomorphic Validation Áp dụng cho: Leptos · Dioxus Mục tiêu: Forms phức tạp (nested, dynamic fields), file upload UX, isomorphic validation 🗺️ Bức Tranh Tổng Quan Form Complexity Spectrum: Simple Medium Complex ───────────────────────────────────────────────────── Login ... ]]></description>
-    <pubDate>Tue, 05 May 2026 18:03:24 GMT</pubDate>
+    <title>10-Sharding-When-Why-Pitfalls</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/10-Sharding-When-Why-Pitfalls</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/10-Sharding-When-Why-Pitfalls</guid>
+    <description><![CDATA[ 10 — Sharding: Khi Nào, Vấn Đề Phiền Toái, và Giải Pháp Audience: Senior engineers đang scale database lên hàng chục/trăm triệu records hoặc evaluating sharding. ]]></description>
+    <pubDate>Wed, 06 May 2026 18:24:09 GMT</pubDate>
   </item><item>
-    <title>Bai-44-Styling-Pipeline</title>
-    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-44-Styling-Pipeline</link>
-    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-44-Styling-Pipeline</guid>
-    <description><![CDATA[ Bài 44: Styling Pipeline — Tailwind + Leptos/Dioxus Áp dụng cho: Leptos (cargo-leptos) · Dioxus (dx CLI) Mục tiêu: Setup Tailwind đúng cách, CSS-in-Rust patterns, dark mode, responsive design 🗺️ Bức Tranh Tổng Quan Styling trong Rust frontend — các lựa chọn: Option 1: Plain CSS / SCSS ├── File .css... ]]></description>
-    <pubDate>Tue, 05 May 2026 18:03:24 GMT</pubDate>
+    <title>11-PostgreSQL-Redis-Consistency</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/11-PostgreSQL-Redis-Consistency</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/11-PostgreSQL-Redis-Consistency</guid>
+    <description><![CDATA[ 11 — Consistency: PostgreSQL + Redis Song Hành Audience: Senior engineers xây dựng caching layer và gặp vấn đề cache inconsistency. ]]></description>
+    <pubDate>Wed, 06 May 2026 18:24:09 GMT</pubDate>
   </item><item>
-    <title>Bai-45-Background-Caching</title>
-    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-45-Background-Caching</link>
-    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-45-Background-Caching</guid>
-    <description><![CDATA[ Bài 45: Background Jobs &amp; Caching — Production Scale Áp dụng cho: Axum (backend) · Leptos · Dioxus Mục tiêu: Job queues, HTTP caching, Redis cache layer, in-memory cache — không để server chết vì load 🗺️ Bức Tranh Tổng Quan Tại sao cần Background Jobs &amp; Caching? Không có → Mọi thứ xảy ra sy... ]]></description>
-    <pubDate>Tue, 05 May 2026 18:03:24 GMT</pubDate>
+    <title>12-UNION-and-LIKE-Optimization</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/12-UNION-and-LIKE-Optimization</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/12-UNION-and-LIKE-Optimization</guid>
+    <description><![CDATA[ 12 — Tối Ưu UNION và LIKE Search Audience: Backend engineers cần tối ưu queries dùng UNION và LIKE trong production. ]]></description>
+    <pubDate>Wed, 06 May 2026 18:24:09 GMT</pubDate>
   </item>
     </channel>
   </rss>
