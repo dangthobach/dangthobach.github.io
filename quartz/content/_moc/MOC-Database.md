@@ -89,3 +89,22 @@ tags: [moc, database, postgresql, sql, nosql]
 
 - [[Notion Knowledge/Note/SQL Query Optimization — From Simple to Complex|⭐ SQL Query Optimization — From Simple to Complex]]
   → Mental model hoàn chỉnh: query lifecycle → EXPLAIN ANALYZE → Layer 1-5 từ simple đến bulk ops 10M+ records. PostgreSQL tricks: LATERAL, FILTER, covering index, UPSERT chaining, parallel query. Pattern áp dụng trực tiếp vào PDMS batch validation.
+
+---
+
+## 🐘 PostgreSQL — Deep Dive Cluster (New)
+
+> Cluster chuyên sâu, tổ chức khoa học — thay thế các notes PostgreSQL phân mảnh trước đây.
+
+- [[Database-Patterns/PostgreSQL/00-PostgreSQL-Hub]] — Entry point
+  - [[Database-Patterns/PostgreSQL/01-ACID-Internals]] — Bản chất thật của ACID: WAL, fsync, crash recovery, isolation spectrum
+  - [[Database-Patterns/PostgreSQL/02-MVCC-Concurrency]] — MVCC engine: xmin/xmax, snapshot, dead tuples, vacuum, HOT update
+  - [[Database-Patterns/PostgreSQL/03-Concurrency-Patterns]] — Edge cases & bài toán thực tế: lost update, write skew, FOR UPDATE, SKIP LOCKED, advisory locks
+  - [[Database-Patterns/PostgreSQL/04-Index-Internals]] — B-Tree, GIN, BRIN, partial/covering index
+  - [[Database-Patterns/PostgreSQL/05-Performance-Tuning]] — Memory, vacuum, monitoring, anti-patterns
+  - [[Database-Patterns/PostgreSQL/06-Query-Planner]] — Cost model, statistics, join algorithms
+
+---
+
+*Tags: #moc #database #postgresql #sql*
+*Updated: 2026-05-06*

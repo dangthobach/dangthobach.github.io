@@ -133,3 +133,17 @@ Legacy service cần throughput cao, không muốn rewrite:
 ---
 
 *Tags: #database #jdbc #jpa #hibernate #r2dbc #virtual-threads #spring-boot #index*
+
+---
+
+## 🐘 PostgreSQL Deep Dive Series
+
+> Cluster mới — tổ chức lại toàn bộ PostgreSQL knowledge vào một hub thống nhất, tránh phân mảnh.
+
+- [[PostgreSQL/00-PostgreSQL-Hub]] — Entry point cho mọi thứ PostgreSQL
+  - [[PostgreSQL/01-ACID-Internals]] — WAL, fsync, crash recovery, isolation levels thật sự
+  - [[PostgreSQL/02-MVCC-Concurrency]] — Tuple versioning, snapshot model, vacuum lifecycle
+  - [[PostgreSQL/03-Concurrency-Patterns]] — Lost update, write skew, FOR UPDATE, SKIP LOCKED, advisory locks
+  - [[PostgreSQL/04-Index-Internals]] — Index types, EXPLAIN, pitfalls
+  - [[PostgreSQL/05-Performance-Tuning]] — Memory, vacuum, monitoring, anti-patterns
+  - [[PostgreSQL/06-Query-Planner]] — Cost model, join algorithms, plan caching
