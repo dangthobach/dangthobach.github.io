@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>18-Snapshot-Internals-Deep-Dive</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="Dang Tho Bach's Knowledge Base"/><meta property="og:title" content="18-Snapshot-Internals-Deep-Dive"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="18-Snapshot-Internals-Deep-Dive"/><meta name="twitter:description" content="18 — PostgreSQL Snapshot Internals: Cơ Chế Thực Sự &amp; Giới Hạn So Với Oracle Audience: Senior engineers cần hiểu sâu cơ chế snapshot để debug isolation bugs, tune performance, và đưa ra quyết định kiến trúc đúng đắn."/><meta property="og:description" content="18 — PostgreSQL Snapshot Internals: Cơ Chế Thực Sự &amp; Giới Hạn So Với Oracle Audience: Senior engineers cần hiểu sâu cơ chế snapshot để debug isolation bugs, tune performance, và đưa ra quyết định kiến trúc đúng đắn."/><meta property="og:image:alt" content="18 — PostgreSQL Snapshot Internals: Cơ Chế Thực Sự &amp; Giới Hạn So Với Oracle Audience: Senior engineers cần hiểu sâu cơ chế snapshot để debug isolation bugs, tune performance, và đưa ra quyết định kiến trúc đúng đắn."/><meta property="twitter:domain" content="dangthobach.github.io/knowledge"/><meta property="og:url" content="https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/18-Snapshot-Internals-Deep-Dive"/><meta property="twitter:url" content="https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/18-Snapshot-Internals-Deep-Dive"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="18 — PostgreSQL Snapshot Internals: Cơ Chế Thực Sự &amp; Giới Hạn So Với Oracle Audience: Senior engineers cần hiểu sâu cơ chế snapshot để debug isolation bugs, tune performance, và đưa ra quyết định kiến trúc đúng đắn."/><meta name="generator" content="Quartz"/><link href="../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiL2hvbWUvcnVubmVyL3dvcmsvZGFuZ3Rob2JhY2guZ2l0aHViLmlvL2Rhbmd0aG9iYWNoLmdpdGh1Yi5pby9xdWFydHovcXVhcnR6L2NvbXBvbmVudHMvc3R5bGVzIiwic291cmNlcyI6WyJtZXJtYWlkLmlubGluZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFHRjtFQUNFOzs7QUFLRjtFQUNFO0VBQ0E7OztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTs7QUFJRjtFQUNFO0VBQ0E7RUFDQSIsInNvdXJjZXNDb250ZW50IjpbIi5leHBhbmQtYnV0dG9uIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbG9hdDogcmlnaHQ7XG4gIHBhZGRpbmc6IDAuNHJlbTtcbiAgbWFyZ2luOiAwLjNyZW07XG4gIHJpZ2h0OiAwOyAvLyBOT1RFOiByaWdodCB3aWxsIGJlIHNldCBpbiBtZXJtYWlkLmlubGluZS50c1xuICBjb2xvcjogdmFyKC0tZ3JheSk7XG4gIGJvcmRlci1jb2xvcjogdmFyKC0tZGFyayk7XG4gIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgYm9yZGVyOiAxcHggc29saWQ7XG4gIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgb3BhY2l0eTogMDtcbiAgdHJhbnNpdGlvbjogMC4ycztcblxuICAmID4gc3ZnIHtcbiAgICBmaWxsOiB2YXIoLS1saWdodCk7XG4gICAgZmlsdGVyOiBjb250cmFzdCgwLjMpO1xuICB9XG5cbiAgJjpob3ZlciB7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIGJvcmRlci1jb2xvcjogdmFyKC0tc2Vjb25kYXJ5KTtcbiAgfVxuXG4gICY6Zm9jdXMge1xuICAgIG91dGxpbmU6IDA7XG4gIH1cbn1cblxucHJlIHtcbiAgJjpob3ZlciA+IC5leHBhbmQtYnV0dG9uIHtcbiAgICBvcGFjaXR5OiAxO1xuICAgIHRyYW5zaXRpb246IDAuMnM7XG4gIH1cbn1cblxuI21lcm1haWQtY29udGFpbmVyIHtcbiAgcG9zaXRpb246IGZpeGVkO1xuICBjb250YWluOiBsYXlvdXQ7XG4gIHotaW5kZXg6IDk5OTtcbiAgbGVmdDogMDtcbiAgdG9wOiAwO1xuICB3aWR0aDogMTAwdnc7XG4gIGhlaWdodDogMTAwdmg7XG4gIG92ZXJmbG93OiBoaWRkZW47XG4gIGRpc3BsYXk6IG5vbmU7XG4gIGJhY2tkcm9wLWZpbHRlcjogYmx1cig0cHgpO1xuICBiYWNrZ3JvdW5kOiByZ2JhKDAsIDAsIDAsIDAuNSk7XG5cbiAgJi5hY3RpdmUge1xuICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgfVxuXG4gICYgPiAjbWVybWFpZC1zcGFjZSB7XG4gICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gICAgYm9yZGVyLXJhZGl1czogNXB4O1xuICAgIHBvc2l0aW9uOiBmaXhlZDtcbiAgICB0b3A6IDUwJTtcbiAgICBsZWZ0OiA1MCU7XG4gICAgdHJhbnNmb3JtOiB0cmFuc2xhdGUoLTUwJSwgLTUwJSk7XG4gICAgaGVpZ2h0OiA4MHZoO1xuICAgIHdpZHRoOiA4MHZ3O1xuICAgIG92ZXJmbG93OiBoaWRkZW47XG5cbiAgICAmID4gLm1lcm1haWQtY29udGVudCB7XG4gICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgICB0cmFuc2Zvcm0tb3JpZ2luOiAwIDA7XG4gICAgICB0cmFuc2l0aW9uOiB0cmFuc2Zvcm0gMC4xcyBlYXNlO1xuICAgICAgb3ZlcmZsb3c6IHZpc2libGU7XG4gICAgICBtaW4taGVpZ2h0OiAyMDBweDtcbiAgICAgIG1pbi13aWR0aDogMjAwcHg7XG5cbiAgICAgIHByZSB7XG4gICAgICAgIG1hcmdpbjogMDtcbiAgICAgICAgYm9yZGVyOiBub25lO1xuICAgICAgfVxuXG4gICAgICBzdmcge1xuICAgICAgICBtYXgtd2lkdGg6IG5vbmU7XG4gICAgICAgIGhlaWdodDogYXV0bztcbiAgICAgIH1cbiAgICB9XG5cbiAgICAmID4gLm1lcm1haWQtY29udHJvbHMge1xuICAgICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgICAgYm90dG9tOiAyMHB4O1xuICAgICAgcmlnaHQ6IDIwcHg7XG4gICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgZ2FwOiA4cHg7XG4gICAgICBwYWRkaW5nOiA4cHg7XG4gICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgYm9yZGVyLXJhZGl1czogNnB4O1xuICAgICAgYm94LXNoYWRvdzogMCAycHggNHB4IHJnYmEoMCwgMCwgMCwgMC4xKTtcbiAgICAgIHotaW5kZXg6IDI7XG5cbiAgICAgIC5tZXJtYWlkLWNvbnRyb2wtYnV0dG9uIHtcbiAgICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgIHdpZHRoOiAzMnB4O1xuICAgICAgICBoZWlnaHQ6IDMycHg7XG4gICAgICAgIHBhZGRpbmc6IDA7XG4gICAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgICAgY29sb3I6IHZhcigtLWRhcmspO1xuICAgICAgICBib3JkZXItcmFkaXVzOiA0cHg7XG4gICAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICAgICAgZm9udC1zaXplOiAxNnB4O1xuICAgICAgICBmb250LWZhbWlseTogdmFyKC0tYm9keUZvbnQpO1xuICAgICAgICB0cmFuc2l0aW9uOiBhbGwgMC4ycyBlYXNlO1xuXG4gICAgICAgICY6aG92ZXIge1xuICAgICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIH1cblxuICAgICAgICAmOmFjdGl2ZSB7XG4gICAgICAgICAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKDFweCk7XG4gICAgICAgIH1cblxuICAgICAgICAvLyBTdHlsZSB0aGUgcmVzZXQgYnV0dG9uIGRpZmZlcmVudGx5XG4gICAgICAgICY6bnRoLWNoaWxkKDIpIHtcbiAgICAgICAgICB3aWR0aDogYXV0bztcbiAgICAgICAgICBwYWRkaW5nOiAwIDEycHg7XG4gICAgICAgICAgZm9udC1zaXplOiAxNHB4O1xuICAgICAgICB9XG4gICAgICB9XG4gICAgfVxuICB9XG59XG4iXX0= */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://dangthobach.github.io/knowledge/index.xml"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image" content="https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/18-Snapshot-Internals-Deep-Dive-og-image.webp"/><meta property="og:image:url" content="https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/18-Snapshot-Internals-Deep-Dive-og-image.webp"/><meta name="twitter:image" content="https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/18-Snapshot-Internals-Deep-Dive-og-image.webp"/><meta property="og:image:type" content="image/.webp"/></head><body data-slug="Database-Patterns/PostgreSQL/18-Snapshot-Internals-Deep-Dive"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../..">Dang Tho Bach's Knowledge Base</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-72"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-72" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Database-Patterns/">Database Patterns</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Database-Patterns/PostgreSQL/">PostgreSQL</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>18 Snapshot Internals Deep Dive</a></div></nav><h1 class="article-title">18-Snapshot-Internals-Deep-Dive</h1><p show-comma="true" class="content-meta"><time datetime="2026-05-07T06:39:59.000Z">May 07, 2026</time><span>29 min read</span></p><ul class="tags"><li><a href="../../tags/postgresql" class="internal tag-link">postgresql</a></li><li><a href="../../tags/snapshot" class="internal tag-link">snapshot</a></li><li><a href="../../tags/mvcc" class="internal tag-link">mvcc</a></li><li><a href="../../tags/oracle" class="internal tag-link">oracle</a></li><li><a href="../../tags/internals" class="internal tag-link">internals</a></li><li><a href="../../tags/concurrency" class="internal tag-link">concurrency</a></li><li><a href="../../tags/bloat" class="internal tag-link">bloat</a></li><li><a href="../../tags/vacuum" class="internal tag-link">vacuum</a></li></ul></div></div><article class="popover-hint"><h1 id="18--postgresql-snapshot-internals-cơ-chế-thực-sự--giới-hạn-so-với-oracle">18 — PostgreSQL Snapshot Internals: Cơ Chế Thực Sự &amp; Giới Hạn So Với Oracle<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#18--postgresql-snapshot-internals-cơ-chế-thực-sự--giới-hạn-so-với-oracle" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<blockquote>
+<p><strong>Audience:</strong> Senior engineers cần hiểu sâu cơ chế snapshot để debug isolation bugs, tune performance, và đưa ra quyết định kiến trúc đúng đắn.
+<strong>Scope:</strong> Cấu trúc snapshot data structure, vòng đời đầy đủ, các vấn đề cố hữu của PostgreSQL MVCC, và cách Oracle giải quyết chúng khác biệt như thế nào.
+<strong>Liên kết:</strong> <a href="../../Database-Patterns/PostgreSQL/02-MVCC-Concurrency" class="internal" data-slug="Database-Patterns/PostgreSQL/02-MVCC-Concurrency">02-MVCC-Concurrency</a> | <a href="../../Database-Patterns/PostgreSQL/01-ACID-Internals" class="internal" data-slug="Database-Patterns/PostgreSQL/01-ACID-Internals">01-ACID-Internals</a> | <a href="../../Database-Patterns/PostgreSQL/15-Transaction-Isolation-Levels-Compared" class="internal" data-slug="Database-Patterns/PostgreSQL/15-Transaction-Isolation-Levels-Compared">15-Transaction-Isolation-Levels-Compared</a> | <a href="../../Database-Patterns/PostgreSQL/08-MVCC-MySQL-PostgreSQL-Oracle" class="internal" data-slug="Database-Patterns/PostgreSQL/08-MVCC-MySQL-PostgreSQL-Oracle">08-MVCC-MySQL-PostgreSQL-Oracle</a></p>
+</blockquote>
+<hr/>
+<h2 id="-mục-lục">📋 Mục lục<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-mục-lục" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<ol>
+<li><a href="#1-snapshot-l%C3%A0-g%C3%AC--%C4%91%E1%BB%8Bnh-ngh%C4%A9a-ch%C3%ADnh-x%C3%A1c" class="internal alias">Snapshot là gì — Định nghĩa chính xác</a></li>
+<li><a href="#2-c%E1%BA%A5u-tr%C3%BAc-d%E1%BB%AF-li%E1%BB%87u-th%E1%BB%B1c-t%E1%BA%BF-trong-source-code" class="internal alias">Cấu trúc dữ liệu thực tế trong source code</a></li>
+<li><a href="#3-v%C3%B2ng-%C4%91%E1%BB%9Di-snapshot--t%E1%BB%AB-khi-sinh-%C4%91%E1%BA%BFn-khi-ch%E1%BA%BFt" class="internal alias">Vòng đời snapshot — Từ khi sinh đến khi chết</a></li>
+<li><a href="#4-snapshot-acquisition--%C4%91i%E1%BB%81u-th%E1%BB%B1c-s%E1%BB%B1-x%E1%BA%A3y-ra" class="internal alias">Snapshot Acquisition — Điều thực sự xảy ra</a></li>
+<li><a href="#5-visibility-check--thu%E1%BA%ADt-to%C3%A1n-%C4%91%E1%BA%A7y-%C4%91%E1%BB%A7" class="internal alias">Visibility Check — Thuật toán đầy đủ</a></li>
+<li><a href="#6-snapshot-export--import--pg_export_snapshot" class="internal alias">Snapshot Export &amp; Import — pg_export_snapshot</a></li>
+<li><a href="#7-c%C3%A1c-v%E1%BA%A5n-%C4%91%E1%BB%81-c%E1%BB%91-h%E1%BB%AFu-c%E1%BB%A7a-postgresql-snapshot-model" class="internal alias">Các vấn đề cố hữu của PostgreSQL snapshot model</a></li>
+<li><a href="#8-oracle-undo-segment--ki%E1%BA%BFn-tr%C3%BAc-kh%C3%A1c-bi%E1%BB%87t-c%C4%83n-b%E1%BA%A3n" class="internal alias">Oracle Undo Segment — Kiến trúc khác biệt căn bản</a></li>
+<li><a href="#9-%C4%91%E1%BB%91i-chi%E1%BA%BFu-postgresql-vs-oracle--b%E1%BA%A3ng-so-s%C3%A1nh-khoa-h%E1%BB%8Dc" class="internal alias">Đối chiếu PostgreSQL vs Oracle — Bảng so sánh khoa học</a></li>
+<li><a href="#10-h%E1%BB%87-qu%E1%BA%A3-th%E1%BB%B1c-t%E1%BA%BF-cho-pdmsbanking-workloads" class="internal alias">Hệ quả thực tế cho PDMS/Banking workloads</a></li>
+</ol>
+<hr/>
+<h2 id="1-snapshot-là-gì--định-nghĩa-chính-xác">1. Snapshot là gì — Định nghĩa chính xác<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-snapshot-là-gì--định-nghĩa-chính-xác" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Snapshot <strong>không phải</strong> là bản sao dữ liệu. Snapshot là một <strong>predicate</strong> — một tập điều kiện luận lý để quyết định xem một tuple phiên bản nào được “nhìn thấy” tại một thời điểm nhất định.</p>
+<pre><code>┌─────────────────────────────────────────────────────────────────────────┐
+│              Snapshot = &quot;Ảnh chụp trạng thái commit space&quot;               │
+│                                                                         │
+│  Không phải: copy của dữ liệu vào thời điểm T                           │
+│  Đúng hơn:   bộ quy tắc để lọc tuple nào visible                        │
+│                                                                         │
+│  Tương tự: không phải &quot;chụp ảnh cuốn sách lúc 3:00 PM&quot;                  │
+│             mà là &quot;quy tắc: tôi chỉ đọc những trang được in              │
+│             trước 3:00 PM và chưa bị xé đi&quot;                              │
+└─────────────────────────────────────────────────────────────────────────┘
+</code></pre>
+<h3 id="hai-loại-snapshot-trong-postgresql">Hai loại snapshot trong PostgreSQL<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#hai-loại-snapshot-trong-postgresql" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>┌──────────────────────────────────┬──────────────────────────────────────┐
+│         SnapshotNow              │        Registered Snapshot            │
+│   (Statement-level snapshot)     │    (Transaction-level snapshot)       │
+├──────────────────────────────────┼──────────────────────────────────────┤
+│ Lấy mới mỗi statement            │ Lấy một lần khi transaction bắt đầu  │
+│ READ COMMITTED behavior          │ REPEATABLE READ / SERIALIZABLE        │
+│ Không cần register               │ Phải register để giữ xmin horizon     │
+│ Rẻ (no ref counting)             │ Đắt hơn (cần ProcArray update)        │
+└──────────────────────────────────┴──────────────────────────────────────┘
+</code></pre>
+<hr/>
+<h2 id="2-cấu-trúc-dữ-liệu-thực-tế-trong-source-code">2. Cấu trúc dữ liệu thực tế trong source code<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-cấu-trúc-dữ-liệu-thực-tế-trong-source-code" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Đây là định nghĩa thực từ PostgreSQL source (<code>src/include/utils/snapshot.h</code>):</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">/*</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"> * Snapshot — đơn giản hóa từ source PostgreSQL</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"> * Các field quan trọng nhất:</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"> */</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">typedef</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> SnapshotData {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    SnapshotType snapshot_type;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"> /* MVCC, Any, Self, v.v. */</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">    /*</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">     * Đây là TRÁI TIM của snapshot MVCC:</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">     */</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    TransactionId xmin;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">   /* Tất cả XID &lt; xmin đều đã committed</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">                             (hoặc đã aborted) khi snapshot được lấy.</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">                             Không cần check pg_xact cho chúng nữa. */</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    TransactionId xmax;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">   /* Tất cả XID >= xmax đều chưa tồn tại</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">                             khi snapshot được lấy. Luôn invisible. */</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    TransactionId </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">xip;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">   /* Mảng các XID đang in-progress</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">                             (đã bắt đầu nhưng chưa commit/abort)</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">                             xmin &lt;= xip[i] &lt; xmax */</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    uint32  xcnt;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">         /* Số phần tử trong xip */</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">    /*</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">     * Cho Serializable Isolation:</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">     */</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    TransactionId subxmin;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    TransactionId </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">subxip;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    int32   subxcnt;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    bool</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    suboverflowed;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">  /* xip quá lớn → cờ &quot;có thể có thêm&quot; */</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">    /*</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">     * Reference counting để biết khi nào có thể giải phóng:</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">     */</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    uint32  active_count;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">   /* Số portal đang dùng snapshot này */</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    uint32  regd_count;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">     /* Số lần được &quot;registered&quot; */</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    pairingheap_node ph_node;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"> /* Vị trí trong heap của registered snapshots */</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    TimestampTz whenTaken;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">  /* Thời điểm snapshot được lấy (debug) */</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    XLogRecPtr  lsn;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">        /* LSN để check WAL consistency */</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">} SnapshotData;</span></span></code></pre></figure>
+<pre><code>┌─────────────────────────────────────────────────────────────────────┐
+│                   SnapshotData — Minh họa bộ nhớ                    │
+│                                                                     │
+│  xmin = 500    ──────────────────────────────────────────────────►  │
+│                 Mọi XID &lt; 500 đã settled (committed/aborted)        │
+│                                                                     │
+│  xmax = 520    ──────────────────────────────────────────────────►  │
+│                 Mọi XID >= 520 chưa tồn tại khi snapshot lấy        │
+│                                                                     │
+│  xip = [502, 507, 515]   (in-progress)                              │
+│         │     │     │                                               │
+│         │     │     └── XID 515: đang chạy, uncommitted            │
+│         │     └──────── XID 507: đang chạy, uncommitted            │
+│         └────────────── XID 502: đang chạy, uncommitted            │
+│                                                                     │
+│  Vùng &quot;nhìn thấy được&quot;:                                             │
+│                                                                     │
+│  │◄── invisible ──►│◄──────── visible (nếu committed) ────────►│   │
+│  0               499  500           519  │      520 → ∞           │
+│                                      [xip members → invisible]     │
+└─────────────────────────────────────────────────────────────────────┘
+</code></pre>
+<h3 id="tại-sao-cần-xip-array">Tại sao cần xip array?<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#tại-sao-cần-xip-array" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Vùng <code>[xmin, xmax)</code> <strong>không phải tất cả đều committed</strong>. Một số XID trong range này đang in-progress. <code>xip</code> list chính xác những XID đó.</p>
+<pre><code>Ví dụ thực tế:
+  XID 500: committed (balance transfer xong)
+  XID 502: in-progress (session của user A đang sửa document)
+  XID 507: in-progress (batch job đang chạy)
+  XID 508: committed
+  XID 515: in-progress
+  XID 519: committed
+
+  Snapshot lấy lúc này:
+  xmin = 502 (XID nhỏ nhất chưa committed)
+  xmax = 520 (next XID sẽ được assign)
+  xip  = [502, 507, 515]
+
+  Khi check XID 508:
+  → 508 trong [xmin=502, xmax=520)? YES
+  → 508 trong xip=[502, 507, 515]? NO
+  → Vậy 508 đã committed → VISIBLE ✓
+
+  Khi check XID 507:
+  → 507 trong [xmin=502, xmax=520)? YES
+  → 507 trong xip=[502, 507, 515]? YES
+  → UNCOMMITTED → INVISIBLE ✗
+</code></pre>
+<hr/>
+<h2 id="3-vòng-đời-snapshot--từ-khi-sinh-đến-khi-chết">3. Vòng đời snapshot — Từ khi sinh đến khi chết<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-vòng-đời-snapshot--từ-khi-sinh-đến-khi-chết" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><code>┌─────────────────────────────────────────────────────────────────────────┐
+│                    Snapshot Lifecycle                                    │
+│                                                                         │
+│                    ┌──────────────────┐                                  │
+│                    │  BEGIN (hoặc đầu │                                  │
+│                    │  statement đầu   │                                  │
+│                    │  tiên)           │                                  │
+│                    └────────┬─────────┘                                  │
+│                             │                                           │
+│                             ▼                                           │
+│              ┌──────────────────────────────┐                           │
+│              │   GetTransactionSnapshot()   │                           │
+│              │   hoặc GetLatestSnapshot()   │                           │
+│              │                             │                           │
+│              │   1. Lock ProcArrayLock      │                           │
+│              │   2. Duyệt ProcArray         │                           │
+│              │      (mọi running process)   │                           │
+│              │   3. Tính xmin, xmax, xip    │                           │
+│              │   4. Unlock ProcArrayLock    │                           │
+│              └──────────────┬───────────────┘                           │
+│                             │                                           │
+│              ┌──────────────▼───────────────┐                           │
+│              │    Snapshot object tạo ra    │                           │
+│              │    (stack-allocated hoặc     │                           │
+│              │     heap-allocated)          │                           │
+│              └──────────────┬───────────────┘                           │
+│                             │                                           │
+│              ┌──────────────▼───────────────┐                           │
+│              │  RegisterSnapshot() nếu cần  │                           │
+│              │  → Thêm vào registered list  │                           │
+│              │  → Cập nhật xmin horizon     │                           │
+│              │    (ngăn VACUUM xóa tuples   │                           │
+│              │     mà snapshot cần)         │                           │
+│              └──────────────┬───────────────┘                           │
+│                             │                                           │
+│              ┌──────────────▼───────────────┐                           │
+│              │   Sử dụng trong queries:     │                           │
+│              │   HeapTupleSatisfiesMVCC()   │                           │
+│              │   per-tuple visibility check  │                           │
+│              └──────────────┬───────────────┘                           │
+│                             │                                           │
+│              ┌──────────────▼───────────────┐                           │
+│              │  UnregisterSnapshot() /      │                           │
+│              │  Transaction commit/rollback │                           │
+│              │  → Xóa khỏi registered list  │                           │
+│              │  → xmin horizon có thể tiến  │                           │
+│              │  → VACUUM có thể tiến hành   │                           │
+│              └──────────────────────────────┘                           │
+└─────────────────────────────────────────────────────────────────────────┘
+</code></pre>
+<h3 id="xmin-horizon--khái-niệm-sống-còn">xmin horizon — Khái niệm sống còn<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#xmin-horizon--khái-niệm-sống-còn" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p><strong>xmin horizon</strong> = XID nhỏ nhất của tất cả active snapshots trên toàn hệ thống.</p>
+<pre><code>┌─────────────────────────────────────────────────────────────────┐
+│                     Global xmin Horizon                          │
+│                                                                 │
+│  Session 1 snapshot: xmin = 450                                 │
+│  Session 2 snapshot: xmin = 480                                 │
+│  Session 3 snapshot: xmin = 495                                 │
+│                                                                 │
+│  Global xmin horizon = min(450, 480, 495) = 450                 │
+│                                                                 │
+│  VACUUM có thể dọn dead tuples với xmax &lt; 450                   │
+│  (vì không có snapshot nào cần thấy chúng nữa)                  │
+│                                                                 │
+│  Nếu Session 1 giữ snapshot với xmin=450 mãi mãi:               │
+│  → Global horizon bị &quot;stuck&quot; tại 450                            │
+│  → Dead tuples từ XID 451 trở đi không thể vacuum               │
+│  → BLOAT!                                                       │
+│                                                                 │
+│  Đây là nguồn gốc của vấn đề &quot;long-running transactions&quot;         │
+│  trong PostgreSQL                                               │
+└─────────────────────────────────────────────────────────────────┘
+</code></pre>
+<hr/>
+<h2 id="4-snapshot-acquisition--điều-thực-sự-xảy-ra">4. Snapshot Acquisition — Điều thực sự xảy ra<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-snapshot-acquisition--điều-thực-sự-xảy-ra" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Khi PostgreSQL lấy snapshot, nó phải quét <strong>ProcArray</strong> — mảng chứa thông tin của mọi backend process đang chạy.</p>
+<pre><code>┌─────────────────────────────────────────────────────────────────────────┐
+│                       ProcArray Scan                                     │
+│                                                                         │
+│  ProcArray (shared memory):                                             │
+│  ┌───────────────────────────────────────────────────────────────────┐  │
+│  │  PGPROC[0]: backend PID=1001, XID=502, status=running            │  │
+│  │  PGPROC[1]: backend PID=1002, XID=507, status=running            │  │
+│  │  PGPROC[2]: backend PID=1003, XID=0,   status=idle               │  │
+│  │  PGPROC[3]: backend PID=1004, XID=515, status=running            │  │
+│  │  PGPROC[4]: autovacuum worker,  XID=518, status=running          │  │
+│  │  ...                                                             │  │
+│  └───────────────────────────────────────────────────────────────────┘  │
+│                                                                         │
+│  Quy trình GetSnapshotData():                                            │
+│                                                                         │
+│  1. LWLockAcquire(ProcArrayLock, LW_SHARED)   ← shared lock           │
+│     (tất cả backend khác không thể commit/begin trong lúc này)          │
+│                                                                         │
+│  2. latestCompletedXid = ShmemVariableCache->latestCompletedXid        │
+│     xmax = latestCompletedXid + 1                                       │
+│                                                                         │
+│  3. Duyệt mỗi PGPROC:                                                  │
+│     if PGPROC.xid != InvalidXid:                                        │
+│         xip[xcnt++] = PGPROC.xid                                        │
+│                                                                         │
+│  4. xmin = min(xip)                                                     │
+│                                                                         │
+│  5. LWLockRelease(ProcArrayLock)                                        │
+│                                                                         │
+│  Kết quả: Snapshot = {xmin=502, xmax=520, xip=[502,507,515,518]}       │
+└─────────────────────────────────────────────────────────────────────────┘
+</code></pre>
+<h3 id="chi-phí-của-snapshot-acquisition">Chi phí của snapshot acquisition<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#chi-phí-của-snapshot-acquisition" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>O(N) trong đó N = số active backends
+
+Với N=100 backends:
+  → 100 PGPROC entries cần đọc
+  → ProcArrayLock held trong suốt thời gian đó
+  → Mọi transaction commit/begin phải chờ lock này
+
+Đây là lý do:
+  max_connections ảnh hưởng trực tiếp đến snapshot overhead
+  1000 connections → snapshot acquisition chậm hơn ~10x so với 100
+  → PgBouncer/connection pooling là CRITICAL, không phải optional
+</code></pre>
+<hr/>
+<h2 id="5-visibility-check--thuật-toán-đầy-đủ">5. Visibility Check — Thuật toán đầy đủ<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5-visibility-check--thuật-toán-đầy-đủ" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Hàm <code>HeapTupleSatisfiesMVCC()</code> trong source code thực hiện logic này:</p>
+<pre><code>┌─────────────────────────────────────────────────────────────────────────┐
+│             HeapTupleSatisfiesMVCC(tuple, snapshot)                      │
+│                                                                         │
+│  INPUT: tuple(xmin, xmax, infomask), snapshot(xmin, xmax, xip)          │
+│                                                                         │
+│  PHASE 1: Check xmin (ai tạo ra tuple này?)                             │
+│  ┌───────────────────────────────────────────────────────────────────┐  │
+│  │                                                                   │  │
+│  │  IF HEAP_XMIN_INVALID set in infomask:                           │  │
+│  │     → xmin aborted → tuple NEVER EXISTED → return false          │  │
+│  │                                                                   │  │
+│  │  IF HEAP_XMIN_COMMITTED set in infomask:                         │  │
+│  │     → cached result: xmin committed → skip pg_xact check         │  │
+│  │     → nhảy sang PHASE 2                                          │  │
+│  │                                                                   │  │
+│  │  IF tuple.xmin == current transaction XID:                       │  │
+│  │     → tự mình tạo ra → có thể thấy → nhảy sang PHASE 2          │  │
+│  │                                                                   │  │
+│  │  IF tuple.xmin in snapshot.xip:                                  │  │
+│  │     → in-progress khi snapshot lấy → NOT VISIBLE → return false  │  │
+│  │                                                                   │  │
+│  │  IF tuple.xmin &lt; snapshot.xmin:                                  │  │
+│  │     → committed trước mọi active tx → VISIBLE (xmin ok)          │  │
+│  │                                                                   │  │
+│  │  IF tuple.xmin >= snapshot.xmax:                                 │  │
+│  │     → chưa tồn tại khi snapshot lấy → NOT VISIBLE → return false │  │
+│  │                                                                   │  │
+│  │  ELSE (xmin trong [snapshot.xmin, snapshot.xmax)):               │  │
+│  │     → Không trong xip → đã committed giữa chừng → VISIBLE        │  │
+│  │                                                                   │  │
+│  └───────────────────────────────────────────────────────────────────┘  │
+│                                                                         │
+│  PHASE 2: Check xmax (ai xóa/update tuple này?)                         │
+│  ┌───────────────────────────────────────────────────────────────────┐  │
+│  │                                                                   │  │
+│  │  IF tuple.xmax == 0:                                             │  │
+│  │     → chưa bị xóa → VISIBLE → return true ✓                     │  │
+│  │                                                                   │  │
+│  │  IF HEAP_XMAX_INVALID (infomask):                                │  │
+│  │     → xmax aborted → xóa không thành → VISIBLE → return true ✓  │  │
+│  │                                                                   │  │
+│  │  IF tuple.xmax == current transaction XID:                       │  │
+│  │     → tự mình xóa → NOT VISIBLE (đã xóa trong tx này)           │  │
+│  │                                                                   │  │
+│  │  IF tuple.xmax in snapshot.xip:                                  │  │
+│  │     → xóa đang in-progress → chúng ta không thấy việc xóa        │  │
+│  │     → VISIBLE → return true ✓                                    │  │
+│  │                                                                   │  │
+│  │  IF tuple.xmax &lt; snapshot.xmin:                                  │  │
+│  │     → xóa đã committed trước snapshot → NOT VISIBLE → false      │  │
+│  │                                                                   │  │
+│  │  IF tuple.xmax >= snapshot.xmax:                                 │  │
+│  │     → xóa xảy ra sau snapshot → chúng ta không thấy             │  │
+│  │     → VISIBLE → return true ✓                                    │  │
+│  │                                                                   │  │
+│  │  ELSE:                                                           │  │
+│  │     Check pg_xact: xmax committed? NOT VISIBLE : VISIBLE         │  │
+│  │                                                                   │  │
+│  └───────────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────────┘
+</code></pre>
+<h3 id="minh-họa-với-timeline-thực-tế">Minh họa với timeline thực tế<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#minh-họa-với-timeline-thực-tế" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>Timeline (thời gian trôi từ trái sang phải):
+
+  T=1:  Tx 100 INSERT row A (salary=5000)            → committed
+  T=2:  Tx 200 BEGIN (READ COMMITTED)
+  T=3:  Tx 150 UPDATE row A (salary=6000)            → committed
+  T=4:  Tx 200 SELECT salary FROM employees (statement 1)
+                Snapshot₂₀₀ₐ = {xmin=200, xmax=201, xip=[200]}
+                                (READ COMMITTED: snapshot per statement)
+  T=5:  Tx 200 SELECT salary FROM employees (statement 2)
+                Snapshot₂₀₀ᵦ = {xmin=200, xmax=201, xip=[200]}
+
+  Tuples trên disk:
+  Tuple A₁: (xmin=100, xmax=150, salary=5000)
+  Tuple A₂: (xmin=150, xmax=0,   salary=6000)
+
+  Tx200 statement 1 thấy gì?
+  → Tuple A₁: xmax=150 &lt; xmin=200 → committed trước snapshot → NOT VISIBLE
+  → Tuple A₂: xmin=150 &lt; xmin=200 → committed → VISIBLE, xmax=0 → VISIBLE
+  → salary = 6000 ✓
+
+  ─────────────────────────────────────────────────────────────────────
+
+  Bây giờ với REPEATABLE READ:
+  T=2': Tx 200 BEGIN (REPEATABLE READ)
+  Snapshot₂₀₀ = {xmin=101, xmax=151, xip=[]}
+                  (giả sử chỉ Tx100 đã committed, Tx150 chưa bắt đầu)
+
+  T=3': Tx 150 UPDATE row A (salary=6000) → committed (sau snapshot của Tx200!)
+
+  T=4': Tx 200 SELECT salary
+  → Tuple A₁: xmin=100 &lt; 101 → VISIBLE; xmax=150 >= xmax=151? NO.
+              150 trong xip=[]? NO. 150 &lt; xmin=101? NO.
+              150 trong [101, 151)? YES, không trong xip → committed
+              → xmax committed trong tầm nhìn của snapshot → NOT VISIBLE
+              Hmm... cần check: 150 committed TRƯỚC snapshot (xmax=151 là next XID khi snapshot lấy)
+              → 150 &lt; 151 → đã committed trước snapshot
+              → Việc xóa visible → tuple A₁ NOT VISIBLE
+  → Tuple A₂: xmin=150 in [101, 151)? YES, không trong xip → committed
+              Nhưng 150 >= xmax=151? NO. 150 committed trong snapshot? Check:
+              150 in [xmin=101, xmax=151) và không trong xip → committed TRƯỚC snapshot
+              → xmin VISIBLE. xmax=0 → VISIBLE
+  → salary = 6000 ✓ (Repeatable read thấy update vì update xảy ra trước snapshot!)
+</code></pre>
+<hr/>
+<h2 id="6-snapshot-export--import--pg_export_snapshot">6. Snapshot Export &amp; Import — pg_export_snapshot<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#6-snapshot-export--import--pg_export_snapshot" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>PostgreSQL cho phép chia sẻ snapshot giữa các transaction độc lập — cực kỳ hữu ích cho parallel processing.</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="sql" data-theme="github-light github-dark"><code data-language="sql" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Session 1 (coordinator):</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">BEGIN</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> ISOLATION</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> LEVEL</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> REPEATABLE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> READ</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SELECT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> pg_export_snapshot();</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Returns: '00000003-00000001-1'</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Snapshot này được &quot;frozen&quot; — Session 1 KHÔNG COMMIT cho đến khi workers xong</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Session 2 (worker 1):</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">BEGIN</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> ISOLATION</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> LEVEL</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> REPEATABLE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> READ</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SET</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> TRANSACTION</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> SNAPSHOT</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> '00000003-00000001-1'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SELECT</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> *</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> FROM</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> large_table </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">WHERE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> id % </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">2</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;   </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- xử lý even rows</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Session 3 (worker 2):</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">BEGIN</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> ISOLATION</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> LEVEL</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> REPEATABLE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> READ</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SET</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> TRANSACTION</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> SNAPSHOT</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> '00000003-00000001-1'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SELECT</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> *</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> FROM</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> large_table </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">WHERE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> id % </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">2</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;   </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- xử lý odd rows</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Cả hai workers thấy CÙNG một snapshot → consistent parallel scan</span></span></code></pre></figure>
+<pre><code>┌──────────────────────────────────────────────────────────────────────┐
+│                   Exported Snapshot Mechanism                         │
+│                                                                      │
+│  Session 1 (Exporter)                                                │
+│  ┌─────────────────────┐                                             │
+│  │ snapshot = {        │  ──── export ────►  snapshot file:          │
+│  │   xmin: 500,        │                    /tmp/pg_snapshots/       │
+│  │   xmax: 520,        │                    00000003-00000001-1      │
+│  │   xip: [502,507]    │                                             │
+│  │ }                   │                                             │
+│  │ refcount: 3         │ ◄── Session 1,2,3 đều giữ reference        │
+│  └─────────────────────┘                                             │
+│                                                                      │
+│  xmin horizon bị giữ tại 500                                         │
+│  → VACUUM không thể dọn dead tuples với xmax >= 500                 │
+│  → QUAN TRỌNG: Session 1 phải commit/rollback kịp thời               │
+└──────────────────────────────────────────────────────────────────────┘
+</code></pre>
+<p><strong>Ứng dụng thực tế trong PDMS:</strong></p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="java" data-theme="github-light github-dark"><code data-language="java" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// Parallel document migration với consistent snapshot</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">@</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Transactional</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">isolation</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> Isolation.REPEATABLE_READ)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">public</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> String </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">exportSnapshot</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">() {</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    return</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> jdbcTemplate.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">queryForObject</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">        &quot;SELECT pg_export_snapshot()&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, String.class);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// Worker threads import snapshot này</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// Tất cả thấy cùng dataset → không bị inconsistency khi migrate</span></span></code></pre></figure>
+<hr/>
+<h2 id="7-các-vấn-đề-cố-hữu-của-postgresql-snapshot-model">7. Các vấn đề cố hữu của PostgreSQL snapshot model<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#7-các-vấn-đề-cố-hữu-của-postgresql-snapshot-model" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="vấn-đề-1-table-bloat-từ-dead-tuples">Vấn đề 1: Table Bloat từ Dead Tuples<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#vấn-đề-1-table-bloat-từ-dead-tuples" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>┌──────────────────────────────────────────────────────────────────────┐
+│                         Table Bloat Problem                           │
+│                                                                      │
+│  Root cause: PostgreSQL lưu TẤT CẢ versions trong heap               │
+│              (cả current lẫn old versions)                           │
+│                                                                      │
+│  Scenario: Bảng accounts với 1M rows, UPDATE balance mỗi giây        │
+│                                                                      │
+│  Sau 1 giờ:                                                          │
+│  ┌─────────────────────────────────────────────────────────────┐     │
+│  │  Page 1:  [dead][dead][dead][dead][live][dead][live][dead]   │     │
+│  │  Page 2:  [dead][live][dead][dead][dead][live][dead][dead]   │     │
+│  │  ...                                                        │     │
+│  │  Page N:  [live][dead][live][dead][dead][dead][live][dead]   │     │
+│  └─────────────────────────────────────────────────────────────┘     │
+│                                                                      │
+│  Physical size: 10x logical size (90% dead tuples!)                  │
+│  Sequential scan: đọc 10x data cần thiết                             │
+│  Index: trỏ vào dead tuples → index bloat                            │
+│                                                                      │
+│  VACUUM dọn được → nhưng KHÔNG shrink file!                          │
+│  (chỉ free slots để reuse, không TRUNCATE file)                      │
+│                                                                      │
+│  Solution: VACUUM FULL (lock table!) hoặc pg_repack (online)         │
+└──────────────────────────────────────────────────────────────────────┘
+</code></pre>
+<h3 id="vấn-đề-2-long-running-transaction--bloat-accumulation">Vấn đề 2: Long-Running Transaction = Bloat Accumulation<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#vấn-đề-2-long-running-transaction--bloat-accumulation" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>┌──────────────────────────────────────────────────────────────────────┐
+│              Long-Running Transaction Blocking Vacuum                 │
+│                                                                      │
+│  T=0:    Tx_OLD BEGIN, snapshot xmin = 1000                          │
+│  T=1:    Tx_OLD làm gì đó chậm (report generation, migration...)    │
+│  T=100:  Hàng nghìn UPDATE diễn ra: XID 1001 → 5000                │
+│          Dead tuples: (xmax=1001) đến (xmax=4999)                   │
+│  T=101:  AUTOVACUUM chạy                                             │
+│          Global xmin horizon = min(Tx_OLD.xmin=1000, others)        │
+│          → horizon = 1000                                            │
+│          → VACUUM chỉ dọn dead tuples với xmax &lt; 1000               │
+│          → Không có gì để dọn! (tất cả dead tuples có xmax >= 1001) │
+│  T=200:  Tx_OLD vẫn chạy. Bloat tiếp tục tích lũy.                 │
+│                                                                      │
+│  Hệ quả:                                                            │
+│  • Table size tăng liên tục                                          │
+│  • Query plans degraded (stale statistics)                           │
+│  • I/O tăng (scan nhiều dead pages)                                  │
+│  • Có thể OOM nếu shared_buffers fill với bloat pages               │
+└──────────────────────────────────────────────────────────────────────┘
+</code></pre>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="sql" data-theme="github-light github-dark"><code data-language="sql" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Phát hiện long-running transactions</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SELECT</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    pid,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    usename,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    application_name,</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    state</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    EXTRACT(EPOCH </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">FROM</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">now</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">() </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> xact_start))::</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">int</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> AS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> tx_duration_sec,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    EXTRACT(EPOCH </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">FROM</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">now</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">() </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> query_start))::</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">int</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> AS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> query_duration_sec,</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">    left</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(query, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">100</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">AS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> current_query,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    age(backend_xmin) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">AS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> xmin_age  </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Bao nhiêu XID phía sau</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">FROM</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> pg_stat_activity</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">WHERE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> state</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> !=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> 'idle'</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">  AND</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> xact_start </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">IS NOT NULL</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ORDER BY</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> tx_duration_sec </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">DESC</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Alert khi tx > 5 phút và bloat có thể nghiêm trọng</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- tx_duration_sec > 300 → investigate!</span></span></code></pre></figure>
+<h3 id="vấn-đề-3-snapshot-overhead-tăng-theo-connection-count">Vấn đề 3: Snapshot Overhead tăng theo connection count<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#vấn-đề-3-snapshot-overhead-tăng-theo-connection-count" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>┌──────────────────────────────────────────────────────────────────────┐
+│              Snapshot Acquisition Cost vs Connections                 │
+│                                                                      │
+│  GetSnapshotData() = O(N connections) với ProcArrayLock held         │
+│                                                                      │
+│  100 connections:  ~5μs   per snapshot acquisition                   │
+│  500 connections:  ~25μs  (linear scaling)                           │
+│  1000 connections: ~50μs  + lock contention overhead                 │
+│  5000 connections: ~250μs + severe contention → throughput collapse  │
+│                                                                      │
+│  Mỗi query cần ít nhất 1 snapshot                                    │
+│  OLTP: 1000 QPS × 50μs = 5% CPU chỉ cho snapshot acquisition!       │
+│                                                                      │
+│  Giải pháp bắt buộc: Connection pooling (PgBouncer, pgpool-II)       │
+│  Target: actual_connections &lt; 100-200                                 │
+│          client connections pooled đằng sau                          │
+└──────────────────────────────────────────────────────────────────────┘
+</code></pre>
+<h3 id="vấn-đề-4-oom-từ-xip-array-với-nhiều-active-transactions">Vấn đề 4: OOM từ xip Array với nhiều active transactions<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#vấn-đề-4-oom-từ-xip-array-với-nhiều-active-transactions" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>Khi xcnt (số in-progress XIDs) lớn:
+  xip array được allocated trên heap
+  Mỗi snapshot: xcnt × 4 bytes
+
+  500 active transactions × 4 bytes = 2KB per snapshot
+  1000 queries/s × 2KB = 2MB/s allocation pressure
+
+  Nếu subxip overflow (subtransactions > PGPROC_MAX_CACHED_SUBXIDS = 64):
+  → suboverflowed = true
+  → PostgreSQL phải scan pg_subtrans cho mọi visibility check
+  → SEVERE performance degradation
+
+  Subtransaction là root cause của nhiều production incidents!
+</code></pre>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="sql" data-theme="github-light github-dark"><code data-language="sql" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- NGUY HIỂM: Savepoints tạo subtransactions</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">BEGIN</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">SAVEPOINT sp1;</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- ... nhiều operations ...</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">SAVEPOINT sp2;  </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Mỗi SAVEPOINT = 1 subtransaction</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- ... 64+ savepoints → suboverflowed = true → performance cliff!</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ROLLBACK</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> TO</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> sp1;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">COMMIT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span></code></pre></figure>
+<h3 id="vấn-đề-5-xid-wraparound--catastrophic-failure-mode">Vấn đề 5: XID Wraparound — Catastrophic Failure Mode<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#vấn-đề-5-xid-wraparound--catastrophic-failure-mode" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>┌──────────────────────────────────────────────────────────────────────┐
+│                    XID Wraparound Horror Show                         │
+│                                                                      │
+│  XID space: 0 ──────────────────────────────────► 2³²-1 (4.3B)      │
+│                                                                      │
+│  PostgreSQL dùng modular arithmetic:                                 │
+│  XID A &quot;cũ hơn&quot; XID B nếu B - A (mod 2³²) &lt; 2³¹                    │
+│                                                                      │
+│  Normal:                                                             │
+│  Current XID = 3,000,000,000                                         │
+│  Tuple xmin  = 2,999,999,000  → &quot;1000 transactions trước&quot; → VISIBLE  │
+│                                                                      │
+│  Sau wraparound (chưa freeze):                                       │
+│  Current XID = 500,000 (sau khi wrap)                                │
+│  Tuple xmin  = 2,999,999,000                                         │
+│  Diff = 500,000 - 2,999,999,000 mod 2³² = 1,295,968,296             │
+│  1,295,968,296 &lt; 2,147,483,648 (2³¹)?  YES                          │
+│  → PostgreSQL nghĩ tuple &quot;cũ&quot; 1.3B transactions                     │
+│  → Nhưng 2,999,999,000 có thể &quot;trong tương lai&quot; với một số logic    │
+│                                                                      │
+│  Thực tế: một số old tuples sẽ trở nên INVISIBLE                    │
+│  → Data disappears! Không crash, không error — chỉ silent wrong data │
+│  → Đây là worst possible failure mode                                │
+│                                                                      │
+│  Phòng ngừa: VACUUM FREEZE định kỳ, monitor age(relfrozenxid)       │
+│  PostgreSQL tự động SHUT DOWN nếu approaching 3M XIDs to wraparound  │
+└──────────────────────────────────────────────────────────────────────┘
+</code></pre>
+<hr/>
+<h2 id="8-oracle-undo-segment--kiến-trúc-khác-biệt-căn-bản">8. Oracle Undo Segment — Kiến trúc khác biệt căn bản<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#8-oracle-undo-segment--kiến-trúc-khác-biệt-căn-bản" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Oracle giải quyết bài toán snapshot theo cách <strong>hoàn toàn khác về cơ bản</strong>.</p>
+<h3 id="oracle-mvcc-undo-based-model">Oracle MVCC: Undo-Based Model<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#oracle-mvcc-undo-based-model" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>┌──────────────────────────────────────────────────────────────────────┐
+│                    Oracle vs PostgreSQL MVCC Model                    │
+│                                                                      │
+│  PostgreSQL (Copy-on-write trong Heap):                               │
+│                                                                      │
+│  Heap file:  [v1: old][v2: new][v3: newer][v4: current]              │
+│              ↑ mọi versions đều nằm trong heap                       │
+│              VACUUM dọn old versions                                  │
+│                                                                      │
+│  ─────────────────────────────────────────────────────────────────── │
+│                                                                      │
+│  Oracle (Undo Segment):                                              │
+│                                                                      │
+│  Heap file:  [current version chỉ]                                   │
+│                   │                                                  │
+│                   └──► Undo Segment (riêng biệt):                   │
+│                          [delta: old → current]                      │
+│                          [delta: older → old]                        │
+│                          [delta: oldest → older]                     │
+│                                                                      │
+│  Để đọc &quot;version tại thời điểm T&quot;:                                   │
+│  1. Đọc current block từ heap                                        │
+│  2. Apply undo deltas ngược về thời điểm T                           │
+│  3. Kết quả = &quot;constructed&quot; snapshot                                 │
+└──────────────────────────────────────────────────────────────────────┘
+</code></pre>
+<h3 id="oracle-scn--system-change-number">Oracle SCN — System Change Number<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#oracle-scn--system-change-number" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Oracle không dùng XID như PostgreSQL. Oracle dùng <strong>SCN (System Change Number)</strong> — một monotonically increasing 48-bit number.</p>
+<pre><code>SCN ≠ XID:
+  XID: identifies a specific transaction
+  SCN: identifies a specific point in the database timeline
+       (giống như &quot;database timestamp&quot; ở resolution rất cao)
+
+SCN có 2 component:
+  SCN = (base, wrap) → (48-bit effective range)
+
+Oracle tăng SCN khi:
+  - Transaction commits
+  - Database checkpoint
+  - Distributed transaction coordination
+  - Redo log switch
+</code></pre>
+<pre><code>┌──────────────────────────────────────────────────────────────────────┐
+│                      Oracle Snapshot via SCN                          │
+│                                                                      │
+│  Query bắt đầu → Oracle record SCN_query = current SCN              │
+│                                                                      │
+│  Khi đọc block:                                                      │
+│  Block có SCN_block (khi block được modified lần cuối)               │
+│                                                                      │
+│  Case 1: SCN_block &lt;= SCN_query                                      │
+│          → Block phản ánh state tại/trước query time                 │
+│          → Read directly (consistent!) ✓                             │
+│                                                                      │
+│  Case 2: SCN_block > SCN_query                                       │
+│          → Block đã bị modify SAU query bắt đầu                     │
+│          → Oracle cần &quot;rollback&quot; block về state tại SCN_query        │
+│          → Vào Undo Segment, apply undo records                      │
+│          → Construct &quot;CR block&quot; (Consistent Read block)              │
+│          → Đọc CR block ✓                                            │
+└──────────────────────────────────────────────────────────────────────┘
+</code></pre>
+<h3 id="oracle-undo-segment-architecture">Oracle Undo Segment Architecture<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#oracle-undo-segment-architecture" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>┌──────────────────────────────────────────────────────────────────────┐
+│                    Oracle Undo Tablespace                             │
+│                                                                      │
+│  UNDO tablespace:                                                    │
+│  ┌─────────────────────────────────────────────────────────────┐    │
+│  │  Undo Segment 1 (USN=1):                                    │    │
+│  │  ┌──────────┬──────────┬──────────┬──────────┐             │    │
+│  │  │ Extent 1 │ Extent 2 │ Extent 3 │ Extent 4 │             │    │
+│  │  │          │          │          │          │             │    │
+│  │  │ Transaction Header  │          │          │             │    │
+│  │  │ XID, status,        │          │          │             │    │
+│  │  │ SCN, wrap#          │          │          │             │    │
+│  │  │          │          │          │          │             │    │
+│  │  │ Undo records:       │          │          │             │    │
+│  │  │ [before-image]      │ [before] │ [before] │             │    │
+│  │  │ [row-level lock]    │          │          │             │    │
+│  │  └──────────┴──────────┴──────────┴──────────┘             │    │
+│  │                                                             │    │
+│  │  Undo Segment 2 (USN=2): ...                               │    │
+│  │  Undo Segment N: ...                                       │    │
+│  └─────────────────────────────────────────────────────────────┘    │
+│                                                                      │
+│  Segments được assign tự động khi transaction bắt đầu                │
+│  Segments REUSED theo vòng tròn (circular — quan trọng!)             │
+│  → Old undo bị overwrite khi segment đầy                            │
+└──────────────────────────────────────────────────────────────────────┘
+</code></pre>
+<h3 id="oracle-cr-block-construction">Oracle CR Block Construction<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#oracle-cr-block-construction" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>┌──────────────────────────────────────────────────────────────────────┐
+│                   Consistent Read Block Construction                  │
+│                                                                      │
+│  Data Block (current, modified by SCN=1000):                         │
+│  ┌───────────────────────────────────────────────────────────┐       │
+│  │ Row 1: salary=8000 (ITL: XID=Tx_C, SCN=1000, locked)    │       │
+│  │ Row 2: salary=5000 (ITL: XID=Tx_A, SCN=800, committed)  │       │
+│  └───────────────────────────────────────────────────────────┘       │
+│                                                                      │
+│  Query có SCN_query=900 → cần thấy state lúc SCN=900                │
+│                                                                      │
+│  Step 1: Copy block vào buffer cache (CR buffer)                     │
+│  Step 2: Check ITL (Interested Transaction List) entries:            │
+│          Row 1 modified at SCN=1000 > 900 → cần undo                 │
+│          Row 2 modified at SCN=800 &lt;= 900 → OK                       │
+│                                                                      │
+│  Step 3: Tìm undo record cho Tx_C tại SCN=1000                      │
+│          Apply undo: salary 8000 → 7000 (giá trị cũ)                │
+│                                                                      │
+│  Step 4: Check lại: Row 1 now SCN=850 (previous version)            │
+│          850 &lt;= 900 → OK!                                            │
+│                                                                      │
+│  CR Block:                                                           │
+│  ┌───────────────────────────────────────────────────────────┐       │
+│  │ Row 1: salary=7000 (SCN=850, consistent for query)       │       │
+│  │ Row 2: salary=5000 (SCN=800, consistent for query)       │       │
+│  └───────────────────────────────────────────────────────────┘       │
+│                                                                      │
+│  Query đọc CR Block → consistent read ✓                              │
+│  CR Block discarded sau khi dùng (không persist)                     │
+└──────────────────────────────────────────────────────────────────────┘
+</code></pre>
+<h3 id="oracle-ora-01555-snapshot-too-old--hệ-quả-của-undo-model">Oracle “ORA-01555: snapshot too old” — Hệ quả của undo model<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#oracle-ora-01555-snapshot-too-old--hệ-quả-của-undo-model" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>┌──────────────────────────────────────────────────────────────────────┐
+│              Oracle ORA-01555: Snapshot Too Old                       │
+│                                                                      │
+│  Vấn đề:                                                             │
+│  Undo segments có kích thước hữu hạn.                                │
+│  Oracle overwrite undo cũ khi cần space cho undo mới.               │
+│                                                                      │
+│  Scenario:                                                           │
+│  T=0:   Long query bắt đầu với SCN_query=5000                        │
+│  T=1:   Nhiều UPDATE diễn ra → undo segments fill up                 │
+│  T=100: Undo cũ (SCN 5000-6000) bị overwrite bởi undo mới           │
+│  T=101: Long query cần construct CR block cho SCN=5000               │
+│         → Undo records đã bị overwrite                               │
+│         → ORA-01555: snapshot too old!                               │
+│         → Query FAILS, phải restart                                  │
+│                                                                      │
+│  PostgreSQL equivalent:                                              │
+│  → KHÔNG CÓ vấn đề này!                                             │
+│  → PostgreSQL giữ dead tuples miễn là có snapshot cần chúng         │
+│  → Trade-off: bloat thay vì ORA-01555                                │
+│                                                                      │
+│  Oracle solutions:                                                   │
+│  • UNDO_RETENTION parameter: bao lâu Oracle CỐ GẮNG giữ undo        │
+│  • GUARANTEE retention: GUARANTEE (có thể fail DML nếu undo full)   │
+│  • Tăng UNDO tablespace size                                         │
+│  • Optimize long queries để chạy nhanh hơn                          │
+└──────────────────────────────────────────────────────────────────────┘
+</code></pre>
+<hr/>
+<h2 id="9-đối-chiếu-postgresql-vs-oracle--bảng-so-sánh-khoa-học">9. Đối chiếu PostgreSQL vs Oracle — Bảng so sánh khoa học<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#9-đối-chiếu-postgresql-vs-oracle--bảng-so-sánh-khoa-học" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="bảng-tổng-hợp-kiến-trúc">Bảng tổng hợp kiến trúc<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#bảng-tổng-hợp-kiến-trúc" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>┌──────────────────────┬────────────────────────────┬─────────────────────────────┐
+│ Dimension            │ PostgreSQL                 │ Oracle                      │
+├──────────────────────┼────────────────────────────┼─────────────────────────────┤
+│ Storage model        │ Heap-only (all versions    │ Current version in heap,    │
+│                      │ in heap file)              │ old versions in undo        │
+├──────────────────────┼────────────────────────────┼─────────────────────────────┤
+│ Version identifier   │ XID (32-bit, ~4.3B max)    │ SCN (48-bit, effectively    │
+│                      │                            │ unlimited)                  │
+├──────────────────────┼────────────────────────────┼─────────────────────────────┤
+│ Snapshot mechanism   │ xmin/xmax/xip tuple        │ SCN-based CR block          │
+│                      │                            │ construction                │
+├──────────────────────┼────────────────────────────┼─────────────────────────────┤
+│ Snapshot storage     │ In-memory SnapshotData     │ Undo segments (disk)        │
+│                      │ struct                     │                             │
+├──────────────────────┼────────────────────────────┼─────────────────────────────┤
+│ Old version cleanup  │ VACUUM (manual or auto),   │ Automatic undo overwrite    │
+│                      │ explicit background job    │ when segment wraps          │
+├──────────────────────┼────────────────────────────┼─────────────────────────────┤
+│ Bloat risk           │ HIGH (dead tuples in       │ LOW (undo separate from     │
+│                      │ same heap)                 │ live data)                  │
+├──────────────────────┼────────────────────────────┼─────────────────────────────┤
+│ Snapshot age limit   │ Unlimited (snapshot        │ Limited by UNDO_RETENTION   │
+│                      │ blocks vacuum but no       │ and undo tablespace size    │
+│                      │ &quot;too old&quot; failure)         │ → ORA-01555 possible        │
+├──────────────────────┼────────────────────────────┼─────────────────────────────┤
+│ Long query impact    │ Blocks vacuum → bloat      │ May get ORA-01555 if undo   │
+│                      │ (degraded performance)     │ overwritten (query fails)   │
+├──────────────────────┼────────────────────────────┼─────────────────────────────┤
+│ Read performance     │ Direct tuple access,       │ May need CR block           │
+│ (hot data)           │ no reconstruction needed   │ construction (overhead)     │
+├──────────────────────┼────────────────────────────┼─────────────────────────────┤
+│ Write amplification  │ Writes full new tuple      │ Writes undo record + update │
+│                      │ + undo in WAL              │ current (smaller writes)    │
+├──────────────────────┼────────────────────────────┼─────────────────────────────┤
+│ Concurrent readers   │ Zero read-write conflict   │ Zero read-write conflict    │
+│                      │ (MVCC)                     │ (MVCC via CR blocks)        │
+├──────────────────────┼────────────────────────────┼─────────────────────────────┤
+│ Scalability          │ xip array O(connections)   │ No equivalent overhead      │
+│ bottleneck           │ ProcArrayLock contention   │ SCN-based, more scalable    │
+├──────────────────────┼────────────────────────────┼─────────────────────────────┤
+│ Catastrophic failure │ XID wraparound (DB stops   │ No equivalent               │
+│                      │ accepting writes at        │ (SCN space effectively      │
+│                      │ ~2B XIDs to wraparound)    │ infinite)                   │
+├──────────────────────┼────────────────────────────┼─────────────────────────────┤
+│ Snapshot isolation   │ Serializable (SSI with     │ Serializable (requires      │
+│ level                │ predicate locking)         │ locking, not true MVCC)     │
+└──────────────────────┴────────────────────────────┴─────────────────────────────┘
+</code></pre>
+<h3 id="điểm-oracle-giải-quyết-tốt-hơn">Điểm Oracle giải quyết tốt hơn<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#điểm-oracle-giải-quyết-tốt-hơn" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>1. KHÔNG CÓ table bloat từ MVCC:
+   Oracle dead data nằm trong undo (tự overwrite)
+   PostgreSQL dead data chiếm heap space mãi đến khi VACUUM
+
+2. Unlimited snapshot history (giới hạn bởi storage, không bởi logic):
+   Oracle: undo_retention có thể set rất lớn nếu có disk
+   PostgreSQL: snapshot không thể quá cũ (XID wraparound)
+
+3. SCN space thực tế không bao giờ wraparound:
+   Oracle SCN: 48-bit = 281 trillion → hàng triệu năm
+   PostgreSQL XID: 32-bit = 4.3 billion → production DBs gặp này thực tế
+
+4. Consistent read không block cleanup:
+   Oracle có thể overwrite undo bất cứ lúc nào (trade: ORA-01555)
+   PostgreSQL phải giữ dead tuples cho đến khi mọi snapshot cũ hơn release
+
+5. Kích thước ProcArray không ảnh hưởng read path:
+   Oracle visibility check không cần scan toàn bộ active sessions
+   PostgreSQL: O(N) scan mỗi snapshot acquisition
+</code></pre>
+<h3 id="điểm-postgresql-giải-quyết-tốt-hơn-hoặc-khác-biệt">Điểm PostgreSQL giải quyết tốt hơn hoặc khác biệt<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#điểm-postgresql-giải-quyết-tốt-hơn-hoặc-khác-biệt" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>1. KHÔNG CÓ ORA-01555:
+   PostgreSQL đảm bảo long queries không fail vì snapshot &quot;quá cũ&quot;
+   (nhưng trả giá bằng bloat)
+
+2. Simpler backup và point-in-time recovery:
+   PostgreSQL WAL chứa toàn bộ before/after images
+   Oracle requires undo + redo + archive logs để PITR
+
+3. Vacuum tunable granularly:
+   Per-table autovacuum settings
+   Oracle undo retention là global, ít granular hơn
+
+4. Open source, không license fee:
+   Không phải điểm kỹ thuật nhưng critical cho nhiều org
+
+5. Index-only scan với Visibility Map:
+   Optimization tinh tế không có equivalent trong Oracle
+</code></pre>
+<hr/>
+<h2 id="10-hệ-quả-thực-tế-cho-pdmsbanking-workloads">10. Hệ quả thực tế cho PDMS/Banking workloads<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#10-hệ-quả-thực-tế-cho-pdmsbanking-workloads" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="scenarios-thường-gặp-và-cách-xử-lý">Scenarios thường gặp và cách xử lý<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#scenarios-thường-gặp-và-cách-xử-lý" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p><strong>Scenario 1: Document search trong khi batch update chạy</strong></p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="sql" data-theme="github-light github-dark"><code data-language="sql" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- PDMS: Tìm documents trong khi background job update status</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Vấn đề: batch job tạo nhiều dead tuples → scan chậm</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Monitoring:</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SELECT</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    relname,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    n_dead_tup,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    n_live_tup,</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">    ROUND</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(n_dead_tup::</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">numeric</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> /</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> NULLIF</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(n_live_tup, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 100</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">2</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">AS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> bloat_ratio_pct</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">FROM</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> pg_stat_user_tables</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">WHERE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> relname </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">IN</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">'documents'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">'document_versions'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">'document_metadata'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ORDER BY</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> bloat_ratio_pct </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">DESC</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Nếu bloat_ratio_pct > 20% → aggressive vacuum:</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">VACUUM ANALYZE documents;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Tune autovacuum cho documents table (UPDATE heavy):</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ALTER</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> TABLE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> documents </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SET</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    autovacuum_vacuum_scale_factor </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">05</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,   </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- vacuum sau 5% dead</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    autovacuum_vacuum_cost_delay </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 2</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,         </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- ít throttle hơn</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    autovacuum_vacuum_cost_limit </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 400</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">        -- làm nhiều hơn mỗi lần</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span></code></pre></figure>
+<p><strong>Scenario 2: Long-running report query block vacuum</strong></p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="sql" data-theme="github-light github-dark"><code data-language="sql" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Phát hiện reports đang block vacuum:</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SELECT</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">    a</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">pid</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">    a</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">usename</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">    a</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">application_name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    age(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">a</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">backend_xmin</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">AS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> xmin_horizon_age,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    EXTRACT(EPOCH </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">FROM</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">now</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">() </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> a</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">xact_start</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">))::</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">int</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> AS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> tx_seconds,</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">    left</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">a</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">query</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">200</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">FROM</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> pg_stat_activity a</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">WHERE</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> a</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">backend_xmin</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> IS NOT NULL</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">  AND</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> age(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">a</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">backend_xmin</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">></span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 10000</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">  -- đang hold xmin horizon</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ORDER BY</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> age(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">a</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">backend_xmin</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">DESC</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Nếu tx_seconds > 300 và xmin_horizon_age > 100000 → investigate!</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Option: pg_terminate_backend(pid) nếu không critical</span></span></code></pre></figure>
+<p><strong>Scenario 3: Tránh subtransaction overflow trong PDMS workflows</strong></p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="java" data-theme="github-light github-dark"><code data-language="java" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// NGUY HIỂM: Quá nhiều savepoints trong 1 transaction</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">@</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Transactional</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">public</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> void</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> processDocumentBatch</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(List</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&lt;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">Document</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">></span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> docs) {</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    for</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (Document doc </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">:</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> docs) {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        Object savepoint </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> TransactionAspectSupport</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">currentTransactionStatus</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">().</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">createSavepoint</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">();</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        try</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">            processDocument</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(doc);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        } </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">catch</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (Exception </span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">e</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            TransactionAspectSupport.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">currentTransactionStatus</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">()</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">                .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">rollbackToSavepoint</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(savepoint); </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// Tạo subtransaction!</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    }</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">    // 64+ documents → suboverflowed → performance cliff!</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// TỐT HƠN: Xử lý từng document trong transaction riêng</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">@</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Transactional</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">propagation</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> Propagation.REQUIRES_NEW)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">public</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> void</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> processDocument</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(Document doc) {</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">    // Nếu fail → chỉ rollback 1 transaction nhỏ</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">    // Không cần savepoints</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></figure>
+<p><strong>Scenario 4: Exported snapshot cho parallel document migration</strong></p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="java" data-theme="github-light github-dark"><code data-language="java" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// Coordinator service</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">@</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Service</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">public</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> class</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> DocumentMigrationCoordinator</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    @</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Transactional</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">isolation</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> Isolation.REPEATABLE_READ)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    public</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> void</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> coordinateMigration</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">() {</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">        // Lấy snapshot nhất quán</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        String snapshotId </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> jdbcTemplate.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">queryForObject</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">            &quot;SELECT pg_export_snapshot()&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, String.class);</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">        // Chia công việc cho workers</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        long</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> totalDocs </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> jdbcTemplate.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">queryForObject</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">            &quot;SELECT COUNT(*) FROM documents WHERE status = 'pending'&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            Long.class);</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">        // Launch workers với cùng snapshot</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> workerCount </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 4</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        List&lt;CompletableFuture&lt;</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Void</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">>> futures </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> new</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> ArrayList&lt;>();</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        for</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> i </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">; i </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&lt;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> workerCount; i</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">++</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) {</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">            final</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> workerId </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> i;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            futures.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">add</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(CompletableFuture.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">runAsync</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(() </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-></span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">                migrationWorker.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">process</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(snapshotId, workerId, workerCount)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            ));</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        }</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">        // Đợi tất cả workers xong</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        CompletableFuture.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">allOf</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(futures.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">toArray</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">new</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> CompletableFuture</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">])).</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">join</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">();</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">        // Transaction kết thúc → snapshot released → VACUUM có thể tiến hành</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">@</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Service</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">public</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> class</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> DocumentMigrationWorker</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    @</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Transactional</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">isolation</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> Isolation.REPEATABLE_READ)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    public</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> void</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> process</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(String </span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">snapshotId</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;"> workerId</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;"> totalWorkers</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) {</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">        // Import shared snapshot</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        jdbcTemplate.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">execute</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;SET TRANSACTION SNAPSHOT '&quot;</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> +</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> snapshotId </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">+</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;'&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">        // Mỗi worker xử lý partition của data</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        jdbcTemplate.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">query</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">            &quot;SELECT * FROM documents WHERE status='pending' AND id % ? = ?&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">            new</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> Object</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">[]{totalWorkers, workerId},</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            rs </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-></span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> { </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">/* migrate */</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        );</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></figure>
+<h3 id="monitoring-snapshot-health-trong-production">Monitoring snapshot health trong production<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#monitoring-snapshot-health-trong-production" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="sql" data-theme="github-light github-dark"><code data-language="sql" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Dashboard query: Snapshot health check</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">WITH</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> snapshot_info </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">AS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    SELECT</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        pid,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        usename,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        application_name,</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        state</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        backend_xmin,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        age(backend_xmin) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">AS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> xmin_age,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        EXTRACT(EPOCH </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">FROM</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">now</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">() </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> xact_start))::</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">int</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> AS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> tx_age_sec</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    FROM</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> pg_stat_activity</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    WHERE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> backend_xmin </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">IS NOT NULL</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">),</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">bloat_info </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">AS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    SELECT</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        relname,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        n_dead_tup,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        n_live_tup,</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        CASE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> WHEN</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> n_live_tup </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">></span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">             THEN</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> ROUND</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(n_dead_tup::</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">numeric</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> /</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> n_live_tup </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 100</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">             ELSE</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> END</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> AS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> dead_pct</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    FROM</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> pg_stat_user_tables</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    WHERE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> schemaname </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> 'public'</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SELECT</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">    'SNAPSHOT_HEALTH'</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> AS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> check_type,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    (</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SELECT</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> COUNT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">FROM</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> snapshot_info </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">WHERE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> xmin_age </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">></span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 1000000</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">AS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> long_horizon_count,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    (</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SELECT</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> MAX</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(xmin_age) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">FROM</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> snapshot_info) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">AS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> max_xmin_age,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    (</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SELECT</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> MAX</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(tx_age_sec) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">FROM</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> snapshot_info) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">AS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> max_tx_sec,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    (</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SELECT</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> SUM</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(n_dead_tup) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">FROM</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> bloat_info) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">AS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> total_dead_tuples,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    (</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SELECT</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> MAX</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(dead_pct) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">FROM</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> bloat_info) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">AS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> max_table_dead_pct,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    (</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SELECT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> relname </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">FROM</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> bloat_info </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ORDER BY</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> dead_pct </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">DESC</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> LIMIT</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">AS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> most_bloated_table;</span></span></code></pre></figure>
+<hr/>
+<h2 id="tóm-tắt--mental-model-hoàn-chỉnh">Tóm tắt — Mental Model hoàn chỉnh<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#tóm-tắt--mental-model-hoàn-chỉnh" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><code>┌─────────────────────────────────────────────────────────────────────────┐
+│                  PostgreSQL Snapshot — Big Picture                       │
+│                                                                         │
+│  Snapshot = predicate {xmin, xmax, xip}                                 │
+│  → Không phải bản sao data                                              │
+│  → Định nghĩa tập committed transactions &quot;nhìn thấy được&quot;               │
+│                                                                         │
+│  Chi phí:                                                               │
+│  • Acquisition: O(N connections), ProcArrayLock                         │
+│  • Storage: dead tuples trong heap đến khi VACUUM                       │
+│  • Risk: XID wraparound (32-bit), long-tx bloat                         │
+│                                                                         │
+│  Oracle giải quyết:                                                     │
+│  • Undo segments (circular) → không bloat heap                          │
+│  • SCN (48-bit) → không wraparound trong thực tế                        │
+│  • CR block construction → reads luôn consistent                        │
+│  • Trade-off: ORA-01555 khi undo bị overwrite                           │
+│                                                                         │
+│  Cho banking workloads:                                                 │
+│  • Monitor xmin horizon, bloat ratio, long transactions                 │
+│  • Tune autovacuum aggressively cho UPDATE-heavy tables                 │
+│  • Tránh subtransaction overflow (&lt; 64 savepoints per tx)               │
+│  • Dùng exported snapshots cho consistent parallel processing           │
+│  • Connection pooling là mandatory (không phải optional)                │
+└─────────────────────────────────────────────────────────────────────────┘
+</code></pre>
+<hr/>
+<h2 id="related-notes">Related Notes<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#related-notes" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<ul>
+<li><a href="../../Database-Patterns/PostgreSQL/02-MVCC-Concurrency" class="internal" data-slug="Database-Patterns/PostgreSQL/02-MVCC-Concurrency">02-MVCC-Concurrency</a> — MVCC cơ bản: xmin/xmax, dead tuples, vacuum lifecycle</li>
+<li><a href="../../Database-Patterns/PostgreSQL/01-ACID-Internals" class="internal" data-slug="Database-Patterns/PostgreSQL/01-ACID-Internals">01-ACID-Internals</a> — WAL, checkpoint, crash recovery</li>
+<li><a href="../../Database-Patterns/PostgreSQL/15-Transaction-Isolation-Levels-Compared" class="internal" data-slug="Database-Patterns/PostgreSQL/15-Transaction-Isolation-Levels-Compared">15-Transaction-Isolation-Levels-Compared</a> — RC vs RR vs Serializable chi tiết</li>
+<li><a href="../../Database-Patterns/PostgreSQL/08-MVCC-MySQL-PostgreSQL-Oracle" class="internal" data-slug="Database-Patterns/PostgreSQL/08-MVCC-MySQL-PostgreSQL-Oracle">08-MVCC-MySQL-PostgreSQL-Oracle</a> — So sánh MVCC implementation 3 database</li>
+<li><a href="../../Database-Patterns/PostgreSQL/03-Concurrency-Patterns" class="internal" data-slug="Database-Patterns/PostgreSQL/03-Concurrency-Patterns">03-Concurrency-Patterns</a> — FOR UPDATE, SKIP LOCKED, advisory locks</li>
+<li><a href="../../Database-Patterns/PostgreSQL/05-Performance-Tuning" class="internal" data-slug="Database-Patterns/PostgreSQL/05-Performance-Tuning">05-Performance-Tuning</a> — Vacuum configuration chi tiết, bloat monitoring</li>
+</ul>
+<hr/>
+<p><em>Tags: <a href="../.././../tags/postgresql" class="tag-link internal alias" data-slug="tags/postgresql">postgresql</a> <a href="../.././../tags/snapshot" class="tag-link internal alias" data-slug="tags/snapshot">snapshot</a> <a href="../.././../tags/mvcc" class="tag-link internal alias" data-slug="tags/mvcc">mvcc</a> <a href="../.././../tags/oracle" class="tag-link internal alias" data-slug="tags/oracle">oracle</a> <a href="../.././../tags/internals" class="tag-link internal alias" data-slug="tags/internals">internals</a> <a href="../.././../tags/concurrency" class="tag-link internal alias" data-slug="tags/concurrency">concurrency</a> <a href="../.././../tags/bloat" class="tag-link internal alias" data-slug="tags/bloat">bloat</a> <a href="../.././../tags/vacuum" class="tag-link internal alias" data-slug="tags/vacuum">vacuum</a></em>
+<em>Created: 2026-05-07 | Difficulty: ⭐⭐⭐⭐⭐ | Area: Database-Patterns/PostgreSQL</em></p></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-22" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#18--postgresql-snapshot-internals-cơ-chế-thực-sự--giới-hạn-so-với-oracle" data-for="18--postgresql-snapshot-internals-cơ-chế-thực-sự--giới-hạn-so-với-oracle">18 — PostgreSQL Snapshot Internals: Cơ Chế Thực Sự &amp; Giới Hạn So Với Oracle</a></li><li class="depth-1"><a href="#-mục-lục" data-for="-mục-lục">📋 Mục lục</a></li><li class="depth-1"><a href="#1-snapshot-là-gì--định-nghĩa-chính-xác" data-for="1-snapshot-là-gì--định-nghĩa-chính-xác">1. Snapshot là gì — Định nghĩa chính xác</a></li><li class="depth-2"><a href="#hai-loại-snapshot-trong-postgresql" data-for="hai-loại-snapshot-trong-postgresql">Hai loại snapshot trong PostgreSQL</a></li><li class="depth-1"><a href="#2-cấu-trúc-dữ-liệu-thực-tế-trong-source-code" data-for="2-cấu-trúc-dữ-liệu-thực-tế-trong-source-code">2. Cấu trúc dữ liệu thực tế trong source code</a></li><li class="depth-2"><a href="#tại-sao-cần-xip-array" data-for="tại-sao-cần-xip-array">Tại sao cần xip array?</a></li><li class="depth-1"><a href="#3-vòng-đời-snapshot--từ-khi-sinh-đến-khi-chết" data-for="3-vòng-đời-snapshot--từ-khi-sinh-đến-khi-chết">3. Vòng đời snapshot — Từ khi sinh đến khi chết</a></li><li class="depth-2"><a href="#xmin-horizon--khái-niệm-sống-còn" data-for="xmin-horizon--khái-niệm-sống-còn">xmin horizon — Khái niệm sống còn</a></li><li class="depth-1"><a href="#4-snapshot-acquisition--điều-thực-sự-xảy-ra" data-for="4-snapshot-acquisition--điều-thực-sự-xảy-ra">4. Snapshot Acquisition — Điều thực sự xảy ra</a></li><li class="depth-2"><a href="#chi-phí-của-snapshot-acquisition" data-for="chi-phí-của-snapshot-acquisition">Chi phí của snapshot acquisition</a></li><li class="depth-1"><a href="#5-visibility-check--thuật-toán-đầy-đủ" data-for="5-visibility-check--thuật-toán-đầy-đủ">5. Visibility Check — Thuật toán đầy đủ</a></li><li class="depth-2"><a href="#minh-họa-với-timeline-thực-tế" data-for="minh-họa-với-timeline-thực-tế">Minh họa với timeline thực tế</a></li><li class="depth-1"><a href="#6-snapshot-export--import--pg_export_snapshot" data-for="6-snapshot-export--import--pg_export_snapshot">6. Snapshot Export &amp; Import — pg_export_snapshot</a></li><li class="depth-1"><a href="#7-các-vấn-đề-cố-hữu-của-postgresql-snapshot-model" data-for="7-các-vấn-đề-cố-hữu-của-postgresql-snapshot-model">7. Các vấn đề cố hữu của PostgreSQL snapshot model</a></li><li class="depth-2"><a href="#vấn-đề-1-table-bloat-từ-dead-tuples" data-for="vấn-đề-1-table-bloat-từ-dead-tuples">Vấn đề 1: Table Bloat từ Dead Tuples</a></li><li class="depth-2"><a href="#vấn-đề-2-long-running-transaction--bloat-accumulation" data-for="vấn-đề-2-long-running-transaction--bloat-accumulation">Vấn đề 2: Long-Running Transaction = Bloat Accumulation</a></li><li class="depth-2"><a href="#vấn-đề-3-snapshot-overhead-tăng-theo-connection-count" data-for="vấn-đề-3-snapshot-overhead-tăng-theo-connection-count">Vấn đề 3: Snapshot Overhead tăng theo connection count</a></li><li class="depth-2"><a href="#vấn-đề-4-oom-từ-xip-array-với-nhiều-active-transactions" data-for="vấn-đề-4-oom-từ-xip-array-với-nhiều-active-transactions">Vấn đề 4: OOM từ xip Array với nhiều active transactions</a></li><li class="depth-2"><a href="#vấn-đề-5-xid-wraparound--catastrophic-failure-mode" data-for="vấn-đề-5-xid-wraparound--catastrophic-failure-mode">Vấn đề 5: XID Wraparound — Catastrophic Failure Mode</a></li><li class="depth-1"><a href="#8-oracle-undo-segment--kiến-trúc-khác-biệt-căn-bản" data-for="8-oracle-undo-segment--kiến-trúc-khác-biệt-căn-bản">8. Oracle Undo Segment — Kiến trúc khác biệt căn bản</a></li><li class="depth-2"><a href="#oracle-mvcc-undo-based-model" data-for="oracle-mvcc-undo-based-model">Oracle MVCC: Undo-Based Model</a></li><li class="depth-2"><a href="#oracle-scn--system-change-number" data-for="oracle-scn--system-change-number">Oracle SCN — System Change Number</a></li><li class="depth-2"><a href="#oracle-undo-segment-architecture" data-for="oracle-undo-segment-architecture">Oracle Undo Segment Architecture</a></li><li class="depth-2"><a href="#oracle-cr-block-construction" data-for="oracle-cr-block-construction">Oracle CR Block Construction</a></li><li class="depth-2"><a href="#oracle-ora-01555-snapshot-too-old--hệ-quả-của-undo-model" data-for="oracle-ora-01555-snapshot-too-old--hệ-quả-của-undo-model">Oracle “ORA-01555: snapshot too old” — Hệ quả của undo model</a></li><li class="depth-1"><a href="#9-đối-chiếu-postgresql-vs-oracle--bảng-so-sánh-khoa-học" data-for="9-đối-chiếu-postgresql-vs-oracle--bảng-so-sánh-khoa-học">9. Đối chiếu PostgreSQL vs Oracle — Bảng so sánh khoa học</a></li><li class="depth-2"><a href="#bảng-tổng-hợp-kiến-trúc" data-for="bảng-tổng-hợp-kiến-trúc">Bảng tổng hợp kiến trúc</a></li><li class="depth-2"><a href="#điểm-oracle-giải-quyết-tốt-hơn" data-for="điểm-oracle-giải-quyết-tốt-hơn">Điểm Oracle giải quyết tốt hơn</a></li><li class="depth-2"><a href="#điểm-postgresql-giải-quyết-tốt-hơn-hoặc-khác-biệt" data-for="điểm-postgresql-giải-quyết-tốt-hơn-hoặc-khác-biệt">Điểm PostgreSQL giải quyết tốt hơn hoặc khác biệt</a></li><li class="depth-1"><a href="#10-hệ-quả-thực-tế-cho-pdmsbanking-workloads" data-for="10-hệ-quả-thực-tế-cho-pdmsbanking-workloads">10. Hệ quả thực tế cho PDMS/Banking workloads</a></li><li class="depth-2"><a href="#scenarios-thường-gặp-và-cách-xử-lý" data-for="scenarios-thường-gặp-và-cách-xử-lý">Scenarios thường gặp và cách xử lý</a></li><li class="depth-2"><a href="#monitoring-snapshot-health-trong-production" data-for="monitoring-snapshot-health-trong-production">Monitoring snapshot health trong production</a></li><li class="depth-1"><a href="#tóm-tắt--mental-model-hoàn-chỉnh" data-for="tóm-tắt--mental-model-hoàn-chỉnh">Tóm tắt — Mental Model hoàn chỉnh</a></li><li class="depth-1"><a href="#related-notes" data-for="related-notes">Related Notes</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://dangthobach.github.io/">Back to Portfolio</a></li><li><a href="https://github.com/dangthobach">GitHub</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../postscript.js" type="module" data-persist="true"></script></html>

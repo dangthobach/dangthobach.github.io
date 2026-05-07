@@ -6,65 +6,65 @@
       <description>Last 10 notes on Dang Tho Bach&#039;s Knowledge Base</description>
       <generator>Quartz -- quartz.jzhao.xyz</generator>
       <item>
-    <title>template-til</title>
-    <link>https://dangthobach.github.io/knowledge/_templates/template-til</link>
-    <guid>https://dangthobach.github.io/knowledge/_templates/template-til</guid>
-    <description><![CDATA[ TIL: {{title}} 💡 Insight 🔍 Context 🔗 Liên quan . ]]></description>
-    <pubDate>Wed, 06 May 2026 18:31:25 GMT</pubDate>
-  </item><item>
-    <title>template-pattern</title>
-    <link>https://dangthobach.github.io/knowledge/_templates/template-pattern</link>
-    <guid>https://dangthobach.github.io/knowledge/_templates/template-pattern</guid>
-    <description><![CDATA[ Pattern: {{title}} 🎯 Problem 💡 Solution 🔄 Flow &lt;!-- Diagram text hoặc steps --&gt; ✅ Pros / ❌ Cons ProsCons 📍 Applied In MOC-PDMS — 🔗 Related Patterns . ]]></description>
-    <pubDate>Wed, 06 May 2026 18:31:25 GMT</pubDate>
-  </item><item>
-    <title>template-concept</title>
-    <link>https://dangthobach.github.io/knowledge/_templates/template-concept</link>
-    <guid>https://dangthobach.github.io/knowledge/_templates/template-concept</guid>
-    <description><![CDATA[ {{title}} 📌 One-liner Concept này là gì trong một câu 🧠 Core Idea 🔁 Java / Rust Analog JavaRustEquivalentKey difference 💡 Khi nào dùng ⚠️ Pitfalls 🔗 Liên quan 📖 Nguồn . ]]></description>
-    <pubDate>Wed, 06 May 2026 18:31:25 GMT</pubDate>
-  </item><item>
-    <title>00-Hub-Database-Persistence</title>
-    <link>https://dangthobach.github.io/knowledge/Database-Patterns/00-Hub-Database-Persistence</link>
-    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/00-Hub-Database-Persistence</guid>
-    <description><![CDATA[ Database Persistence in Java — Bức Tranh Tổng Quan Mục tiêu: Trả lời câu hỏi “Dùng cái gì?” trước khi đi vào từng thứ. ]]></description>
-    <pubDate>Wed, 06 May 2026 17:06:07 GMT</pubDate>
+    <title>18-Snapshot-Internals-Deep-Dive</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/18-Snapshot-Internals-Deep-Dive</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/18-Snapshot-Internals-Deep-Dive</guid>
+    <description><![CDATA[ 18 — PostgreSQL Snapshot Internals: Cơ Chế Thực Sự &amp; Giới Hạn So Với Oracle Audience: Senior engineers cần hiểu sâu cơ chế snapshot để debug isolation bugs, tune performance, và đưa ra quyết định kiến trúc đúng đắn. ]]></description>
+    <pubDate>Thu, 07 May 2026 06:39:59 GMT</pubDate>
   </item><item>
     <title>00-PostgreSQL-Hub</title>
     <link>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/00-PostgreSQL-Hub</link>
     <guid>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/00-PostgreSQL-Hub</guid>
     <description><![CDATA[ 🐘 PostgreSQL — Hub Entry point duy nhất cho mọi thứ liên quan PostgreSQL trong vault này. ]]></description>
-    <pubDate>Wed, 06 May 2026 17:06:07 GMT</pubDate>
+    <pubDate>Wed, 06 May 2026 18:24:09 GMT</pubDate>
   </item><item>
-    <title>01-ACID-Internals</title>
-    <link>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/01-ACID-Internals</link>
-    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/01-ACID-Internals</guid>
-    <description><![CDATA[ 01 — ACID Internals: Bản Chất Thật Sự của PostgreSQL Audience: Senior engineers đã biết định nghĩa ACID, muốn hiểu cơ chế thật sự bên dưới. ]]></description>
-    <pubDate>Wed, 06 May 2026 17:06:07 GMT</pubDate>
+    <title>07-Count-Star-vs-Count-Column</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/07-Count-Star-vs-Count-Column</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/07-Count-Star-vs-Count-Column</guid>
+    <description><![CDATA[ 07 — COUNT(*) vs COUNT(column): Hiểu Đúng Để Dùng Đúng Audience: Backend engineers hay dùng COUNT mà không rõ sự khác biệt về semantic và performance. ]]></description>
+    <pubDate>Wed, 06 May 2026 18:24:09 GMT</pubDate>
   </item><item>
-    <title>02-MVCC-Concurrency</title>
-    <link>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/02-MVCC-Concurrency</link>
-    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/02-MVCC-Concurrency</guid>
-    <description><![CDATA[ 02 — MVCC &amp; Concurrency Engine: Bên Trong PostgreSQL Audience: Senior engineers muốn hiểu tại sao PostgreSQL scale tốt cho concurrent workloads. ]]></description>
-    <pubDate>Wed, 06 May 2026 17:06:07 GMT</pubDate>
+    <title>08-MVCC-MySQL-PostgreSQL-Oracle</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/08-MVCC-MySQL-PostgreSQL-Oracle</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/08-MVCC-MySQL-PostgreSQL-Oracle</guid>
+    <description><![CDATA[ 08 — MVCC So Sánh: MySQL vs PostgreSQL vs Oracle Audience: Senior engineers cần hiểu sâu concurrency control để thiết kế hệ thống đúng, hoặc chuẩn bị phỏng vấn system design. ]]></description>
+    <pubDate>Wed, 06 May 2026 18:24:09 GMT</pubDate>
   </item><item>
-    <title>03-Concurrency-Patterns</title>
-    <link>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/03-Concurrency-Patterns</link>
-    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/03-Concurrency-Patterns</guid>
-    <description><![CDATA[ 03 — Concurrency Patterns: Edge Cases &amp; Bài Toán Thực Tế Audience: Senior engineers cần giải quyết concurrency bugs trong production. ]]></description>
-    <pubDate>Wed, 06 May 2026 17:06:07 GMT</pubDate>
+    <title>09-Temporal-Data-Types</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/09-Temporal-Data-Types</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/09-Temporal-Data-Types</guid>
+    <description><![CDATA[ 09 — Kiểu Dữ Liệu Thời Gian Tối Ưu trong PostgreSQL Audience: Backend engineers hay gặp bug timezone, lúng túng khi chọn giữa timestamp/timestamptz/date. ]]></description>
+    <pubDate>Wed, 06 May 2026 18:24:09 GMT</pubDate>
   </item><item>
-    <title>04-Index-Internals</title>
-    <link>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/04-Index-Internals</link>
-    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/04-Index-Internals</guid>
-    <description><![CDATA[ 04 — Index Internals: B-Tree, GIN, BRIN và Hơn Thế Nữa Moved &amp; consolidated từ concepts/postgresql-index-internals.md. ]]></description>
-    <pubDate>Wed, 06 May 2026 17:06:07 GMT</pubDate>
+    <title>10-Sharding-When-Why-Pitfalls</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/10-Sharding-When-Why-Pitfalls</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/10-Sharding-When-Why-Pitfalls</guid>
+    <description><![CDATA[ 10 — Sharding: Khi Nào, Vấn Đề Phiền Toái, và Giải Pháp Audience: Senior engineers đang scale database lên hàng chục/trăm triệu records hoặc evaluating sharding. ]]></description>
+    <pubDate>Wed, 06 May 2026 18:24:09 GMT</pubDate>
   </item><item>
-    <title>05-Performance-Tuning</title>
-    <link>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/05-Performance-Tuning</link>
-    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/05-Performance-Tuning</guid>
-    <description><![CDATA[ 05 — Performance Tuning: Memory, Vacuum, Monitoring Moved &amp; consolidated từ concepts/postgresql-performance-deep-dive.md. ]]></description>
-    <pubDate>Wed, 06 May 2026 17:06:07 GMT</pubDate>
+    <title>11-PostgreSQL-Redis-Consistency</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/11-PostgreSQL-Redis-Consistency</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/11-PostgreSQL-Redis-Consistency</guid>
+    <description><![CDATA[ 11 — Consistency: PostgreSQL + Redis Song Hành Audience: Senior engineers xây dựng caching layer và gặp vấn đề cache inconsistency. ]]></description>
+    <pubDate>Wed, 06 May 2026 18:24:09 GMT</pubDate>
+  </item><item>
+    <title>12-UNION-and-LIKE-Optimization</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/12-UNION-and-LIKE-Optimization</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/12-UNION-and-LIKE-Optimization</guid>
+    <description><![CDATA[ 12 — Tối Ưu UNION và LIKE Search Audience: Backend engineers cần tối ưu queries dùng UNION và LIKE trong production. ]]></description>
+    <pubDate>Wed, 06 May 2026 18:24:09 GMT</pubDate>
+  </item><item>
+    <title>13-Grouping-and-Aggregation</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/13-Grouping-and-Aggregation</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/13-Grouping-and-Aggregation</guid>
+    <description><![CDATA[ 13 — Grouping &amp; Aggregation: Từ Cơ Bản Đến Advanced Audience: Senior engineers cần master aggregation cho reporting, analytics, và banking calculations. ]]></description>
+    <pubDate>Wed, 06 May 2026 18:24:09 GMT</pubDate>
+  </item><item>
+    <title>14-CTE-Recursive-Advanced-SQL</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/14-CTE-Recursive-Advanced-SQL</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/14-CTE-Recursive-Advanced-SQL</guid>
+    <description><![CDATA[ 14 — CTE, Recursive, INTERSECT, EXCEPT, Subquery: Powerful SQL Techniques Audience: Senior engineers muốn viết SQL elegant, maintainable, và performant. ]]></description>
+    <pubDate>Wed, 06 May 2026 18:24:09 GMT</pubDate>
   </item>
     </channel>
   </rss>
