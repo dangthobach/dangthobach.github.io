@@ -6,65 +6,65 @@
       <description>Last 10 notes on Dang Tho Bach&#039;s Knowledge Base</description>
       <generator>Quartz -- quartz.jzhao.xyz</generator>
       <item>
-    <title>18-Snapshot-Internals-Deep-Dive</title>
-    <link>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/18-Snapshot-Internals-Deep-Dive</link>
-    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/18-Snapshot-Internals-Deep-Dive</guid>
-    <description><![CDATA[ 18 — PostgreSQL Snapshot Internals: Cơ Chế Thực Sự &amp; Giới Hạn So Với Oracle Audience: Senior engineers cần hiểu sâu cơ chế snapshot để debug isolation bugs, tune performance, và đưa ra quyết định kiến trúc đúng đắn. ]]></description>
-    <pubDate>Thu, 07 May 2026 06:39:59 GMT</pubDate>
+    <title>SolidJS-01-Reactivity-Internals</title>
+    <link>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-01-Reactivity-Internals</link>
+    <guid>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-01-Reactivity-Internals</guid>
+    <description><![CDATA[ SolidJS 01 — Reactivity Internals: Bản chất Fine-Grained Reactivity solidjs frontend reactivity phase-1-core Mục tiêu: Hiểu được tại sao SolidJS không cần Virtual DOM, cơ chế reactive graph hoạt động thế nào, và ownership model khác gì với React/Vue. ]]></description>
+    <pubDate>Fri, 08 May 2026 06:52:03 GMT</pubDate>
   </item><item>
-    <title>00-PostgreSQL-Hub</title>
-    <link>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/00-PostgreSQL-Hub</link>
-    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/00-PostgreSQL-Hub</guid>
-    <description><![CDATA[ 🐘 PostgreSQL — Hub Entry point duy nhất cho mọi thứ liên quan PostgreSQL trong vault này. ]]></description>
-    <pubDate>Wed, 06 May 2026 18:24:09 GMT</pubDate>
+    <title>SolidJS-02-Signals-Deep-Dive</title>
+    <link>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-02-Signals-Deep-Dive</link>
+    <guid>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-02-Signals-Deep-Dive</guid>
+    <description><![CDATA[ SolidJS 02 — Signals Deep Dive: createSignal, createMemo, batch solidjs frontend signals phase-1-core Mục tiêu: Nắm vững anatomy của Signal — getter/setter pattern, lazy evaluation trong Memo, batching update, và untrack. ]]></description>
+    <pubDate>Fri, 08 May 2026 06:52:03 GMT</pubDate>
   </item><item>
-    <title>07-Count-Star-vs-Count-Column</title>
-    <link>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/07-Count-Star-vs-Count-Column</link>
-    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/07-Count-Star-vs-Count-Column</guid>
-    <description><![CDATA[ 07 — COUNT(*) vs COUNT(column): Hiểu Đúng Để Dùng Đúng Audience: Backend engineers hay dùng COUNT mà không rõ sự khác biệt về semantic và performance. ]]></description>
-    <pubDate>Wed, 06 May 2026 18:24:09 GMT</pubDate>
+    <title>SolidJS-03-Effects-And-Lifecycle</title>
+    <link>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-03-Effects-And-Lifecycle</link>
+    <guid>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-03-Effects-And-Lifecycle</guid>
+    <description><![CDATA[ SolidJS 03 — Effects &amp; Lifecycle: createEffect, onMount, onCleanup solidjs frontend effects lifecycle phase-1-core Mục tiêu: Nắm vững cơ chế tracking context trong effect, phân biệt các loại effect API, và pattern quản lý side effects (WebSocket, timer, event listener) mà không gây memory leak t... ]]></description>
+    <pubDate>Fri, 08 May 2026 06:52:03 GMT</pubDate>
   </item><item>
-    <title>08-MVCC-MySQL-PostgreSQL-Oracle</title>
-    <link>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/08-MVCC-MySQL-PostgreSQL-Oracle</link>
-    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/08-MVCC-MySQL-PostgreSQL-Oracle</guid>
-    <description><![CDATA[ 08 — MVCC So Sánh: MySQL vs PostgreSQL vs Oracle Audience: Senior engineers cần hiểu sâu concurrency control để thiết kế hệ thống đúng, hoặc chuẩn bị phỏng vấn system design. ]]></description>
-    <pubDate>Wed, 06 May 2026 18:24:09 GMT</pubDate>
+    <title>SolidJS-04-JSX-Component-Model</title>
+    <link>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-04-JSX-Component-Model</link>
+    <guid>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-04-JSX-Component-Model</guid>
+    <description><![CDATA[ SolidJS 04 — JSX &amp; Component Model: Cơ chế biên dịch solidjs frontend jsx components phase-1-core Mục tiêu: Hiểu SolidJS JSX compile ra gì khác React, tại sao component function chỉ chạy 1 lần (không re-render), cách xử lý props đúng cách với mergeProps/splitProps, và tại sao children là signal. ]]></description>
+    <pubDate>Fri, 08 May 2026 06:52:03 GMT</pubDate>
   </item><item>
-    <title>09-Temporal-Data-Types</title>
-    <link>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/09-Temporal-Data-Types</link>
-    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/09-Temporal-Data-Types</guid>
-    <description><![CDATA[ 09 — Kiểu Dữ Liệu Thời Gian Tối Ưu trong PostgreSQL Audience: Backend engineers hay gặp bug timezone, lúng túng khi chọn giữa timestamp/timestamptz/date. ]]></description>
-    <pubDate>Wed, 06 May 2026 18:24:09 GMT</pubDate>
+    <title>SolidJS-05-Control-Flow-Primitives</title>
+    <link>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-05-Control-Flow-Primitives</link>
+    <guid>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-05-Control-Flow-Primitives</guid>
+    <description><![CDATA[ SolidJS 05 — Control Flow Primitives: Show, For, Index, Switch solidjs frontend control-flow phase-1-core Mục tiêu: Hiểu tại sao SolidJS cần control flow components thay vì JS thuần, nắm vững sự khác biệt giữa &lt;For&gt; (keyed) và &lt;Index&gt; (by-position), và biết cách xây dựng danh sách phức t... ]]></description>
+    <pubDate>Fri, 08 May 2026 06:52:03 GMT</pubDate>
   </item><item>
-    <title>10-Sharding-When-Why-Pitfalls</title>
-    <link>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/10-Sharding-When-Why-Pitfalls</link>
-    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/10-Sharding-When-Why-Pitfalls</guid>
-    <description><![CDATA[ 10 — Sharding: Khi Nào, Vấn Đề Phiền Toái, và Giải Pháp Audience: Senior engineers đang scale database lên hàng chục/trăm triệu records hoặc evaluating sharding. ]]></description>
-    <pubDate>Wed, 06 May 2026 18:24:09 GMT</pubDate>
+    <title>SolidJS-06-Stores-Nested-State</title>
+    <link>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-06-Stores-Nested-State</link>
+    <guid>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-06-Stores-Nested-State</guid>
+    <description><![CDATA[ SolidJS 06 — Stores &amp; Nested State: createStore, produce, reconcile solidjs frontend store state-management phase-2-state Mục tiêu: Hiểu tại sao Signal không đủ cho nested object, cơ chế Proxy-based reactivity của Store, cách dùng produce() cho immutable-style mutation, và reconcile() để sync se... ]]></description>
+    <pubDate>Fri, 08 May 2026 06:52:03 GMT</pubDate>
   </item><item>
-    <title>11-PostgreSQL-Redis-Consistency</title>
-    <link>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/11-PostgreSQL-Redis-Consistency</link>
-    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/11-PostgreSQL-Redis-Consistency</guid>
-    <description><![CDATA[ 11 — Consistency: PostgreSQL + Redis Song Hành Audience: Senior engineers xây dựng caching layer và gặp vấn đề cache inconsistency. ]]></description>
-    <pubDate>Wed, 06 May 2026 18:24:09 GMT</pubDate>
+    <title>SolidJS-07-Context-DI</title>
+    <link>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-07-Context-DI</link>
+    <guid>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-07-Context-DI</guid>
+    <description><![CDATA[ SolidJS 07 — Context &amp; Dependency Injection: createContext, Provider, Service Layer solidjs frontend context dependency-injection phase-2-state Mục tiêu: Nắm vững createContext để truyền reactive value qua component tree không cần prop drilling, xây dựng service layer pattern (Context + Store + ... ]]></description>
+    <pubDate>Fri, 08 May 2026 06:52:03 GMT</pubDate>
   </item><item>
-    <title>12-UNION-and-LIKE-Optimization</title>
-    <link>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/12-UNION-and-LIKE-Optimization</link>
-    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/12-UNION-and-LIKE-Optimization</guid>
-    <description><![CDATA[ 12 — Tối Ưu UNION và LIKE Search Audience: Backend engineers cần tối ưu queries dùng UNION và LIKE trong production. ]]></description>
-    <pubDate>Wed, 06 May 2026 18:24:09 GMT</pubDate>
+    <title>SolidJS-08-Async-Resources</title>
+    <link>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-08-Async-Resources</link>
+    <guid>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-08-Async-Resources</guid>
+    <description><![CDATA[ SolidJS 08 — Async &amp; Resources: createResource, Suspense, ErrorBoundary solidjs frontend async resources suspense phase-2-state Mục tiêu: Nắm vững createResource để biến async fetching thành reactive source, cách Suspense boundary quản lý loading state declarative, ErrorBoundary cho error recove... ]]></description>
+    <pubDate>Fri, 08 May 2026 06:52:03 GMT</pubDate>
   </item><item>
-    <title>13-Grouping-and-Aggregation</title>
-    <link>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/13-Grouping-and-Aggregation</link>
-    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/13-Grouping-and-Aggregation</guid>
-    <description><![CDATA[ 13 — Grouping &amp; Aggregation: Từ Cơ Bản Đến Advanced Audience: Senior engineers cần master aggregation cho reporting, analytics, và banking calculations. ]]></description>
-    <pubDate>Wed, 06 May 2026 18:24:09 GMT</pubDate>
+    <title>SolidJS-09-Routing</title>
+    <link>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-09-Routing</link>
+    <guid>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-09-Routing</guid>
+    <description><![CDATA[ SolidJS 09 — Routing: @solidjs/router, Nested Routes, Data Loaders solidjs frontend routing solidjs-router phase-2-state Mục tiêu: Nắm vững @solidjs/router — config-based và file-based routing, nested routes với &lt;Outlet&gt;, route data loaders chạy parallel, search params reactive, và navigation ... ]]></description>
+    <pubDate>Fri, 08 May 2026 06:52:03 GMT</pubDate>
   </item><item>
-    <title>14-CTE-Recursive-Advanced-SQL</title>
-    <link>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/14-CTE-Recursive-Advanced-SQL</link>
-    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/14-CTE-Recursive-Advanced-SQL</guid>
-    <description><![CDATA[ 14 — CTE, Recursive, INTERSECT, EXCEPT, Subquery: Powerful SQL Techniques Audience: Senior engineers muốn viết SQL elegant, maintainable, và performant. ]]></description>
-    <pubDate>Wed, 06 May 2026 18:24:09 GMT</pubDate>
+    <title>SolidJS-10-Complex-UI-Patterns</title>
+    <link>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-10-Complex-UI-Patterns</link>
+    <guid>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-10-Complex-UI-Patterns</guid>
+    <description><![CDATA[ SolidJS 10 — Complex UI Patterns: Forms, Data Tables, Virtual Scroll solidjs frontend forms data-table virtual-scroll phase-3-enterprise Mục tiêu: Xây dựng các UI component phức tạp chuẩn enterprise — form validation schema-driven với Zod, data table sort/filter/pagination thuần signal không re-rend... ]]></description>
+    <pubDate>Fri, 08 May 2026 06:52:03 GMT</pubDate>
   </item>
     </channel>
   </rss>
