@@ -1,51 +1,69 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml"><url>
-    <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/00-Core-Concepts-Newbie/01-Angular-Philosophy</loc>
-    <lastmod>2026-05-08T16:07:46.000Z</lastmod>
-  </url><url>
-    <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/00-Core-Concepts-Newbie/02-Architecture-Overview</loc>
-    <lastmod>2026-05-08T16:07:46.000Z</lastmod>
-  </url><url>
-    <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/00-Core-Concepts-Newbie/03-Data-Binding-Basics</loc>
-    <lastmod>2026-05-08T16:07:46.000Z</lastmod>
-  </url><url>
-    <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/00-Core-Concepts-Newbie/04-Dependency-Injection-Intro</loc>
-    <lastmod>2026-05-08T16:07:46.000Z</lastmod>
-  </url><url>
-    <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/00-Core-Concepts-Newbie/05-Component-Lifecycle</loc>
-    <lastmod>2026-05-08T16:07:46.000Z</lastmod>
-  </url><url>
-    <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/00-Core-Concepts-Newbie/06-Template-Syntax-And-Pipes</loc>
-    <lastmod>2026-05-08T16:07:46.000Z</lastmod>
-  </url><url>
     <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/00-Roadmap</loc>
-    <lastmod>2026-05-08T16:07:46.000Z</lastmod>
+    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
   </url><url>
-    <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/01-Signals-The-New-Foundation</loc>
-    <lastmod>2026-05-08T16:07:46.000Z</lastmod>
+    <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/01-Introduction-and-Environment</loc>
+    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
   </url><url>
-    <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/02-Modern-Component-Architecture</loc>
-    <lastmod>2026-05-08T16:07:46.000Z</lastmod>
+    <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/02-Components-The-Building-Blocks</loc>
+    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
   </url><url>
-    <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/03-New-Control-Flow</loc>
-    <lastmod>2026-05-08T16:07:46.000Z</lastmod>
+    <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/03-Data-Binding-and-Event-Handling</loc>
+    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
   </url><url>
-    <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/04-Dependency-Injection-Mastery</loc>
-    <lastmod>2026-05-08T16:07:46.000Z</lastmod>
+    <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/04-Directives-and-Pipes</loc>
+    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
   </url><url>
-    <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/05-Enterprise-State-HTTP</loc>
-    <lastmod>2026-05-08T16:07:46.000Z</lastmod>
+    <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/05-Component-Lifecycle-Hooks</loc>
+    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
   </url><url>
-    <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/06-Advanced-Patterns</loc>
-    <lastmod>2026-05-08T16:07:46.000Z</lastmod>
+    <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/06-Component-Communication</loc>
+    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
   </url><url>
-    <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/07-Routing-And-Navigation</loc>
-    <lastmod>2026-05-08T16:07:46.000Z</lastmod>
+    <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/07-RxJS-and-Observables-Foundation</loc>
+    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
   </url><url>
-    <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/08-Reactive-Forms-Enterprise</loc>
-    <lastmod>2026-05-08T16:07:46.000Z</lastmod>
+    <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/08-Signals-The-Modern-Reactivity</loc>
+    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
   </url><url>
-    <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/09-Testing-Angular</loc>
-    <lastmod>2026-05-08T16:07:46.000Z</lastmod>
+    <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/09-Reactive-Forms-Mastery</loc>
+    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/10-Routing-and-Navigation</loc>
+    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/11-Dependency-Injection-and-Services</loc>
+    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/12-HTTP-Client-and-Data-Fetching</loc>
+    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/13-Testing-Fundamentals</loc>
+    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/14-Enterprise-Architecture-and-Standalone</loc>
+    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/15-Change-Detection-and-OnPush</loc>
+    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/16-NgRx-State-Management</loc>
+    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/17-HTTP-Interceptors-Auth-Patterns</loc>
+    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/18-Route-Guards-and-Resolvers</loc>
+    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/19-Content-Projection-and-Advanced-Template</loc>
+    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/20-Lazy-Loading-and-Code-Splitting</loc>
+    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/21-Error-Handling-Global-Patterns</loc>
+    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/00-Hub-Database-Persistence</loc>
     <lastmod>2026-05-06T17:06:07.000Z</lastmod>
@@ -854,59 +872,74 @@
     <loc>https://dangthobach.github.io/knowledge/Performance-System-Programming/02-Wasm-Server-side/05-Spin-Framework</loc>
     <lastmod>2026-05-01T00:00:00.000Z</lastmod>
   </url><url>
-    <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/00-Core-Concepts-Newbie/01-What-is-React</loc>
-    <lastmod>2026-05-08T16:07:46.000Z</lastmod>
-  </url><url>
-    <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/00-Core-Concepts-Newbie/02-Virtual-DOM-Simplified</loc>
-    <lastmod>2026-05-08T16:07:46.000Z</lastmod>
-  </url><url>
-    <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/00-Core-Concepts-Newbie/03-JSX-Under-The-Hood</loc>
-    <lastmod>2026-05-08T16:07:46.000Z</lastmod>
-  </url><url>
-    <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/00-Core-Concepts-Newbie/04-State-vs-Props</loc>
-    <lastmod>2026-05-08T16:07:46.000Z</lastmod>
-  </url><url>
-    <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/00-Core-Concepts-Newbie/05-Component-Lifecycle-With-Hooks</loc>
-    <lastmod>2026-05-08T16:07:46.000Z</lastmod>
-  </url><url>
-    <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/00-Core-Concepts-Newbie/06-Event-Handling</loc>
-    <lastmod>2026-05-08T16:07:46.000Z</lastmod>
-  </url><url>
-    <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/00-Core-Concepts-Newbie/07-Lists-Keys-And-Conditional-Rendering</loc>
-    <lastmod>2026-05-08T16:07:46.000Z</lastmod>
-  </url><url>
     <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/00-Roadmap</loc>
-    <lastmod>2026-05-08T16:07:46.000Z</lastmod>
+    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
   </url><url>
-    <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/01-React-Fiber-and-Reconciliation</loc>
-    <lastmod>2026-05-08T16:07:46.000Z</lastmod>
+    <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/01-Getting-Started-with-React</loc>
+    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
   </url><url>
-    <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/02-Hooks-Internal-Logic</loc>
-    <lastmod>2026-05-08T16:07:46.000Z</lastmod>
+    <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/02-State-Management-Basics</loc>
+    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
   </url><url>
-    <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/03-Effect-and-Synchronization</loc>
-    <lastmod>2026-05-08T16:07:46.000Z</lastmod>
+    <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/03-Event-Handling-and-Lists</loc>
+    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
   </url><url>
-    <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/04-Performance-Mastery</loc>
-    <lastmod>2026-05-08T16:07:46.000Z</lastmod>
+    <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/04-Conditional-Rendering</loc>
+    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
   </url><url>
-    <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/05-Context-and-State-Management</loc>
-    <lastmod>2026-05-08T16:07:46.000Z</lastmod>
+    <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/05-Hooks-Lifecycle-and-useEffect</loc>
+    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
   </url><url>
-    <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/06-Concurrent-React-and-Suspense</loc>
-    <lastmod>2026-05-08T16:07:46.000Z</lastmod>
+    <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/06-Forms-and-Validation</loc>
+    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
   </url><url>
-    <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/07-Server-Components-and-NextJS</loc>
-    <lastmod>2026-05-08T16:07:46.000Z</lastmod>
+    <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/07-React-Router-v6</loc>
+    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
   </url><url>
-    <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/08-Enterprise-Architecture</loc>
-    <lastmod>2026-05-08T16:07:46.000Z</lastmod>
+    <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/08-Advanced-Hooks</loc>
+    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
   </url><url>
-    <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/09-React-Router-Navigation</loc>
-    <lastmod>2026-05-08T16:07:46.000Z</lastmod>
+    <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/09-Context-API-and-State-Sharing</loc>
+    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
   </url><url>
-    <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/10-Forms-And-Validation</loc>
-    <lastmod>2026-05-08T16:07:46.000Z</lastmod>
+    <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/10-Data-Fetching-and-Error-Boundaries</loc>
+    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/11-Performance-Optimization</loc>
+    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/12-Concurrent-Features</loc>
+    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/13-React-Server-Components-and-NextJS-Intro</loc>
+    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/14-Testing-React</loc>
+    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/15-Enterprise-Best-Practices</loc>
+    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/16-TypeScript-with-React</loc>
+    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/17-Zustand-State-Management</loc>
+    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/18-TanStack-Query-Server-State</loc>
+    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/19-Authentication-Protected-Routes</loc>
+    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/20-Advanced-Component-Patterns</loc>
+    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/21-Multi-Step-Forms-Complex-Validation</loc>
+    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/22-Portals-and-Modals</loc>
+    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-1-Ownership-Mindset</loc>
     <lastmod>2026-05-02T04:58:37.000Z</lastmod>
