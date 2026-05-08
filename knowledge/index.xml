@@ -6,65 +6,65 @@
       <description>Last 10 notes on Dang Tho Bach&#039;s Knowledge Base</description>
       <generator>Quartz -- quartz.jzhao.xyz</generator>
       <item>
-    <title>SolidJS-01-Reactivity-Internals</title>
-    <link>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-01-Reactivity-Internals</link>
-    <guid>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-01-Reactivity-Internals</guid>
-    <description><![CDATA[ SolidJS 01 — Reactivity Internals: Bản chất Fine-Grained Reactivity solidjs frontend reactivity phase-1-core Mục tiêu: Hiểu được tại sao SolidJS không cần Virtual DOM, cơ chế reactive graph hoạt động thế nào, và ownership model khác gì với React/Vue. ]]></description>
-    <pubDate>Fri, 08 May 2026 06:52:03 GMT</pubDate>
+    <title>01-Angular-Philosophy</title>
+    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/00-Core-Concepts-Newbie/01-Angular-Philosophy</link>
+    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/00-Core-Concepts-Newbie/01-Angular-Philosophy</guid>
+    <description><![CDATA[ Triết lý của Angular: Không chỉ là thư viện, đó là một Nền tảng 🏰 Chào mừng bạn đến với thế giới của Angular! Nếu React giống như một bộ Lego mà bạn phải tự tìm thêm các mảnh ghép từ bên ngoài, thì Angular giống như một ngôi nhà “chìa khóa trao tay” đầy đủ tiện nghi. ]]></description>
+    <pubDate>Fri, 08 May 2026 16:07:46 GMT</pubDate>
   </item><item>
-    <title>SolidJS-02-Signals-Deep-Dive</title>
-    <link>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-02-Signals-Deep-Dive</link>
-    <guid>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-02-Signals-Deep-Dive</guid>
-    <description><![CDATA[ SolidJS 02 — Signals Deep Dive: createSignal, createMemo, batch solidjs frontend signals phase-1-core Mục tiêu: Nắm vững anatomy của Signal — getter/setter pattern, lazy evaluation trong Memo, batching update, và untrack. ]]></description>
-    <pubDate>Fri, 08 May 2026 06:52:03 GMT</pubDate>
+    <title>02-Architecture-Overview</title>
+    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/00-Core-Concepts-Newbie/02-Architecture-Overview</link>
+    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/00-Core-Concepts-Newbie/02-Architecture-Overview</guid>
+    <description><![CDATA[ Tổng quan kiến trúc Angular: Những mảnh ghép nền tảng 🧱 Để hiểu cách Angular vận hành, hãy tưởng tượng bạn đang quản lý một rạp chiếu phim. ]]></description>
+    <pubDate>Fri, 08 May 2026 16:07:46 GMT</pubDate>
   </item><item>
-    <title>SolidJS-03-Effects-And-Lifecycle</title>
-    <link>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-03-Effects-And-Lifecycle</link>
-    <guid>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-03-Effects-And-Lifecycle</guid>
-    <description><![CDATA[ SolidJS 03 — Effects &amp; Lifecycle: createEffect, onMount, onCleanup solidjs frontend effects lifecycle phase-1-core Mục tiêu: Nắm vững cơ chế tracking context trong effect, phân biệt các loại effect API, và pattern quản lý side effects (WebSocket, timer, event listener) mà không gây memory leak t... ]]></description>
-    <pubDate>Fri, 08 May 2026 06:52:03 GMT</pubDate>
+    <title>03-Data-Binding-Basics</title>
+    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/00-Core-Concepts-Newbie/03-Data-Binding-Basics</link>
+    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/00-Core-Concepts-Newbie/03-Data-Binding-Basics</guid>
+    <description><![CDATA[ Data Binding: Sợi dây kết nối kỳ diệu 🧵 Data Binding là cách Angular kết nối “bộ não” (TypeScript) và “khuôn mặt” (HTML) của Component. ]]></description>
+    <pubDate>Fri, 08 May 2026 16:07:46 GMT</pubDate>
   </item><item>
-    <title>SolidJS-04-JSX-Component-Model</title>
-    <link>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-04-JSX-Component-Model</link>
-    <guid>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-04-JSX-Component-Model</guid>
-    <description><![CDATA[ SolidJS 04 — JSX &amp; Component Model: Cơ chế biên dịch solidjs frontend jsx components phase-1-core Mục tiêu: Hiểu SolidJS JSX compile ra gì khác React, tại sao component function chỉ chạy 1 lần (không re-render), cách xử lý props đúng cách với mergeProps/splitProps, và tại sao children là signal. ]]></description>
-    <pubDate>Fri, 08 May 2026 06:52:03 GMT</pubDate>
+    <title>04-Dependency-Injection-Intro</title>
+    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/00-Core-Concepts-Newbie/04-Dependency-Injection-Intro</link>
+    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/00-Core-Concepts-Newbie/04-Dependency-Injection-Intro</guid>
+    <description><![CDATA[ Dependency Injection (DI): Đừng tự làm, hãy để Angular “ship” tận nơi 🚚 Dependency Injection (Tiêm phụ thuộc) nghe có vẻ hàn lâm, nhưng thực ra nó rất gần gũi. ]]></description>
+    <pubDate>Fri, 08 May 2026 16:07:46 GMT</pubDate>
   </item><item>
-    <title>SolidJS-05-Control-Flow-Primitives</title>
-    <link>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-05-Control-Flow-Primitives</link>
-    <guid>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-05-Control-Flow-Primitives</guid>
-    <description><![CDATA[ SolidJS 05 — Control Flow Primitives: Show, For, Index, Switch solidjs frontend control-flow phase-1-core Mục tiêu: Hiểu tại sao SolidJS cần control flow components thay vì JS thuần, nắm vững sự khác biệt giữa &lt;For&gt; (keyed) và &lt;Index&gt; (by-position), và biết cách xây dựng danh sách phức t... ]]></description>
-    <pubDate>Fri, 08 May 2026 06:52:03 GMT</pubDate>
+    <title>05-Component-Lifecycle</title>
+    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/00-Core-Concepts-Newbie/05-Component-Lifecycle</link>
+    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/00-Core-Concepts-Newbie/05-Component-Lifecycle</guid>
+    <description><![CDATA[ 05 - Vòng đời của Component (Component Lifecycle) 🌱 Mỗi Component trong Angular đều trải qua một “cuộc đời” từ lúc được tạo ra đến khi bị xóa đi. ]]></description>
+    <pubDate>Fri, 08 May 2026 16:07:46 GMT</pubDate>
   </item><item>
-    <title>SolidJS-06-Stores-Nested-State</title>
-    <link>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-06-Stores-Nested-State</link>
-    <guid>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-06-Stores-Nested-State</guid>
-    <description><![CDATA[ SolidJS 06 — Stores &amp; Nested State: createStore, produce, reconcile solidjs frontend store state-management phase-2-state Mục tiêu: Hiểu tại sao Signal không đủ cho nested object, cơ chế Proxy-based reactivity của Store, cách dùng produce() cho immutable-style mutation, và reconcile() để sync se... ]]></description>
-    <pubDate>Fri, 08 May 2026 06:52:03 GMT</pubDate>
+    <title>06-Template-Syntax-And-Pipes</title>
+    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/00-Core-Concepts-Newbie/06-Template-Syntax-And-Pipes</link>
+    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/00-Core-Concepts-Newbie/06-Template-Syntax-And-Pipes</guid>
+    <description><![CDATA[ 06 - Template Syntax &amp; Pipes — Ngôn ngữ của Giao diện 🎨 Template là nơi bạn mô tả giao diện sẽ trông như thế nào. ]]></description>
+    <pubDate>Fri, 08 May 2026 16:07:46 GMT</pubDate>
   </item><item>
-    <title>SolidJS-07-Context-DI</title>
-    <link>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-07-Context-DI</link>
-    <guid>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-07-Context-DI</guid>
-    <description><![CDATA[ SolidJS 07 — Context &amp; Dependency Injection: createContext, Provider, Service Layer solidjs frontend context dependency-injection phase-2-state Mục tiêu: Nắm vững createContext để truyền reactive value qua component tree không cần prop drilling, xây dựng service layer pattern (Context + Store + ... ]]></description>
-    <pubDate>Fri, 08 May 2026 06:52:03 GMT</pubDate>
+    <title>00-Roadmap</title>
+    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/00-Roadmap</link>
+    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/00-Roadmap</guid>
+    <description><![CDATA[ Lộ trình Chinh phục Modern Angular (v17+) Chào mừng bạn đến với series hướng dẫn chuyên sâu về Angular hiện đại. ]]></description>
+    <pubDate>Fri, 08 May 2026 16:07:46 GMT</pubDate>
   </item><item>
-    <title>SolidJS-08-Async-Resources</title>
-    <link>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-08-Async-Resources</link>
-    <guid>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-08-Async-Resources</guid>
-    <description><![CDATA[ SolidJS 08 — Async &amp; Resources: createResource, Suspense, ErrorBoundary solidjs frontend async resources suspense phase-2-state Mục tiêu: Nắm vững createResource để biến async fetching thành reactive source, cách Suspense boundary quản lý loading state declarative, ErrorBoundary cho error recove... ]]></description>
-    <pubDate>Fri, 08 May 2026 06:52:03 GMT</pubDate>
+    <title>01-Signals-The-New-Foundation</title>
+    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/01-Signals-The-New-Foundation</link>
+    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/01-Signals-The-New-Foundation</guid>
+    <description><![CDATA[ 01 - Signals: Nền tảng của Reactivity hiện đại Signals là sự thay đổi mang tính nền tảng nhất trong cách Angular xử lý sự thay đổi dữ liệu. ]]></description>
+    <pubDate>Fri, 08 May 2026 16:07:46 GMT</pubDate>
   </item><item>
-    <title>SolidJS-09-Routing</title>
-    <link>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-09-Routing</link>
-    <guid>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-09-Routing</guid>
-    <description><![CDATA[ SolidJS 09 — Routing: @solidjs/router, Nested Routes, Data Loaders solidjs frontend routing solidjs-router phase-2-state Mục tiêu: Nắm vững @solidjs/router — config-based và file-based routing, nested routes với &lt;Outlet&gt;, route data loaders chạy parallel, search params reactive, và navigation ... ]]></description>
-    <pubDate>Fri, 08 May 2026 06:52:03 GMT</pubDate>
+    <title>02-Modern-Component-Architecture</title>
+    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/02-Modern-Component-Architecture</link>
+    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/02-Modern-Component-Architecture</guid>
+    <description><![CDATA[ 02 - Kiến trúc Component hiện đại Trong Angular v17+, kiến trúc component đã chuyển mình mạnh mẽ sang hướng Standalone-first và Signal-based. ]]></description>
+    <pubDate>Fri, 08 May 2026 16:07:46 GMT</pubDate>
   </item><item>
-    <title>SolidJS-10-Complex-UI-Patterns</title>
-    <link>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-10-Complex-UI-Patterns</link>
-    <guid>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-10-Complex-UI-Patterns</guid>
-    <description><![CDATA[ SolidJS 10 — Complex UI Patterns: Forms, Data Tables, Virtual Scroll solidjs frontend forms data-table virtual-scroll phase-3-enterprise Mục tiêu: Xây dựng các UI component phức tạp chuẩn enterprise — form validation schema-driven với Zod, data table sort/filter/pagination thuần signal không re-rend... ]]></description>
-    <pubDate>Fri, 08 May 2026 06:52:03 GMT</pubDate>
+    <title>03-New-Control-Flow</title>
+    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/03-New-Control-Flow</link>
+    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/03-New-Control-Flow</guid>
+    <description><![CDATA[ 03 - New Control Flow &amp; Deferrable Views Angular v17 giới thiệu một cú pháp điều khiển (Control Flow) hoàn toàn mới, tích hợp sâu vào compiler để đạt hiệu suất tối ưu và loại bỏ sự phụ thuộc vào CommonModule (*ngIf, *ngFor). ]]></description>
+    <pubDate>Fri, 08 May 2026 16:07:46 GMT</pubDate>
   </item>
     </channel>
   </rss>
