@@ -115,6 +115,16 @@ export const CustomOgImages: QuartzEmitterPlugin<Partial<SocialImageOptions>> = 
       const bodyFont = cfg.theme.typography.body
       const fonts = await getSatoriFonts(headerFont, bodyFont)
 
+      if (fonts.length === 0) {
+        console.warn(
+          styleText(
+            "yellow",
+            `\nWarning: No fonts found for CustomOgImages. Skipping image generation.`,
+          ),
+        )
+        return
+      }
+
       for (const [_tree, vfile] of content) {
         if (vfile.data.frontmatter?.socialImage !== undefined) continue
         yield processOgImage(ctx, vfile.data, fonts, fullOptions)
@@ -125,6 +135,16 @@ export const CustomOgImages: QuartzEmitterPlugin<Partial<SocialImageOptions>> = 
       const headerFont = cfg.theme.typography.header
       const bodyFont = cfg.theme.typography.body
       const fonts = await getSatoriFonts(headerFont, bodyFont)
+
+      if (fonts.length === 0) {
+        console.warn(
+          styleText(
+            "yellow",
+            `\nWarning: No fonts found for CustomOgImages. Skipping image generation.`,
+          ),
+        )
+        return
+      }
 
       // find all slugs that changed or were added
       for (const changeEvent of changeEvents) {
