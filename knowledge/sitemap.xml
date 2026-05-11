@@ -68,6 +68,24 @@
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/00-Hub-Database-Persistence</loc>
     <lastmod>2026-05-06T17:06:07.000Z</lastmod>
   </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-01-Flyway-Deep-Dive</loc>
+    <lastmod>2026-05-11T15:38:06.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-02-AtlasGo-Deep-Dive</loc>
+    <lastmod>2026-05-11T15:38:06.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-03-Tool-Comparison</loc>
+    <lastmod>2026-05-11T15:38:06.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-04-Enterprise-Patterns</loc>
+    <lastmod>2026-05-11T15:38:06.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-05-Adoption-Roadmap</loc>
+    <lastmod>2026-05-11T15:38:06.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-MOC</loc>
+    <lastmod>2026-05-11T15:38:06.000Z</lastmod>
+  </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/Hibernate-Performance-Deep-Dive</loc>
     <lastmod>2026-05-02T04:58:37.000Z</lastmod>
   </url><url>
@@ -76,6 +94,24 @@
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/JDBC-vs-R2DBC-vs-VirtualThreads</loc>
     <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Database-Patterns/Liquibase/Liquibase-01-Core-Mechanics</loc>
+    <lastmod>2026-05-11T15:38:06.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Database-Patterns/Liquibase/Liquibase-02-Configuration-SpringBoot</loc>
+    <lastmod>2026-05-11T15:38:06.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Database-Patterns/Liquibase/Liquibase-03-Changelog-Mastery</loc>
+    <lastmod>2026-05-11T15:38:06.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Database-Patterns/Liquibase/Liquibase-04-Advanced-Enterprise</loc>
+    <lastmod>2026-05-11T15:38:06.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Database-Patterns/Liquibase/Liquibase-05-CICD-Production-Workflow</loc>
+    <lastmod>2026-05-11T15:38:06.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Database-Patterns/Liquibase/Liquibase-MOC</loc>
+    <lastmod>2026-05-11T15:38:06.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/00-PostgreSQL-Hub</loc>
     <lastmod>2026-05-06T18:24:09.000Z</lastmod>

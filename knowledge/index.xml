@@ -6,65 +6,65 @@
       <description>Last 10 notes on Dang Tho Bach&#039;s Knowledge Base</description>
       <generator>Quartz -- quartz.jzhao.xyz</generator>
       <item>
-    <title>00-Roadmap</title>
-    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/00-Roadmap</link>
-    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/00-Roadmap</guid>
-    <description><![CDATA[ Lộ trình Angular “Zero to Hero” cho Dự án Enterprise 🚀 Series này được thiết kế cho Newbie đến Enterprise — từ khái niệm cơ bản đến kiến trúc dự án banking phức tạp. ]]></description>
-    <pubDate>Fri, 08 May 2026 18:11:43 GMT</pubDate>
+    <title>DBMigration-01-Flyway-Deep-Dive</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-01-Flyway-Deep-Dive</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-01-Flyway-Deep-Dive</guid>
+    <description><![CDATA[ Flyway Deep Dive — Cơ chế hoạt động &amp; Enterprise Patterns Flyway: Migration tool SQL-first, versioned, đơn giản nhưng mạnh mẽ. ]]></description>
+    <pubDate>Mon, 11 May 2026 15:38:06 GMT</pubDate>
   </item><item>
-    <title>01-Introduction-and-Environment</title>
-    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/01-Introduction-and-Environment</link>
-    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/01-Introduction-and-Environment</guid>
-    <description><![CDATA[ 01. ]]></description>
-    <pubDate>Fri, 08 May 2026 18:11:43 GMT</pubDate>
+    <title>DBMigration-02-AtlasGo-Deep-Dive</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-02-AtlasGo-Deep-Dive</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-02-AtlasGo-Deep-Dive</guid>
+    <description><![CDATA[ Atlas Go Deep Dive — Schema-as-Code &amp; Declarative Migrations Atlas Go: Công cụ migration thế hệ mới — triết lý declarative (khai báo trạng thái mong muốn, Atlas tự tính diff). ]]></description>
+    <pubDate>Mon, 11 May 2026 15:38:06 GMT</pubDate>
   </item><item>
-    <title>02-Components-The-Building-Blocks</title>
-    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/02-Components-The-Building-Blocks</link>
-    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/02-Components-The-Building-Blocks</guid>
-    <description><![CDATA[ 02. Component: Viên gạch xây nhà 🧱 Bài học nền tảng — Mọi thứ trong Angular đều là Component. ]]></description>
-    <pubDate>Fri, 08 May 2026 18:11:43 GMT</pubDate>
+    <title>DBMigration-03-Tool-Comparison</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-03-Tool-Comparison</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-03-Tool-Comparison</guid>
+    <description><![CDATA[ Tool Comparison: Liquibase vs Flyway vs Atlas Go Mục tiêu: So sánh khoa học 3 công cụ migration — use cases, điểm mạnh/yếu, cách kết hợp, và những misuse phổ biến cần tránh. ]]></description>
+    <pubDate>Mon, 11 May 2026 15:38:06 GMT</pubDate>
   </item><item>
-    <title>03-Data-Binding-and-Event-Handling</title>
-    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/03-Data-Binding-and-Event-Handling</link>
-    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/03-Data-Binding-and-Event-Handling</guid>
-    <description><![CDATA[ 03. ]]></description>
-    <pubDate>Fri, 08 May 2026 18:11:43 GMT</pubDate>
+    <title>DBMigration-04-Enterprise-Patterns</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-04-Enterprise-Patterns</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-04-Enterprise-Patterns</guid>
+    <description><![CDATA[ Enterprise Patterns — 200 Tables + 50 Stored Procedures Mục tiêu: Patterns và tổ chức file cụ thể cho hệ thống enterprise quy mô lớn — 200 bảng, 50 stored procs/functions, multi-environment, multi-tenant. ]]></description>
+    <pubDate>Mon, 11 May 2026 15:38:06 GMT</pubDate>
   </item><item>
-    <title>04-Directives-and-Pipes</title>
-    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/04-Directives-and-Pipes</link>
-    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/04-Directives-and-Pipes</guid>
-    <description><![CDATA[ 04. ]]></description>
-    <pubDate>Fri, 08 May 2026 18:11:43 GMT</pubDate>
+    <title>DBMigration-05-Adoption-Roadmap</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-05-Adoption-Roadmap</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-05-Adoption-Roadmap</guid>
+    <description><![CDATA[ Adoption Roadmap — Triển khai Migration Tool cho Dự án Đang Giữa Chừng Tình huống thực tế: Dự án PDMS đang giữa phase với 200 bảng, 50 stored procedures, scripts lưu rải rác, golive bị thiếu scripts. ]]></description>
+    <pubDate>Mon, 11 May 2026 15:38:06 GMT</pubDate>
   </item><item>
-    <title>05-Component-Lifecycle-Hooks</title>
-    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/05-Component-Lifecycle-Hooks</link>
-    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/05-Component-Lifecycle-Hooks</guid>
-    <description><![CDATA[ 05. ]]></description>
-    <pubDate>Fri, 08 May 2026 18:11:43 GMT</pubDate>
+    <title>DBMigration-MOC</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-MOC</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-MOC</guid>
+    <description><![CDATA[ Database Migration Tools — Map of Content Series mục tiêu: So sánh chuyên sâu Flyway · Atlas Go · Liquibase — lựa chọn đúng công cụ, triển khai đúng cách cho hệ thống enterprise 200+ bảng, 50+ stored procedures. ]]></description>
+    <pubDate>Mon, 11 May 2026 15:38:06 GMT</pubDate>
   </item><item>
-    <title>06-Component-Communication</title>
-    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/06-Component-Communication</link>
-    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/06-Component-Communication</guid>
-    <description><![CDATA[ 06. Giao tiếp giữa các Component 👨‍👩‍👦 Trong một ứng dụng lớn, các Component không thể sống cô lập. ]]></description>
-    <pubDate>Fri, 08 May 2026 18:11:43 GMT</pubDate>
+    <title>Liquibase-01-Core-Mechanics</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/Liquibase/Liquibase-01-Core-Mechanics</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/Liquibase/Liquibase-01-Core-Mechanics</guid>
+    <description><![CDATA[ Liquibase 01 — Core Mechanics: Cơ chế hoạt động nội tại Mục tiêu: Hiểu sâu cách Liquibase hoạt động bên trong — để khi gặp vấn đề production, bạn biết chính xác điều gì đang xảy ra. ]]></description>
+    <pubDate>Mon, 11 May 2026 15:38:06 GMT</pubDate>
   </item><item>
-    <title>07-RxJS-and-Observables-Foundation</title>
-    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/07-RxJS-and-Observables-Foundation</link>
-    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/07-RxJS-and-Observables-Foundation</guid>
-    <description><![CDATA[ 07. ]]></description>
-    <pubDate>Fri, 08 May 2026 18:11:43 GMT</pubDate>
+    <title>Liquibase-02-Configuration-SpringBoot</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/Liquibase/Liquibase-02-Configuration-SpringBoot</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/Liquibase/Liquibase-02-Configuration-SpringBoot</guid>
+    <description><![CDATA[ Liquibase 02 — Configuration &amp; Spring Boot Enterprise Setup Mục tiêu: Cấu hình Liquibase vào project Spring Boot enterprise đúng cách — từ dependency đến multi-datasource, từ local dev đến production. ]]></description>
+    <pubDate>Mon, 11 May 2026 15:38:06 GMT</pubDate>
   </item><item>
-    <title>08-Signals-The-Modern-Reactivity</title>
-    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/08-Signals-The-Modern-Reactivity</link>
-    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/08-Signals-The-Modern-Reactivity</guid>
-    <description><![CDATA[ 08. ]]></description>
-    <pubDate>Fri, 08 May 2026 18:11:43 GMT</pubDate>
+    <title>Liquibase-03-Changelog-Mastery</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/Liquibase/Liquibase-03-Changelog-Mastery</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/Liquibase/Liquibase-03-Changelog-Mastery</guid>
+    <description><![CDATA[ Liquibase 03 — Changelog Mastery: Viết Changelog chuẩn cho hệ thống 200 bảng Mục tiêu: Nắm vững cách viết changelog XML/SQL đúng cách, strategies tổ chức cho dự án lớn, và các patterns tránh lỗi production. ]]></description>
+    <pubDate>Mon, 11 May 2026 15:38:06 GMT</pubDate>
   </item><item>
-    <title>09-Reactive-Forms-Mastery</title>
-    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/09-Reactive-Forms-Mastery</link>
-    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/09-Reactive-Forms-Mastery</guid>
-    <description><![CDATA[ 09. ]]></description>
-    <pubDate>Fri, 08 May 2026 18:11:43 GMT</pubDate>
+    <title>Liquibase-04-Advanced-Enterprise</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/Liquibase/Liquibase-04-Advanced-Enterprise</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/Liquibase/Liquibase-04-Advanced-Enterprise</guid>
+    <description><![CDATA[ Liquibase 04 — Advanced Enterprise: Multi-schema, Multi-tenant, Diff &amp; generateChangeLog Mục tiêu: Các pattern nâng cao cho enterprise — đặc biệt là diff và generateChangeLog để giải quyết bài toán compare scripts trước golive. ]]></description>
+    <pubDate>Mon, 11 May 2026 15:38:06 GMT</pubDate>
   </item>
     </channel>
   </rss>
