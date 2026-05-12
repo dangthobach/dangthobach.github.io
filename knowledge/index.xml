@@ -6,6 +6,18 @@
       <description>Last 10 notes on Dang Tho Bach&#039;s Knowledge Base</description>
       <generator>Quartz -- quartz.jzhao.xyz</generator>
       <item>
+    <title>MOC-System-Design</title>
+    <link>https://dangthobach.github.io/knowledge/_moc/MOC-System-Design</link>
+    <guid>https://dangthobach.github.io/knowledge/_moc/MOC-System-Design</guid>
+    <description><![CDATA[ 🏛️ MOC — Architecture &amp; Design Patterns Mục tiêu: Nắm vững các architectural patterns và design principles để đưa ra quyết định thiết kế đúng đắn — không phải học thuộc lý thuyết mà là biết khi nào apply pattern nào. ]]></description>
+    <pubDate>Tue, 12 May 2026 06:26:36 GMT</pubDate>
+  </item><item>
+    <title>Frontend-Project-Architecture-2026</title>
+    <link>https://dangthobach.github.io/knowledge/concepts/Frontend-Project-Architecture-2026</link>
+    <guid>https://dangthobach.github.io/knowledge/concepts/Frontend-Project-Architecture-2026</guid>
+    <description><![CDATA[ Frontend Project Architecture 2026 — Kiến Trúc Nào Cho Usecase Nào? Status: 🟢 Active Tags: frontend architecture react angular solidjs FSD scalability Related: 15-Enterprise-Best-Practices · 14-Enterprise-Architecture-and-Standalone · 06-Enterprise-Architecture · concepts 🗺️ Tại Sao Cần Quan Tâm Đ... ]]></description>
+    <pubDate>Tue, 12 May 2026 06:26:36 GMT</pubDate>
+  </item><item>
     <title>DBMigration-01-Flyway-Deep-Dive</title>
     <link>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-01-Flyway-Deep-Dive</link>
     <guid>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-01-Flyway-Deep-Dive</guid>
@@ -52,18 +64,6 @@
     <link>https://dangthobach.github.io/knowledge/Database-Patterns/Liquibase/Liquibase-02-Configuration-SpringBoot</link>
     <guid>https://dangthobach.github.io/knowledge/Database-Patterns/Liquibase/Liquibase-02-Configuration-SpringBoot</guid>
     <description><![CDATA[ Liquibase 02 — Configuration &amp; Spring Boot Enterprise Setup Mục tiêu: Cấu hình Liquibase vào project Spring Boot enterprise đúng cách — từ dependency đến multi-datasource, từ local dev đến production. ]]></description>
-    <pubDate>Mon, 11 May 2026 15:38:06 GMT</pubDate>
-  </item><item>
-    <title>Liquibase-03-Changelog-Mastery</title>
-    <link>https://dangthobach.github.io/knowledge/Database-Patterns/Liquibase/Liquibase-03-Changelog-Mastery</link>
-    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/Liquibase/Liquibase-03-Changelog-Mastery</guid>
-    <description><![CDATA[ Liquibase 03 — Changelog Mastery: Viết Changelog chuẩn cho hệ thống 200 bảng Mục tiêu: Nắm vững cách viết changelog XML/SQL đúng cách, strategies tổ chức cho dự án lớn, và các patterns tránh lỗi production. ]]></description>
-    <pubDate>Mon, 11 May 2026 15:38:06 GMT</pubDate>
-  </item><item>
-    <title>Liquibase-04-Advanced-Enterprise</title>
-    <link>https://dangthobach.github.io/knowledge/Database-Patterns/Liquibase/Liquibase-04-Advanced-Enterprise</link>
-    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/Liquibase/Liquibase-04-Advanced-Enterprise</guid>
-    <description><![CDATA[ Liquibase 04 — Advanced Enterprise: Multi-schema, Multi-tenant, Diff &amp; generateChangeLog Mục tiêu: Các pattern nâng cao cho enterprise — đặc biệt là diff và generateChangeLog để giải quyết bài toán compare scripts trước golive. ]]></description>
     <pubDate>Mon, 11 May 2026 15:38:06 GMT</pubDate>
   </item>
     </channel>
