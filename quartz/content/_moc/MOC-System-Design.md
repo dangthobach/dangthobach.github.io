@@ -106,3 +106,10 @@ tags: [moc, architecture, design-patterns, clean-architecture, ddd]
 - [[Microservices-Patterns/03-Reliability|🛡️ Reliability]] — Circuit Breaker, Service Discovery
 - [[Microservices-Patterns/04-Observability|🔭 Observability]] — Distributed Tracing, Metrics, Logs
 - [[Microservices-Patterns/05-Decomposition|✂️ Decomposition & Deployment]] — DDD, Strangler Fig, Container
+
+---
+
+## 🖥️ Frontend Architecture
+
+- [[concepts/Frontend-Project-Architecture-2026|🏗️ Frontend Project Architecture 2026]]
+  → So sánh FSD, Vertical Slice, Micro-Frontends, Layered. Decision tree chọn kiến trúc. Áp dụng cho React, Angular, SolidJS. Tooling và migration path.
