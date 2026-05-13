@@ -644,3 +644,193 @@ Golive discipline:
 ---
 
 #enterprise #flyway #stored-procedures #200-tables #postgresql #zero-downtime #patterns
+
+---
+
+## Deep Dive — Giải thích sâu các pattern khó hiểu
+
+### 3-bước ADD COLUMN — Tại sao không làm 1 bước?
+
+Nhiều người đặt câu hỏi: "Tại sao không viết luôn `ALTER TABLE ADD COLUMN priority INT NOT NULL DEFAULT 0`? Chỉ 1 dòng thôi?"
+
+```
+Vấn đề với 1-bước trên table lớn (ví dụ: 50 triệu rows):
+───────────────────────────────────────────────────────────
+
+ALTER TABLE document ADD COLUMN priority INT NOT NULL DEFAULT 0;
+
+PostgreSQL cũ (< 11) sẽ làm:
+  1. Lock table (không ai đọc/ghi được)
+  2. Viết lại toàn bộ 50 triệu rows (thêm column priority=0 vào mỗi row)
+  3. Tạo constraint NOT NULL
+  4. Release lock
+  
+  Thời gian: 30 phút đến vài giờ
+  Trong thời gian đó: app bị treo, timeout
+  
+PostgreSQL 11+ có cải thiện:
+  Nếu DEFAULT là constant (không phải expression) → thêm column nhanh
+  PostgreSQL lưu DEFAULT value ở metadata, không rewrite rows
+  Nhưng NOT NULL vẫn cần scan để verify không có NULL
+  
+Dù sao: 3-bước pattern vẫn an toàn hơn và portable hơn
+```
+
+**Giải thích từng bước:**
+
+```sql
+-- BƯỚC 1: Add column NULLABLE (milliseconds, zero lock)
+-- Tại sao nhanh: PostgreSQL chỉ update catalog metadata, không động đến data rows
+ALTER TABLE document ADD COLUMN priority INT;
+
+-- Lúc này: column tồn tại, tất cả rows có priority = NULL
+-- App cũ vẫn chạy bình thường (không biết column này)
+-- App mới có thể bắt đầu đọc column (thấy NULL)
+```
+
+```sql
+-- BƯỚC 2: Fill data theo batch (chạy nền, không lock)
+-- Tại sao batch? UPDATE toàn bộ 50M rows = 1 transaction khổng lồ = lock lâu
+-- Batch nhỏ = nhiều transaction nhỏ = lock ngắn = app vẫn chạy được
+
+DO $$
+DECLARE
+    rows_done INT;
+BEGIN
+    LOOP
+        UPDATE document
+        SET priority = 0
+        WHERE priority IS NULL
+        AND id IN (
+            SELECT id FROM document
+            WHERE priority IS NULL
+            LIMIT 10000      -- 10K rows mỗi batch
+        );
+        
+        GET DIAGNOSTICS rows_done = ROW_COUNT;
+        EXIT WHEN rows_done = 0;
+        
+        PERFORM pg_sleep(0.05);  -- nghỉ 50ms giữa các batch
+        -- Để postgres xử lý các request khác
+    END LOOP;
+END $$;
+```
+
+```sql
+-- BƯỚC 3: Sau khi tất cả rows đã có data → set constraint
+-- PostgreSQL scan để verify, nhưng nhanh hơn vì data đã sẵn sàng
+ALTER TABLE document ALTER COLUMN priority SET NOT NULL;
+ALTER TABLE document ALTER COLUMN priority SET DEFAULT 0;
+```
+
+---
+
+### CONCURRENT INDEX — Tại sao cần Java migration?
+
+```
+CREATE INDEX thường:
+  PostgreSQL lock table trong suốt quá trình build index
+  Table 50M rows → lock 10-30 phút → outage
+
+CREATE INDEX CONCURRENTLY:
+  PostgreSQL build index mà không lock
+  Chậm hơn ~2x nhưng app vẫn chạy được
+
+Vấn đề với Flyway + CONCURRENTLY:
+  Flyway mặc định wrap mỗi migration trong 1 transaction (BEGIN...COMMIT)
+  PostgreSQL quy định: CREATE INDEX CONCURRENTLY KHÔNG được chạy trong transaction
+  
+  Nếu thử:
+  BEGIN;
+  CREATE INDEX CONCURRENTLY ...;
+  COMMIT;
+  → ERROR: CREATE INDEX CONCURRENTLY cannot run inside a transaction block
+```
+
+Đó là lý do cần Java migration với `canExecuteInTransaction() = false`:
+
+```java
+public class V2_04__Create_tenant_indexes_concurrent extends BaseJavaMigration {
+    
+    @Override
+    public void migrate(Context context) throws Exception {
+        // Flyway không wrap trong transaction vì canExecuteInTransaction = false
+        // Phải tự quản lý connection
+        var conn = context.getConnection();
+        conn.setAutoCommit(true);   // Không transaction
+        
+        try (var stmt = conn.createStatement()) {
+            // Bây giờ CONCURRENTLY hoạt động
+            stmt.execute("""
+                CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_document_tenant_deleted
+                ON document(tenant_code)
+                WHERE deleted = false
+            """);
+            // IF NOT EXISTS: idempotent — chạy lại không lỗi
+        }
+    }
+    
+    @Override
+    public boolean canExecuteInTransaction() {
+        return false;   // KEY: Flyway sẽ KHÔNG wrap trong transaction
+    }
+}
+```
+
+**Trade-off của CONCURRENTLY:** Nếu `CREATE INDEX CONCURRENTLY` fail giữa chừng, PostgreSQL để lại một "invalid index". Bạn phải `DROP INDEX` thủ công trước khi chạy lại. Đó là lý do dùng `IF NOT EXISTS` — nhưng nó không giúp khi index tồn tại ở trạng thái invalid.
+
+```sql
+-- Kiểm tra invalid indexes:
+SELECT schemaname, tablename, indexname, pg_size_pretty(pg_relation_size(indexrelid))
+FROM pg_stat_user_indexes
+JOIN pg_index USING (indexrelid)
+WHERE NOT pg_index.indisvalid;
+
+-- Nếu có invalid index: drop và tạo lại
+DROP INDEX CONCURRENTLY IF EXISTS idx_document_tenant_deleted;
+```
+
+---
+
+### Idempotent seed data — Tại sao ON CONFLICT quan trọng
+
+```
+Tình huống không có ON CONFLICT:
+──────────────────────────────────
+V1_10__Seed_lookup_data.sql chạy lần 1 trên dev → OK
+Dev reset DB → chạy lại → OK (DB trống)
+Nhưng nếu ai đó chạy flyway repair rồi migrate → chạy lại V1_10 → ERROR!
+  "duplicate key value violates unique constraint"
+
+Flyway đánh dấu V1_10 là FAILED → app không start
+
+Với ON CONFLICT DO NOTHING:
+  Chạy lần 1: INSERT thành công
+  Chạy lần 2: Duplicate → bỏ qua, không lỗi
+  → Migration idempotent, an toàn khi chạy lại
+```
+
+**Ba pattern và khi nào dùng:**
+
+```sql
+-- Pattern 1: ON CONFLICT DO NOTHING
+-- Dùng khi: data seed không bao giờ cần update, chỉ cần có mặt
+INSERT INTO document_status (id, code, name) VALUES (1, 'DRAFT', 'Nháp')
+ON CONFLICT (id) DO NOTHING;
+-- Nếu id=1 đã có → bỏ qua hoàn toàn, kể cả name có sai
+-- Dùng cho: enum-like data, ít khi thay đổi
+
+-- Pattern 2: ON CONFLICT DO UPDATE (upsert)
+-- Dùng khi: config có thể cần update theo migration mới
+INSERT INTO system_config (key, value) VALUES ('MAX_BATCH', '10000')
+ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = NOW();
+-- EXCLUDED = row mà bạn đang cố INSERT (chưa vào được)
+-- Dùng cho: configuration data, có thể cần sync lại
+
+-- Pattern 3: WHERE NOT EXISTS
+-- Dùng khi: logic phức tạp hơn — cần check điều kiện trước khi insert
+INSERT INTO warehouse (code, name, type_id)
+SELECT 'HAN_MAIN', 'Kho Hà Nội', 1
+WHERE NOT EXISTS (SELECT 1 FROM warehouse WHERE code = 'HAN_MAIN');
+-- Dùng cho: data phụ thuộc vào data khác đã có sẵn
+```

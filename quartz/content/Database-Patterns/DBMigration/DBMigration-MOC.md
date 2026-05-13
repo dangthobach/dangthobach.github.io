@@ -8,11 +8,14 @@
 
 | # | Article | Nội dung |
 |---|---------|----------|
+| 0 | [[DBMigration-00-Newbie-Guide]] | **Đọc trước** — Tại sao cần migration tool, cơ chế checksum, giải thích sâu từng rule, mental model |
 | 1 | [[DBMigration-01-Flyway-Deep-Dive]] | Core mechanics, Spring Boot config, versioned + repeatable migrations, enterprise patterns |
 | 2 | [[DBMigration-02-AtlasGo-Deep-Dive]] | Schema-as-code, HCL/SQL, declarative diff engine, CI linting, PostgreSQL native |
 | 3 | [[DBMigration-03-Tool-Comparison]] | Liquibase vs Flyway vs Atlas — use cases, kết hợp, misuse warnings |
 | 4 | [[DBMigration-04-Enterprise-Patterns]] | 200 tables + 50 stored procs: tổ chức file, stored proc strategy, multi-env |
 | 5 | [[DBMigration-05-Adoption-Roadmap]] | **Lộ trình triển khai cho dự án đang giữa chừng** — song song feature dev |
+
+> 💡 **Nếu là lần đầu đọc series này**: Bắt đầu từ bài 00. Các bài 01–05 viết theo kiểu reference — đầy đủ nhưng giả định bạn đã hiểu cơ bản. Bài 00 giải thích những thứ mà các bài kia bỏ qua.
 
 ---
 

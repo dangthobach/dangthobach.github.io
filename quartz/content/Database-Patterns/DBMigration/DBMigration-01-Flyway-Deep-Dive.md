@@ -660,3 +660,190 @@ Flyway weakness:
 ---
 
 #flyway #database-migration #spring-boot #postgresql #stored-procedures #enterprise
+
+---
+
+## Deep Dive — Giải thích sâu cho những khái niệm dễ nhầm
+
+### Tại sao "bỏ V2 ổn" nhưng "V2 xuất hiện muộn lại nguy hiểm"?
+
+Hai tình huống này trông giống nhau nhưng hoàn toàn khác nhau:
+
+```
+Tình huống A — "Bỏ V2 ổn" (SAFE):
+────────────────────────────────────
+Files trên disk: V1, V3 (không có V2)
+Flyway_history:  (trống)
+
+Flyway chạy: V1 → V3
+Không có V2 → Flyway không biết → không quan tâm → OK
+
+Tình huống B — "V2 xuất hiện muộn" (NGUY HIỂM):
+──────────────────────────────────────────────────
+Files trên disk: V1, V2, V3
+Flyway_history:  V1 ✅, V3 ✅  ← V3 đã chạy rồi!
+
+Flyway nhận ra: "V2 tồn tại nhưng chưa trong history"
+               "V3 đã trong history rồi"
+               "V2 < V3 → V2 phải chạy TRƯỚC V3 → nhưng V3 đã chạy!"
+
+Mặc định (out-of-order=false): ERROR
+out-of-order=true: Flyway chạy V2 SAU V3 — nhưng thứ tự SQL có thể sai!
+```
+
+**Ví dụ thực tế tại sao out-of-order nguy hiểm:**
+
+```sql
+-- V2__add_priority_column.sql (xuất hiện muộn)
+ALTER TABLE document ADD COLUMN priority INT DEFAULT 0;
+
+-- V3__add_priority_index.sql (đã chạy trước trên prod)
+CREATE INDEX idx_doc_priority ON document(priority);
+-- Nếu V2 chưa chạy → column priority chưa có → INDEX NÀY ĐÃ LỖI khi apply!
+-- Nhưng nếu prod đã "vượt qua" được (có thể do tay ai đó add column) → drift
+```
+
+**Giải pháp đúng khi V2 xuất hiện muộn:** Rename V2 → V4 (version sau cùng) trước khi merge. SQL logic có thể cần điều chỉnh để phản ánh đúng thứ tự mới.
+
+---
+
+### Checksum — Cơ chế thực sự bên trong
+
+Flyway dùng thuật toán **CRC32** để tính checksum, sau đó lưu vào cột `checksum` (kiểu INT) trong `flyway_schema_history`.
+
+```
+Ví dụ thực tế:
+────────────────
+Nội dung file V2__create_table.sql:
+  "CREATE TABLE foo (id INT);"
+  CRC32 → 1234567890  ← lưu vào DB
+
+Sau khi ai đó thêm dấu cách:
+  "CREATE TABLE foo ( id INT );"
+  CRC32 → 9876543210  ← KHÁC HOÀN TOÀN
+
+→ Validate fail ngay cả khi thay đổi không ảnh hưởng gì đến SQL
+```
+
+**Quirk quan trọng:** Flyway tính checksum TRƯỚC khi parse SQL. Nghĩa là comment, whitespace, line ending (LF vs CRLF) đều ảnh hưởng. Đây là nguồn gốc bug khi dev dùng Windows (CRLF) và CI/CD dùng Linux (LF) — checksum khác nhau giữa hai môi trường.
+
+```bash
+# Fix: chuẩn hóa line endings trong .gitattributes
+echo "*.sql text eol=lf" >> .gitattributes
+git add --renormalize .
+```
+
+---
+
+### Vì sao flyway migrate chạy trong Spring Boot startup mà không cần gọi tay?
+
+```
+Spring Boot autoconfiguration:
+───────────────────────────────
+1. Spring Boot detect: classpath có flyway.jar không?
+2. Có → tự tạo FlywayAutoConfiguration bean
+3. FlywayAutoConfiguration tạo Flyway bean + FlywayMigrationInitializer bean
+4. FlywayMigrationInitializer implement InitializingBean → afterPropertiesSet() gọi flyway.migrate()
+5. Spring đảm bảo Flyway migrate XONG trước khi datasource được dùng bởi JPA/Hibernate
+
+Thứ tự khởi động:
+  DataSource bean created
+      ↓
+  Flyway bean created (inject DataSource)
+      ↓
+  flyway.migrate() — apply tất cả pending
+      ↓
+  EntityManagerFactory (JPA) created — giờ mới init JPA
+      ↓
+  App ready
+```
+
+Đây là lý do khi migration fail → app fail startup hoàn toàn. Không có cách nào bypass, đây là design intentional: "Nếu DB schema không đúng, app không nên chạy."
+
+---
+
+### Flyway repair — Dùng khi nào, dùng thế nào
+
+`flyway repair` là lệnh "emergency fix" cho hai tình huống:
+
+```
+Tình huống 1: Migration bị FAILED trong history
+────────────────────────────────────────────────
+flyway_schema_history có row: V3, success=false
+
+Flyway thấy row failed → từ chối chạy tiếp
+Bạn fix bug trong V3__something.sql
+Chạy: flyway repair → xóa row failed khỏi history
+Chạy: flyway migrate → thử V3 lại từ đầu
+
+Tình huống 2: Checksum mismatch (file bị sửa)
+─────────────────────────────────────────────
+flyway_schema_history: V2, checksum=1111
+File V2 trên disk: checksum=2222
+
+Chạy: flyway repair → cập nhật checksum trong DB thành 2222
+⚠️ NGUY HIỂM: chỉ làm khi chắc chắn thay đổi trong file
+   KHÔNG làm gì khác ngoài việc "bắt Flyway bỏ qua sự khác biệt"
+   Staging và prod có thể lệch nhau nếu dùng repair bừa bãi
+```
+
+---
+
+### Flyway callbacks — Hook vào lifecycle
+
+Flyway cho phép chạy SQL/Java trước/sau mỗi migration:
+
+```
+Callback files (đặt cùng folder với migrations):
+
+beforeMigrate.sql    → Chạy trước toàn bộ migrate
+afterMigrate.sql     → Chạy sau toàn bộ migrate thành công
+afterMigrateError.sql → Chạy sau khi migrate có lỗi
+
+beforeEachMigrate.sql → Chạy trước MỖI file migration
+afterEachMigrate.sql  → Chạy sau MỖI file migration thành công
+```
+
+```sql
+-- afterMigrate.sql — Ví dụ thực tế từ PDMS
+-- Refresh materialized views sau mỗi lần migrate
+
+REFRESH MATERIALIZED VIEW CONCURRENTLY mv_document_summary;
+REFRESH MATERIALIZED VIEW CONCURRENTLY mv_credit_case_stats;
+
+-- afterMigrate chạy mỗi lần app start + có migrate
+-- Đảm bảo MV luôn fresh sau schema change
+```
+
+---
+
+### Placeholder — Biến trong migration SQL
+
+Flyway hỗ trợ placeholder để tránh hardcode giá trị môi trường:
+
+```sql
+-- Migration file dùng placeholder ${...}
+INSERT INTO system_config (key, value)
+VALUES ('DEFAULT_TENANT', '${defaultTenant}');
+
+INSERT INTO admin_user (email, role)
+VALUES ('${adminEmail}', 'SUPER_ADMIN');
+```
+
+```yaml
+# application-dev.yml
+spring:
+  flyway:
+    placeholders:
+      defaultTenant: VPBANK_DEV
+      adminEmail: admin-dev@vpbank.com
+
+# application-prod.yml  
+spring:
+  flyway:
+    placeholders:
+      defaultTenant: VPBANK
+      adminEmail: admin@vpbank.com
+```
+
+Placeholder giải quyết vấn đề "seed data khác nhau giữa môi trường" mà không cần tạo nhiều file migration.

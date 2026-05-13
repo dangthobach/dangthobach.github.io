@@ -573,3 +573,181 @@ Atlas weaknesses:
 ---
 
 #atlasgo #schema-as-code #database-migration #postgresql #cicd #declarative
+
+---
+
+## Deep Dive — Declarative thực sự nghĩa là gì?
+
+### Imperative vs Declarative — Ví dụ bằng ngôn ngữ tự nhiên
+
+Cách dễ nhất để hiểu sự khác biệt:
+
+```
+Tình huống: Bạn muốn đến nhà hàng
+
+Imperative (Flyway style):
+  "Đi thẳng 200m, rẽ trái, đi 100m, rẽ phải, đến số nhà 42"
+  → Bạn mô tả từng BƯỚC để đến đó
+  → Nếu có công trình đang sửa → lệnh "đi thẳng 200m" sẽ thất bại
+  
+Declarative (Atlas style):
+  "Tôi muốn đến nhà hàng Phở Bắc, 42 Hàng Bông"
+  → Bạn mô tả ĐÍCH ĐẾN, không quan tâm đường đi
+  → GPS (Atlas) tự tìm đường tốt nhất từ vị trí hiện tại
+```
+
+Áp dụng vào database:
+
+```
+Imperative (Flyway):
+  Bạn viết: ALTER TABLE document ADD COLUMN priority INT;
+  Flyway thực thi chính xác câu SQL đó
+  → Bạn phải biết DB đang ở đâu để viết đúng SQL
+
+Declarative (Atlas):
+  Bạn khai báo: table document { column priority { type = int } }
+  Atlas nhìn vào DB hiện tại: "DB đang có gì?"
+  Atlas tính diff: "Thiếu column priority"
+  Atlas tự generate: ALTER TABLE document ADD COLUMN priority INT;
+  → Bạn chỉ cần biết muốn DB trông như thế nào
+```
+
+---
+
+### Atlas Dev Database — Tại sao cần?
+
+Khi chạy `atlas migrate diff`, Atlas cần một **dev database** tạm thời để tính diff. Đây là điều nhiều người không hiểu tại sao.
+
+```
+Atlas diff process (chi tiết):
+────────────────────────────────
+
+Bước 1: Atlas tạo dev DB trống (dùng Docker)
+         docker://postgres/15/pdms_dev → Atlas tự spin up container
+
+Bước 2: Apply desired state vào dev DB
+         Đọc schema.hcl → chạy SQL tương đương trên dev DB
+         Dev DB bây giờ có schema mà BẠN MUỐN
+
+Bước 3: Inspect dev DB → "Desired state thực tế trông như thế nào?"
+         (Đôi khi HCL → SQL có edge cases)
+
+Bước 4: Inspect target DB → "DB hiện tại có gì?"
+
+Bước 5: Diff: Desired state - Current state = Changes needed
+
+Bước 6: Generate migration SQL từ changes
+
+Bước 7: Destroy dev DB (cleanup)
+```
+
+```
+Tại sao không diff trực tiếp schema.hcl với target DB?
+────────────────────────────────────────────────────────
+Vì HCL là "ngôn ngữ khai báo" — cần compile ra SQL thực tế mới compare được
+Giống như bạn không compare TypeScript source với compiled JS output trực tiếp
+→ Dev DB là bước "compile HCL thành real schema" trước khi diff
+```
+
+---
+
+### Atlas Versioned vs Declarative Mode — Khi nào dùng cái nào?
+
+Atlas có hai chế độ hoàn toàn khác nhau, dễ nhầm:
+
+```
+Versioned Mode (atlas migrate):
+────────────────────────────────
+Atlas generate migration FILES (giống Flyway)
+Bạn review file trước khi apply
+Files được versioned trong Git
+Apply bằng: atlas migrate apply
+
+→ Dùng cho: production environments, cần review/approval
+→ Dùng cho: team lớn, cần audit trail rõ ràng
+
+Declarative Mode (atlas schema apply):
+────────────────────────────────────────
+Atlas tính diff và apply TRỰC TIẾP lên DB
+KHÔNG tạo migration files
+Mỗi lần chạy: Atlas sync DB về desired state
+
+→ Dùng cho: development local (reset nhanh)
+→ Dùng cho: CI ephemeral test databases
+→ KHÔNG dùng cho: production (không có audit trail)
+```
+
+```bash
+# Versioned mode — generate file rồi review
+atlas migrate diff "add_priority_column" \
+  --dir "file://migrations" \
+  --to "file://schema.hcl" \
+  --dev-url "docker://postgres/15/dev"
+
+# → Tạo file: migrations/20241120_add_priority_column.sql
+# → Bạn review file
+# → atlas migrate apply
+
+# Declarative mode — apply thẳng, không file
+atlas schema apply \
+  --url "postgres://user@localhost/pdms_local" \
+  --to "file://schema.hcl" \
+  --dev-url "docker://postgres/15/dev"
+
+# → Atlas tính diff và apply luôn
+# → Không có file nào được tạo
+# → NGUY HIỂM trên prod vì không có cách review
+```
+
+---
+
+### Atlas Lint — Hiểu từng loại check
+
+Atlas phát hiện các loại thay đổi nguy hiểm khác nhau:
+
+```
+1. DESTRUCTIVE — Mất data ngay lập tức
+───────────────────────────────────────
+DROP TABLE          → Xóa cả bảng + data
+DROP COLUMN         → Xóa column + data trong đó
+TRUNCATE TABLE      → Xóa sạch data
+
+Atlas: ERROR by default — block CI
+
+2. DATA_DEPEND — Có thể mất data tùy vào data thực tế
+──────────────────────────────────────────────────────
+ALTER COLUMN type (INT → VARCHAR)   → Có thể fail nếu data không convert được
+ADD CONSTRAINT NOT NULL             → Fail nếu có row có NULL
+ADD UNIQUE CONSTRAINT               → Fail nếu có duplicate data
+
+Atlas: ERROR by default — phải review
+
+3. NON_LINEAR — Thứ tự migration không theo line thẳng
+───────────────────────────────────────────────────────
+Migration version thấp hơn xuất hiện sau version cao hơn đã chạy
+(out-of-order như đã giải thích ở bài 01)
+
+Atlas: WARNING — không block nhưng cảnh báo
+
+4. CONCURRENT_INDEX — Index tạo không CONCURRENTLY trên large table
+────────────────────────────────────────────────────────────────────
+CREATE INDEX (không có CONCURRENTLY) → lock table khi tạo
+Trên table lớn: lock hàng phút/giờ → outage
+
+Atlas: WARNING — nhắc dùng CONCURRENTLY
+```
+
+```hcl
+# atlas.hcl — Cấu hình severity level
+lint {
+  destructive {
+    error = true    # Block CI khi có DROP TABLE/COLUMN
+  }
+  data_depend {
+    error = true    # Block CI khi có thay đổi phụ thuộc data
+  }
+  non_linear {
+    error = false   # Chỉ warn, không block
+  }
+}
+```

@@ -754,3 +754,192 @@ PHASE 3 CHECKLIST (Tuần 6+):
 ---
 
 #adoption-roadmap #flyway #atlasgo #enterprise #pdms #migration #golive #postgresql
+
+---
+
+## Deep Dive — Những câu hỏi thực tế khi adopt
+
+### Baseline thực sự làm gì với flyway_schema_history?
+
+```
+Khi chạy: flyway baseline -baselineVersion=1
+────────────────────────────────────────────
+
+Flyway INSERT 1 row vào flyway_schema_history:
+  installed_rank = 1
+  version        = "1"
+  description    = "Existing PDMS schema before Flyway adoption"
+  type           = "BASELINE"    ← không phải SQL hay JDBC
+  script         = "<< Flyway Baseline >>"
+  checksum       = NULL          ← không có checksum
+  installed_by   = "flyway_user"
+  installed_on   = NOW()
+  execution_time = 0
+  success        = true
+
+Khi Flyway chạy tiếp theo:
+  Đọc history → thấy version 1 đã "chạy" (thực ra là baseline)
+  Scan migration files → tìm tất cả files có version > 1
+  Chạy V2, V3, V4... nhưng BỎ QUA V1
+  
+Điều quan trọng: Flyway baseline KHÔNG chạy bất kỳ SQL nào
+                 Nó chỉ INSERT 1 row vào tracking table
+                 DB schema không thay đổi chút nào
+```
+
+**Tại sao phải generate V1__Baseline_existing_schema.sql nếu Flyway không chạy nó?**
+
+```
+Câu hỏi hay! Có 2 lý do:
+
+1. Cho dev mới setup local:
+   Dev mới join team → clone repo → chưa có DB
+   Flyway cần file V1 để tạo schema từ đầu (không có DB sẵn)
+   Flyway chạy V1__Baseline.sql → tạo 200 tables → rồi chạy V2, V3...
+   
+   Staging/Prod: đã có DB sẵn → flyway baseline → bỏ qua V1
+   Dev mới:     DB trống → flyway migrate → chạy V1 để tạo schema
+
+2. Disaster recovery:
+   Nếu prod DB bị mất hoàn toàn → cần tạo lại từ đầu
+   V1__Baseline.sql là "bản snapshot" toàn bộ schema ban đầu
+   Chạy từ V1 → ... → Vn để recover hoàn toàn
+```
+
+---
+
+### Khi nào nên dùng 1 migration file vs nhiều files?
+
+```
+Rule of thumb: "1 business change = 1 migration file"
+
+Ví dụ 1: Thêm tính năng tenant support
+  ✅ ĐÚNG: 3 files riêng biệt
+    V2_01__Add_tenant_columns_nullable.sql
+    V2_02__Fill_tenant_data.sql
+    V2_03__Add_tenant_constraints_indexes.sql
+  
+  Lý do: Bước 2 (fill data) có thể chạy lâu và cần retry độc lập
+          Nếu gộp vào 1 file → fail ở bước fill → rollback cả add column
+
+Ví dụ 2: Add 1 column nhỏ trên bảng ít data
+  ✅ ĐỦ: 1 file
+    V3__Add_priority_to_small_table.sql
+    
+    ALTER TABLE config ADD COLUMN priority INT NOT NULL DEFAULT 0;
+    -- Table nhỏ → 1-bước an toàn, không cần chia
+
+Ví dụ 3: Create nhiều lookup tables liên quan
+  ✅ ĐÚNG: 1 file (cùng 1 unit của change)
+    V4__Create_lookup_tables.sql
+    
+    CREATE TABLE document_type (...);
+    CREATE TABLE document_status (...);
+    CREATE TABLE warehouse_type (...);
+    -- Các table này liên quan nhau, failure một cái → nên rollback tất cả
+```
+
+---
+
+### "flyway repair" có an toàn không?
+
+```
+flyway repair làm 2 việc:
+
+Việc 1: Xóa FAILED migration records
+  FAILED record trong history → Flyway từ chối chạy tiếp
+  repair xóa record failed → Flyway có thể thử lại
+  
+  AN TOÀN nếu: SQL trong migration đã thực sự rollback hết
+  (Flyway tự rollback nếu migration chạy trong transaction)
+  
+  NGUY HIỂM nếu: migration là canExecuteInTransaction=false
+  Khi đó SQL đã chạy một phần mà không rollback được
+  repair xóa record → Flyway thử lại → SQL chạy lại → DUPLICATE ERROR
+
+Việc 2: Cập nhật checksum
+  Khi file V__ bị sửa → checksum mismatch
+  repair update checksum trong history = checksum file hiện tại
+  
+  AN TOÀN nếu: thay đổi trong file là cosmetic (comment, whitespace)
+               và bạn chắc chắn DB đang ở đúng state
+  
+  NGUY HIỂM nếu: bạn sửa SQL logic → DB state giữa environments có thể lệch
+  Staging đã chạy SQL cũ, repair trên prod → prod sẽ chạy SQL mới
+  → Staging và prod có schema khác nhau
+
+Nguyên tắc: repair chỉ dùng như "emergency fix" trên dev/staging
+             Production: tạo file migration mới để fix, không repair
+```
+
+---
+
+### Sau khi baseline thành công — Workflow hàng ngày của team
+
+```
+Từ đây về sau, mọi thứ phải qua Flyway:
+─────────────────────────────────────────
+
+Developer muốn thêm column:
+  1. git pull (lấy code mới nhất)
+  2. flyway info → xem version cao nhất hiện tại (VD: 20241120143052)
+  3. Tạo file: V20241121090000__add_priority_column.sql
+  4. Viết SQL:
+       ALTER TABLE document ADD COLUMN priority INT;
+  5. flyway migrate (local) → verify OK
+  6. flyway validate → verify checksum OK
+  7. git add + git commit + git push
+  8. PR → CI pipeline chạy flyway validate + atlas lint
+  9. Merge → Deploy → Flyway tự migrate trên staging/prod
+
+Developer muốn sửa stored procedure:
+  1. Mở file R__020_SP_validate_document.sql
+  2. Sửa logic trực tiếp trong file
+  3. flyway migrate (local) → Flyway detect checksum thay đổi → re-run SP
+  4. Test SP
+  5. Commit → PR → Deploy → flyway migrate trên staging/prod tự re-run SP
+  
+Không cần tạo file migration mới cho stored proc!
+Không cần viết DROP + CREATE!
+Flyway tự detect và re-run khi file thay đổi.
+```
+
+---
+
+### Troubleshooting checklist khi Flyway fail trên production
+
+```
+Step 1: Đọc error message đầy đủ
+  flyway info để xem trạng thái
+
+Step 2: Phân loại error:
+  
+  "Validate failed: checksum mismatch"
+  → Ai đó sửa file migration đã chạy
+  → Tìm ai, tìm sự thay đổi
+  → Production: KHÔNG repair, tạo file mới để fix
+  → Staging/Dev: repair OK nếu thay đổi không ảnh hưởng
+  
+  "Migration V{x} failed!"
+  → SQL trong migration bị lỗi
+  → Flyway đã rollback transaction (nếu transactional migration)
+  → Fix SQL trong file
+  → flyway repair → flyway migrate
+  
+  "Out-of-order migration detected"
+  → File version thấp hơn xuất hiện sau version cao hơn đã chạy
+  → Production: KHÔNG bật out-of-order=true
+  → Rename file về version mới nhất + review SQL logic
+  
+  "Unable to acquire Flyway advisory lock"
+  → Có instance khác đang chạy flyway migrate
+  → Hoặc: instance trước bị kill giữa chừng, lock không được release
+  → Chờ hoặc manually release lock:
+     SELECT pg_advisory_unlock_all();
+     -- Sau đó chạy flyway repair để đảm bảo history sạch
+
+Step 3: Sau khi fix, verify:
+  flyway validate → OK?
+  flyway info → trạng thái hợp lý?
+  flyway migrate → chạy thành công?
+```

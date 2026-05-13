@@ -415,3 +415,151 @@ Best combinations:
 ---
 
 #comparison #flyway #liquibase #atlasgo #enterprise #misuse #best-practices
+
+---
+
+## Deep Dive — Những điều bảng so sánh không nói
+
+### Tại sao Flyway Community không có rollback?
+
+Đây là câu hỏi hay. Câu trả lời thực sự không phải "Flyway muốn bán Teams".
+
+```
+Lý do kỹ thuật — SQL DDL không rollback được dễ dàng:
+──────────────────────────────────────────────────────
+
+Migration tiến (forward):
+  V3: ALTER TABLE document ADD COLUMN priority INT;
+  → Đơn giản, rõ ràng
+
+Rollback "ngược lại" V3:
+  ALTER TABLE document DROP COLUMN priority;
+  → Ổn nếu column còn trống
+
+Nhưng nếu sau khi V3 chạy, app đã INSERT 1 triệu rows với priority data?
+  DROP COLUMN priority → DATA MẤT VĨNH VIỄN
+  Đây không phải "rollback" — đây là "xóa data"
+
+Flyway Teams "Undo migrations":
+  Bạn phải tự viết undo SQL — Flyway không auto-generate
+  Và undo SQL chỉ an toàn khi CHƯA có data change
+  Với DDL change có data change → không có undo thực sự
+```
+
+**Kết luận thực tế:** Với hầu hết production scenarios, rollback database không phải "chạy SQL ngược lại" — mà là "deploy version app cũ và accept data state hiện tại". Đây là lý do backup trước golive quan trọng hơn có undo migration.
+
+---
+
+### Liquibase changesets vs Flyway files — Sự khác biệt triết học
+
+```
+Flyway: 1 file = 1 migration unit
+──────────────────────────────────
+V3__add_tenant.sql:
+  ALTER TABLE document ADD COLUMN tenant_code VARCHAR(20);
+  ALTER TABLE credit_case ADD COLUMN tenant_code VARCHAR(20);
+  ALTER TABLE warehouse ADD COLUMN tenant_code VARCHAR(20);
+  
+→ Cả 3 ALTER chạy trong 1 transaction
+→ Một trong 3 fail → tất cả rollback
+→ Không thể retry từng ALTER riêng lẻ
+
+Liquibase: 1 changeset = 1 thay đổi nhỏ nhất
+──────────────────────────────────────────────
+<changeSet id="add-tenant-document" author="bach">
+  <addColumn tableName="document">
+    <column name="tenant_code" type="VARCHAR(20)"/>
+  </addColumn>
+</changeSet>
+
+<changeSet id="add-tenant-credit-case" author="bach">
+  <addColumn tableName="credit_case">
+    <column name="tenant_code" type="VARCHAR(20)"/>
+  </addColumn>
+</changeSet>
+
+→ Mỗi changeSet là 1 transaction riêng
+→ changeSet 1 thành công, changeSet 2 fail
+  → Document có tenant_code, credit_case chưa có
+  → Retry: chỉ chạy lại từ changeSet 2
+→ Granular control hơn
+
+Khi nào granular control quan trọng?
+  Migration lớn chạy hàng giờ, lỗi ở bước thứ 50/100
+  Flyway: phải chạy lại từ đầu 100 bước
+  Liquibase: chỉ chạy lại từ bước 50
+```
+
+---
+
+### Misuse 3 (Hibernate ddl-auto) — Tại sao nguy hiểm hơn bạn nghĩ
+
+```
+spring.jpa.hibernate.ddl-auto = update
+```
+
+Nhiều dev nghĩ `update` là "an toàn" vì nó chỉ thêm, không xóa. Nhưng:
+
+```
+Hibernate ddl-auto = update thực sự làm gì:
+────────────────────────────────────────────
+1. Đọc tất cả @Entity classes
+2. Inspect DB schema hiện tại
+3. Tạo SQL để sync entity → DB
+4. Chạy SQL đó
+
+Vấn đề 1: Hibernate KHÔNG track changes
+  Hibernate không biết "change nào đã chạy rồi"
+  Mỗi lần restart: Hibernate scan lại toàn bộ entities
+  → Có thể add column duplicate nếu logic không hoàn hảo
+
+Vấn đề 2: Hibernate không bao giờ DROP
+  Bạn rename cột Java: oldColumn → newColumn
+  Hibernate tạo: newColumn (mới), giữ nguyên oldColumn (cũ)
+  Kết quả: DB tích lũy rác — các column cũ không bao giờ bị xóa
+  Sau 2 năm: table có 30 cột cũ không dùng nữa
+
+Vấn đề 3: Không có audit trail
+  Ai đã thêm column này? Khi nào? Tại sao?
+  Không biết → production bị "schema drift" âm thầm
+  
+Vấn đề 4: Race condition khi multi-instance
+  App chạy 3 instances, tất cả start cùng lúc
+  3 instances đều cố "create index" → 2 cái fail
+  → Startup error không nhất quán, khó debug
+  
+✅ Rule: Luôn dùng validate hoặc none trên staging/prod
+         Chỉ dùng create-drop trên unit test (in-memory H2)
+```
+
+---
+
+### Misuse 4 — Version number strategy thực tế tại PDMS
+
+```
+Convention nào tốt nhất cho PDMS?
+───────────────────────────────────
+
+Option 1: Sequential (V1, V2, V3...)
+  Ưu: Đơn giản
+  Nhược: Conflict khi nhiều dev làm song song
+         Dev A tạo V5, Dev B tạo V5 → Merge conflict
+
+Option 2: Timestamp (V20241120143052)
+  Ưu: Không bao giờ conflict (timestamp unique)
+  Nhược: Số dài, khó đọc
+  
+Option 3: Sprint-based (V2024S47_01, V2024S47_02)
+  Ưu: Biết ngay migration thuộc sprint nào
+  Nhược: Convention phức tạp
+
+Khuyến nghị cho PDMS: Timestamp 14 chữ số
+  V20241120143052__add_priority_column.sql
+  
+  Cách tạo nhanh trên terminal:
+  date +V%Y%m%d%H%M%S
+  → V20241120143052
+  
+  Hoặc script:
+  alias new-migration='echo "V$(date +%Y%m%d%H%M%S)__"'
+```
