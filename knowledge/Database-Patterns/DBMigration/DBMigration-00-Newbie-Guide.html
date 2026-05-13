@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>DBMigration-00-Newbie-Guide</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="Dang Tho Bach's Knowledge Base"/><meta property="og:title" content="DBMigration-00-Newbie-Guide"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="DBMigration-00-Newbie-Guide"/><meta name="twitter:description" content="Database Migration — Giải thích từ đầu cho người mới Bài này giải thích tại sao migration tools tồn tại, cơ chế thực sự bên trong, và những khái niệm dễ nhầm nhất — trước khi đọc các bài chuyên sâu."/><meta property="og:description" content="Database Migration — Giải thích từ đầu cho người mới Bài này giải thích tại sao migration tools tồn tại, cơ chế thực sự bên trong, và những khái niệm dễ nhầm nhất — trước khi đọc các bài chuyên sâu."/><meta property="og:image:alt" content="Database Migration — Giải thích từ đầu cho người mới Bài này giải thích tại sao migration tools tồn tại, cơ chế thực sự bên trong, và những khái niệm dễ nhầm nhất — trước khi đọc các bài chuyên sâu."/><meta property="twitter:domain" content="dangthobach.github.io/knowledge"/><meta property="og:url" content="https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-00-Newbie-Guide"/><meta property="twitter:url" content="https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-00-Newbie-Guide"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="Database Migration — Giải thích từ đầu cho người mới Bài này giải thích tại sao migration tools tồn tại, cơ chế thực sự bên trong, và những khái niệm dễ nhầm nhất — trước khi đọc các bài chuyên sâu."/><meta name="generator" content="Quartz"/><link href="../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiL2hvbWUvcnVubmVyL3dvcmsvZGFuZ3Rob2JhY2guZ2l0aHViLmlvL2Rhbmd0aG9iYWNoLmdpdGh1Yi5pby9xdWFydHovcXVhcnR6L2NvbXBvbmVudHMvc3R5bGVzIiwic291cmNlcyI6WyJtZXJtYWlkLmlubGluZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFHRjtFQUNFOzs7QUFLRjtFQUNFO0VBQ0E7OztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTs7QUFJRjtFQUNFO0VBQ0E7RUFDQSIsInNvdXJjZXNDb250ZW50IjpbIi5leHBhbmQtYnV0dG9uIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbG9hdDogcmlnaHQ7XG4gIHBhZGRpbmc6IDAuNHJlbTtcbiAgbWFyZ2luOiAwLjNyZW07XG4gIHJpZ2h0OiAwOyAvLyBOT1RFOiByaWdodCB3aWxsIGJlIHNldCBpbiBtZXJtYWlkLmlubGluZS50c1xuICBjb2xvcjogdmFyKC0tZ3JheSk7XG4gIGJvcmRlci1jb2xvcjogdmFyKC0tZGFyayk7XG4gIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgYm9yZGVyOiAxcHggc29saWQ7XG4gIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgb3BhY2l0eTogMDtcbiAgdHJhbnNpdGlvbjogMC4ycztcblxuICAmID4gc3ZnIHtcbiAgICBmaWxsOiB2YXIoLS1saWdodCk7XG4gICAgZmlsdGVyOiBjb250cmFzdCgwLjMpO1xuICB9XG5cbiAgJjpob3ZlciB7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIGJvcmRlci1jb2xvcjogdmFyKC0tc2Vjb25kYXJ5KTtcbiAgfVxuXG4gICY6Zm9jdXMge1xuICAgIG91dGxpbmU6IDA7XG4gIH1cbn1cblxucHJlIHtcbiAgJjpob3ZlciA+IC5leHBhbmQtYnV0dG9uIHtcbiAgICBvcGFjaXR5OiAxO1xuICAgIHRyYW5zaXRpb246IDAuMnM7XG4gIH1cbn1cblxuI21lcm1haWQtY29udGFpbmVyIHtcbiAgcG9zaXRpb246IGZpeGVkO1xuICBjb250YWluOiBsYXlvdXQ7XG4gIHotaW5kZXg6IDk5OTtcbiAgbGVmdDogMDtcbiAgdG9wOiAwO1xuICB3aWR0aDogMTAwdnc7XG4gIGhlaWdodDogMTAwdmg7XG4gIG92ZXJmbG93OiBoaWRkZW47XG4gIGRpc3BsYXk6IG5vbmU7XG4gIGJhY2tkcm9wLWZpbHRlcjogYmx1cig0cHgpO1xuICBiYWNrZ3JvdW5kOiByZ2JhKDAsIDAsIDAsIDAuNSk7XG5cbiAgJi5hY3RpdmUge1xuICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgfVxuXG4gICYgPiAjbWVybWFpZC1zcGFjZSB7XG4gICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gICAgYm9yZGVyLXJhZGl1czogNXB4O1xuICAgIHBvc2l0aW9uOiBmaXhlZDtcbiAgICB0b3A6IDUwJTtcbiAgICBsZWZ0OiA1MCU7XG4gICAgdHJhbnNmb3JtOiB0cmFuc2xhdGUoLTUwJSwgLTUwJSk7XG4gICAgaGVpZ2h0OiA4MHZoO1xuICAgIHdpZHRoOiA4MHZ3O1xuICAgIG92ZXJmbG93OiBoaWRkZW47XG5cbiAgICAmID4gLm1lcm1haWQtY29udGVudCB7XG4gICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgICB0cmFuc2Zvcm0tb3JpZ2luOiAwIDA7XG4gICAgICB0cmFuc2l0aW9uOiB0cmFuc2Zvcm0gMC4xcyBlYXNlO1xuICAgICAgb3ZlcmZsb3c6IHZpc2libGU7XG4gICAgICBtaW4taGVpZ2h0OiAyMDBweDtcbiAgICAgIG1pbi13aWR0aDogMjAwcHg7XG5cbiAgICAgIHByZSB7XG4gICAgICAgIG1hcmdpbjogMDtcbiAgICAgICAgYm9yZGVyOiBub25lO1xuICAgICAgfVxuXG4gICAgICBzdmcge1xuICAgICAgICBtYXgtd2lkdGg6IG5vbmU7XG4gICAgICAgIGhlaWdodDogYXV0bztcbiAgICAgIH1cbiAgICB9XG5cbiAgICAmID4gLm1lcm1haWQtY29udHJvbHMge1xuICAgICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgICAgYm90dG9tOiAyMHB4O1xuICAgICAgcmlnaHQ6IDIwcHg7XG4gICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgZ2FwOiA4cHg7XG4gICAgICBwYWRkaW5nOiA4cHg7XG4gICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgYm9yZGVyLXJhZGl1czogNnB4O1xuICAgICAgYm94LXNoYWRvdzogMCAycHggNHB4IHJnYmEoMCwgMCwgMCwgMC4xKTtcbiAgICAgIHotaW5kZXg6IDI7XG5cbiAgICAgIC5tZXJtYWlkLWNvbnRyb2wtYnV0dG9uIHtcbiAgICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgIHdpZHRoOiAzMnB4O1xuICAgICAgICBoZWlnaHQ6IDMycHg7XG4gICAgICAgIHBhZGRpbmc6IDA7XG4gICAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgICAgY29sb3I6IHZhcigtLWRhcmspO1xuICAgICAgICBib3JkZXItcmFkaXVzOiA0cHg7XG4gICAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICAgICAgZm9udC1zaXplOiAxNnB4O1xuICAgICAgICBmb250LWZhbWlseTogdmFyKC0tYm9keUZvbnQpO1xuICAgICAgICB0cmFuc2l0aW9uOiBhbGwgMC4ycyBlYXNlO1xuXG4gICAgICAgICY6aG92ZXIge1xuICAgICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIH1cblxuICAgICAgICAmOmFjdGl2ZSB7XG4gICAgICAgICAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKDFweCk7XG4gICAgICAgIH1cblxuICAgICAgICAvLyBTdHlsZSB0aGUgcmVzZXQgYnV0dG9uIGRpZmZlcmVudGx5XG4gICAgICAgICY6bnRoLWNoaWxkKDIpIHtcbiAgICAgICAgICB3aWR0aDogYXV0bztcbiAgICAgICAgICBwYWRkaW5nOiAwIDEycHg7XG4gICAgICAgICAgZm9udC1zaXplOiAxNHB4O1xuICAgICAgICB9XG4gICAgICB9XG4gICAgfVxuICB9XG59XG4iXX0= */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://dangthobach.github.io/knowledge/index.xml"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image" content="https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-00-Newbie-Guide-og-image.webp"/><meta property="og:image:url" content="https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-00-Newbie-Guide-og-image.webp"/><meta name="twitter:image" content="https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-00-Newbie-Guide-og-image.webp"/><meta property="og:image:type" content="image/.webp"/></head><body data-slug="Database-Patterns/DBMigration/DBMigration-00-Newbie-Guide"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../..">Dang Tho Bach's Knowledge Base</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-76"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-76" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Database-Patterns/">Database Patterns</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Database-Patterns/DBMigration/">DBMigration</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>DBMigration 00 Newbie Guide</a></div></nav><h1 class="article-title">DBMigration-00-Newbie-Guide</h1><p show-comma="true" class="content-meta"><time datetime="2026-05-13T01:34:21.000Z">May 13, 2026</time><span>13 min read</span></p><ul class="tags"><li><a href="../../tags/flyway" class="internal tag-link">flyway</a></li><li><a href="../../tags/database-migration" class="internal tag-link">database-migration</a></li><li><a href="../../tags/newbie" class="internal tag-link">newbie</a></li><li><a href="../../tags/concepts" class="internal tag-link">concepts</a></li><li><a href="../../tags/postgresql" class="internal tag-link">postgresql</a></li><li><a href="../../tags/spring-boot" class="internal tag-link">spring-boot</a></li><li><a href="../../tags/checklist" class="internal tag-link">checklist</a></li></ul></div></div><article class="popover-hint"><h1 id="database-migration--giải-thích-từ-đầu-cho-người-mới">Database Migration — Giải thích từ đầu cho người mới<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#database-migration--giải-thích-từ-đầu-cho-người-mới" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<blockquote>
+<p>Bài này giải thích <strong>tại sao</strong> migration tools tồn tại, <strong>cơ chế thực sự</strong> bên trong, và những khái niệm dễ nhầm nhất — trước khi đọc các bài chuyên sâu.</p>
+</blockquote>
+<p><strong>Series</strong>: <a href="../../Database-Patterns/DBMigration/DBMigration-MOC" class="internal" data-slug="Database-Patterns/DBMigration/DBMigration-MOC">DBMigration-MOC</a> | <strong>Next</strong>: <a href="../../Database-Patterns/DBMigration/DBMigration-01-Flyway-Deep-Dive" class="internal" data-slug="Database-Patterns/DBMigration/DBMigration-01-Flyway-Deep-Dive">DBMigration-01-Flyway-Deep-Dive</a></p>
+<hr/>
+<h2 id="1-vấn-đề-gốc-rễ--tại-sao-cần-migration-tool">1. Vấn đề gốc rễ — Tại sao cần migration tool?<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-vấn-đề-gốc-rễ--tại-sao-cần-migration-tool" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Hãy bắt đầu bằng câu chuyện thực tế.</p>
+<h3 id="tình-huống-không-có-migration-tool">Tình huống không có migration tool<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#tình-huống-không-có-migration-tool" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Bạn và 5 người trong team đang phát triển PDMS. Database đang có bảng <code>document</code>.</p>
+<p><strong>Tháng 1</strong>: Dev A thêm cột <code>priority</code> vào bảng <code>document</code> trên máy local của mình, rồi viết code Java dùng cột đó. Anh ta gửi code lên Git, nhưng <strong>không gửi kèm SQL</strong>. Dev B pull code về, chạy app → lỗi <code>column &quot;priority&quot; does not exist</code>. Dev B mất 30 phút debug mới hiểu ra vấn đề.</p>
+<p><strong>Tháng 2</strong>: Sắp golive. Lead dev hỏi: “Staging đang thiếu gì so với prod?“. Không ai biết chắc. Team phải ngồi compare thủ công 2-4 giờ.</p>
+<p><strong>Tháng 3</strong>: Golive xong, phát hiện thiếu 2 stored procedure. App lỗi production. Rollback thủ công trong đêm.</p>
+<p>Đây chính xác là <code>GOLIVE PAIN</code> mà PDMS đang gặp.</p>
+<h3 id="migration-tool-giải-quyết-bằng-cách-nào">Migration tool giải quyết bằng cách nào?<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#migration-tool-giải-quyết-bằng-cách-nào" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Ý tưởng cốt lõi rất đơn giản:</p>
+<blockquote>
+<p><strong>Mỗi thay đổi database phải được viết thành file SQL, đặt tên có version, và commit cùng code.</strong></p>
+</blockquote>
+<pre><code>Không có migration tool:              Có migration tool:
+─────────────────────                 ─────────────────────
+Dev A sửa DB trên máy local     →     Dev A viết V2__add_priority.sql
+Dev B không biết gì             →     Dev B chạy: flyway migrate
+Dev B tự debug                  →     Flyway apply V2 tự động
+Golive: compare thủ công        →     Golive: flyway info → thấy ngay
+</code></pre>
+<hr/>
+<h2 id="2-flyway-hoạt-động-thế-nào--từng-bước">2. Flyway hoạt động thế nào — Từng bước<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-flyway-hoạt-động-thế-nào--từng-bước" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="lần-đầu-tiên-flyway-chạy">Lần đầu tiên Flyway chạy<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#lần-đầu-tiên-flyway-chạy" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>Flyway khởi động
+    │
+    ├─ Nhìn vào DB → &quot;Bảng flyway_schema_history có chưa?&quot;
+    │                    │
+    │               Chưa có → Tạo bảng tracking
+    │               Rồi có  → Đọc lịch sử
+    │
+    ├─ Scan thư mục migration/ → Tìm tất cả file V*.sql và R*.sql
+    │
+    ├─ So sánh: &quot;File nào đã chạy? File nào chưa?&quot;
+    │
+    └─ Chạy các file chưa chạy, theo thứ tự version
+</code></pre>
+<h3 id="flyway_schema_history--nhật-ký-của-flyway">flyway_schema_history — “Nhật ký” của Flyway<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#flyway_schema_history--nhật-ký-của-flyway" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Bảng này là tất cả. Flyway không “nhớ” gì ngoài bảng này.</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="sql" data-theme="github-light github-dark"><code data-language="sql" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Đây là bảng Flyway tự tạo khi chạy lần đầu</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Bạn không cần tạo, không cần sửa thủ công</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SELECT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> installed_rank, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">version</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">description</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, script, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">checksum</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, success</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">FROM</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> flyway_schema_history</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ORDER BY</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> installed_rank;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Ví dụ output thực tế:</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- rank | version | description            | script                      | checksum   | success</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- ─────┼─────────┼────────────────────────┼─────────────────────────────┼────────────┼─────────</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">--  1   | 1       | Baseline existing      | V1__Baseline_existing.sql   | -782341234 | true</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">--  2   | 1.1     | Add document tables    | V1_1__Add_document_tables.sql| 1234567890 | true</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">--  3   | 2       | Add tenant support     | V2__Add_tenant_support.sql  | 987654321  | true</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">--  4   | null    | SP validate document   | R__SP_validate_document.sql | 112233445  | true  ← Repeatable</span></span></code></pre></figure>
+<p><strong><code>checksum</code></strong> là gì? Khi Flyway chạy file <code>V2__Add_tenant_support.sql</code>, nó tính một con số đặc trưng của nội dung file đó (CRC32). Con số này được lưu vào bảng. Lần sau Flyway chạy, nó tính lại checksum của file và so sánh. Nếu khác → ai đó đã sửa file → lỗi ngay.</p>
+<p>Đây chính là lý do tại sao <strong>“Không sửa file đã chạy”</strong> là rule số 1.</p>
+<hr/>
+<h2 id="3-giải-thích-chi-tiết-bảng-rules--từng-dòng">3. Giải thích chi tiết bảng Rules — Từng dòng<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-giải-thích-chi-tiết-bảng-rules--từng-dòng" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Bảng trong bài 01 có dòng này gây nhầm lẫn:</p>
+<pre><code>Version phải tăng dần | V1 → V2 → V3, không nhảy cóc (V1 → V3 ổn, bỏ V2 ổn)
+</code></pre>
+<h3 id="bỏ-v2-ổn-thực-sự-nghĩa-là-gì">“Bỏ V2 ổn” thực sự nghĩa là gì?<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#bỏ-v2-ổn-thực-sự-nghĩa-là-gì" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Flyway <strong>không yêu cầu version phải liên tục</strong>. Nó chỉ yêu cầu version sau phải <strong>lớn hơn</strong> version đã chạy gần nhất.</p>
+<pre><code>Ví dụ 1: V1, V3 (bỏ V2) → HỢP LỆ
+──────────────────────────────────
+Bạn có files: V1__init.sql, V3__add_feature.sql
+Flyway chạy: V1 trước, V3 sau
+Không có V2 → Flyway không phàn nàn, chạy bình thường
+
+Ví dụ 2: V1, V2, V4 (bỏ V3) → HỢP LỆ
+──────────────────────────────────────
+Bạn có files: V1__init.sql, V2__second.sql, V4__fourth.sql
+Flyway chạy: V1 → V2 → V4, bỏ qua V3 vì không có file
+</code></pre>
+<p><strong>Tại sao lại được phép?</strong> Trong team đông người, dev A đang làm feature cần V2, dev B đang làm feature cần V3. Nếu feature của B xong trước, B cần tạo file migration. B chọn số V3 (không bận tâm V2 chưa có). Sau đó A xong, tạo V2. Khi merge: V2 và V3 đều tồn tại, Flyway chạy V2 trước V3 — mọi thứ ổn.</p>
+<pre><code>Ví dụ 3: V1, V3, V2 (V2 xuất hiện SAU khi V3 đã chạy) → VẤN ĐỀ
+──────────────────────────────────────────────────────────────────
+Flyway đã chạy V3 rồi
+Bây giờ file V2 xuất hiện (dev A merge muộn)
+Mặc định: Flyway báo lỗi &quot;out-of-order migration detected&quot;
+Cấu hình out-of-order: true → Flyway chạy V2 sau V3 (nguy hiểm trên prod)
+</code></pre>
+<hr/>
+<h3 id="không-sửa-file-đã-chạy--tại-sao-nghiêm-trọng">”Không sửa file đã chạy” — Tại sao nghiêm trọng?<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#không-sửa-file-đã-chạy--tại-sao-nghiêm-trọng" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>Tình huống:
+──────────
+1. Bạn tạo V2__create_table.sql với nội dung:
+   CREATE TABLE foo (id INT);
+   
+2. Flyway chạy trên staging → OK, lưu checksum = 12345
+
+3. Bạn phát hiện lỗi, sửa file thành:
+   CREATE TABLE foo (id BIGINT);  ← đổi INT thành BIGINT
+
+4. Flyway chạy lần tiếp theo:
+   - Đọc lịch sử: V2 đã chạy rồi, checksum = 12345
+   - Tính checksum file hiện tại: 67890
+   - 12345 ≠ 67890 → LỖI: &quot;Validate failed: Migration checksum mismatch&quot;
+   
+Lý do rule này tồn tại:
+   Staging đã tạo bảng foo với cột id INT
+   Production cũng đã tạo foo với id INT (giống nhau)
+   Nếu bạn sửa file, Flyway trên prod sẽ không biết sửa hay không sửa
+   → Staging và prod có thể đi lệch nhau mà không hay
+   
+Cách đúng:
+   Tạo V3__alter_foo_id_to_bigint.sql:
+   ALTER TABLE foo ALTER COLUMN id TYPE BIGINT;
+</code></pre>
+<hr/>
+<h3 id="repeatable-re-run-khi-file-thay-đổi--cơ-chế">”Repeatable re-run khi file thay đổi” — Cơ chế<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#repeatable-re-run-khi-file-thay-đổi--cơ-chế" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>File <code>R__</code> khác hoàn toàn với <code>V__</code>:</p>
+<pre><code>V__ (Versioned):              R__ (Repeatable):
+────────────────              ──────────────────
+Chạy đúng 1 lần              Chạy lại mỗi khi checksum thay đổi
+Có version number             KHÔNG có version number
+Thứ tự: theo version          Thứ tự: theo tên file (alphabet)
+Dùng cho: DDL, data           Dùng cho: stored procs, views, functions
+</code></pre>
+<pre><code>Ví dụ lifecycle của R__SP_validate.sql:
+────────────────────────────────────────
+Lần 1: File có checksum = AAA → Flyway chạy SP, lưu checksum AAA
+Lần 2: File không đổi → Flyway thấy checksum còn AAA → BỎ QUA
+Lần 3: Bạn sửa logic SP → checksum đổi thành BBB
+        → Flyway thấy BBB ≠ AAA → CHẠY LẠI file
+Lần 4: File không đổi → checksum vẫn BBB → BỎ QUA
+</code></pre>
+<p>Đây là lý do stored procedures được đặt trong file <code>R__</code>: mỗi lần sửa logic SP, chỉ cần sửa file, commit, Flyway tự detect và re-apply. Không cần tạo file migration mới.</p>
+<hr/>
+<h3 id="version-có-thể-có-dấu-chấm--cách-flyway-so-sánh">”Version có thể có dấu chấm” — Cách Flyway so sánh<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#version-có-thể-có-dấu-chấm--cách-flyway-so-sánh" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>V1        → [1]
+V1.2      → [1, 2]
+V1.2.3    → [1, 2, 3]
+V2024.11  → [2024, 11]
+
+So sánh từ trái sang phải:
+V1.2 &lt; V1.10   (vì 2 &lt; 10, không phải string sort!)
+V1.9 &lt; V2.0    (vì segment đầu: 1 &lt; 2)
+V1.2 &lt; V1.2.1  (vì [1,2] &lt; [1,2,1] — thêm segment là lớn hơn)
+</code></pre>
+<p>Cạm bẫy phổ biến nếu không biết:</p>
+<pre><code>❌ Nếu dùng tên file kiểu string:
+   V1, V10, V2 → sort alphabetically: V1 &lt; V10 &lt; V2
+   Flyway sẽ chạy: V1 → V10 → V2 (SAI ORDER!)
+
+✅ Flyway không sort string — nó parse số:
+   V1  = [1]
+   V2  = [2]
+   V10 = [10]
+   Order đúng: V1 → V2 → V10
+</code></pre>
+<hr/>
+<h2 id="4-sơ-đồ-toàn-bộ-luồng--từ-file-đến-database">4. Sơ đồ toàn bộ luồng — Từ file đến database<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-sơ-đồ-toàn-bộ-luồng--từ-file-đến-database" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    DEV[\&quot;👨‍💻 Developer\\nviết V3__add_columns.sql\&quot;] --> GIT[\&quot;📁 Git Repository\\ndb/migration/V3__add_columns.sql\&quot;]\n    \n    GIT --> CI[\&quot;⚙️ CI Pipeline\\nflyway validate\\natlas lint\&quot;]\n    \n    CI -->|Pass| MERGE[\&quot;✅ Merge to main\&quot;]\n    CI -->|Fail checksum/naming| BLOCK[\&quot;❌ PR blocked\&quot;]\n    \n    MERGE --> DEPLOY[\&quot;🚀 Deploy\&quot;]\n    \n    DEPLOY --> FLY_START[\&quot;Flyway khởi động\\n(Spring Boot auto-run)\&quot;]\n    \n    FLY_START --> SCAN[\&quot;Scan migration files\\ntrong classpath\&quot;]\n    \n    SCAN --> HISTORY[\&quot;Đọc flyway_schema_history\\n'V1, V2 đã chạy rồi'\&quot;]\n    \n    HISTORY --> DIFF[\&quot;So sánh:\\nV3 chưa có trong history\\n→ V3 là PENDING\&quot;]\n    \n    DIFF --> EXEC[\&quot;Execute V3__add_columns.sql\\ntrong 1 transaction\&quot;]\n    \n    EXEC -->|Success| RECORD[\&quot;Ghi vào flyway_schema_history:\\nversion=3, checksum=XYZ, success=true\&quot;]\n    EXEC -->|Fail| FAIL_RECORD[\&quot;Ghi: success=false\\nRollback transaction\\nApp startup FAILS\&quot;]\n    \n    RECORD --> APP_UP[\&quot;✅ App khởi động thành công\&quot;]\n    FAIL_RECORD --> APP_DOWN[\&quot;❌ App không khởi động\\nDev phải fix và chạy: flyway repair\&quot;]\n    \n    style DEV fill:#2196F3,color:#fff\n    style RECORD fill:#4CAF50,color:#fff\n    style FAIL_RECORD fill:#F44336,color:#fff\n    style APP_DOWN fill:#F44336,color:#fff&quot;">flowchart TD
+    DEV[&quot;👨‍💻 Developer\nviết V3__add_columns.sql&quot;] --> GIT[&quot;📁 Git Repository\ndb/migration/V3__add_columns.sql&quot;]
+    
+    GIT --> CI[&quot;⚙️ CI Pipeline\nflyway validate\natlas lint&quot;]
+    
+    CI -->|Pass| MERGE[&quot;✅ Merge to main&quot;]
+    CI -->|Fail checksum/naming| BLOCK[&quot;❌ PR blocked&quot;]
+    
+    MERGE --> DEPLOY[&quot;🚀 Deploy&quot;]
+    
+    DEPLOY --> FLY_START[&quot;Flyway khởi động\n(Spring Boot auto-run)&quot;]
+    
+    FLY_START --> SCAN[&quot;Scan migration files\ntrong classpath&quot;]
+    
+    SCAN --> HISTORY[&quot;Đọc flyway_schema_history\n'V1, V2 đã chạy rồi'&quot;]
+    
+    HISTORY --> DIFF[&quot;So sánh:\nV3 chưa có trong history\n→ V3 là PENDING&quot;]
+    
+    DIFF --> EXEC[&quot;Execute V3__add_columns.sql\ntrong 1 transaction&quot;]
+    
+    EXEC -->|Success| RECORD[&quot;Ghi vào flyway_schema_history:\nversion=3, checksum=XYZ, success=true&quot;]
+    EXEC -->|Fail| FAIL_RECORD[&quot;Ghi: success=false\nRollback transaction\nApp startup FAILS&quot;]
+    
+    RECORD --> APP_UP[&quot;✅ App khởi động thành công&quot;]
+    FAIL_RECORD --> APP_DOWN[&quot;❌ App không khởi động\nDev phải fix và chạy: flyway repair&quot;]
+    
+    style DEV fill:#2196F3,color:#fff
+    style RECORD fill:#4CAF50,color:#fff
+    style FAIL_RECORD fill:#F44336,color:#fff
+    style APP_DOWN fill:#F44336,color:#fff
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<hr/>
+<h2 id="5-versioned-vs-repeatable--khi-nào-dùng-cái-nào">5. Versioned vs Repeatable — Khi nào dùng cái nào?<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5-versioned-vs-repeatable--khi-nào-dùng-cái-nào" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><code>Câu hỏi đơn giản để quyết định:
+&quot;Nếu chạy lại file này 2 lần, có lỗi không?&quot;
+
+Nếu có lỗi → dùng V__ (chạy 1 lần thôi)
+Nếu không lỗi (idempotent) → có thể dùng R__
+</code></pre>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="sql" data-theme="github-light github-dark"><code data-language="sql" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Ví dụ file V__ (chạy 2 lần sẽ lỗi):</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">CREATE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> TABLE</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> document</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (...);  </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Lần 2: ERROR: relation &quot;document&quot; already exists</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Ví dụ file R__ (chạy 2 lần vẫn OK):</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">CREATE OR REPLACE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> FUNCTION</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> sp_validate</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(...)  </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- OR REPLACE = idempotent</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">LANGUAGE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> plpgsql </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">AS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> $$ ... $$;</span></span></code></pre></figure>
+<pre><code>V__ dùng cho:                     R__ dùng cho:
+──────────────                    ─────────────
+CREATE TABLE                      CREATE OR REPLACE FUNCTION
+ALTER TABLE                       CREATE OR REPLACE PROCEDURE
+CREATE INDEX                      CREATE OR REPLACE VIEW
+INSERT lookup data                CREATE OR REPLACE TRIGGER
+DROP TABLE (không khuyến khích)   REFRESH MATERIALIZED VIEW
+</code></pre>
+<hr/>
+<h2 id="6-baseline--khái-niệm-quan-trọng-nhất-khi-onboard">6. Baseline — Khái niệm quan trọng nhất khi onboard<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#6-baseline--khái-niệm-quan-trọng-nhất-khi-onboard" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p><strong>Baseline</strong> giải quyết câu hỏi: “Nếu DB đã có 200 bảng rồi, làm sao bắt đầu dùng Flyway mà không bị Flyway cố tạo lại những gì đã có?“</p>
+<pre><code>Tình huống PDMS hiện tại:
+──────────────────────────
+DB production đang có 200 bảng, 50 stored procs
+Chưa bao giờ dùng Flyway
+
+Nếu không baseline:
+Flyway scan folder → thấy V1__create_200_tables.sql
+Flyway check history → không có gì → coi V1 là PENDING
+Flyway chạy V1 → ERROR: table &quot;document&quot; already exists!
+(Vì bảng đã tồn tại rồi!)
+
+Với baseline:
+&quot;flyway baseline&quot; → Flyway ghi vào history: &quot;V1 = BASELINE&quot;
+Ý nghĩa: &quot;Tao coi như V1 đã chạy rồi, đừng chạy nữa&quot;
+Flyway chỉ chạy V2, V3, V4... (những thứ mới sau baseline)
+</code></pre>
+<pre><code>Timeline baseline:
+─────────────────
+           Baseline point
+               │
+───[V1]────────┼────[V2]────[V3]────[V4]────▶ thời gian
+   (skip,      │     (run)   (run)   (run)
+   đã có sẵn)  │
+               │
+        flyway baseline chạy ở đây
+        Đánh dấu V1 = đã xong
+</code></pre>
+<hr/>
+<h2 id="7-những-lỗi-newbie-hay-gặp--và-cách-fix">7. Những lỗi newbie hay gặp — Và cách fix<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#7-những-lỗi-newbie-hay-gặp--và-cách-fix" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="lỗi-1-checksum-mismatch">Lỗi 1: Checksum mismatch<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#lỗi-1-checksum-mismatch" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>ERROR: Validate failed:
+Migration checksum mismatch for migration version 2
+-> Applied to database : 12345678
+-> Resolved locally    : 87654321
+
+Nguyên nhân: Ai đó sửa file V2__something.sql sau khi đã chạy
+
+Fix:
+Option A (Đúng nguyên tắc): Tạo file V{next}__fix_the_issue.sql
+Option B (Chỉ khi chắc chắn thay đổi không ảnh hưởng gì):
+         flyway repair  ← cập nhật checksum trong DB theo file hiện tại
+         CẢNH BÁO: repair chỉ dùng khi thực sự hiểu tác động
+</code></pre>
+<h3 id="lỗi-2-migration-failed--app-không-khởi-động-được">Lỗi 2: Migration failed — App không khởi động được<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#lỗi-2-migration-failed--app-không-khởi-động-được" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>ERROR: Migration V3__add_columns.sql failed!
+Please restore backups and roll back accordingly
+
+Chuyện gì đã xảy ra:
+1. Flyway bắt đầu chạy V3
+2. SQL trong V3 bị lỗi (typo, vi phạm constraint...)
+3. Flyway rollback transaction → DB như chưa chạy V3
+4. Flyway ghi vào history: V3 = FAILED (success = false)
+5. Lần sau Flyway khởi động: thấy V3 failed → từ chối chạy tiếp
+
+Fix:
+1. Sửa lỗi SQL trong V3__add_columns.sql
+2. flyway repair  ← xóa record FAILED khỏi history
+3. flyway migrate  ← thử lại
+</code></pre>
+<h3 id="lỗi-3-out-of-order-migration">Lỗi 3: Out-of-order migration<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#lỗi-3-out-of-order-migration" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>ERROR: Detected resolved migration not applied to database: 1.5
+Applied migrations resolve to: 1, 1.1, 1.2, 1.3, 2
+                                                    ↑
+                               V1.5 đột nhiên xuất hiện SAU khi V2 đã chạy
+
+Nguyên nhân: Dev A tạo V1.5 và merge muộn, sau khi V2 đã deploy
+
+Fix ngắn hạn (DEV chỉ):
+spring.flyway.out-of-order: true  → cho phép V1.5 chạy sau V2
+
+Fix đúng (production):
+Rename V1.5 → V{next} (VD: V2.1) và tạo PR mới
+</code></pre>
+<h3 id="lỗi-4-repeatable-file-bị-lỗi-nhưng-sp-cũ-vẫn-chạy">Lỗi 4: Repeatable file bị lỗi nhưng SP cũ vẫn chạy<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#lỗi-4-repeatable-file-bị-lỗi-nhưng-sp-cũ-vẫn-chạy" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>Situation:
+R__SP_validate.sql có lỗi → Flyway báo lỗi khi chạy
+Nhưng SP cũ (version trước) vẫn đang chạy được trong DB
+
+Tại sao:
+Flyway chạy R__SP_validate.sql trong 1 transaction
+Nếu lỗi → transaction rollback → SP trong DB KHÔNG thay đổi
+→ Version cũ của SP vẫn còn
+
+Fix:
+1. Sửa lỗi trong R__SP_validate.sql
+2. flyway repair (nếu có FAILED record)
+3. flyway migrate → chạy lại file đã sửa
+</code></pre>
+<hr/>
+<h2 id="8-mental-model--cách-nghĩ-đúng-về-migration">8. Mental Model — Cách nghĩ đúng về migration<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#8-mental-model--cách-nghĩ-đúng-về-migration" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><code>Migration tool = &quot;Git for Database&quot;
+
+Git:                              Flyway:
+────                              ───────
+Mỗi commit = 1 thay đổi code     Mỗi file V__ = 1 thay đổi DB
+.git/history = lịch sử commits   flyway_schema_history = lịch sử migrations
+git log = xem commits đã chạy    flyway info = xem migrations đã chạy
+git pull = lấy code mới          flyway migrate = apply migrations mới
+Không sửa commit cũ              Không sửa file V__ đã chạy
+git revert = tạo commit mới      Rollback = tạo file V__ mới (reverse SQL)
+</code></pre>
+<pre><code>Repeatable (R__) = &quot;Terraform apply&quot;
+
+Terraform:                        Flyway Repeatable:
+──────────                        ──────────────────
+Khai báo desired state            Stored proc = desired state
+terraform apply = sync to state   flyway migrate = sync to latest R__ file
+Mỗi lần apply = idempotent        Mỗi lần chạy = idempotent (OR REPLACE)
+Chạy lại khi file thay đổi       Chạy lại khi file thay đổi
+</code></pre>
+<hr/>
+<h2 id="9-quick-reference--lệnh-hay-dùng-nhất">9. Quick Reference — Lệnh hay dùng nhất<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#9-quick-reference--lệnh-hay-dùng-nhất" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Xem tình trạng: file nào đã chạy, file nào pending</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">flyway</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> info</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Apply tất cả pending migrations</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">flyway</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> migrate</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Validate: file migration có bị sửa không?</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">flyway</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> validate</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Fix sau khi migration fail</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">flyway</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> repair</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Baseline: đánh dấu DB hiện tại là &quot;đã migration xong đến V1&quot;</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">flyway</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> baseline</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># ⚠️ NGUY HIỂM: DROP tất cả objects (chỉ dùng trên dev)</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">flyway</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> clean</span></span></code></pre></figure>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Spring Boot: Flyway tự chạy khi app start</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Nhưng nếu muốn chạy manual:</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">mvn</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> flyway:info</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">mvn</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> flyway:migrate</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">mvn</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> flyway:validate</span></span></code></pre></figure>
+<hr/>
+<h2 id="10-checklist-trước-khi-viết-migration-đầu-tiên">10. Checklist trước khi viết migration đầu tiên<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#10-checklist-trước-khi-viết-migration-đầu-tiên" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><code>✅ Xác định version hiện tại cao nhất là bao nhiêu?
+   flyway info | grep -E &quot;Success|Baseline&quot; | tail -1
+
+✅ File đặt đúng thư mục chưa?
+   V__ → src/main/resources/db/migration/
+   R__ → src/main/resources/db/stored_procedures/
+
+✅ Naming đúng convention chưa?
+   V{version}__{description}.sql  (double underscore)
+   R__{prefix}_{name}.sql
+
+✅ SQL có idempotent không?
+   CREATE TABLE → thêm IF NOT EXISTS
+   INSERT → thêm ON CONFLICT DO NOTHING
+   Stored proc → dùng CREATE OR REPLACE
+
+✅ Test local trước khi commit:
+   flyway migrate → OK?
+   flyway validate → OK?
+   App start → OK?
+
+✅ Nếu ALTER TABLE lớn:
+   Bước 1: ADD COLUMN nullable
+   Bước 2: UPDATE fill data
+   Bước 3: SET NOT NULL
+   Ba bước = ba file migration riêng (an toàn hơn)
+</code></pre>
+<hr/>
+<p><strong>Next</strong>: Đọc <a href="../../Database-Patterns/DBMigration/DBMigration-01-Flyway-Deep-Dive" class="internal" data-slug="Database-Patterns/DBMigration/DBMigration-01-Flyway-Deep-Dive">DBMigration-01-Flyway-Deep-Dive</a> với những gì đã hiểu ở đây.</p>
+<hr/>
+<p><a href="../.././../tags/flyway" class="tag-link internal alias" data-slug="tags/flyway">flyway</a> <a href="../.././../tags/database-migration" class="tag-link internal alias" data-slug="tags/database-migration">database-migration</a> <a href="../.././../tags/newbie" class="tag-link internal alias" data-slug="tags/newbie">newbie</a> <a href="../.././../tags/concepts" class="tag-link internal alias" data-slug="tags/concepts">concepts</a> <a href="../.././../tags/postgresql" class="tag-link internal alias" data-slug="tags/postgresql">postgresql</a> <a href="../.././../tags/spring-boot" class="tag-link internal alias" data-slug="tags/spring-boot">spring-boot</a> <a href="../.././../tags/checklist" class="tag-link internal alias" data-slug="tags/checklist">checklist</a></p></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-23" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#database-migration--giải-thích-từ-đầu-cho-người-mới" data-for="database-migration--giải-thích-từ-đầu-cho-người-mới">Database Migration — Giải thích từ đầu cho người mới</a></li><li class="depth-1"><a href="#1-vấn-đề-gốc-rễ--tại-sao-cần-migration-tool" data-for="1-vấn-đề-gốc-rễ--tại-sao-cần-migration-tool">1. Vấn đề gốc rễ — Tại sao cần migration tool?</a></li><li class="depth-2"><a href="#tình-huống-không-có-migration-tool" data-for="tình-huống-không-có-migration-tool">Tình huống không có migration tool</a></li><li class="depth-2"><a href="#migration-tool-giải-quyết-bằng-cách-nào" data-for="migration-tool-giải-quyết-bằng-cách-nào">Migration tool giải quyết bằng cách nào?</a></li><li class="depth-1"><a href="#2-flyway-hoạt-động-thế-nào--từng-bước" data-for="2-flyway-hoạt-động-thế-nào--từng-bước">2. Flyway hoạt động thế nào — Từng bước</a></li><li class="depth-2"><a href="#lần-đầu-tiên-flyway-chạy" data-for="lần-đầu-tiên-flyway-chạy">Lần đầu tiên Flyway chạy</a></li><li class="depth-2"><a href="#flyway_schema_history--nhật-ký-của-flyway" data-for="flyway_schema_history--nhật-ký-của-flyway">flyway_schema_history — “Nhật ký” của Flyway</a></li><li class="depth-1"><a href="#3-giải-thích-chi-tiết-bảng-rules--từng-dòng" data-for="3-giải-thích-chi-tiết-bảng-rules--từng-dòng">3. Giải thích chi tiết bảng Rules — Từng dòng</a></li><li class="depth-2"><a href="#bỏ-v2-ổn-thực-sự-nghĩa-là-gì" data-for="bỏ-v2-ổn-thực-sự-nghĩa-là-gì">“Bỏ V2 ổn” thực sự nghĩa là gì?</a></li><li class="depth-2"><a href="#không-sửa-file-đã-chạy--tại-sao-nghiêm-trọng" data-for="không-sửa-file-đã-chạy--tại-sao-nghiêm-trọng">”Không sửa file đã chạy” — Tại sao nghiêm trọng?</a></li><li class="depth-2"><a href="#repeatable-re-run-khi-file-thay-đổi--cơ-chế" data-for="repeatable-re-run-khi-file-thay-đổi--cơ-chế">”Repeatable re-run khi file thay đổi” — Cơ chế</a></li><li class="depth-2"><a href="#version-có-thể-có-dấu-chấm--cách-flyway-so-sánh" data-for="version-có-thể-có-dấu-chấm--cách-flyway-so-sánh">”Version có thể có dấu chấm” — Cách Flyway so sánh</a></li><li class="depth-1"><a href="#4-sơ-đồ-toàn-bộ-luồng--từ-file-đến-database" data-for="4-sơ-đồ-toàn-bộ-luồng--từ-file-đến-database">4. Sơ đồ toàn bộ luồng — Từ file đến database</a></li><li class="depth-1"><a href="#5-versioned-vs-repeatable--khi-nào-dùng-cái-nào" data-for="5-versioned-vs-repeatable--khi-nào-dùng-cái-nào">5. Versioned vs Repeatable — Khi nào dùng cái nào?</a></li><li class="depth-1"><a href="#6-baseline--khái-niệm-quan-trọng-nhất-khi-onboard" data-for="6-baseline--khái-niệm-quan-trọng-nhất-khi-onboard">6. Baseline — Khái niệm quan trọng nhất khi onboard</a></li><li class="depth-1"><a href="#7-những-lỗi-newbie-hay-gặp--và-cách-fix" data-for="7-những-lỗi-newbie-hay-gặp--và-cách-fix">7. Những lỗi newbie hay gặp — Và cách fix</a></li><li class="depth-2"><a href="#lỗi-1-checksum-mismatch" data-for="lỗi-1-checksum-mismatch">Lỗi 1: Checksum mismatch</a></li><li class="depth-2"><a href="#lỗi-2-migration-failed--app-không-khởi-động-được" data-for="lỗi-2-migration-failed--app-không-khởi-động-được">Lỗi 2: Migration failed — App không khởi động được</a></li><li class="depth-2"><a href="#lỗi-3-out-of-order-migration" data-for="lỗi-3-out-of-order-migration">Lỗi 3: Out-of-order migration</a></li><li class="depth-2"><a href="#lỗi-4-repeatable-file-bị-lỗi-nhưng-sp-cũ-vẫn-chạy" data-for="lỗi-4-repeatable-file-bị-lỗi-nhưng-sp-cũ-vẫn-chạy">Lỗi 4: Repeatable file bị lỗi nhưng SP cũ vẫn chạy</a></li><li class="depth-1"><a href="#8-mental-model--cách-nghĩ-đúng-về-migration" data-for="8-mental-model--cách-nghĩ-đúng-về-migration">8. Mental Model — Cách nghĩ đúng về migration</a></li><li class="depth-1"><a href="#9-quick-reference--lệnh-hay-dùng-nhất" data-for="9-quick-reference--lệnh-hay-dùng-nhất">9. Quick Reference — Lệnh hay dùng nhất</a></li><li class="depth-1"><a href="#10-checklist-trước-khi-viết-migration-đầu-tiên" data-for="10-checklist-trước-khi-viết-migration-đầu-tiên">10. Checklist trước khi viết migration đầu tiên</a></li><li class="overflow-end"></li></ul></div><div class="backlinks"><h3>Backlinks</h3><ul id="list-2" class="overflow"><li><a href="../../Database-Patterns/DBMigration/DBMigration-MOC" class="internal">DBMigration-MOC</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://dangthobach.github.io/">Back to Portfolio</a></li><li><a href="https://github.com/dangthobach">GitHub</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../postscript.js" type="module" data-persist="true"></script></html>

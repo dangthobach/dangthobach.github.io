@@ -6,6 +6,48 @@
       <description>Last 10 notes on Dang Tho Bach&#039;s Knowledge Base</description>
       <generator>Quartz -- quartz.jzhao.xyz</generator>
       <item>
+    <title>DBMigration-00-Newbie-Guide</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-00-Newbie-Guide</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-00-Newbie-Guide</guid>
+    <description><![CDATA[ Database Migration — Giải thích từ đầu cho người mới Bài này giải thích tại sao migration tools tồn tại, cơ chế thực sự bên trong, và những khái niệm dễ nhầm nhất — trước khi đọc các bài chuyên sâu. ]]></description>
+    <pubDate>Wed, 13 May 2026 01:34:21 GMT</pubDate>
+  </item><item>
+    <title>DBMigration-01-Flyway-Deep-Dive</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-01-Flyway-Deep-Dive</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-01-Flyway-Deep-Dive</guid>
+    <description><![CDATA[ Flyway Deep Dive — Cơ chế hoạt động &amp; Enterprise Patterns Flyway: Migration tool SQL-first, versioned, đơn giản nhưng mạnh mẽ. ]]></description>
+    <pubDate>Wed, 13 May 2026 01:34:21 GMT</pubDate>
+  </item><item>
+    <title>DBMigration-02-AtlasGo-Deep-Dive</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-02-AtlasGo-Deep-Dive</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-02-AtlasGo-Deep-Dive</guid>
+    <description><![CDATA[ Atlas Go Deep Dive — Schema-as-Code &amp; Declarative Migrations Atlas Go: Công cụ migration thế hệ mới — triết lý declarative (khai báo trạng thái mong muốn, Atlas tự tính diff). ]]></description>
+    <pubDate>Wed, 13 May 2026 01:34:21 GMT</pubDate>
+  </item><item>
+    <title>DBMigration-03-Tool-Comparison</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-03-Tool-Comparison</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-03-Tool-Comparison</guid>
+    <description><![CDATA[ Tool Comparison: Liquibase vs Flyway vs Atlas Go Mục tiêu: So sánh khoa học 3 công cụ migration — use cases, điểm mạnh/yếu, cách kết hợp, và những misuse phổ biến cần tránh. ]]></description>
+    <pubDate>Wed, 13 May 2026 01:34:21 GMT</pubDate>
+  </item><item>
+    <title>DBMigration-04-Enterprise-Patterns</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-04-Enterprise-Patterns</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-04-Enterprise-Patterns</guid>
+    <description><![CDATA[ Enterprise Patterns — 200 Tables + 50 Stored Procedures Mục tiêu: Patterns và tổ chức file cụ thể cho hệ thống enterprise quy mô lớn — 200 bảng, 50 stored procs/functions, multi-environment, multi-tenant. ]]></description>
+    <pubDate>Wed, 13 May 2026 01:34:21 GMT</pubDate>
+  </item><item>
+    <title>DBMigration-05-Adoption-Roadmap</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-05-Adoption-Roadmap</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-05-Adoption-Roadmap</guid>
+    <description><![CDATA[ Adoption Roadmap — Triển khai Migration Tool cho Dự án Đang Giữa Chừng Tình huống thực tế: Dự án PDMS đang giữa phase với 200 bảng, 50 stored procedures, scripts lưu rải rác, golive bị thiếu scripts. ]]></description>
+    <pubDate>Wed, 13 May 2026 01:34:21 GMT</pubDate>
+  </item><item>
+    <title>DBMigration-MOC</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-MOC</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-MOC</guid>
+    <description><![CDATA[ Database Migration Tools — Map of Content Series mục tiêu: So sánh chuyên sâu Flyway · Atlas Go · Liquibase — lựa chọn đúng công cụ, triển khai đúng cách cho hệ thống enterprise 200+ bảng, 50+ stored procedures. ]]></description>
+    <pubDate>Wed, 13 May 2026 01:34:21 GMT</pubDate>
+  </item><item>
     <title>MOC-System-Design</title>
     <link>https://dangthobach.github.io/knowledge/_moc/MOC-System-Design</link>
     <guid>https://dangthobach.github.io/knowledge/_moc/MOC-System-Design</guid>
@@ -18,52 +60,10 @@
     <description><![CDATA[ Frontend Project Architecture 2026 — Kiến Trúc Nào Cho Usecase Nào? Status: 🟢 Active Tags: frontend architecture react angular solidjs FSD scalability Related: 15-Enterprise-Best-Practices · 14-Enterprise-Architecture-and-Standalone · 06-Enterprise-Architecture · concepts 🗺️ Tại Sao Cần Quan Tâm Đ... ]]></description>
     <pubDate>Tue, 12 May 2026 06:26:36 GMT</pubDate>
   </item><item>
-    <title>DBMigration-01-Flyway-Deep-Dive</title>
-    <link>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-01-Flyway-Deep-Dive</link>
-    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-01-Flyway-Deep-Dive</guid>
-    <description><![CDATA[ Flyway Deep Dive — Cơ chế hoạt động &amp; Enterprise Patterns Flyway: Migration tool SQL-first, versioned, đơn giản nhưng mạnh mẽ. ]]></description>
-    <pubDate>Mon, 11 May 2026 15:38:06 GMT</pubDate>
-  </item><item>
-    <title>DBMigration-02-AtlasGo-Deep-Dive</title>
-    <link>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-02-AtlasGo-Deep-Dive</link>
-    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-02-AtlasGo-Deep-Dive</guid>
-    <description><![CDATA[ Atlas Go Deep Dive — Schema-as-Code &amp; Declarative Migrations Atlas Go: Công cụ migration thế hệ mới — triết lý declarative (khai báo trạng thái mong muốn, Atlas tự tính diff). ]]></description>
-    <pubDate>Mon, 11 May 2026 15:38:06 GMT</pubDate>
-  </item><item>
-    <title>DBMigration-03-Tool-Comparison</title>
-    <link>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-03-Tool-Comparison</link>
-    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-03-Tool-Comparison</guid>
-    <description><![CDATA[ Tool Comparison: Liquibase vs Flyway vs Atlas Go Mục tiêu: So sánh khoa học 3 công cụ migration — use cases, điểm mạnh/yếu, cách kết hợp, và những misuse phổ biến cần tránh. ]]></description>
-    <pubDate>Mon, 11 May 2026 15:38:06 GMT</pubDate>
-  </item><item>
-    <title>DBMigration-04-Enterprise-Patterns</title>
-    <link>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-04-Enterprise-Patterns</link>
-    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-04-Enterprise-Patterns</guid>
-    <description><![CDATA[ Enterprise Patterns — 200 Tables + 50 Stored Procedures Mục tiêu: Patterns và tổ chức file cụ thể cho hệ thống enterprise quy mô lớn — 200 bảng, 50 stored procs/functions, multi-environment, multi-tenant. ]]></description>
-    <pubDate>Mon, 11 May 2026 15:38:06 GMT</pubDate>
-  </item><item>
-    <title>DBMigration-05-Adoption-Roadmap</title>
-    <link>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-05-Adoption-Roadmap</link>
-    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-05-Adoption-Roadmap</guid>
-    <description><![CDATA[ Adoption Roadmap — Triển khai Migration Tool cho Dự án Đang Giữa Chừng Tình huống thực tế: Dự án PDMS đang giữa phase với 200 bảng, 50 stored procedures, scripts lưu rải rác, golive bị thiếu scripts. ]]></description>
-    <pubDate>Mon, 11 May 2026 15:38:06 GMT</pubDate>
-  </item><item>
-    <title>DBMigration-MOC</title>
-    <link>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-MOC</link>
-    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-MOC</guid>
-    <description><![CDATA[ Database Migration Tools — Map of Content Series mục tiêu: So sánh chuyên sâu Flyway · Atlas Go · Liquibase — lựa chọn đúng công cụ, triển khai đúng cách cho hệ thống enterprise 200+ bảng, 50+ stored procedures. ]]></description>
-    <pubDate>Mon, 11 May 2026 15:38:06 GMT</pubDate>
-  </item><item>
     <title>Liquibase-01-Core-Mechanics</title>
     <link>https://dangthobach.github.io/knowledge/Database-Patterns/Liquibase/Liquibase-01-Core-Mechanics</link>
     <guid>https://dangthobach.github.io/knowledge/Database-Patterns/Liquibase/Liquibase-01-Core-Mechanics</guid>
     <description><![CDATA[ Liquibase 01 — Core Mechanics: Cơ chế hoạt động nội tại Mục tiêu: Hiểu sâu cách Liquibase hoạt động bên trong — để khi gặp vấn đề production, bạn biết chính xác điều gì đang xảy ra. ]]></description>
-    <pubDate>Mon, 11 May 2026 15:38:06 GMT</pubDate>
-  </item><item>
-    <title>Liquibase-02-Configuration-SpringBoot</title>
-    <link>https://dangthobach.github.io/knowledge/Database-Patterns/Liquibase/Liquibase-02-Configuration-SpringBoot</link>
-    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/Liquibase/Liquibase-02-Configuration-SpringBoot</guid>
-    <description><![CDATA[ Liquibase 02 — Configuration &amp; Spring Boot Enterprise Setup Mục tiêu: Cấu hình Liquibase vào project Spring Boot enterprise đúng cách — từ dependency đến multi-datasource, từ local dev đến production. ]]></description>
     <pubDate>Mon, 11 May 2026 15:38:06 GMT</pubDate>
   </item>
     </channel>
