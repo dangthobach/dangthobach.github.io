@@ -6,6 +6,42 @@
       <description>Last 10 notes on Dang Tho Bach&#039;s Knowledge Base</description>
       <generator>Quartz -- quartz.jzhao.xyz</generator>
       <item>
+    <title>22-Routing-Layout-SearchState</title>
+    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/22-Routing-Layout-SearchState</link>
+    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/22-Routing-Layout-SearchState</guid>
+    <description><![CDATA[ Angular Routing — Layout Cố Định &amp; Search State Preservation tags: angular routing layout search-state frontend 1. ]]></description>
+    <pubDate>Thu, 14 May 2026 06:35:10 GMT</pubDate>
+  </item><item>
+    <title>23-Multiple-Router-Outlets-Named-Auxiliary</title>
+    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/23-Multiple-Router-Outlets-Named-Auxiliary</link>
+    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/23-Multiple-Router-Outlets-Named-Auxiliary</guid>
+    <description><![CDATA[ Multiple Router Outlets trong SPA — Named &amp; Auxiliary Routes tags: angular react solidjs routing named-outlet auxiliary-route 1. ]]></description>
+    <pubDate>Thu, 14 May 2026 06:35:10 GMT</pubDate>
+  </item><item>
+    <title>23-Routing-Layout-SearchState</title>
+    <link>https://dangthobach.github.io/knowledge/React-Latest-Series/23-Routing-Layout-SearchState</link>
+    <guid>https://dangthobach.github.io/knowledge/React-Latest-Series/23-Routing-Layout-SearchState</guid>
+    <description><![CDATA[ React Routing — Layout Cố Định &amp; Search State Preservation tags: react react-router routing layout search-state frontend 1. ]]></description>
+    <pubDate>Thu, 14 May 2026 06:35:10 GMT</pubDate>
+  </item><item>
+    <title>24-Multiple-Router-Outlets-Pattern</title>
+    <link>https://dangthobach.github.io/knowledge/React-Latest-Series/24-Multiple-Router-Outlets-Pattern</link>
+    <guid>https://dangthobach.github.io/knowledge/React-Latest-Series/24-Multiple-Router-Outlets-Pattern</guid>
+    <description><![CDATA[ Multiple Router Outlets trong React — Parallel Rendering Pattern tags: react react-router routing parallel-routes named-outlet Bài này cover phần React của chủ đề Multiple Router Outlets. ]]></description>
+    <pubDate>Thu, 14 May 2026 06:35:10 GMT</pubDate>
+  </item><item>
+    <title>SolidJS-13-Routing-Layout-SearchState</title>
+    <link>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-13-Routing-Layout-SearchState</link>
+    <guid>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-13-Routing-Layout-SearchState</guid>
+    <description><![CDATA[ SolidJS Routing — Layout Cố Định &amp; Search State Preservation tags: solidjs solid-router routing layout search-state frontend 1. ]]></description>
+    <pubDate>Thu, 14 May 2026 06:35:10 GMT</pubDate>
+  </item><item>
+    <title>SolidJS-14-Multiple-Outlets-Pattern</title>
+    <link>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-14-Multiple-Outlets-Pattern</link>
+    <guid>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-14-Multiple-Outlets-Pattern</guid>
+    <description><![CDATA[ Multiple Outlets trong SolidJS — Store-driven Pattern tags: solidjs solid-router routing multiple-outlets parallel Bài này cover phần SolidJS của chủ đề Multiple Router Outlets. ]]></description>
+    <pubDate>Thu, 14 May 2026 06:35:10 GMT</pubDate>
+  </item><item>
     <title>DBMigration-00-Newbie-Guide</title>
     <link>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-00-Newbie-Guide</link>
     <guid>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-00-Newbie-Guide</guid>
@@ -29,42 +65,6 @@
     <guid>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-03-Tool-Comparison</guid>
     <description><![CDATA[ Tool Comparison: Liquibase vs Flyway vs Atlas Go Mục tiêu: So sánh khoa học 3 công cụ migration — use cases, điểm mạnh/yếu, cách kết hợp, và những misuse phổ biến cần tránh. ]]></description>
     <pubDate>Wed, 13 May 2026 01:34:21 GMT</pubDate>
-  </item><item>
-    <title>DBMigration-04-Enterprise-Patterns</title>
-    <link>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-04-Enterprise-Patterns</link>
-    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-04-Enterprise-Patterns</guid>
-    <description><![CDATA[ Enterprise Patterns — 200 Tables + 50 Stored Procedures Mục tiêu: Patterns và tổ chức file cụ thể cho hệ thống enterprise quy mô lớn — 200 bảng, 50 stored procs/functions, multi-environment, multi-tenant. ]]></description>
-    <pubDate>Wed, 13 May 2026 01:34:21 GMT</pubDate>
-  </item><item>
-    <title>DBMigration-05-Adoption-Roadmap</title>
-    <link>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-05-Adoption-Roadmap</link>
-    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-05-Adoption-Roadmap</guid>
-    <description><![CDATA[ Adoption Roadmap — Triển khai Migration Tool cho Dự án Đang Giữa Chừng Tình huống thực tế: Dự án PDMS đang giữa phase với 200 bảng, 50 stored procedures, scripts lưu rải rác, golive bị thiếu scripts. ]]></description>
-    <pubDate>Wed, 13 May 2026 01:34:21 GMT</pubDate>
-  </item><item>
-    <title>DBMigration-MOC</title>
-    <link>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-MOC</link>
-    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-MOC</guid>
-    <description><![CDATA[ Database Migration Tools — Map of Content Series mục tiêu: So sánh chuyên sâu Flyway · Atlas Go · Liquibase — lựa chọn đúng công cụ, triển khai đúng cách cho hệ thống enterprise 200+ bảng, 50+ stored procedures. ]]></description>
-    <pubDate>Wed, 13 May 2026 01:34:21 GMT</pubDate>
-  </item><item>
-    <title>MOC-System-Design</title>
-    <link>https://dangthobach.github.io/knowledge/_moc/MOC-System-Design</link>
-    <guid>https://dangthobach.github.io/knowledge/_moc/MOC-System-Design</guid>
-    <description><![CDATA[ 🏛️ MOC — Architecture &amp; Design Patterns Mục tiêu: Nắm vững các architectural patterns và design principles để đưa ra quyết định thiết kế đúng đắn — không phải học thuộc lý thuyết mà là biết khi nào apply pattern nào. ]]></description>
-    <pubDate>Tue, 12 May 2026 06:26:36 GMT</pubDate>
-  </item><item>
-    <title>Frontend-Project-Architecture-2026</title>
-    <link>https://dangthobach.github.io/knowledge/concepts/Frontend-Project-Architecture-2026</link>
-    <guid>https://dangthobach.github.io/knowledge/concepts/Frontend-Project-Architecture-2026</guid>
-    <description><![CDATA[ Frontend Project Architecture 2026 — Kiến Trúc Nào Cho Usecase Nào? Status: 🟢 Active Tags: frontend architecture react angular solidjs FSD scalability Related: 15-Enterprise-Best-Practices · 14-Enterprise-Architecture-and-Standalone · 06-Enterprise-Architecture · concepts 🗺️ Tại Sao Cần Quan Tâm Đ... ]]></description>
-    <pubDate>Tue, 12 May 2026 06:26:36 GMT</pubDate>
-  </item><item>
-    <title>Liquibase-01-Core-Mechanics</title>
-    <link>https://dangthobach.github.io/knowledge/Database-Patterns/Liquibase/Liquibase-01-Core-Mechanics</link>
-    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/Liquibase/Liquibase-01-Core-Mechanics</guid>
-    <description><![CDATA[ Liquibase 01 — Core Mechanics: Cơ chế hoạt động nội tại Mục tiêu: Hiểu sâu cách Liquibase hoạt động bên trong — để khi gặp vấn đề production, bạn biết chính xác điều gì đang xảy ra. ]]></description>
-    <pubDate>Mon, 11 May 2026 15:38:06 GMT</pubDate>
   </item>
     </channel>
   </rss>
