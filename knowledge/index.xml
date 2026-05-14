@@ -6,6 +6,12 @@
       <description>Last 10 notes on Dang Tho Bach&#039;s Knowledge Base</description>
       <generator>Quartz -- quartz.jzhao.xyz</generator>
       <item>
+    <title>24-Two-Way-Binding-Internals</title>
+    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/24-Two-Way-Binding-Internals</link>
+    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/24-Two-Way-Binding-Internals</guid>
+    <description><![CDATA[ Angular Two-Way Data Binding — Cơ chế bên dưới tags: angular data-binding zone-js change-detection signals internals 1. ]]></description>
+    <pubDate>Thu, 14 May 2026 13:56:35 GMT</pubDate>
+  </item><item>
     <title>22-Routing-Layout-SearchState</title>
     <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/22-Routing-Layout-SearchState</link>
     <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/22-Routing-Layout-SearchState</guid>
@@ -58,12 +64,6 @@
     <link>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-02-AtlasGo-Deep-Dive</link>
     <guid>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-02-AtlasGo-Deep-Dive</guid>
     <description><![CDATA[ Atlas Go Deep Dive — Schema-as-Code &amp; Declarative Migrations Atlas Go: Công cụ migration thế hệ mới — triết lý declarative (khai báo trạng thái mong muốn, Atlas tự tính diff). ]]></description>
-    <pubDate>Wed, 13 May 2026 01:34:21 GMT</pubDate>
-  </item><item>
-    <title>DBMigration-03-Tool-Comparison</title>
-    <link>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-03-Tool-Comparison</link>
-    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-03-Tool-Comparison</guid>
-    <description><![CDATA[ Tool Comparison: Liquibase vs Flyway vs Atlas Go Mục tiêu: So sánh khoa học 3 công cụ migration — use cases, điểm mạnh/yếu, cách kết hợp, và những misuse phổ biến cần tránh. ]]></description>
     <pubDate>Wed, 13 May 2026 01:34:21 GMT</pubDate>
   </item>
     </channel>
