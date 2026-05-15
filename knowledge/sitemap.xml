@@ -995,6 +995,9 @@
     <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/24-Multiple-Router-Outlets-Pattern</loc>
     <lastmod>2026-05-14T06:35:10.000Z</lastmod>
   </url><url>
+    <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/25-vDOM-vs-SolidJS-Reactivity</loc>
+    <lastmod>2026-05-15T01:28:37.000Z</lastmod>
+  </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-1-Ownership-Mindset</loc>
     <lastmod>2026-05-02T04:58:37.000Z</lastmod>
   </url><url>
@@ -1211,6 +1214,9 @@
     <loc>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-14-Multiple-Outlets-Pattern</loc>
     <lastmod>2026-05-14T06:35:10.000Z</lastmod>
   </url><url>
+    <loc>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-15-Reactivity-vs-React-vDOM</loc>
+    <lastmod>2026-05-15T01:28:37.000Z</lastmod>
+  </url><url>
     <loc>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-MOC</loc>
     <lastmod>2026-05-08T06:52:03.000Z</lastmod>
   </url><url>
@@ -1279,6 +1285,12 @@
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/concepts/README</loc>
     <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/concepts/React-Compiler-Internals-Memoization</loc>
+    <lastmod>2026-05-15T01:28:37.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/concepts/SolidJS-vs-React-Reactivity-Model</loc>
+    <lastmod>2026-05-15T01:28:37.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/concepts/adr-framework</loc>
     <lastmod>2026-05-02T04:58:37.000Z</lastmod>

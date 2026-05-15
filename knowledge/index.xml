@@ -6,6 +6,30 @@
       <description>Last 10 notes on Dang Tho Bach&#039;s Knowledge Base</description>
       <generator>Quartz -- quartz.jzhao.xyz</generator>
       <item>
+    <title>25-vDOM-vs-SolidJS-Reactivity</title>
+    <link>https://dangthobach.github.io/knowledge/React-Latest-Series/25-vDOM-vs-SolidJS-Reactivity</link>
+    <guid>https://dangthobach.github.io/knowledge/React-Latest-Series/25-vDOM-vs-SolidJS-Reactivity</guid>
+    <description><![CDATA[ React Virtual DOM vs SolidJS Fine-grained Reactivity tags: react solidjs virtual-dom performance reconciler fiber Bài so sánh chi tiết: SolidJS-vs-React-Reactivity-Model Tóm tắt nhanh React dùng Virtual DOM — mỗi setState trigger re-run component function, build new vDOM tree, diff (reconcile), rồi ... ]]></description>
+    <pubDate>Fri, 15 May 2026 01:28:37 GMT</pubDate>
+  </item><item>
+    <title>SolidJS-15-Reactivity-vs-React-vDOM</title>
+    <link>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-15-Reactivity-vs-React-vDOM</link>
+    <guid>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-15-Reactivity-vs-React-vDOM</guid>
+    <description><![CDATA[ SolidJS Reactivity vs React Virtual DOM — Performance Deep Dive tags: solidjs react reactivity performance virtual-dom Bài so sánh chi tiết: SolidJS-vs-React-Reactivity-Model Tóm tắt nhanh SolidJS không re-run component function khi state thay đổi. ]]></description>
+    <pubDate>Fri, 15 May 2026 01:28:37 GMT</pubDate>
+  </item><item>
+    <title>React-Compiler-Internals-Memoization</title>
+    <link>https://dangthobach.github.io/knowledge/concepts/React-Compiler-Internals-Memoization</link>
+    <guid>https://dangthobach.github.io/knowledge/concepts/React-Compiler-Internals-Memoization</guid>
+    <description><![CDATA[ React Compiler — Cơ chế thu hẹp gap với SolidJS tags: react react-compiler memoization performance compiler HIR SSA internals 1. ]]></description>
+    <pubDate>Fri, 15 May 2026 01:28:37 GMT</pubDate>
+  </item><item>
+    <title>SolidJS-vs-React-Reactivity-Model</title>
+    <link>https://dangthobach.github.io/knowledge/concepts/SolidJS-vs-React-Reactivity-Model</link>
+    <guid>https://dangthobach.github.io/knowledge/concepts/SolidJS-vs-React-Reactivity-Model</guid>
+    <description><![CDATA[ SolidJS vs React — Fine-grained Reactivity vs Virtual DOM tags: solidjs react reactivity virtual-dom signals performance internals 1. ]]></description>
+    <pubDate>Fri, 15 May 2026 01:28:37 GMT</pubDate>
+  </item><item>
     <title>24-Two-Way-Binding-Internals</title>
     <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/24-Two-Way-Binding-Internals</link>
     <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/24-Two-Way-Binding-Internals</guid>
@@ -41,30 +65,6 @@
     <guid>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-13-Routing-Layout-SearchState</guid>
     <description><![CDATA[ SolidJS Routing — Layout Cố Định &amp; Search State Preservation tags: solidjs solid-router routing layout search-state frontend 1. ]]></description>
     <pubDate>Thu, 14 May 2026 06:35:10 GMT</pubDate>
-  </item><item>
-    <title>SolidJS-14-Multiple-Outlets-Pattern</title>
-    <link>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-14-Multiple-Outlets-Pattern</link>
-    <guid>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-14-Multiple-Outlets-Pattern</guid>
-    <description><![CDATA[ Multiple Outlets trong SolidJS — Store-driven Pattern tags: solidjs solid-router routing multiple-outlets parallel Bài này cover phần SolidJS của chủ đề Multiple Router Outlets. ]]></description>
-    <pubDate>Thu, 14 May 2026 06:35:10 GMT</pubDate>
-  </item><item>
-    <title>DBMigration-00-Newbie-Guide</title>
-    <link>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-00-Newbie-Guide</link>
-    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-00-Newbie-Guide</guid>
-    <description><![CDATA[ Database Migration — Giải thích từ đầu cho người mới Bài này giải thích tại sao migration tools tồn tại, cơ chế thực sự bên trong, và những khái niệm dễ nhầm nhất — trước khi đọc các bài chuyên sâu. ]]></description>
-    <pubDate>Wed, 13 May 2026 01:34:21 GMT</pubDate>
-  </item><item>
-    <title>DBMigration-01-Flyway-Deep-Dive</title>
-    <link>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-01-Flyway-Deep-Dive</link>
-    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-01-Flyway-Deep-Dive</guid>
-    <description><![CDATA[ Flyway Deep Dive — Cơ chế hoạt động &amp; Enterprise Patterns Flyway: Migration tool SQL-first, versioned, đơn giản nhưng mạnh mẽ. ]]></description>
-    <pubDate>Wed, 13 May 2026 01:34:21 GMT</pubDate>
-  </item><item>
-    <title>DBMigration-02-AtlasGo-Deep-Dive</title>
-    <link>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-02-AtlasGo-Deep-Dive</link>
-    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-02-AtlasGo-Deep-Dive</guid>
-    <description><![CDATA[ Atlas Go Deep Dive — Schema-as-Code &amp; Declarative Migrations Atlas Go: Công cụ migration thế hệ mới — triết lý declarative (khai báo trạng thái mong muốn, Atlas tự tính diff). ]]></description>
-    <pubDate>Wed, 13 May 2026 01:34:21 GMT</pubDate>
   </item>
     </channel>
   </rss>
