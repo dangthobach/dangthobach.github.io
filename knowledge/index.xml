@@ -6,6 +6,24 @@
       <description>Last 10 notes on Dang Tho Bach&#039;s Knowledge Base</description>
       <generator>Quartz -- quartz.jzhao.xyz</generator>
       <item>
+    <title>API-Design-REST-GraphQL-Webhook</title>
+    <link>https://dangthobach.github.io/knowledge/Microservices-Patterns/API-Design-REST-GraphQL-Webhook</link>
+    <guid>https://dangthobach.github.io/knowledge/Microservices-Patterns/API-Design-REST-GraphQL-Webhook</guid>
+    <description><![CDATA[ REST API vs GraphQL vs Webhook vs gRPC — Lựa Chọn Khoa Học Tags: api-design rest graphql webhook grpc architecture microservices Related: 02-Communication · PDMS-Workflow-Optimal-Communication · Transactional-Outbox Status: 🟢 Complete TL;DR — Decision Matrix Tiêu chíREST APIGraphQLWebhookgRPCLuồng ... ]]></description>
+    <pubDate>Sat, 16 May 2026 18:01:57 GMT</pubDate>
+  </item><item>
+    <title>Cross-Service-Join-AuthZ-Fine-Grained-Filter</title>
+    <link>https://dangthobach.github.io/knowledge/Microservices-Patterns/Cross-Service-Join-AuthZ-Fine-Grained-Filter</link>
+    <guid>https://dangthobach.github.io/knowledge/Microservices-Patterns/Cross-Service-Join-AuthZ-Fine-Grained-Filter</guid>
+    <description><![CDATA[ 🔐 Cross-Service Join — AuthZ &amp; Fine-Grained Data Filtering tại Scale TL;DR: Khi AuthZ service giữ bảng phân quyền mà nhiều services cần để filter data (row-level security), không được cross-service JOIN trực tiếp. ]]></description>
+    <pubDate>Sat, 16 May 2026 18:01:57 GMT</pubDate>
+  </item><item>
+    <title>gRPC-Deep-Dive</title>
+    <link>https://dangthobach.github.io/knowledge/Microservices-Patterns/gRPC-Deep-Dive</link>
+    <guid>https://dangthobach.github.io/knowledge/Microservices-Patterns/gRPC-Deep-Dive</guid>
+    <description><![CDATA[ 🚀 gRPC Deep Dive: Cơ chế, Triển khai &amp; Chiến lược sử dụng Lưu ý: Bài viết này tập trung vào gRPC (Google Remote Procedure Call) — framework RPC hiện đại và phổ biến nhất hiện nay cho các hệ thống phân tán. ]]></description>
+    <pubDate>Sat, 16 May 2026 18:01:57 GMT</pubDate>
+  </item><item>
     <title>02-Components-The-Building-Blocks</title>
     <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/02-Components-The-Building-Blocks</link>
     <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/02-Components-The-Building-Blocks</guid>
@@ -46,24 +64,6 @@
     <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/16-NgRx-State-Management</link>
     <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/16-NgRx-State-Management</guid>
     <description><![CDATA[ 16. ]]></description>
-    <pubDate>Sat, 16 May 2026 17:39:23 GMT</pubDate>
-  </item><item>
-    <title>17-HTTP-Interceptors-Auth-Patterns</title>
-    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/17-HTTP-Interceptors-Auth-Patterns</link>
-    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/17-HTTP-Interceptors-Auth-Patterns</guid>
-    <description><![CDATA[ 17. ]]></description>
-    <pubDate>Sat, 16 May 2026 17:39:23 GMT</pubDate>
-  </item><item>
-    <title>18-Route-Guards-and-Resolvers</title>
-    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/18-Route-Guards-and-Resolvers</link>
-    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/18-Route-Guards-and-Resolvers</guid>
-    <description><![CDATA[ 18. Route Guards &amp; Resolvers: Kiểm soát điều hướng 🛡️ Tại sao quan trọng? Guards là “bảo vệ” đứng trước cánh cửa mỗi route. ]]></description>
-    <pubDate>Sat, 16 May 2026 17:39:23 GMT</pubDate>
-  </item><item>
-    <title>20-Lazy-Loading-and-Code-Splitting</title>
-    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/20-Lazy-Loading-and-Code-Splitting</link>
-    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/20-Lazy-Loading-and-Code-Splitting</guid>
-    <description><![CDATA[ 20. Lazy Loading &amp; Code Splitting: Tối ưu Bundle Size 🚀 Tại sao quan trọng với enterprise? Dự án banking có hàng chục màn hình. ]]></description>
     <pubDate>Sat, 16 May 2026 17:39:23 GMT</pubDate>
   </item>
     </channel>

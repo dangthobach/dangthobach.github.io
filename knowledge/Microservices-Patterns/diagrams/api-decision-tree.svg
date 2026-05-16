@@ -1,0 +1,160 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="680" height="680" viewBox="0 0 680 680" role="img">
+  <title>API Design Decision Framework — REST, GraphQL, Webhook, gRPC</title>
+  <desc>Flowchart giúp lựa chọn REST API, GraphQL, Webhook hoặc gRPC dựa theo usecase</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <style>
+      text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; fill: #1a1a1a; }
+      .th  { font-size: 13px; font-weight: 600; }
+      .ts  { font-size: 11px; font-weight: 400; fill: #555; }
+      .box-gray   { fill: #f5f5f5; stroke: #bbb; }
+      .box-purple { fill: #EEEDFE; stroke: #534AB7; }
+      .box-teal   { fill: #E1F5EE; stroke: #0F6E56; }
+      .box-blue   { fill: #E6F1FB; stroke: #185FA5; }
+      .box-green  { fill: #EAF3DE; stroke: #3B6D11; }
+      .box-amber  { fill: #FAEEDA; stroke: #854F0B; }
+      .box-coral  { fill: #FAECE7; stroke: #993C1D; }
+      .box-indigo { fill: #EEEDFE; stroke: #534AB7; }
+      .arr { fill: none; stroke: #888; stroke-width: 1.1; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <!-- START -->
+  <rect x="240" y="18" width="200" height="40" rx="20" class="box-gray" stroke-width="0.8"/>
+  <text class="th" x="340" y="38" text-anchor="middle" dominant-baseline="central">Bắt đầu thiết kế API</text>
+
+  <line x1="340" y1="58" x2="340" y2="92" class="arr"/>
+
+  <!-- Q1: Who initiates? -->
+  <rect x="170" y="92" width="340" height="52" rx="8" class="box-purple" stroke-width="0.8"/>
+  <text class="th" x="340" y="112" text-anchor="middle" dominant-baseline="central">Ai khởi tạo communication?</text>
+  <text class="ts" x="340" y="132" text-anchor="middle" dominant-baseline="central">Client cần data/action  vs  Server có event?</text>
+
+  <!-- Left: CLIENT branch -->
+  <path d="M210 144 L120 184" fill="none" stroke="#888" stroke-width="1.1" marker-end="url(#arrow)"/>
+  <text class="ts" x="148" y="170" text-anchor="middle">Client</text>
+
+  <!-- Right: SERVER branch -->
+  <path d="M470 144 L560 184" fill="none" stroke="#888" stroke-width="1.1" marker-end="url(#arrow)"/>
+  <text class="ts" x="532" y="170" text-anchor="middle">Server</text>
+
+  <!-- Q2: Internal? -->
+  <rect x="20" y="184" width="200" height="52" rx="8" class="box-teal" stroke-width="0.8"/>
+  <text class="th" x="120" y="204" text-anchor="middle" dominant-baseline="central">Internal service?</text>
+  <text class="ts" x="120" y="222" text-anchor="middle" dominant-baseline="central">Không expose ra browser?</text>
+
+  <!-- Q3: Volume? (Server branch) -->
+  <rect x="460" y="184" width="200" height="52" rx="8" class="box-teal" stroke-width="0.8"/>
+  <text class="th" x="560" y="204" text-anchor="middle" dominant-baseline="central">Event volume cao?</text>
+  <text class="ts" x="560" y="222" text-anchor="middle" dominant-baseline="central">&gt;500 events/giây?</text>
+
+  <!-- Internal YES → Q4: Need streaming? -->
+  <path d="M60 236 L60 296" fill="none" stroke="#888" stroke-width="1.1" marker-end="url(#arrow)"/>
+  <text class="ts" x="42" y="270" text-anchor="middle">Có</text>
+
+  <!-- Internal NO → Q5: Data complex? -->
+  <path d="M180 236 L260 296" fill="none" stroke="#888" stroke-width="1.1" marker-end="url(#arrow)"/>
+  <text class="ts" x="234" y="275" text-anchor="middle">Không</text>
+
+  <!-- Volume YES → Kafka -->
+  <path d="M620 236 L620 296" fill="none" stroke="#888" stroke-width="1.1" marker-end="url(#arrow)"/>
+  <text class="ts" x="638" y="270" text-anchor="middle">Có</text>
+
+  <!-- Volume NO → Webhook -->
+  <path d="M500 236 L440 296" fill="none" stroke="#888" stroke-width="1.1" marker-end="url(#arrow)"/>
+  <text class="ts" x="456" y="274" text-anchor="middle">Không</text>
+
+  <!-- Q4: Need streaming? (internal path) -->
+  <rect x="18" y="296" width="164" height="52" rx="8" class="box-teal" stroke-width="0.8"/>
+  <text class="th" x="100" y="316" text-anchor="middle" dominant-baseline="central">Cần streaming?</text>
+  <text class="ts" x="100" y="334" text-anchor="middle" dominant-baseline="central">Real-time, bidi?</text>
+
+  <!-- Q5: Data complex? (external path) -->
+  <rect x="204" y="296" width="194" height="52" rx="8" class="box-teal" stroke-width="0.8"/>
+  <text class="th" x="301" y="316" text-anchor="middle" dominant-baseline="central">Data graph phức tạp?</text>
+  <text class="ts" x="301" y="334" text-anchor="middle" dominant-baseline="central">Nested, multi-consumer, BFF?</text>
+
+  <!-- Webhook result -->
+  <rect x="388" y="296" width="148" height="52" rx="8" class="box-amber" stroke-width="0.8"/>
+  <text class="th" x="462" y="316" text-anchor="middle" dominant-baseline="central">Webhook</text>
+  <text class="ts" x="462" y="334" text-anchor="middle" dominant-baseline="central">Event notification</text>
+
+  <!-- Kafka result -->
+  <rect x="564" y="296" width="100" height="52" rx="8" class="box-coral" stroke-width="0.8"/>
+  <text class="th" x="614" y="316" text-anchor="middle" dominant-baseline="central">Kafka/MQ</text>
+  <text class="ts" x="614" y="334" text-anchor="middle" dominant-baseline="central">High-volume</text>
+
+  <!-- Streaming YES → gRPC Streaming -->
+  <path d="M40 348 L40 408" fill="none" stroke="#888" stroke-width="1.1" marker-end="url(#arrow)"/>
+  <text class="ts" x="22" y="382" text-anchor="middle">Có</text>
+
+  <!-- Streaming NO → gRPC Unary -->
+  <path d="M160 348 L160 408" fill="none" stroke="#888" stroke-width="1.1" marker-end="url(#arrow)"/>
+  <text class="ts" x="178" y="382" text-anchor="middle">Không</text>
+
+  <!-- Data complex YES → GraphQL -->
+  <path d="M250 348 L250 408" fill="none" stroke="#888" stroke-width="1.1" marker-end="url(#arrow)"/>
+  <text class="ts" x="232" y="382" text-anchor="middle">Có</text>
+
+  <!-- Data complex NO → REST -->
+  <path d="M352 348 L352 408" fill="none" stroke="#888" stroke-width="1.1" marker-end="url(#arrow)"/>
+  <text class="ts" x="370" y="382" text-anchor="middle">Không</text>
+
+  <!-- Result boxes row -->
+  <!-- gRPC Streaming -->
+  <rect x="8" y="408" width="108" height="64" rx="8" class="box-indigo" stroke-width="0.8"/>
+  <text class="th" x="62" y="430" text-anchor="middle" dominant-baseline="central">gRPC Streaming</text>
+  <text class="ts" x="62" y="448" text-anchor="middle">Server / Client /</text>
+  <text class="ts" x="62" y="462" text-anchor="middle">Bidi streaming</text>
+
+  <!-- gRPC Unary -->
+  <rect x="120" y="408" width="108" height="64" rx="8" class="box-indigo" stroke-width="0.8"/>
+  <text class="th" x="174" y="430" text-anchor="middle" dominant-baseline="central">gRPC Unary</text>
+  <text class="ts" x="174" y="448" text-anchor="middle">High-perf internal</text>
+  <text class="ts" x="174" y="462" text-anchor="middle">typed RPC</text>
+
+  <!-- GraphQL -->
+  <rect x="232" y="408" width="108" height="64" rx="8" class="box-blue" stroke-width="0.8"/>
+  <text class="th" x="286" y="430" text-anchor="middle" dominant-baseline="central">GraphQL</text>
+  <text class="ts" x="286" y="448" text-anchor="middle">BFF, aggregation</text>
+  <text class="ts" x="286" y="462" text-anchor="middle">multi-consumer</text>
+
+  <!-- REST -->
+  <rect x="344" y="408" width="108" height="64" rx="8" class="box-green" stroke-width="0.8"/>
+  <text class="th" x="398" y="430" text-anchor="middle" dominant-baseline="central">REST API</text>
+  <text class="ts" x="398" y="448" text-anchor="middle">CRUD, public API</text>
+  <text class="ts" x="398" y="462" text-anchor="middle">simple resource ops</text>
+
+  <!-- Sub-notes -->
+  <line x1="62"  y1="472" x2="62"  y2="516" class="arr"/>
+  <rect x="8"   y="516" width="108" height="40" rx="6" class="box-gray" stroke-width="0.5"/>
+  <text class="th" x="62" y="532" text-anchor="middle" dominant-baseline="central">Bidi → real-time</text>
+  <text class="ts" x="62" y="547" text-anchor="middle" dominant-baseline="central">collab, telemetry</text>
+
+  <line x1="174" y1="472" x2="174" y2="516" class="arr"/>
+  <rect x="120" y="516" width="108" height="40" rx="6" class="box-gray" stroke-width="0.5"/>
+  <text class="th" x="174" y="532" text-anchor="middle" dominant-baseline="central">IAM check, validate</text>
+  <text class="ts" x="174" y="547" text-anchor="middle" dominant-baseline="central">latency sensitive</text>
+
+  <line x1="286" y1="472" x2="286" y2="516" class="arr"/>
+  <rect x="232" y="516" width="108" height="40" rx="6" class="box-gray" stroke-width="0.5"/>
+  <text class="th" x="286" y="532" text-anchor="middle" dominant-baseline="central">+Subscription</text>
+  <text class="ts" x="286" y="547" text-anchor="middle" dominant-baseline="central">for real-time push</text>
+
+  <line x1="398" y1="472" x2="398" y2="516" class="arr"/>
+  <rect x="344" y="516" width="108" height="40" rx="6" class="box-gray" stroke-width="0.5"/>
+  <text class="th" x="398" y="532" text-anchor="middle" dominant-baseline="central">HTTP cache/CDN</text>
+  <text class="ts" x="398" y="547" text-anchor="middle" dominant-baseline="central">ETag, browser cache</text>
+
+  <!-- Combination pattern note -->
+  <path d="M62  556 L100 596" fill="none" stroke="#ccc" stroke-width="0.8" stroke-dasharray="3 3"/>
+  <path d="M174 556 L200 596" fill="none" stroke="#ccc" stroke-width="0.8" stroke-dasharray="3 3"/>
+  <path d="M286 556 L300 596" fill="none" stroke="#ccc" stroke-width="0.8" stroke-dasharray="3 3"/>
+  <path d="M398 556 L400 596" fill="none" stroke="#ccc" stroke-width="0.8" stroke-dasharray="3 3"/>
+  <path d="M462 348 L462 596" fill="none" stroke="#ccc" stroke-width="0.8" stroke-dasharray="3 3"/>
+  <rect x="8" y="596" width="618" height="42" rx="8" class="box-gray" stroke-width="0.8"/>
+  <text class="th" x="317" y="614" text-anchor="middle" dominant-baseline="central">Production combination: REST (external) + gRPC (internal) + Webhook (events)</text>
+  <text class="ts" x="317" y="630" text-anchor="middle" dominant-baseline="central">Không phải "chọn 1" — mỗi pattern phục vụ một mục đích riêng trong cùng hệ thống</text>
+</svg>

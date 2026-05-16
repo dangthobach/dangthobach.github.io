@@ -506,6 +506,9 @@
     <loc>https://dangthobach.github.io/knowledge/Microservices-Patterns/05-Decomposition</loc>
     <lastmod>2026-05-02T04:58:37.000Z</lastmod>
   </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Microservices-Patterns/API-Design-REST-GraphQL-Webhook</loc>
+    <lastmod>2026-05-16T18:01:57.000Z</lastmod>
+  </url><url>
     <loc>https://dangthobach.github.io/knowledge/Microservices-Patterns/BPMN-CMMN-DMN-Enterprise-Process-Modeling</loc>
     <lastmod>2026-05-02T04:58:37.000Z</lastmod>
   </url><url>
@@ -522,7 +525,7 @@
     <lastmod>2026-05-02T04:58:37.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Microservices-Patterns/Cross-Service-Join-AuthZ-Fine-Grained-Filter</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-05-16T18:01:57.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Microservices-Patterns/Database-per-Service</loc>
     <lastmod>2026-05-02T04:58:37.000Z</lastmod>
@@ -583,6 +586,9 @@
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Microservices-Patterns/Transactional-Outbox</loc>
     <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Microservices-Patterns/gRPC-Deep-Dive</loc>
+    <lastmod>2026-05-16T18:01:57.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Note-taking-Methods</loc>
     <lastmod>2026-05-02T04:58:37.000Z</lastmod>
