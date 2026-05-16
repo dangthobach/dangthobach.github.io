@@ -255,12 +255,12 @@ chunk-reports.js                 620 KB  ← Tải khi vào Reports
 ```mermaid
 flowchart TD
     Q[Module/Component này có cần ngay không?] 
-    Q -- Có: Login, Core Layout --> Eager[Eager Loading\nImport trực tiếp]
-    Q -- Không: Feature pages --> Lazy[Lazy Loading\nloadChildren / loadComponent]
+    Q -- Có: Login, Core Layout --> Eager[Eager Loading<br/>Import trực tiếp]
+    Q -- Không: Feature pages --> Lazy[Lazy Loading<br/>loadChildren / loadComponent]
     
     Lazy --> Usage{Người dùng dùng thường xuyên?}
-    Usage -- Thường xuyên: Dashboard, CaseFile --> Preload[Thêm preload: true\nHoặc PreloadAllModules]
-    Usage -- Ít khi: Reports, Admin --> NoPreload[Không preload\nTải khi cần]
+    Usage -- Thường xuyên: Dashboard, CaseFile --> Preload[Thêm preload: true<br/>Hoặc PreloadAllModules]
+    Usage -- Ít khi: Reports, Admin --> NoPreload[Không preload<br/>Tải khi cần]
     
     style Eager fill:#fff9c4
     style Lazy fill:#c8e6c9

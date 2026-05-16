@@ -13,13 +13,13 @@ graph TD
         App --> Main
         Main --> CaseList
         CaseList --> CaseRow
-        CaseRow --> Modal["Modal bị clip bởi\noverflow: hidden của cha"]
+        CaseRow --> Modal["Modal bị clip bởi<br/>overflow: hidden của cha"]
     end
 
     subgraph "Với Portal"
         App2["App"] --> Body["document.body"]
-        Body --> ModalPortal["Modal render\ntại đây (z-index tự do)"]
-        CaseRow2["CaseRow"] -->|"React event bubbling\nvẫn hoạt động"| ModalPortal
+        Body --> ModalPortal["Modal render<br/>tại đây (z-index tự do)"]
+        CaseRow2["CaseRow"] -->|"React event bubbling<br/>vẫn hoạt động"| ModalPortal
     end
 ```
 

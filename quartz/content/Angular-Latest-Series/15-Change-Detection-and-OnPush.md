@@ -247,11 +247,11 @@ flowchart TD
     Q[Component này làm gì?] --> Simple[Hiển thị thuần: Chỉ nhận @Input và render]
     Q --> Complex[Phức tạp: Subscribe nhiều service, real-time data]
     
-    Simple --> OnPush[✅ Dùng OnPush\nKết hợp Signals\nHiệu năng tối ưu]
+    Simple --> OnPush[✅ Dùng OnPush<br/>Kết hợp Signals<br/>Hiệu năng tối ưu]
     Complex --> Depends{Có dùng Signals không?}
     
-    Depends -- Có --> OnPushSignal[✅ OnPush + Signals\nAngular tự quản lý]
-    Depends -- Không --> CDRef[⚠️ Dùng Default hoặc\nOnPush + cdr.markForCheck()]
+    Depends -- Có --> OnPushSignal[✅ OnPush + Signals<br/>Angular tự quản lý]
+    Depends -- Không --> CDRef[⚠️ Dùng Default hoặc<br/>OnPush + cdr.markForCheck()]
     
     style OnPush fill:#c8e6c9
     style OnPushSignal fill:#c8e6c9

@@ -22,7 +22,7 @@ Câu hỏi cốt lõi: "Khi data thay đổi, ai chịu trách nhiệm cập nh�
 
 ```mermaid
 flowchart LR
-    M["📦 Model\n(State/Data)"] -->|"render()"| V["🖼️ View\n(DOM)"]
+    M["📦 Model<br/>(State/Data)"] -->|"render()"| V["🖼️ View<br/>(DOM)"]
 
     style M fill:#3b82f6,color:#fff
     style V fill:#10b981,color:#fff
@@ -35,7 +35,7 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    M["📦 Model\n(State/Data)"] <-->|"sync tu dong"| V["🖼️ View\n(DOM)"]
+    M["📦 Model<br/>(State/Data)"] <-->|"sync tu dong"| V["🖼️ View<br/>(DOM)"]
 
     style M fill:#8b5cf6,color:#fff
     style V fill:#f59e0b,color:#000
@@ -55,12 +55,12 @@ React áp dụng **Unidirectional Data Flow** — được lấy cảm hứng t�
 
 ```mermaid
 flowchart TD
-    S["State / Props\n(Source of Truth)"]
+    S["State / Props<br/>(Source of Truth)"]
     R["render()"]
     V["Virtual DOM"]
     D["Real DOM"]
-    E["User Event\n(click, type, submit)"]
-    H["Event Handler\n(setState, dispatch)"]
+    E["User Event<br/>(click, type, submit)"]
+    H["Event Handler<br/>(setState, dispatch)"]
 
     S --> R --> V
     V -->|"Reconciliation (diffing)"| D
@@ -141,10 +141,10 @@ function SearchBox() {
 
 ```mermaid
 flowchart TD
-    P["Parent Component\nstate: user.name = Bach"]
-    C1["Child A\nprops: name = Bach"]
-    C2["Child B\nprops: name = Bach"]
-    GC["Grandchild\nprops: name = Bach"]
+    P["Parent Component<br/>state: user.name = Bach"]
+    C1["Child A<br/>props: name = Bach"]
+    C2["Child B<br/>props: name = Bach"]
+    GC["Grandchild<br/>props: name = Bach"]
 
     P -->|"props read-only"| C1
     P -->|"props read-only"| C2
@@ -172,13 +172,13 @@ Angular kế thừa từ AngularJS (2010) với mục tiêu giúp developer ít 
 
 ```mermaid
 flowchart TD
-    TS["TypeScript Component\n(Model/State)"]
-    IB["Interpolation\ndouble-curly value"]
-    PB["Property Binding\nproperty = value"]
-    EB["Event Binding\nevent = handler"]
-    TB["Two-Way\nngModel = value"]
-    TPL["HTML Template\n(View)"]
-    CD["Change Detection\n(Zone.js)"]
+    TS["TypeScript Component<br/>(Model/State)"]
+    IB["Interpolation<br/>double-curly value"]
+    PB["Property Binding<br/>property = value"]
+    EB["Event Binding<br/>event = handler"]
+    TB["Two-Way<br/>ngModel = value"]
+    TPL["HTML Template<br/>(View)"]
+    CD["Change Detection<br/>(Zone.js)"]
 
     TS -->|"one-way out"| IB
     TS -->|"one-way out"| PB
@@ -383,13 +383,13 @@ flowchart TD
     T["setState triggered"]
     RC["Re-render Component"]
     VD["Create new Virtual DOM"]
-    DIFF["Diff voi Virtual DOM cu\nReconciliation"]
-    PATCH["Patch Real DOM\nchi nhung gi thay doi"]
+    DIFF["Diff voi Virtual DOM cu<br/>Reconciliation"]
+    PATCH["Patch Real DOM<br/>chi nhung gi thay doi"]
 
     T --> RC --> VD --> DIFF --> PATCH
 
-    M["React.memo\nskip re-render neu props unchanged"]
-    UC["useMemo / useCallback\nmemoize values/functions"]
+    M["React.memo<br/>skip re-render neu props unchanged"]
+    UC["useMemo / useCallback<br/>memoize values/functions"]
 
     M -.->|"guards"| RC
     UC -.->|"stabilize"| VD
@@ -420,16 +420,16 @@ export class ProductCard {
 ```mermaid
 flowchart TD
     subgraph DEFAULT["Default Change Detection"]
-        E1["Any Event / Async"] --> CD1["Check EVERY component\nin entire tree"]
-        CD1 --> P1["Update DOM\ncheck 100s components\nde update 1"]
+        E1["Any Event / Async"] --> CD1["Check EVERY component<br/>in entire tree"]
+        CD1 --> P1["Update DOM<br/>check 100s components<br/>de update 1"]
         style CD1 fill:#ef4444,color:#fff
     end
 
     subgraph ONPUSH["OnPush Change Detection"]
         E2["Event / Async"] --> CHECK["Input reference changed?"]
-        CHECK -->|"Yes"| CD2["Check only\naffected subtree"]
+        CHECK -->|"Yes"| CD2["Check only<br/>affected subtree"]
         CHECK -->|"No"| SKIP["Skip"]
-        CD2 --> P2["Update DOM\nefficient"]
+        CD2 --> P2["Update DOM<br/>efficient"]
         style CD2 fill:#10b981,color:#fff
         style SKIP fill:#10b981,color:#fff
     end
@@ -470,18 +470,18 @@ Vì React dùng one-way binding, khi hai sibling components cần share state:
 ```mermaid
 flowchart TD
     subgraph BAD["BAD — Moi component tu quan ly state"]
-        CA["Component A\nstate: query=abc"]
-        CB["Component B\nstate: query=xyz"]
-        DESYNC["State bi desync!\nUser thay ket qua khac nhau"]
+        CA["Component A<br/>state: query=abc"]
+        CB["Component B<br/>state: query=xyz"]
+        DESYNC["State bi desync!<br/>User thay ket qua khac nhau"]
         CA --> DESYNC
         CB --> DESYNC
         style DESYNC fill:#ef4444,color:#fff
     end
 
     subgraph GOOD["GOOD — Lift State Up"]
-        P["Parent Component\nstate: query=''"]
-        CA2["Component A\nprops: query, onQueryChange"]
-        CB2["Component B\nprops: query"]
+        P["Parent Component<br/>state: query=''"]
+        CA2["Component A<br/>props: query, onQueryChange"]
+        CB2["Component B<br/>props: query"]
 
         P -->|"query prop"| CA2
         P -->|"query prop"| CB2
@@ -620,12 +620,12 @@ class SearchComponent {
 
 ```mermaid
 flowchart LR
-    A["AngularJS 2010\nTwo-way ng-model\nDirty checking"] --> B["Angular 2+ 2016\nZone.js CD\nngModel"]
-    B --> C["Angular Signals 2023\nFine-grained reactive\nZone.js optional"]
-    C --> D["Angular Zoneless 2024\nSignal two-way\nNo Zone.js"]
+    A["AngularJS 2010<br/>Two-way ng-model<br/>Dirty checking"] --> B["Angular 2+ 2016<br/>Zone.js CD<br/>ngModel"]
+    B --> C["Angular Signals 2023<br/>Fine-grained reactive<br/>Zone.js optional"]
+    C --> D["Angular Zoneless 2024<br/>Signal two-way<br/>No Zone.js"]
 
-    E["React 2013\nOne-way Flux\nsetState"] --> F["React Hooks 2018\nuseState / useEffect\nLess boilerplate"]
-    F --> G["React 18 2022\nServer Components\nSelective hydration"]
+    E["React 2013<br/>One-way Flux<br/>setState"] --> F["React Hooks 2018<br/>useState / useEffect<br/>Less boilerplate"]
+    F --> G["React 18 2022<br/>Server Components<br/>Selective hydration"]
 
     D -.->|"converging"| G
 

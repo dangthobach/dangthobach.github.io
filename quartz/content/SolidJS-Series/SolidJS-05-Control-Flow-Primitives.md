@@ -58,10 +58,10 @@ import { Show } from "solid-js";
 ```mermaid
 flowchart LR
     W["when()"] --> T{"truthy?"}
-    T -- "Yes" --> MOUNT["Mount children\n(create DOM)"]
-    T -- "No" --> FALLBACK["Mount fallback\n(nếu có)"]
+    T -- "Yes" --> MOUNT["Mount children<br/>(create DOM)"]
+    T -- "No" --> FALLBACK["Mount fallback<br/>(nếu có)"]
     MOUNT --> WATCH{"when() thay đổi?"}
-    WATCH -- "false" --> DESTROY["Destroy children\nonCleanup chạy"]
+    WATCH -- "false" --> DESTROY["Destroy children<br/>onCleanup chạy"]
     DESTROY --> FALLBACK
     FALLBACK --> WATCH2{"when() thay đổi?"}
     WATCH2 -- "true" --> MOUNT

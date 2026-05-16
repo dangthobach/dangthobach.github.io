@@ -36,20 +36,20 @@ So sánh với `useEffect` của React:
 
 ```mermaid
 flowchart TD
-    A["createEffect(fn) được gọi"] --> B["Effect được thêm vào\nowner's children"]
-    B --> C["fn() chạy lần đầu\ntrong tracking context"]
-    C --> D["Signals được đọc trong fn\ntự động đăng ký subscriptions"]
-    D --> E["fn hoàn thành\n→ Effect ở trạng thái stable"]
+    A["createEffect(fn) được gọi"] --> B["Effect được thêm vào<br/>owner's children"]
+    B --> C["fn() chạy lần đầu<br/>trong tracking context"]
+    C --> D["Signals được đọc trong fn<br/>tự động đăng ký subscriptions"]
+    D --> E["fn hoàn thành<br/>→ Effect ở trạng thái stable"]
 
-    E --> F{"Dependency\nsignal thay đổi?"}
+    E --> F{"Dependency<br/>signal thay đổi?"}
     F -- "Không" --> E
-    F -- "Có" --> G["onCleanup callbacks\ntừ lần chạy trước được gọi"]
-    G --> H["Subscriptions cũ bị xóa\n(cleanup bidirectional links)"]
-    H --> I["fn() chạy lại\ntrong tracking context mới"]
+    F -- "Có" --> G["onCleanup callbacks<br/>từ lần chạy trước được gọi"]
+    G --> H["Subscriptions cũ bị xóa<br/>(cleanup bidirectional links)"]
+    H --> I["fn() chạy lại<br/>trong tracking context mới"]
     I --> D
 
-    E --> J{"Owner bị\ndispose?"}
-    J -- "Có" --> K["onCleanup callbacks chạy\nEffect bị xóa vĩnh viễn"]
+    E --> J{"Owner bị<br/>dispose?"}
+    J -- "Có" --> K["onCleanup callbacks chạy<br/>Effect bị xóa vĩnh viễn"]
 ```
 
 ### Effect tự động cleanup subscriptions giữa các lần chạy
@@ -163,12 +163,12 @@ function DataTable() {
 
 ```mermaid
 flowchart LR
-    Q{"Cần truy cập\nDOM elements?"}
-    Q -- "Có" --> Q2{"Cần re-run khi\ndata thay đổi?"}
-    Q2 -- "Không" --> MOUNT["onMount\n(runs once after DOM)"]
-    Q2 -- "Có" --> EFFECT_DOM["createEffect\n+ wait for DOM ref"]
-    Q -- "Không" --> Q3{"Cần chạy ngay\n(pre-DOM)?"}
-    Q3 -- "Có" --> EFFECT["createEffect\n(synchronous)"]
+    Q{"Cần truy cập<br/>DOM elements?"}
+    Q -- "Có" --> Q2{"Cần re-run khi<br/>data thay đổi?"}
+    Q2 -- "Không" --> MOUNT["onMount<br/>(runs once after DOM)"]
+    Q2 -- "Có" --> EFFECT_DOM["createEffect<br/>+ wait for DOM ref"]
+    Q -- "Không" --> Q3{"Cần chạy ngay<br/>(pre-DOM)?"}
+    Q3 -- "Có" --> EFFECT["createEffect<br/>(synchronous)"]
     Q3 -- "Không" --> MOUNT
 ```
 

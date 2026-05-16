@@ -19,13 +19,13 @@ Trước khi so sánh, cần phân biệt **hai trường phái** khác nhau că
 
 ```mermaid
 graph TD
-    A["Async/Concurrent Solutions"] --> B["Reactive Streams\n(push-based)"]
-    A --> C["Structured Concurrency\n(sequential-looking)"]
-    A --> D["Actor Model\n(message-passing)"]
+    A["Async/Concurrent Solutions"] --> B["Reactive Streams<br/>(push-based)"]
+    A --> C["Structured Concurrency<br/>(sequential-looking)"]
+    A --> D["Actor Model<br/>(message-passing)"]
     
-    B --> B1["RxJava 3\nProject Reactor\nMutiny"]
-    C --> C1["Kotlin Coroutines\nProject Loom\n(Virtual Threads)"]
-    D --> D1["Akka\n(Akka Streams)"]
+    B --> B1["RxJava 3<br/>Project Reactor<br/>Mutiny"]
+    C --> C1["Kotlin Coroutines<br/>Project Loom<br/>(Virtual Threads)"]
+    D --> D1["Akka<br/>(Akka Streams)"]
     
     style B fill:#4f46e5,color:#fff
     style C fill:#059669,color:#fff

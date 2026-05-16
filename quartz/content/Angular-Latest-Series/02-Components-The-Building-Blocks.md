@@ -248,10 +248,10 @@ export class StatusBadgeComponent {
 
 ```mermaid
 graph TD
-    Smart[Smart Component\nContainer\nBiết về Service, Store, API]
-    Dumb1[Dumb Component\nPresentation\nChỉ nhận Input, phát Output]
-    Dumb2[Dumb Component\nPresentation]
-    Dumb3[Dumb Component\nPresentation]
+    Smart[Smart Component<br/>Container<br/>Biết về Service, Store, API]
+    Dumb1[Dumb Component<br/>Presentation<br/>Chỉ nhận Input, phát Output]
+    Dumb2[Dumb Component<br/>Presentation]
+    Dumb3[Dumb Component<br/>Presentation]
     
     Smart -- "@Input data" --> Dumb1
     Smart -- "@Input data" --> Dumb2

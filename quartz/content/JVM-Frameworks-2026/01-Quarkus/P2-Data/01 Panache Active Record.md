@@ -25,7 +25,7 @@ graph LR
     end
 
     subgraph "Panache Active Record"
-        E["User Entity\nextends PanacheEntity\n+ static query methods"]
+        E["User Entity<br/>extends PanacheEntity<br/>+ static query methods"]
         E --> F["User.findById(id)"]
         E --> F2["User.persist(user)"]
         E --> G["User.findByEmail(email)"]

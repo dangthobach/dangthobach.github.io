@@ -16,23 +16,23 @@ graph TB
     subgraph Kafka Cluster
         direction TB
         subgraph Broker 1 ["Broker 1 (Leader)"]
-            T1P0["Topic-A | Partition 0\n[Leader]"]
-            T1P1["Topic-A | Partition 1\n[Follower]"]
+            T1P0["Topic-A | Partition 0<br/>[Leader]"]
+            T1P1["Topic-A | Partition 1<br/>[Follower]"]
         end
         subgraph Broker 2
-            T1P0R["Topic-A | Partition 0\n[Follower]"]
-            T1P1L["Topic-A | Partition 1\n[Leader]"]
+            T1P0R["Topic-A | Partition 0<br/>[Follower]"]
+            T1P1L["Topic-A | Partition 1<br/>[Leader]"]
         end
         subgraph Broker 3
-            T1P0R2["Topic-A | Partition 0\n[Follower]"]
-            T1P1R["Topic-A | Partition 1\n[Follower]"]
+            T1P0R2["Topic-A | Partition 0<br/>[Follower]"]
+            T1P1R["Topic-A | Partition 1<br/>[Follower]"]
         end
-        ZK[("ZooKeeper /\nKRaft Controller")]
+        ZK[("ZooKeeper /<br/>KRaft Controller")]
     end
 
     subgraph Consumers ["Consumer Group: order-service"]
-        C1[Consumer 1\nPartition 0]
-        C2[Consumer 2\nPartition 1]
+        C1[Consumer 1<br/>Partition 0]
+        C2[Consumer 2<br/>Partition 1]
     end
 
     P1 -->|"batch + acks"| T1P0
@@ -55,12 +55,12 @@ graph TB
 
 ```mermaid
 flowchart LR
-    MSG["Message Arrives"] --> SEG["Active Segment\n(.log file)"]
-    SEG -->|"segment.bytes reached\nOR segment.ms elapsed"| ROLL["Segment Rolled\n(new .log created)"]
+    MSG["Message Arrives"] --> SEG["Active Segment<br/>(.log file)"]
+    SEG -->|"segment.bytes reached<br/>OR segment.ms elapsed"| ROLL["Segment Rolled<br/>(new .log created)"]
     ROLL --> CLEAN{"log.cleanup.policy"}
-    CLEAN -->|delete| DEL["Delete segments\nolder than retention.ms"]
-    CLEAN -->|compact| COMP["Keep only latest\nvalue per key"]
-    COMP --> COMPACTED["Compacted Log\n(changelog topic)"]
+    CLEAN -->|delete| DEL["Delete segments<br/>older than retention.ms"]
+    CLEAN -->|compact| COMP["Keep only latest<br/>value per key"]
+    COMP --> COMPACTED["Compacted Log<br/>(changelog topic)"]
 ```
 
 | Config | Default | Ý nghĩa |
@@ -145,17 +145,17 @@ acks=all (producer side)
 
 ```mermaid
 flowchart TB
-    MSG1["msg 1"] --> ACC["RecordAccumulator\n(in-memory buffer)"]
+    MSG1["msg 1"] --> ACC["RecordAccumulator<br/>(in-memory buffer)"]
     MSG2["msg 2"] --> ACC
     MSG3["msg 3"] --> ACC
 
-    ACC --> COND{"batch.size filled?\nOR linger.ms elapsed?"}
-    COND -->|Yes| SENDER["Sender Thread\n(I/O thread)"]
+    ACC --> COND{"batch.size filled?<br/>OR linger.ms elapsed?"}
+    COND -->|Yes| SENDER["Sender Thread<br/>(I/O thread)"]
     SENDER -->|compress| COMP["Compressed Batch"]
-    COMP --> BROKER["Kafka Broker\nPartition Leader"]
+    COMP --> BROKER["Kafka Broker<br/>Partition Leader"]
 
     subgraph Batching Window
-        TIMER["linger.ms = 10ms\nwait for more msgs"]
+        TIMER["linger.ms = 10ms<br/>wait for more msgs"]
     end
     COND -.->|No, waiting| TIMER
     TIMER --> COND
@@ -226,11 +226,11 @@ max.in.flight.requests.per.connection=1  # Không idempotent, throughput giảm
 
 ```mermaid
 flowchart LR
-    MSG["Message\nkey='order-123'"] --> PART{"Partitioner"}
+    MSG["Message<br/>key='order-123'"] --> PART{"Partitioner"}
 
-    PART -->|"key != null\n(default)"| HASH["murmur2(key) % numPartitions\n→ Partition 2"]
-    PART -->|"key == null\n(sticky)"| STICKY["Stick to 1 partition\nuntil batch full"]
-    PART -->|"Custom"| CUSTOM["Custom Partitioner\ne.g. by region/tenant"]
+    PART -->|"key != null<br/>(default)"| HASH["murmur2(key) % numPartitions<br/>→ Partition 2"]
+    PART -->|"key == null<br/>(sticky)"| STICKY["Stick to 1 partition<br/>until batch full"]
+    PART -->|"Custom"| CUSTOM["Custom Partitioner<br/>e.g. by region/tenant"]
 
     HASH --> P2["Partition 2"]
     STICKY --> P0["Partition 0 (sticky)"]
@@ -355,15 +355,15 @@ Tại sao? Kafka đảm bảo **ordering trong một partition** — nếu 2 con
 ```mermaid
 graph TB
     subgraph RULE["Ba hệ quả bất biến"]
-        R1["① 1 partition → 1 consumer duy nhất\n   trong cùng 1 group (tại 1 thời điểm)"]
+        R1["① 1 partition → 1 consumer duy nhất<br/>   trong cùng 1 group (tại 1 thời điểm)"]
         R2["② 1 consumer → có thể nhận NHIỀU partitions"]
-        R3["③ Consumer dư hơn partitions → IDLE hoàn toàn\n   (không nhận bất kỳ message nào)"]
+        R3["③ Consumer dư hơn partitions → IDLE hoàn toàn<br/>   (không nhận bất kỳ message nào)"]
     end
 
     subgraph IMPLY["Hệ quả thiết kế"]
-        I1["Muốn tăng parallelism\n→ Phải tăng số PARTITIONS\n   (không chỉ tăng consumers)"]
-        I2["Số partitions chỉ tăng được\n→ Thiết kế DƯ từ đầu"]
-        I3["Consumer dư = hot standby\n→ Sẵn sàng tiếp quản khi\n   consumer khác crash"]
+        I1["Muốn tăng parallelism<br/>→ Phải tăng số PARTITIONS<br/>   (không chỉ tăng consumers)"]
+        I2["Số partitions chỉ tăng được<br/>→ Thiết kế DƯ từ đầu"]
+        I3["Consumer dư = hot standby<br/>→ Sẵn sàng tiếp quản khi<br/>   consumer khác crash"]
     end
 
     style RULE fill:#1565C0,color:#fff
@@ -382,17 +382,17 @@ graph TB
 graph LR
     subgraph BEFORE["Trước: bottleneck"]
         direction TB
-        T1["Topic\n6 partitions\n50k msgs/s"]
-        C1["Consumer 1\n10k/s\n⚠️ LAG TĂNG MÃIMÃI"]
+        T1["Topic<br/>6 partitions<br/>50k msgs/s"]
+        C1["Consumer 1<br/>10k/s<br/>⚠️ LAG TĂNG MÃIMÃI"]
         T1 --> C1
     end
 
     subgraph AFTER["Sau: scale out 3 consumers"]
         direction TB
-        T2["Topic\n6 partitions\n50k msgs/s"]
-        C2a["Consumer 1\nP0,P1 — 17k/s"]
-        C2b["Consumer 2\nP2,P3 — 17k/s"]
-        C2c["Consumer 3\nP4,P5 — 17k/s"]
+        T2["Topic<br/>6 partitions<br/>50k msgs/s"]
+        C2a["Consumer 1<br/>P0,P1 — 17k/s"]
+        C2b["Consumer 2<br/>P2,P3 — 17k/s"]
+        C2c["Consumer 3<br/>P4,P5 — 17k/s"]
         T2 --> C2a
         T2 --> C2b
         T2 --> C2c
@@ -441,15 +441,15 @@ spec:
 
 ```mermaid
 graph TB
-    PROD["DocumentUploadedEvent\nProducer — 1 lần publish"] --> TOPIC["Topic: pdms.document.events\n12 partitions\nRetention: 3 ngày"]
+    PROD["DocumentUploadedEvent<br/>Producer — 1 lần publish"] --> TOPIC["Topic: pdms.document.events<br/>12 partitions<br/>Retention: 3 ngày"]
 
-    TOPIC --> CG1["Consumer Group:\npdms-metadata-svc\n→ Lưu vào PostgreSQL\n2 instances"]
-    TOPIC --> CG2["Consumer Group:\npdms-notification-svc\n→ Email / Push notification\n1 instance"]
-    TOPIC --> CG3["Consumer Group:\npdms-search-indexer\n→ Elasticsearch\n3 instances"]
-    TOPIC --> CG4["Consumer Group:\npdms-audit-svc\n→ Audit trail DB\n1 instance"]
+    TOPIC --> CG1["Consumer Group:<br/>pdms-metadata-svc<br/>→ Lưu vào PostgreSQL<br/>2 instances"]
+    TOPIC --> CG2["Consumer Group:<br/>pdms-notification-svc<br/>→ Email / Push notification<br/>1 instance"]
+    TOPIC --> CG3["Consumer Group:<br/>pdms-search-indexer<br/>→ Elasticsearch<br/>3 instances"]
+    TOPIC --> CG4["Consumer Group:<br/>pdms-audit-svc<br/>→ Audit trail DB<br/>1 instance"]
 
     subgraph KEY["Điểm then chốt"]
-        K1["Mỗi group có OFFSET RIÊNG — hoàn toàn độc lập\nGroup chậm/crash KHÔNG ảnh hưởng group khác\nThêm use case mới = tạo group mới, ZERO change producer"]
+        K1["Mỗi group có OFFSET RIÊNG — hoàn toàn độc lập<br/>Group chậm/crash KHÔNG ảnh hưởng group khác<br/>Thêm use case mới = tạo group mới, ZERO change producer"]
     end
 
     style PROD fill:#1565C0,color:#fff
@@ -488,8 +488,8 @@ sequenceDiagram
     T->>C1: DocA, DocB, DocD (nhận theo thứ tự)
     T->>C2: DocC (song song với C1)
 
-    Note over C1: DocA xong MỚI làm DocB\n(cùng partition → ordering per contract)
-    Note over C1,C2: DocA và DocC chạy SONG SONG\n(khác partition → khác worker)
+    Note over C1: DocA xong MỚI làm DocB<br/>(cùng partition → ordering per contract)
+    Note over C1,C2: DocA và DocC chạy SONG SONG<br/>(khác partition → khác worker)
 ```
 
 **Use case PDMS:** Validate documents — các document của cùng 1 hợp đồng cần validate theo thứ tự (phụ lục sau hợp đồng gốc), nhưng các hợp đồng khác nhau hoàn toàn độc lập.
@@ -516,12 +516,12 @@ Với RabbitMQ competing consumers, không có cách đảm bảo ordering per e
 
 ```mermaid
 graph TB
-    TOPIC["Topic: pdms.transactions\n12 partitions | Retention: 7 ngày"]
+    TOPIC["Topic: pdms.transactions<br/>12 partitions | Retention: 7 ngày"]
 
-    TOPIC --> CG_PROD["Group: prod-transaction-processor\nOffset: đang xử lý realtime\nSLA: < 100ms"]
-    TOPIC --> CG_STG["Group: staging-transaction-processor\nĐọc cùng data production\nOffset riêng — KHÔNG ảnh hưởng prod\nSLA: best effort"]
-    TOPIC --> CG_REPLAY["Group: prod-tx-replay-bug-20250420\nauto.offset.reset=earliest\nReplay lại 7 ngày để reproduce bug\nXoá group sau khi debug xong"]
-    TOPIC --> CG_ANALYTICS["Group: analytics-pipeline-v2\nĐọc lại từ ngày deploy feature mới\nTest pipeline mới song song với v1"]
+    TOPIC --> CG_PROD["Group: prod-transaction-processor<br/>Offset: đang xử lý realtime<br/>SLA: < 100ms"]
+    TOPIC --> CG_STG["Group: staging-transaction-processor<br/>Đọc cùng data production<br/>Offset riêng — KHÔNG ảnh hưởng prod<br/>SLA: best effort"]
+    TOPIC --> CG_REPLAY["Group: prod-tx-replay-bug-20250420<br/>auto.offset.reset=earliest<br/>Replay lại 7 ngày để reproduce bug<br/>Xoá group sau khi debug xong"]
+    TOPIC --> CG_ANALYTICS["Group: analytics-pipeline-v2<br/>Đọc lại từ ngày deploy feature mới<br/>Test pipeline mới song song với v1"]
 
     style CG_PROD fill:#1b5e20,color:#fff
     style CG_STG fill:#E65100,color:#fff
@@ -554,21 +554,21 @@ graph TB
         direction LR
         A1["P0 P1 P2 P3"]
         A2["C1: P0,P1,P2  |  C2: P3"]
-        A3["C1 xử lý 3x load của C2\nHot spot, throughput không tối ưu"]
+        A3["C1 xử lý 3x load của C2<br/>Hot spot, throughput không tối ưu"]
     end
 
     subgraph SC2["consumers = partitions — OPTIMAL"]
         direction LR
         B1["P0 P1 P2 P3"]
         B2["C1:P0  C2:P1  C3:P2  C4:P3"]
-        B3["Max parallelism\nLoad cân bằng hoàn hảo"]
+        B3["Max parallelism<br/>Load cân bằng hoàn hảo"]
     end
 
     subgraph SC3["consumers > partitions — Có dư"]
         direction LR
         C1["P0 P1 P2 P3"]
-        C2["C1:P0  C2:P1  C3:P2  C4:P3\nC5: IDLE  C6: IDLE"]
-        C3["C5, C6 không nhận message\nNHƯNG là hot standby tức thì\nnếu C1-C4 crash → rebalance ngay"]
+        C2["C1:P0  C2:P1  C3:P2  C4:P3<br/>C5: IDLE  C6: IDLE"]
+        C3["C5, C6 không nhận message<br/>NHƯNG là hot standby tức thì<br/>nếu C1-C4 crash → rebalance ngay"]
     end
 
     style SC2 fill:#1b5e20,color:#fff
@@ -619,13 +619,13 @@ sequenceDiagram
     GC->>C1: STOP — REBALANCE_IN_PROGRESS
     GC->>C2: STOP — REBALANCE_IN_PROGRESS
 
-    Note over C1,C2,C3: ⏸️ TOÀN BỘ GROUP DỪNG CONSUME\n(downtime thường 10-30s)
+    Note over C1,C2,C3: ⏸️ TOÀN BỘ GROUP DỪNG CONSUME<br/>(downtime thường 10-30s)
 
     C1->>GC: JoinGroup (rejoin)
     C2->>GC: JoinGroup (rejoin)
     C3->>GC: JoinGroup
 
-    Note over GC: Leader Consumer chạy\nthuật toán phân chia partition
+    Note over GC: Leader Consumer chạy<br/>thuật toán phân chia partition
 
     GC->>C1: SyncGroup → P0
     GC->>C2: SyncGroup → P1,P2
@@ -652,7 +652,7 @@ sequenceDiagram
     C2->>GC: P3 revoked
     GC->>C3: Assign P3
 
-    Note over C1,C2,C3: ▶️ Chỉ P3 bị gián đoạn trong vài giây\nC1 (P0,P1) và C2 (P2) không bị ảnh hưởng
+    Note over C1,C2,C3: ▶️ Chỉ P3 bị gián đoạn trong vài giây<br/>C1 (P0,P1) và C2 (P2) không bị ảnh hưởng
 ```
 
 **Config để minimize rebalance downtime:**
@@ -683,7 +683,7 @@ sequenceDiagram
 
     alt Session chưa timeout (session.timeout.ms chưa hết)
         GC->>GC: Nhận ra instance.id quen biết
-        GC-->>C: Assign lại đúng partitions cũ NGAY\nKHÔNG trigger full group rebalance
+        GC-->>C: Assign lại đúng partitions cũ NGAY<br/>KHÔNG trigger full group rebalance
         Note over C,GC: Zero downtime cho toàn group!
     else Session đã timeout (pod down quá lâu)
         GC->>GC: Full rebalance (expected behavior)
@@ -696,18 +696,18 @@ sequenceDiagram
 
 ```mermaid
 graph TB
-    subgraph EVENTS["Topic: pdms.document.events\n12 partitions | RF=3 | Retention=72h"]
+    subgraph EVENTS["Topic: pdms.document.events<br/>12 partitions | RF=3 | Retention=72h"]
     end
 
-    EVENTS --> SVC1["Group: prod-pdms-metadata-svc\n3 pods × 4 partitions/pod\nSLA: < 500ms\nScale: 3→12 pods"]
+    EVENTS --> SVC1["Group: prod-pdms-metadata-svc<br/>3 pods × 4 partitions/pod<br/>SLA: < 500ms<br/>Scale: 3→12 pods"]
 
-    EVENTS --> SVC2["Group: prod-pdms-search-indexer\n2 pods × 6 partitions/pod\nSLA: < 2s\nScale: 2→12 pods"]
+    EVENTS --> SVC2["Group: prod-pdms-search-indexer<br/>2 pods × 6 partitions/pod<br/>SLA: < 2s<br/>Scale: 2→12 pods"]
 
-    EVENTS --> SVC3["Group: prod-pdms-notification-svc\n1 pod × 12 partitions\nSLA: < 5s\nScale: 1→12 pods"]
+    EVENTS --> SVC3["Group: prod-pdms-notification-svc<br/>1 pod × 12 partitions<br/>SLA: < 5s<br/>Scale: 1→12 pods"]
 
-    EVENTS --> SVC4["Group: prod-pdms-audit-svc\n1 pod × 12 partitions\nSLA: best effort\n(không scale — audit cần ordering)"]
+    EVENTS --> SVC4["Group: prod-pdms-audit-svc<br/>1 pod × 12 partitions<br/>SLA: best effort<br/>(không scale — audit cần ordering)"]
 
-    EVENTS --> SVC5["Group: staging-pdms-metadata-svc\nĐọc production data\nTest schema migration\nOffset độc lập với prod"]
+    EVENTS --> SVC5["Group: staging-pdms-metadata-svc<br/>Đọc production data<br/>Test schema migration<br/>Offset độc lập với prod"]
 
     style EVENTS fill:#1565C0,color:#fff
     style SVC1 fill:#1b5e20,color:#fff
@@ -747,12 +747,12 @@ graph TB
     end
 
     subgraph CG1 ["Consumer Group: order-processor (2 consumers)"]
-        C1["Consumer 1\nP0, P1"]
-        C2["Consumer 2\nP2, P3"]
+        C1["Consumer 1<br/>P0, P1"]
+        C2["Consumer 2<br/>P2, P3"]
     end
 
     subgraph CG2 ["Consumer Group: order-analytics (1 consumer)"]
-        C3["Consumer 3\nP0,P1,P2,P3"]
+        C3["Consumer 3<br/>P0,P1,P2,P3"]
     end
 
     P0 --> C1
@@ -764,7 +764,7 @@ graph TB
     P2 --> C3
     P3 --> C3
 
-    note["Mỗi Consumer Group\nđọc TOÀN BỘ topic\nĐộc lập với nhau"]
+    note["Mỗi Consumer Group<br/>đọc TOÀN BỘ topic<br/>Độc lập với nhau"]
 ```
 
 > **Rule:** `num_consumers ≤ num_partitions`. Consumer dư sẽ idle.
@@ -782,7 +782,7 @@ sequenceDiagram
     C->>K: poll() → receive msgs offset 100-199
     C->>C: process messages
     C->>OT: commitSync(offset=200)
-    Note over OT: Store: group=my-group\ntopic=orders\npartition=0\noffset=200
+    Note over OT: Store: group=my-group<br/>topic=orders<br/>partition=0<br/>offset=200
 
     Note over C,K: On restart / rebalance:
     C->>OT: fetch committed offset
@@ -831,7 +831,7 @@ sequenceDiagram
     C->>GC: poll() every max.poll.interval.ms
     Note over C: Process 500 records...
     C->>GC: poll() again
-    Note over GC: If poll() not called within\nmax.poll.interval.ms (5min)\n→ Consumer considered dead\n→ Rebalance triggered
+    Note over GC: If poll() not called within<br/>max.poll.interval.ms (5min)<br/>→ Consumer considered dead<br/>→ Rebalance triggered
 ```
 
 | Config | Default | Ý nghĩa |
@@ -857,13 +857,13 @@ max.poll.interval.ms: 600000  # Tăng timeout (10 phút)
 
 ```mermaid
 flowchart LR
-    C["Consumer poll()"] --> REQ["Fetch Request\nto Broker"]
-    REQ --> WAIT{"fetch.min.bytes\nmet?"}
-    WAIT -->|"No — wait"| TIMER["fetch.max.wait.ms\n(500ms)"]
+    C["Consumer poll()"] --> REQ["Fetch Request<br/>to Broker"]
+    REQ --> WAIT{"fetch.min.bytes<br/>met?"}
+    WAIT -->|"No — wait"| TIMER["fetch.max.wait.ms<br/>(500ms)"]
     TIMER --> RESP["Return what we have"]
     WAIT -->|"Yes"| RESP
-    RESP --> CHECK{"fetch.max.bytes\nexceeded?"}
-    CHECK -->|"Truncate"| TRUNC["Return up to\nfetch.max.bytes"]
+    RESP --> CHECK{"fetch.max.bytes<br/>exceeded?"}
+    CHECK -->|"Truncate"| TRUNC["Return up to<br/>fetch.max.bytes"]
     CHECK -->|"OK"| C
 ```
 
@@ -971,10 +971,10 @@ pub fn create_consumer(brokers: &str, group_id: &str) -> StreamConsumer {
 ```mermaid
 graph LR
     subgraph "Topic Design"
-        T1["orders\npartitions=12\nRF=3\nretention=72h\ncleanup=delete"]
-        T2["user-profiles\npartitions=6\nRF=3\nretention=∞\ncleanup=compact"]
-        T3["audit-log\npartitions=3\nRF=3\nretention=30days\ncleanup=delete"]
-        T4["orders.DLT\npartitions=3\nRF=3\nretention=7days"]
+        T1["orders<br/>partitions=12<br/>RF=3<br/>retention=72h<br/>cleanup=delete"]
+        T2["user-profiles<br/>partitions=6<br/>RF=3<br/>retention=∞<br/>cleanup=compact"]
+        T3["audit-log<br/>partitions=3<br/>RF=3<br/>retention=30days<br/>cleanup=delete"]
+        T4["orders.DLT<br/>partitions=3<br/>RF=3<br/>retention=7days"]
     end
 ```
 
@@ -1021,7 +1021,7 @@ sequenceDiagram
     P->>TC: commitTransaction()
     TC->>T2: write COMMIT marker
     TC->>CO: write COMMIT marker
-    Note over T2,CO: Records now visible\nto consumers with\nisolation.level=read_committed
+    Note over T2,CO: Records now visible<br/>to consumers with<br/>isolation.level=read_committed
 ```
 
 ```java

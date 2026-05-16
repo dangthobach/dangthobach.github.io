@@ -43,17 +43,17 @@ setLoanCase('status', 'PENDING');
 flowchart LR
     subgraph "createStore internals"
         direction TB
-        RAW["Raw object\n{ status, applicant, docs }"]
+        RAW["Raw object<br/>{ status, applicant, docs }"]
         PROXY["Proxy wrapper"]
-        SIGNAL_MAP["Signal map\n{ 'status': Signal, 'applicant': Signal, ... }"]
+        SIGNAL_MAP["Signal map<br/>{ 'status': Signal, 'applicant': Signal, ... }"]
     end
 
-    READ["Component reads\nloanCase.status"] --> PROXY
+    READ["Component reads<br/>loanCase.status"] --> PROXY
     PROXY --> SIGNAL_MAP
-    SIGNAL_MAP -- "get 'status' signal\n+ track subscription" --> READ
+    SIGNAL_MAP -- "get 'status' signal<br/>+ track subscription" --> READ
 
     WRITE["setLoanCase('status', 'PENDING')"] --> SIGNAL_MAP
-    SIGNAL_MAP -- "notify 'status' subscribers only" --> RE_RUN["Re-run only\nstatus consumers"]
+    SIGNAL_MAP -- "notify 'status' subscribers only" --> RE_RUN["Re-run only<br/>status consumers"]
 ```
 
 Mỗi property path trong Store là một Signal ẩn. Khi đọc `store.a.b.c`, SolidJS tạo và track signal cho path `a → b → c`. Khi set path đó, chỉ signal đó notify.

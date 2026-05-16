@@ -16,20 +16,20 @@ graph TB
     subgraph RabbitMQ Broker
         subgraph VHOST ["Virtual Host: /pdms"]
             subgraph Exchanges
-                DE["Default Exchange\n(nameless, direct)"]
-                DX["direct-exchange\nType: Direct"]
-                TX["topic-exchange\nType: Topic"]
-                FX["fanout-exchange\nType: Fanout"]
-                HX["headers-exchange\nType: Headers"]
+                DE["Default Exchange<br/>(nameless, direct)"]
+                DX["direct-exchange<br/>Type: Direct"]
+                TX["topic-exchange<br/>Type: Topic"]
+                FX["fanout-exchange<br/>Type: Fanout"]
+                HX["headers-exchange<br/>Type: Headers"]
             end
 
             subgraph Queues
-                Q1["order.created\n(durable, lazy)"]
-                Q2["order.error\n(durable)"]
+                Q1["order.created<br/>(durable, lazy)"]
+                Q2["order.error<br/>(durable)"]
                 Q3["notification.email"]
                 Q4["notification.sms"]
                 Q5["audit.all"]
-                DLQ["order.created.dlq\n(Dead Letter Queue)"]
+                DLQ["order.created.dlq<br/>(Dead Letter Queue)"]
             end
 
             subgraph Bindings
@@ -42,8 +42,8 @@ graph TB
     end
 
     subgraph Consumers
-        C1["Order Service\n(Spring AMQP)"]
-        C2["Notification Service\n(Rust)"]
+        C1["Order Service<br/>(Spring AMQP)"]
+        C2["Notification Service<br/>(Rust)"]
         C3["Audit Service"]
         C4["DLQ Handler"]
     end
@@ -71,10 +71,10 @@ graph TB
 
 ```mermaid
 graph LR
-    P["Publisher\nroutingKey=order.paid"] --> DE["Direct Exchange\n'payment-exchange'"]
+    P["Publisher<br/>routingKey=order.paid"] --> DE["Direct Exchange<br/>'payment-exchange'"]
     DE -->|"binding: order.paid"| Q1["order-payment-queue"]
     DE -->|"binding: order.failed"| Q2["order-failure-queue"]
-    DE -.->|"order.cancelled\n(no binding match)"| DROP["❌ Dropped / Returned"]
+    DE -.->|"order.cancelled<br/>(no binding match)"| DROP["❌ Dropped / Returned"]
 ```
 
 - **Cơ chế:** So khớp **chính xác** `routingKey` với binding key
@@ -112,13 +112,13 @@ public Binding scanBinding() {
 
 ```mermaid
 graph LR
-    P1["Publisher\nroutingKey=order.vn.paid"] --> TE["Topic Exchange\n'event-exchange'"]
-    P2["Publisher\nroutingKey=order.us.failed"] --> TE
-    P3["Publisher\nroutingKey=user.vn.created"] --> TE
+    P1["Publisher<br/>routingKey=order.vn.paid"] --> TE["Topic Exchange<br/>'event-exchange'"]
+    P2["Publisher<br/>routingKey=order.us.failed"] --> TE
+    P3["Publisher<br/>routingKey=user.vn.created"] --> TE
 
-    TE -->|"binding: order.#"| Q1["all-orders-queue\n(order.vn.paid ✓)\n(order.us.failed ✓)\n(user.vn.created ✗)"]
-    TE -->|"binding: *.vn.*"| Q2["vietnam-events-queue\n(order.vn.paid ✓)\n(order.us.failed ✗)\n(user.vn.created ✓)"]
-    TE -->|"binding: #.failed"| Q3["failure-queue\n(order.us.failed ✓)\n(order.vn.paid ✗)"]
+    TE -->|"binding: order.#"| Q1["all-orders-queue<br/>(order.vn.paid ✓)<br/>(order.us.failed ✓)<br/>(user.vn.created ✗)"]
+    TE -->|"binding: *.vn.*"| Q2["vietnam-events-queue<br/>(order.vn.paid ✓)<br/>(order.us.failed ✗)<br/>(user.vn.created ✓)"]
+    TE -->|"binding: #.failed"| Q3["failure-queue<br/>(order.us.failed ✓)<br/>(order.vn.paid ✗)"]
 ```
 
 **Wildcard rules:**
@@ -139,7 +139,7 @@ graph LR
 
 ```mermaid
 graph LR
-    P["Publisher\n(routingKey ignored)"] --> FE["Fanout Exchange\n'notification-exchange'"]
+    P["Publisher<br/>(routingKey ignored)"] --> FE["Fanout Exchange<br/>'notification-exchange'"]
     FE --> Q1["email-queue"]
     FE --> Q2["sms-queue"]
     FE --> Q3["push-queue"]
@@ -160,10 +160,10 @@ graph LR
 
 ```mermaid
 graph LR
-    P["Publisher\nHeaders:\n{format: pdf, priority: high}"] --> HE["Headers Exchange\n'document-headers-exchange'"]
-    HE -->|"x-match: all\nformat=pdf\npriority=high"| Q1["urgent-pdf-queue ✓"]
-    HE -->|"x-match: any\nformat=pdf"| Q2["pdf-queue ✓"]
-    HE -->|"x-match: all\nformat=xml"| Q3["xml-queue ✗"]
+    P["Publisher<br/>Headers:<br/>{format: pdf, priority: high}"] --> HE["Headers Exchange<br/>'document-headers-exchange'"]
+    HE -->|"x-match: all<br/>format=pdf<br/>priority=high"| Q1["urgent-pdf-queue ✓"]
+    HE -->|"x-match: any<br/>format=pdf"| Q2["pdf-queue ✓"]
+    HE -->|"x-match: all<br/>format=xml"| Q3["xml-queue ✗"]
 ```
 
 | `x-match` | Ý nghĩa |
@@ -183,15 +183,15 @@ graph LR
 ```mermaid
 stateDiagram-v2
     [*] --> Memory: Message arrives
-    Memory --> Disk: persistent=2\n(delivery_mode)
-    Memory --> ACK: persistent=1\nConsumer ACKs
+    Memory --> Disk: persistent=2<br/>(delivery_mode)
+    Memory --> ACK: persistent=1<br/>Consumer ACKs
     Disk --> ACK: Consumer ACKs
     ACK --> [*]: Message removed
 
     state "Broker Restart" as RESTART
-    Memory --> LOST: Broker restarts\n(non-durable queue)
-    Disk --> RESTART: durable queue\n+ persistent message
-    RESTART --> Memory: Queue & messages\nreloaded from disk
+    Memory --> LOST: Broker restarts<br/>(non-durable queue)
+    Disk --> RESTART: durable queue<br/>+ persistent message
+    RESTART --> Memory: Queue & messages<br/>reloaded from disk
 ```
 
 | Config | Values | Ý nghĩa |
@@ -210,18 +210,18 @@ stateDiagram-v2
 ```mermaid
 graph TB
     subgraph "Normal Queue"
-        NM["Messages in Memory\n(fast access)"]
+        NM["Messages in Memory<br/>(fast access)"]
         ND["Disk (overflow only)"]
         NM -.->|"memory pressure"| ND
     end
 
     subgraph "Lazy Queue"
-        LM["Messages on Disk\n(immediately)"]
-        LC["Small cache in Memory\n(being consumed)"]
+        LM["Messages on Disk<br/>(immediately)"]
+        LC["Small cache in Memory<br/>(being consumed)"]
         LM -->|"fetch for consumer"| LC
     end
 
-    NOTE["Lazy Queue: Phù hợp khi:\n- Queue có thể grow rất lớn\n- Consumer chậm hơn producer\n- Memory là bottleneck"]
+    NOTE["Lazy Queue: Phù hợp khi:<br/>- Queue có thể grow rất lớn<br/>- Consumer chậm hơn producer<br/>- Memory là bottleneck"]
 ```
 
 ```java
@@ -241,9 +241,9 @@ public Queue lazyQueue() {
 ```mermaid
 graph TB
     subgraph "Quorum Queue — 3 nodes"
-        L["Leader Node\n(Broker 1)"]
-        F1["Follower\n(Broker 2)"]
-        F2["Follower\n(Broker 3)"]
+        L["Leader Node<br/>(Broker 1)"]
+        F1["Follower<br/>(Broker 2)"]
+        F2["Follower<br/>(Broker 3)"]
     end
 
     P["Publisher"] --> L
@@ -253,7 +253,7 @@ graph TB
     F2 -.->|"ACK"| L
     L -.->|"majority ACK (2/3)"| P
 
-    NOTE["Quorum Queues dùng Raft consensus\nKhông còn classic mirroring\nRabbitMQ 3.8+ recommendation"]
+    NOTE["Quorum Queues dùng Raft consensus<br/>Không còn classic mirroring<br/>RabbitMQ 3.8+ recommendation"]
 ```
 
 ```java
@@ -286,8 +286,8 @@ sequenceDiagram
     P->>Q: Send message
     Q->>C: Deliver message
     C->>Q: nack(requeue=false) OR TTL expires OR queue overflow
-    Q->>DLX: Forward to DLX\n(x-dead-letter-exchange)
-    DLX->>DLQ: Route via\n(x-dead-letter-routing-key)
+    Q->>DLX: Forward to DLX<br/>(x-dead-letter-exchange)
+    DLX->>DLQ: Route via<br/>(x-dead-letter-routing-key)
     DLH->>DLQ: Consume & investigate
     DLH->>P: Alert / manual reprocess
 ```
@@ -357,11 +357,11 @@ public class RabbitMQConfig {
 
 ```mermaid
 graph TB
-    P1["Critical msg\npriority=9"] --> PQ["Priority Queue\nx-max-priority=10"]
-    P2["Normal msg\npriority=5"] --> PQ
-    P3["Low msg\npriority=1"] --> PQ
+    P1["Critical msg<br/>priority=9"] --> PQ["Priority Queue<br/>x-max-priority=10"]
+    P2["Normal msg<br/>priority=5"] --> PQ
+    P3["Low msg<br/>priority=1"] --> PQ
 
-    PQ --> ORDER["Delivery Order:\n1. priority=9 ✓\n2. priority=5 ✓\n3. priority=1 ✓"]
+    PQ --> ORDER["Delivery Order:<br/>1. priority=9 ✓<br/>2. priority=5 ✓<br/>3. priority=1 ✓"]
     ORDER --> C["Consumer"]
 ```
 
@@ -391,7 +391,7 @@ public void sendPriorityMessage(DocumentCommand cmd, int priority) {
 ```mermaid
 graph TB
     subgraph "Connection Pooling"
-        APP["Spring Application\n(JVM process)"]
+        APP["Spring Application<br/>(JVM process)"]
         subgraph POOL["Connection Pool"]
             CONN1["TCP Connection 1"]
             CONN2["TCP Connection 2"]
@@ -427,12 +427,12 @@ graph TB
 ```mermaid
 sequenceDiagram
     participant B as Broker
-    participant C as Consumer\n(prefetch=3)
+    participant C as Consumer<br/>(prefetch=3)
 
     B->>C: Deliver msg #1 (unacked: 1)
     B->>C: Deliver msg #2 (unacked: 2)
     B->>C: Deliver msg #3 (unacked: 3)
-    Note over B: prefetch limit reached!\nStop delivering
+    Note over B: prefetch limit reached!<br/>Stop delivering
     C->>B: ACK msg #1 (unacked: 2)
     B->>C: Deliver msg #4 (unacked: 3)
     C->>B: ACK msg #2, #3 (unacked: 1)
@@ -867,15 +867,15 @@ fn is_transient(err: &anyhow::Error) -> bool {
 ```mermaid
 graph TB
     subgraph "RabbitMQ Broker"
-        VH1["/pdms-prod\nvhost"]
-        VH2["/pdms-staging\nvhost"]
-        VH3["/monitoring\nvhost"]
+        VH1["/pdms-prod<br/>vhost"]
+        VH2["/pdms-staging<br/>vhost"]
+        VH3["/monitoring<br/>vhost"]
     end
 
-    U1["user: pdms-app\npassword: ***"] -->|"configure,write,read"| VH1
-    U2["user: pdms-stage\npassword: ***"] -->|"configure,write,read"| VH2
-    U3["user: monitor\npassword: ***"] -->|"read only"| VH3
-    U4["user: admin\npassword: ***"] -->|"full access"| VH1
+    U1["user: pdms-app<br/>password: ***"] -->|"configure,write,read"| VH1
+    U2["user: pdms-stage<br/>password: ***"] -->|"configure,write,read"| VH2
+    U3["user: monitor<br/>password: ***"] -->|"read only"| VH3
+    U4["user: admin<br/>password: ***"] -->|"full access"| VH1
     U4 -->|"full access"| VH2
     U4 -->|"full access"| VH3
 ```
@@ -900,17 +900,17 @@ rabbitmqctl set_permissions -p /pdms-prod monitor "" "" ".*"
 ```mermaid
 graph TB
     subgraph "Queue Health"
-        QM1["messages_ready\n(waiting to be consumed)"]
-        QM2["messages_unacknowledged\n(in-flight)"]
-        QM3["message_publish_rate\n(msgs/s)"]
-        QM4["message_deliver_rate\n(msgs/s)"]
+        QM1["messages_ready<br/>(waiting to be consumed)"]
+        QM2["messages_unacknowledged<br/>(in-flight)"]
+        QM3["message_publish_rate<br/>(msgs/s)"]
+        QM4["message_deliver_rate<br/>(msgs/s)"]
     end
 
     subgraph "Alerts"
-        A1["⚠️ DLQ size > 0\n→ Something failing"]
-        A2["⚠️ messages_ready growth\n→ Consumer lag"]
-        A3["⚠️ Connection drops\n→ Network issue"]
-        A4["⚠️ Memory alarm triggered\n→ Scale or tune prefetch"]
+        A1["⚠️ DLQ size > 0<br/>→ Something failing"]
+        A2["⚠️ messages_ready growth<br/>→ Consumer lag"]
+        A3["⚠️ Connection drops<br/>→ Network issue"]
+        A4["⚠️ Memory alarm triggered<br/>→ Scale or tune prefetch"]
     end
 ```
 
@@ -937,11 +937,11 @@ management:
 graph TB
     Q{"Use case là gì?"}
 
-    Q -->|"Event log, replay\nEvent sourcing\nLarge throughput\nStream processing"| K["✅ Kafka"]
-    Q -->|"Task queue, RPC\nComplex routing\nPriority messages\nRequest/Reply pattern"| R["✅ RabbitMQ"]
+    Q -->|"Event log, replay<br/>Event sourcing<br/>Large throughput<br/>Stream processing"| K["✅ Kafka"]
+    Q -->|"Task queue, RPC<br/>Complex routing<br/>Priority messages<br/>Request/Reply pattern"| R["✅ RabbitMQ"]
 
-    K --> KE["Kafka strengths:\n• Replay events\n• 100K+ msgs/s\n• Partition-based ordering\n• Kafka Streams / KSQL\n• Long retention"]
-    R --> RE["RabbitMQ strengths:\n• Flexible routing (exchanges)\n• Low latency (<1ms)\n• Priority queues\n• Per-message TTL\n• Easy dead-lettering\n• Smaller infra footprint"]
+    K --> KE["Kafka strengths:<br/>• Replay events<br/>• 100K+ msgs/s<br/>• Partition-based ordering<br/>• Kafka Streams / KSQL<br/>• Long retention"]
+    R --> RE["RabbitMQ strengths:<br/>• Flexible routing (exchanges)<br/>• Low latency (<1ms)<br/>• Priority queues<br/>• Per-message TTL<br/>• Easy dead-lettering<br/>• Smaller infra footprint"]
 ```
 
 | Feature | Kafka | RabbitMQ |

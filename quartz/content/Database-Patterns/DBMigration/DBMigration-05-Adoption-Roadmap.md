@@ -11,11 +11,11 @@
 ```mermaid
 graph TB
     subgraph "Hiện trạng PDMS"
-        A[200 tables\ntrên Production] --> PAIN
-        B[50 stored procs/\nfunctions] --> PAIN
-        C[Scripts lưu rải rác\nGoogle Drive / local] --> PAIN
-        D[Dev tự quản lý\nscripts cá nhân] --> PAIN
-        PAIN[💥 GOLIVE PAIN\n• Thiếu scripts\n• Thiếu constraints\n• Thiếu seed data\n• Diff thủ công 2-4 giờ]
+        A[200 tables<br/>trên Production] --> PAIN
+        B[50 stored procs/<br/>functions] --> PAIN
+        C[Scripts lưu rải rác<br/>Google Drive / local] --> PAIN
+        D[Dev tự quản lý<br/>scripts cá nhân] --> PAIN
+        PAIN[💥 GOLIVE PAIN<br/>• Thiếu scripts<br/>• Thiếu constraints<br/>• Thiếu seed data<br/>• Diff thủ công 2-4 giờ]
     end
     
     subgraph "Yêu cầu"
@@ -25,7 +25,7 @@ graph TB
         R4[Giải quyết triệt để]
     end
     
-    PAIN --> SOLUTION[Cần lộ trình\ntriển khai migration tool]
+    PAIN --> SOLUTION[Cần lộ trình<br/>triển khai migration tool]
     R1 & R2 & R3 & R4 --> SOLUTION
     
     style PAIN fill:#F44336,color:#fff
@@ -38,19 +38,19 @@ graph TB
 
 ```mermaid
 flowchart TD
-    Q1{Ưu tiên\nhàng đầu?} --> A1[Adopt nhanh\nít học mới]
-    Q1 --> A2[Audit trail\nngân hàng]
-    Q1 --> A3[Auto-diff\nschema]
+    Q1{Ưu tiên<br/>hàng đầu?} --> A1[Adopt nhanh<br/>ít học mới]
+    Q1 --> A2[Audit trail<br/>ngân hàng]
+    Q1 --> A3[Auto-diff<br/>schema]
     
-    A1 --> FLYWAY[🟠 Flyway\n+ Atlas CI lint]
-    A2 --> LIQUIBASE[🔵 Liquibase\nstandalone]
-    A3 --> ATLAS[🟢 Atlas\n+ Flyway SP]
+    A1 --> FLYWAY[🟠 Flyway<br/>+ Atlas CI lint]
+    A2 --> LIQUIBASE[🔵 Liquibase<br/>standalone]
+    A3 --> ATLAS[🟢 Atlas<br/>+ Flyway SP]
     
-    FLYWAY --> C1["✅ SQL-first\n✅ Dev đã biết SQL\n✅ Spring Boot native\n✅ Repeatable cho SP\n⚠️ Rollback cần plan thủ công"]
-    LIQUIBASE --> C2["✅ Audit trail đầy đủ\n✅ Built-in rollback\n✅ Preconditions\n⚠️ Learning curve cao hơn\n⚠️ XML overhead"]
-    ATLAS --> C3["✅ Auto-diff tốt nhất\n✅ CI linting\n⚠️ SP support kém\n⚠️ Không Spring Boot auto"]
+    FLYWAY --> C1["✅ SQL-first<br/>✅ Dev đã biết SQL<br/>✅ Spring Boot native<br/>✅ Repeatable cho SP<br/>⚠️ Rollback cần plan thủ công"]
+    LIQUIBASE --> C2["✅ Audit trail đầy đủ<br/>✅ Built-in rollback<br/>✅ Preconditions<br/>⚠️ Learning curve cao hơn<br/>⚠️ XML overhead"]
+    ATLAS --> C3["✅ Auto-diff tốt nhất<br/>✅ CI linting<br/>⚠️ SP support kém<br/>⚠️ Không Spring Boot auto"]
     
-    C1 --> REC[🏆 Khuyến nghị cho PDMS\nFlyway làm core + Atlas cho CI lint\nKhi team quen → consider Liquibase nếu cần audit sâu hơn]
+    C1 --> REC[🏆 Khuyến nghị cho PDMS<br/>Flyway làm core + Atlas cho CI lint<br/>Khi team quen → consider Liquibase nếu cần audit sâu hơn]
     
     style REC fill:#4CAF50,color:#fff
     style FLYWAY fill:#FF9800,color:#fff
@@ -645,19 +645,19 @@ cat "$REPORT_FILE"
 
 ```mermaid
 flowchart TD
-    FAIL[🚨 Golive thất bại] --> Q1{Flyway apply\nthành công chưa?}
+    FAIL[🚨 Golive thất bại] --> Q1{Flyway apply<br/>thành công chưa?}
     
-    Q1 -->|Không - Flyway failed| R1["flyway repair\n→ Fix SQL trong file\n→ flyway migrate lại"]
+    Q1 -->|Không - Flyway failed| R1["flyway repair<br/>→ Fix SQL trong file<br/>→ flyway migrate lại"]
     
-    Q1 -->|Có - App lỗi sau migrate| Q2{Migration đã\nthay đổi data không?}
+    Q1 -->|Có - App lỗi sau migrate| Q2{Migration đã<br/>thay đổi data không?}
     
-    Q2 -->|Không - chỉ DDL| R2["Viết reverse migration:\nV{next}__Rollback_feature.sql\nVD: DROP COLUMN thêm vào"]
+    Q2 -->|Không - chỉ DDL| R2["Viết reverse migration:<br/>V{next}__Rollback_feature.sql<br/>VD: DROP COLUMN thêm vào"]
     
-    Q2 -->|Có - đã UPDATE data| R3{Có backup\ntrước golive không?}
+    Q2 -->|Có - đã UPDATE data| R3{Có backup<br/>trước golive không?}
     
-    R3 -->|Có| R4["Restore từ backup\n(nếu data quan trọng hơn)\nHoặc viết reverse UPDATE"]
+    R3 -->|Có| R4["Restore từ backup<br/>(nếu data quan trọng hơn)<br/>Hoặc viết reverse UPDATE"]
     
-    R3 -->|Không| R5["⚠️ Viết reverse UPDATE\nVD: UPDATE SET old_value\nAccept data loss nếu cần"]
+    R3 -->|Không| R5["⚠️ Viết reverse UPDATE<br/>VD: UPDATE SET old_value<br/>Accept data loss nếu cần"]
     
     style FAIL fill:#F44336,color:#fff
     style R2 fill:#FF9800,color:#fff

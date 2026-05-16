@@ -100,19 +100,19 @@ function createEffect(fn) {
 ```mermaid
 graph TD
     subgraph "Signals (Sources)"
-        S1["🔵 Signal: amount\n= 5_000_000"]
-        S2["🔵 Signal: interestRate\n= 0.085"]
-        S3["🔵 Signal: term\n= 36"]
+        S1["🔵 Signal: amount<br/>= 5_000_000"]
+        S2["🔵 Signal: interestRate<br/>= 0.085"]
+        S3["🔵 Signal: term<br/>= 36"]
     end
 
     subgraph "Memos (Derived)"
-        M1["🟢 Memo: monthlyPayment\n= computed"]
-        M2["🟢 Memo: totalInterest\n= computed"]
+        M1["🟢 Memo: monthlyPayment<br/>= computed"]
+        M2["🟢 Memo: totalInterest<br/>= computed"]
     end
 
     subgraph "Effects (Consumers)"
-        E1["🔴 Effect: render DOM\n#monthly-display"]
-        E2["🔴 Effect: render DOM\n#total-display"]
+        E1["🔴 Effect: render DOM<br/>#monthly-display"]
+        E2["🔴 Effect: render DOM<br/>#total-display"]
         E3["🔴 Effect: log to console"]
     end
 

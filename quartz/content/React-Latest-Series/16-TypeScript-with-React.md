@@ -10,13 +10,13 @@
 ```mermaid
 graph TD
     subgraph JavaScript thuần
-        JS[function processLoan\nloan - không biết kiểu]
-        JS --> Bug[💥 Runtime Error:\nloan.amount.toFixed is not a function]
+        JS[function processLoan<br/>loan - không biết kiểu]
+        JS --> Bug[💥 Runtime Error:<br/>loan.amount.toFixed is not a function]
     end
     
     subgraph TypeScript
-        TS[function processLoan\nloan: LoanApplication - biết rõ kiểu]
-        TS --> Safe[✅ Compile-time Error:\nTS báo lỗi ngay khi code]
+        TS[function processLoan<br/>loan: LoanApplication - biết rõ kiểu]
+        TS --> Safe[✅ Compile-time Error:<br/>TS báo lỗi ngay khi code]
     end
     
     style Bug fill:#ffcccc

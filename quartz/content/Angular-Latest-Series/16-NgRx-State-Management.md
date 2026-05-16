@@ -28,7 +28,7 @@ graph TD
     end
     
     subgraph "Có NgRx - Trật tự"
-        Store[(NgRx Store\nSingle Source of Truth)]
+        Store[(NgRx Store<br/>Single Source of Truth)]
         A[Component A] --> Store
         B[Component B] --> Store
         C[Component C] --> Store
@@ -401,14 +401,14 @@ export class CaseFileListComponent {
 
 ```mermaid
 flowchart TD
-    Q[State này phức tạp không?] --> Simple[Đơn giản:\nChỉ 1-2 component dùng]
-    Q --> Complex[Phức tạp:\nNhiều màn hình, nhiều action]
+    Q[State này phức tạp không?] --> Simple[Đơn giản:<br/>Chỉ 1-2 component dùng]
+    Q --> Complex[Phức tạp:<br/>Nhiều màn hình, nhiều action]
     
-    Simple --> Service[✅ Service + Signal\nNhẹ, dễ hiểu]
+    Simple --> Service[✅ Service + Signal<br/>Nhẹ, dễ hiểu]
     
     Complex --> Audit[Cần audit trail, time-travel debug?]
-    Audit -- Có --> NgRxClassic[NgRx Classic\nMạnh nhất, verbose nhất]
-    Audit -- Không --> NgRxSignal[NgRx Signals Store\nHiện đại, gọn nhẹ]
+    Audit -- Có --> NgRxClassic[NgRx Classic<br/>Mạnh nhất, verbose nhất]
+    Audit -- Không --> NgRxSignal[NgRx Signals Store<br/>Hiện đại, gọn nhẹ]
     
     style Service fill:#c8e6c9
     style NgRxSignal fill:#c8e6c9

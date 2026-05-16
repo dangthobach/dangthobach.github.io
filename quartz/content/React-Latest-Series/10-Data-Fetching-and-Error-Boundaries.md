@@ -9,14 +9,14 @@
 ```mermaid
 graph TD
     subgraph "Server State (TanStack Query)"
-        QC["QueryClient\n(global cache)"]
-        UQ["useQuery\n(GET data)"]
-        UM["useMutation\n(POST/PUT/DELETE)"]
-        UIQ["useInfiniteQuery\n(pagination)"]
+        QC["QueryClient<br/>(global cache)"]
+        UQ["useQuery<br/>(GET data)"]
+        UM["useMutation<br/>(POST/PUT/DELETE)"]
+        UIQ["useInfiniteQuery<br/>(pagination)"]
     end
 
     subgraph "Client State (Zustand)"
-        ZS["UI State\n(modal, filter, selectedId)"]
+        ZS["UI State<br/>(modal, filter, selectedId)"]
     end
 
     UQ --> QC

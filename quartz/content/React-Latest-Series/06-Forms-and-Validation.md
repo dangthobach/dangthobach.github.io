@@ -8,8 +8,8 @@
 
 ```mermaid
 graph LR
-    Zod["Zod Schema\n(validation rules)"] --> RHF["React Hook Form\n(form state engine)"]
-    RHF --> Component["React Component\n(UI)"]
+    Zod["Zod Schema<br/>(validation rules)"] --> RHF["React Hook Form<br/>(form state engine)"]
+    RHF --> Component["React Component<br/>(UI)"]
 
     RHF -->|"formState.errors"| ErrorDisplay["Error Messages"]
     RHF -->|"handleSubmit"| API["API Call"]

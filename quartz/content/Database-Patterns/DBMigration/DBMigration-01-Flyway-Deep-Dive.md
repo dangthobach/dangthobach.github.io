@@ -11,18 +11,18 @@
 ```mermaid
 graph TB
     subgraph "Flyway Engine"
-        A[Migration Files\nV1__init.sql\nV2__add_cols.sql\nR__sp_validate.sql] --> B[File Scanner]
+        A[Migration Files<br/>V1__init.sql<br/>V2__add_cols.sql<br/>R__sp_validate.sql] --> B[File Scanner]
         B --> C[Version Resolver]
-        C --> D{flyway_schema_history\ncheck}
+        C --> D{flyway_schema_history<br/>check}
         D -->|Pending| E[Execute Migration]
         D -->|Already ran| F[Skip]
-        E --> G[Record in\nflyway_schema_history]
+        E --> G[Record in<br/>flyway_schema_history]
     end
     
     subgraph "Database"
         G --> H[(PostgreSQL)]
-        H --> I[flyway_schema_history\n— audit table]
-        H --> J[Your 200 tables\n50 stored procs...]
+        H --> I[flyway_schema_history<br/>— audit table]
+        H --> J[Your 200 tables<br/>50 stored procs...]
     end
     
     style A fill:#FF9800,color:#fff
@@ -73,20 +73,20 @@ graph LR
         A["V2_1_3__Add_tenant_columns.sql"]
         A --> B["V = Versioned"]
         A --> C["2.1.3 = Version"]
-        A --> D["__ = Separator\n(double underscore)"]
-        A --> E["Add_tenant_columns\n= Description"]
+        A --> D["__ = Separator<br/>(double underscore)"]
+        A --> E["Add_tenant_columns<br/>= Description"]
         A --> F[".sql = Extension"]
     end
     
     subgraph "Repeatable Migration"
         G["R__SP_process_document.sql"]
         G --> H["R = Repeatable"]
-        G --> I["SP_process_document\n= Description"]
+        G --> I["SP_process_document<br/>= Description"]
     end
     
     subgraph "Undo Migration"
         J["U2_1_3__Add_tenant_columns.sql"]
-        J --> K["U = Undo\n(Teams version only)"]
+        J --> K["U = Undo<br/>(Teams version only)"]
     end
     
     style B fill:#FF5722,color:#fff
@@ -542,15 +542,15 @@ graph TD
     end
     
     subgraph "DEV"
-        D[flyway migrate\ncontexts: dev\nAll migrations + V999 seed]
+        D[flyway migrate<br/>contexts: dev<br/>All migrations + V999 seed]
     end
     
     subgraph "STAGING"  
-        E[flyway migrate\ncontexts: staging\nAll migrations, NO V999]
+        E[flyway migrate<br/>contexts: staging<br/>All migrations, NO V999]
     end
     
     subgraph "PRODUCTION"
-        F[flyway migrate\ncontexts: production\nAll migrations, NO V999\nclean-disabled: true]
+        F[flyway migrate<br/>contexts: production<br/>All migrations, NO V999<br/>clean-disabled: true]
     end
     
     A --> D & E & F

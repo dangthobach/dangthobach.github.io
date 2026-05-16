@@ -215,30 +215,30 @@ Cạm bẫy phổ biến nếu không biết:
 
 ```mermaid
 flowchart TD
-    DEV["👨‍💻 Developer\nviết V3__add_columns.sql"] --> GIT["📁 Git Repository\ndb/migration/V3__add_columns.sql"]
+    DEV["👨‍💻 Developer<br/>viết V3__add_columns.sql"] --> GIT["📁 Git Repository<br/>db/migration/V3__add_columns.sql"]
     
-    GIT --> CI["⚙️ CI Pipeline\nflyway validate\natlas lint"]
+    GIT --> CI["⚙️ CI Pipeline<br/>flyway validate<br/>atlas lint"]
     
     CI -->|Pass| MERGE["✅ Merge to main"]
     CI -->|Fail checksum/naming| BLOCK["❌ PR blocked"]
     
     MERGE --> DEPLOY["🚀 Deploy"]
     
-    DEPLOY --> FLY_START["Flyway khởi động\n(Spring Boot auto-run)"]
+    DEPLOY --> FLY_START["Flyway khởi động<br/>(Spring Boot auto-run)"]
     
-    FLY_START --> SCAN["Scan migration files\ntrong classpath"]
+    FLY_START --> SCAN["Scan migration files<br/>trong classpath"]
     
-    SCAN --> HISTORY["Đọc flyway_schema_history\n'V1, V2 đã chạy rồi'"]
+    SCAN --> HISTORY["Đọc flyway_schema_history<br/>'V1, V2 đã chạy rồi'"]
     
-    HISTORY --> DIFF["So sánh:\nV3 chưa có trong history\n→ V3 là PENDING"]
+    HISTORY --> DIFF["So sánh:<br/>V3 chưa có trong history<br/>→ V3 là PENDING"]
     
-    DIFF --> EXEC["Execute V3__add_columns.sql\ntrong 1 transaction"]
+    DIFF --> EXEC["Execute V3__add_columns.sql<br/>trong 1 transaction"]
     
-    EXEC -->|Success| RECORD["Ghi vào flyway_schema_history:\nversion=3, checksum=XYZ, success=true"]
-    EXEC -->|Fail| FAIL_RECORD["Ghi: success=false\nRollback transaction\nApp startup FAILS"]
+    EXEC -->|Success| RECORD["Ghi vào flyway_schema_history:<br/>version=3, checksum=XYZ, success=true"]
+    EXEC -->|Fail| FAIL_RECORD["Ghi: success=false<br/>Rollback transaction<br/>App startup FAILS"]
     
     RECORD --> APP_UP["✅ App khởi động thành công"]
-    FAIL_RECORD --> APP_DOWN["❌ App không khởi động\nDev phải fix và chạy: flyway repair"]
+    FAIL_RECORD --> APP_DOWN["❌ App không khởi động<br/>Dev phải fix và chạy: flyway repair"]
     
     style DEV fill:#2196F3,color:#fff
     style RECORD fill:#4CAF50,color:#fff

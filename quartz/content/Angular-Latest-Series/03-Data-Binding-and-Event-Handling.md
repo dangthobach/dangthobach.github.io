@@ -10,12 +10,12 @@
 graph TD
     subgraph Angular_Data_Flow
         direction LR
-        TS["TypeScript\n(Component Class)"]
+        TS["TypeScript<br/>(Component Class)"]
         HTML["HTML Template"]
 
-        TS -->|"Interpolation {{ }}\nProperty Binding [ ]"| HTML
+        TS -->|"Interpolation {{ }}<br/>Property Binding [ ]"| HTML
         HTML -->|"Event Binding ( )"| TS
-        TS <-->|"Two-way Binding [( )]\nSignal model()"| HTML
+        TS <-->|"Two-way Binding [( )]<br/>Signal model()"| HTML
     end
 
     style TS fill:#1565C0,color:#fff

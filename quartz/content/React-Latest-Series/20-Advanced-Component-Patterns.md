@@ -336,11 +336,11 @@ flowchart TD
     Q --> UI[UI Structure]
     Q --> Behavior[Behavior/Crosscutting]
     
-    Logic --> Hook[✅ Custom Hook\nDễ nhất, test được]
+    Logic --> Hook[✅ Custom Hook<br/>Dễ nhất, test được]
     UI --> Sub{Có cần shared state giữa các phần?}
-    Sub -- Có --> Compound[✅ Compound Components\nModal, Tabs, Accordion]
-    Sub -- Không --> Slots[✅ Slot/Composition\nCard, Layout, Panel]
-    Behavior --> HOC[HOC\nAuth guards, Analytics tracking]
+    Sub -- Có --> Compound[✅ Compound Components<br/>Modal, Tabs, Accordion]
+    Sub -- Không --> Slots[✅ Slot/Composition<br/>Card, Layout, Panel]
+    Behavior --> HOC[HOC<br/>Auth guards, Analytics tracking]
 ```
 
 | Pattern | Dùng khi | Ví dụ |

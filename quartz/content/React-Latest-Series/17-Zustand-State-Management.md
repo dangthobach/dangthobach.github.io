@@ -10,15 +10,15 @@
 ```mermaid
 graph LR
     subgraph Context API
-        C[Context] --> C1[Re-render TẤT CẢ consumers\nkhi bất kỳ state nào thay đổi]
+        C[Context] --> C1[Re-render TẤT CẢ consumers<br/>khi bất kỳ state nào thay đổi]
     end
     
     subgraph Zustand
-        Z[Zustand Store] --> Z1[Chỉ re-render component\ndùng đúng slice đó]
+        Z[Zustand Store] --> Z1[Chỉ re-render component<br/>dùng đúng slice đó]
     end
     
     subgraph Redux Toolkit
-        R[Redux Store] --> R1[Mạnh nhất\nNhiều boilerplate nhất\nDevTools xuất sắc]
+        R[Redux Store] --> R1[Mạnh nhất<br/>Nhiều boilerplate nhất<br/>DevTools xuất sắc]
     end
     
     style C1 fill:#ffcccc

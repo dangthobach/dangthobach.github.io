@@ -9,15 +9,15 @@
 ```mermaid
 graph TD
     Hooks["Advanced Hooks"]
-    Hooks --> Memo["Memoization\nuseMemo / useCallback"]
-    Hooks --> DOM["DOM Access\nuseRef / useLayoutEffect"]
-    Hooks --> Expose["API Exposure\nuseImperativeHandle"]
-    Hooks --> A11y["Accessibility\nuseId"]
+    Hooks --> Memo["Memoization<br/>useMemo / useCallback"]
+    Hooks --> DOM["DOM Access<br/>useRef / useLayoutEffect"]
+    Hooks --> Expose["API Exposure<br/>useImperativeHandle"]
+    Hooks --> A11y["Accessibility<br/>useId"]
 
-    Memo --> Perf["Tránh re-render\n& recalculate"]
-    DOM --> Measure["Đo kích thước\nFocus, Animate"]
-    Expose --> ForwardRef["Parent gọi\nChild methods"]
-    A11y --> Labels["label + input\nassociation"]
+    Memo --> Perf["Tránh re-render<br/>& recalculate"]
+    DOM --> Measure["Đo kích thước<br/>Focus, Animate"]
+    Expose --> ForwardRef["Parent gọi<br/>Child methods"]
+    A11y --> Labels["label + input<br/>association"]
 ```
 
 ---
@@ -415,19 +415,19 @@ function CaseFilterPanel() {
 graph TD
     Q{Bạn muốn gì?}
 
-    Q --> A["Truy cập DOM element\n(focus, measure, animate)"]
-    Q --> B["Lưu giá trị không trigger re-render\n(timer, prev value)"]
+    Q --> A["Truy cập DOM element<br/>(focus, measure, animate)"]
+    Q --> B["Lưu giá trị không trigger re-render<br/>(timer, prev value)"]
     Q --> C["Cache kết quả tính toán nặng"]
     Q --> D["Cache hàm để truyền vào memo child"]
     Q --> E["Expose methods từ child → parent"]
-    Q --> F["Cập nhật DOM trước khi browser paint\n(tránh flicker)"]
+    Q --> F["Cập nhật DOM trước khi browser paint<br/>(tránh flicker)"]
     Q --> G["ID unique cho a11y label"]
 
     A --> useRef
     B --> useRef
     C --> useMemo
     D --> useCallback
-    E --> useImperativeHandle["useImperativeHandle\n+ forwardRef"]
+    E --> useImperativeHandle["useImperativeHandle<br/>+ forwardRef"]
     F --> useLayoutEffect
     G --> useId
 ```

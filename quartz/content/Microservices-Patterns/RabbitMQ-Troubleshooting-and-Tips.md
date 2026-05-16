@@ -8,7 +8,7 @@
 
 ```mermaid
 mindmap
-  root((RabbitMQ\nTroubleshooting))
+  root((RabbitMQ<br/>Troubleshooting))
     Errors & Exceptions
       Connection Errors
       Channel Errors
@@ -301,9 +301,9 @@ LinkedHashMap cannot be cast to DocumentCommand
 
 ```mermaid
 graph LR
-    P["Publisher A\nSend DocumentCommand"] -->|"JSON bytes\n+ __TypeId__ header"| Q["Queue"]
+    P["Publisher A<br/>Send DocumentCommand"] -->|"JSON bytes<br/>+ __TypeId__ header"| Q["Queue"]
     Q -->|"JSON bytes"| C["Consumer B"]
-    C -->|"❌ Header mismatch\nor missing"| ERR["ClassCastException\nor LinkedHashMap"]
+    C -->|"❌ Header mismatch<br/>or missing"| ERR["ClassCastException<br/>or LinkedHashMap"]
 ```
 
 **Fix — Type mapping đúng cách:**
@@ -505,14 +505,14 @@ rabbitmqctl purge_queue pdms.document.process
 
 ```mermaid
 graph TB
-    Q["Main Queue"] -->|"nack / TTL"| DLQ["Dead Letter Queue\n📈 Growing!"]
-    DLQ -->|"No consumer!"| ALERT["⚠️ Alert triggered\nDLQ size > threshold"]
+    Q["Main Queue"] -->|"nack / TTL"| DLQ["Dead Letter Queue<br/>📈 Growing!"]
+    DLQ -->|"No consumer!"| ALERT["⚠️ Alert triggered<br/>DLQ size > threshold"]
     
     subgraph "Root causes"
-        R1["Consumer bug\n(always throws)"]
-        R2["Message format\nchanged upstream"]
-        R3["Downstream service\ndown (DB, API)"]
-        R4["Message size\nexceeds limit"]
+        R1["Consumer bug<br/>(always throws)"]
+        R2["Message format<br/>changed upstream"]
+        R3["Downstream service<br/>down (DB, API)"]
+        R4["Message size<br/>exceeds limit"]
     end
 ```
 
@@ -589,11 +589,11 @@ public class DLQReplayService {
 ```mermaid
 graph TB
     subgraph "Normal"
-        N_P["Publisher\n100 msg/s"] --> N_Q["Queue\n(balanced)"] --> N_C["Consumer\n100 msg/s"]
+        N_P["Publisher<br/>100 msg/s"] --> N_Q["Queue<br/>(balanced)"] --> N_C["Consumer<br/>100 msg/s"]
     end
 
     subgraph "Storm"
-        S_P["Publisher\n10,000 msg/s"] --> S_Q["Queue\n📈 Growing fast!"] --> S_C["Consumer\n100 msg/s (can't keep up)"]
+        S_P["Publisher<br/>10,000 msg/s"] --> S_Q["Queue<br/>📈 Growing fast!"] --> S_C["Consumer<br/>100 msg/s (can't keep up)"]
         S_Q -->|"overflow"| S_DLQ["DLQ"]
     end
 ```
@@ -635,12 +635,12 @@ factory.setPrefetchCount(10);  // Giảm prefetch → slow down delivery
 
 ```mermaid
 graph LR
-    P["Producer\n1000 msg/s"] --> Q["Queue\n📈 Lag = 50,000"]
-    Q --> C1["Consumer 1\n200 msg/s"]
-    Q --> C2["Consumer 2\n200 msg/s"]
-    Q --> C3["Consumer 3\n200 msg/s"]
+    P["Producer<br/>1000 msg/s"] --> Q["Queue<br/>📈 Lag = 50,000"]
+    Q --> C1["Consumer 1<br/>200 msg/s"]
+    Q --> C2["Consumer 2<br/>200 msg/s"]
+    Q --> C3["Consumer 3<br/>200 msg/s"]
     
-    NOTE["Total consume: 600 msg/s\nTotal produce: 1000 msg/s\nNet lag: +400 msg/s 😱"]
+    NOTE["Total consume: 600 msg/s<br/>Total produce: 1000 msg/s<br/>Net lag: +400 msg/s 😱"]
 ```
 
 **Chuẩn đoán:**
@@ -697,17 +697,17 @@ graph TB
     
     subgraph "During partition"
         subgraph Partition_A["Network A"]
-            NA1["Node 1\n(thinks it's leader)"]
+            NA1["Node 1<br/>(thinks it's leader)"]
         end
         subgraph Partition_B["Network B"]
-            NB2["Node 2\n(elects new leader)"]
+            NB2["Node 2<br/>(elects new leader)"]
             NB3["Node 3"]
         end
         NA1 -.->|"❌ Cannot reach"| NB2
     end
     
     subgraph "After healing"
-        H1["Node 1"] --> SYNC["Manual sync required!\nData may diverge"]
+        H1["Node 1"] --> SYNC["Manual sync required!<br/>Data may diverge"]
         HB2["Node 2"] --> SYNC
         HB3["Node 3"] --> SYNC
     end
@@ -822,11 +822,11 @@ sequenceDiagram
     participant Reply_Q as "reply.xxx" Queue (exclusive)
 
     Client->>Client: Create exclusive reply queue "amq.rabbitmq.reply-to"
-    Client->>RPC_Q: Send request\n(replyTo="amq.rabbitmq.reply-to"\ncorrelationId="req-123")
+    Client->>RPC_Q: Send request<br/>(replyTo="amq.rabbitmq.reply-to"<br/>correlationId="req-123")
     Server->>RPC_Q: Consume request
     Server->>Server: Process...
-    Server->>Reply_Q: Send response\n(correlationId="req-123")
-    Reply_Q->>Client: Receive response\n(match correlationId)
+    Server->>Reply_Q: Send response<br/>(correlationId="req-123")
+    Reply_Q->>Client: Receive response<br/>(match correlationId)
     Client->>Client: Correlate & return
 ```
 
@@ -866,20 +866,20 @@ public DocumentStatus handleStatusQuery(DocumentStatusRequest request) {
 ```mermaid
 graph TB
     subgraph "Version Strategy"
-        V1["Message v1\n{id, name, type}"] -->|"Add optional field"| V2["Message v2\n{id, name, type,\nbranch?: String}"]
-        V2 -->|"Remove field\n(2 version gap)"| V3["Message v3\n{id, type, branch}"]
+        V1["Message v1<br/>{id, name, type}"] -->|"Add optional field"| V2["Message v2<br/>{id, name, type,<br/>branch?: String}"]
+        V2 -->|"Remove field<br/>(2 version gap)"| V3["Message v3<br/>{id, type, branch}"]
     end
 
     subgraph "BAD"
-        B1["❌ Remove required field\nin single release"]
-        B2["❌ Change field type\n(String → Integer)"]
+        B1["❌ Remove required field<br/>in single release"]
+        B2["❌ Change field type<br/>(String → Integer)"]
         B3["❌ Rename field"]
     end
 
     subgraph "GOOD"
-        G1["✅ Add optional fields\n(with defaults)"]
-        G2["✅ Keep old + new field\n(transition period)"]
-        G3["✅ Version in routing key\ndocument.v2.process"]
+        G1["✅ Add optional fields<br/>(with defaults)"]
+        G2["✅ Keep old + new field<br/>(transition period)"]
+        G3["✅ Version in routing key<br/>document.v2.process"]
     end
 ```
 
@@ -916,12 +916,12 @@ graph TB
     C -->|"Exception"| NACK["nack(requeue=true)"]
     NACK --> Q
     Q --> C
-    C -->|"Loop forever!\n💀 Poison message"| NACK
+    C -->|"Loop forever!<br/>💀 Poison message"| NACK
 
     subgraph "FIX: Retry limit via x-death header"
         Q2["Queue"] --> C2["Smart Consumer"]
         C2 -->|"Check x-death count"| CHECK{"> 3 attempts?"}
-        CHECK -->|"Yes"| DLQ["Send to DLQ\nnack(requeue=false)"]
+        CHECK -->|"Yes"| DLQ["Send to DLQ<br/>nack(requeue=false)"]
         CHECK -->|"No"| RETRY["nack(requeue=true)"]
     end
 ```
@@ -1232,9 +1232,9 @@ spec:
 
 ```mermaid
 graph LR
-    RMQ["RabbitMQ\n:15692/metrics"] -->|"scrape"| PROM["Prometheus"]
-    APP["Spring App\n:8080/actuator/prometheus"] -->|"scrape"| PROM
-    PROM -->|"query"| GRAF["Grafana\nDashboard"]
+    RMQ["RabbitMQ<br/>:15692/metrics"] -->|"scrape"| PROM["Prometheus"]
+    APP["Spring App<br/>:8080/actuator/prometheus"] -->|"scrape"| PROM
+    PROM -->|"query"| GRAF["Grafana<br/>Dashboard"]
     PROM -->|"alert"| AM["Alertmanager"]
     AM -->|"notify"| SLACK["Slack / Email"]
 ```

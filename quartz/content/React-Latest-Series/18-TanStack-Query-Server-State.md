@@ -327,7 +327,7 @@ flowchart TD
     Q --> Server[Từ API/Server]
     Q --> Local[Trạng thái UI thuần]
     
-    Server --> TQ[✅ TanStack Query\nuseQuery / useMutation]
+    Server --> TQ[✅ TanStack Query<br/>useQuery / useMutation]
     Local --> LStore{Nhiều component cần?}
     LStore -- Chỉ 1 component --> US[useState / useReducer]
     LStore -- Nhiều component --> ZS[✅ Zustand]

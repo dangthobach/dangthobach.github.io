@@ -78,16 +78,16 @@ quadrantChart
 
 ```mermaid
 flowchart TD
-    A[Bạn cần gì?] --> B{Chủ yếu DDL\nthay đổi cấu trúc?}
-    B -->|Yes| C{Cần auto-diff\nschema?}
-    B -->|No, chủ yếu DML\ndata migration| D[Flyway hoặc Liquibase]
+    A[Bạn cần gì?] --> B{Chủ yếu DDL<br/>thay đổi cấu trúc?}
+    B -->|Yes| C{Cần auto-diff<br/>schema?}
+    B -->|No, chủ yếu DML<br/>data migration| D[Flyway hoặc Liquibase]
     C -->|Yes| E[Atlas Go]
-    C -->|No, tự viết script| F{Cần audit trail\n+ preconditions?}
+    C -->|No, tự viết script| F{Cần audit trail<br/>+ preconditions?}
     F -->|Yes| G[Liquibase]
     F -->|No, đơn giản thôi| H[Flyway]
     
-    E --> I{Có nhiều Stored\nProcedures?}
-    I -->|Yes| J[Atlas Go + Flyway\nkết hợp]
+    E --> I{Có nhiều Stored<br/>Procedures?}
+    I -->|Yes| J[Atlas Go + Flyway<br/>kết hợp]
     I -->|No| K[Atlas Go standalone]
 
     style E fill:#4CAF50,color:#fff

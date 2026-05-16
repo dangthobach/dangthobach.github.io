@@ -83,11 +83,11 @@ src/main/resources/db/
 ```mermaid
 graph TD
     subgraph "Execution Order (prefix-based)"
-        A["R__000_Custom_types.sql\n(Enum types, domains)"] --> B
-        B["R__010_FN_*.sql\n(Helper functions)"] --> C
-        C["R__020_SP_*.sql\n(Stored procedures\ndùng functions)"] --> D
-        D["R__050_TRG_*.sql\n(Triggers\ndùng SPs)"] --> E
-        E["R__060_VIEW_*.sql\n(Views\ndùng cả SP + Tables)"]
+        A["R__000_Custom_types.sql<br/>(Enum types, domains)"] --> B
+        B["R__010_FN_*.sql<br/>(Helper functions)"] --> C
+        C["R__020_SP_*.sql<br/>(Stored procedures<br/>dùng functions)"] --> D
+        D["R__050_TRG_*.sql<br/>(Triggers<br/>dùng SPs)"] --> E
+        E["R__060_VIEW_*.sql<br/>(Views<br/>dùng cả SP + Tables)"]
     end
     
     style A fill:#FF5722,color:#fff
@@ -214,7 +214,7 @@ sequenceDiagram
     participant DB as PostgreSQL (200M rows)
 
     Note over Flyway,DB: Step 1 — Fast (no lock, no data copy)
-    Flyway->>DB: ALTER TABLE document\nADD COLUMN priority INT NULL;
+    Flyway->>DB: ALTER TABLE document<br/>ADD COLUMN priority INT NULL;
     DB-->>Flyway: ✅ Done in milliseconds
 
     Note over Flyway,DB: Step 2 — Background batch fill (safe)
@@ -223,7 +223,7 @@ sequenceDiagram
     DB-->>Flyway: ✅ Done (minutes, but no lock)
 
     Note over Flyway,DB: Step 3 — Set NOT NULL (fast after fill)
-    Flyway->>DB: ALTER TABLE document\nALTER COLUMN priority SET NOT NULL;
+    Flyway->>DB: ALTER TABLE document<br/>ALTER COLUMN priority SET NOT NULL;
     DB-->>Flyway: ✅ Done quickly (data already filled)
 ```
 
@@ -351,11 +351,11 @@ public class V2_04__Create_tenant_indexes_concurrent extends BaseJavaMigration {
 ```mermaid
 graph TB
     subgraph "Migration Files"
-        V1[V1__Core_schema.sql\nChạy tất cả envs]
-        V2[V2__Features.sql\nChạy tất cả envs]
-        R1["R__SP_*.sql\nChạy tất cả envs"]
-        V99[V1_99__Dev_seed_data.sql\nCHỈ dev]
-        CB[afterMigrate.sql\nCallback: tất cả envs]
+        V1[V1__Core_schema.sql<br/>Chạy tất cả envs]
+        V2[V2__Features.sql<br/>Chạy tất cả envs]
+        R1["R__SP_*.sql<br/>Chạy tất cả envs"]
+        V99[V1_99__Dev_seed_data.sql<br/>CHỈ dev]
+        CB[afterMigrate.sql<br/>Callback: tất cả envs]
     end
     
     subgraph "DEV env"
@@ -367,7 +367,7 @@ graph TB
     end
     
     subgraph "PROD env"
-        P1[V1 ✅] --> P2[V2 ✅] --> P3["R__ ✅"] --> P4[V1_99 ❌] --> P5[callback ✅\nRefresh MV only]
+        P1[V1 ✅] --> P2[V2 ✅] --> P3["R__ ✅"] --> P4[V1_99 ❌] --> P5[callback ✅<br/>Refresh MV only]
     end
     
     style D4 fill:#4CAF50,color:#fff

@@ -111,13 +111,13 @@ const annualInterest = createMemo(() => rate() * principal());
 flowchart LR
     subgraph "createMemo lifecycle"
         direction LR
-        A["Dependencies\nchange"] --> B{"Memo\nstale?"}
-        B -- "Yes" --> C["Mark as stale\n(không tính ngay)"]
-        C --> D{"Memo được\nread?"}
-        D -- "Yes" --> E["Tính lại\ncache value"]
-        D -- "No" --> F["Skip hoàn toàn\n✓ zero cost"]
-        E --> G["Notify\nsubscribers"]
-        B -- "No" --> H["Return cached\nvalue"]
+        A["Dependencies<br/>change"] --> B{"Memo<br/>stale?"}
+        B -- "Yes" --> C["Mark as stale<br/>(không tính ngay)"]
+        C --> D{"Memo được<br/>read?"}
+        D -- "Yes" --> E["Tính lại<br/>cache value"]
+        D -- "No" --> F["Skip hoàn toàn<br/>✓ zero cost"]
+        E --> G["Notify<br/>subscribers"]
+        B -- "No" --> H["Return cached<br/>value"]
     end
 ```
 
@@ -282,15 +282,15 @@ setFilters(f);         // f === f → equals true → không notify
 
 ```mermaid
 flowchart TD
-    Q1{"Dữ liệu có\nnested/deep không?"}
-    Q1 -- "Có (object/array phức tạp)" --> STORE["🗄️ createStore\n+ produce/reconcile"]
-    Q1 -- "Không (primitive/flat)" --> Q2{"Dữ liệu có\ntính từ signal khác?"}
-    Q2 -- "Có (derived)" --> Q3{"Computation\ncó expensive?"}
-    Q3 -- "Có" --> MEMO["🧮 createMemo\n(cached, lazy)"]
-    Q3 -- "Không" --> Q4{"Dùng ở nhiều\nnơi không?"}
+    Q1{"Dữ liệu có<br/>nested/deep không?"}
+    Q1 -- "Có (object/array phức tạp)" --> STORE["🗄️ createStore<br/>+ produce/reconcile"]
+    Q1 -- "Không (primitive/flat)" --> Q2{"Dữ liệu có<br/>tính từ signal khác?"}
+    Q2 -- "Có (derived)" --> Q3{"Computation<br/>có expensive?"}
+    Q3 -- "Có" --> MEMO["🧮 createMemo<br/>(cached, lazy)"]
+    Q3 -- "Không" --> Q4{"Dùng ở nhiều<br/>nơi không?"}
     Q4 -- "Nhiều nơi" --> MEMO
-    Q4 -- "Chỉ 1 nơi" --> INLINE["Tính thẳng\ntrong JSX/Effect"]
-    Q2 -- "Không (source of truth)" --> SIGNAL["🔵 createSignal\n(primitive reactive source)"]
+    Q4 -- "Chỉ 1 nơi" --> INLINE["Tính thẳng<br/>trong JSX/Effect"]
+    Q2 -- "Không (source of truth)" --> SIGNAL["🔵 createSignal<br/>(primitive reactive source)"]
 ```
 
 ---

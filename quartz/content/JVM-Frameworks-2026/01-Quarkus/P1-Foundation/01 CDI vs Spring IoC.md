@@ -34,11 +34,11 @@ framework: quarkus
 ```mermaid
 graph TD
     subgraph "Quarkus CDI Scopes"
-        A["@ApplicationScoped\n1 instance / app\n≈ Spring @Component"] 
-        B["@RequestScoped\n1 instance / HTTP request"]
-        C["@SessionScoped\n1 instance / HTTP session"]
-        D["@Dependent\n1 instance mỗi lần inject\n≈ Spring prototype"]
-        E["@Singleton\n1 instance / app\nnhưng KHÔNG phải proxy!"]
+        A["@ApplicationScoped<br/>1 instance / app<br/>≈ Spring @Component"] 
+        B["@RequestScoped<br/>1 instance / HTTP request"]
+        C["@SessionScoped<br/>1 instance / HTTP session"]
+        D["@Dependent<br/>1 instance mỗi lần inject<br/>≈ Spring prototype"]
+        E["@Singleton<br/>1 instance / app<br/>nhưng KHÔNG phải proxy!"]
     end
     
     style A fill:#1a472a,color:#90EE90

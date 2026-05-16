@@ -35,11 +35,11 @@ graph TD
     A --> E[Vertical Slice Architecture]
     A --> F[Micro-Frontends]
 
-    B --> B1["✅ Small–Medium projects\n❌ Degrades at scale"]
-    C --> C1["✅ Non-negotiable foundation\n❌ Doesn't solve domain complexity"]
-    D --> D1["✅ Medium–Large SPA/MPA\n✅ Cross-functional teams"]
-    E --> E1["✅ Large, team-owned features\n✅ Backend-for-frontend pattern"]
-    F --> F1["✅ Multiple teams, separate deploys\n❌ Overkill nếu 1 team"]
+    B --> B1["✅ Small–Medium projects<br/>❌ Degrades at scale"]
+    C --> C1["✅ Non-negotiable foundation<br/>❌ Doesn't solve domain complexity"]
+    D --> D1["✅ Medium–Large SPA/MPA<br/>✅ Cross-functional teams"]
+    E --> E1["✅ Large, team-owned features<br/>✅ Backend-for-frontend pattern"]
+    F --> F1["✅ Multiple teams, separate deploys<br/>❌ Overkill nếu 1 team"]
 ```
 
 ---
@@ -82,12 +82,12 @@ FSD là methodology được thiết kế riêng cho frontend, tổ chức code 
 ```mermaid
 graph LR
     subgraph LAYERS ["6 Layers (top → bottom)"]
-        APP["app\n(bootstrap, routing, providers)"]
-        PAGES["pages\n(screen-level views)"]
-        WIDGETS["widgets\n(composite blocks)"]
-        FEATURES["features\n(user actions)"]
-        ENTITIES["entities\n(business objects)"]
-        SHARED["shared\n(reusable, framework-agnostic)"]
+        APP["app<br/>(bootstrap, routing, providers)"]
+        PAGES["pages<br/>(screen-level views)"]
+        WIDGETS["widgets<br/>(composite blocks)"]
+        FEATURES["features<br/>(user actions)"]
+        ENTITIES["entities<br/>(business objects)"]
+        SHARED["shared<br/>(reusable, framework-agnostic)"]
     end
 
     APP -->|"can use"| PAGES
@@ -207,9 +207,9 @@ Mỗi **"use case"** hoặc **"user story"** là một slice hoàn toàn độc 
 graph LR
     subgraph VSA ["Vertical Slice Architecture"]
         direction TB
-        S1["CreatePost/\n  CreatePostForm.tsx\n  useCreatePost.ts\n  createPost.api.ts\n  createPost.test.ts"]
-        S2["LikePost/\n  LikeButton.tsx\n  useLikePost.ts\n  likePost.api.ts"]
-        S3["CommentPost/\n  CommentSection.tsx\n  useComments.ts\n  comments.api.ts"]
+        S1["CreatePost/<br/>  CreatePostForm.tsx<br/>  useCreatePost.ts<br/>  createPost.api.ts<br/>  createPost.test.ts"]
+        S2["LikePost/<br/>  LikeButton.tsx<br/>  useLikePost.ts<br/>  likePost.api.ts"]
+        S3["CommentPost/<br/>  CommentSection.tsx<br/>  useComments.ts<br/>  comments.api.ts"]
     end
 
     style S1 fill:#4dabf7,color:#000
@@ -243,14 +243,14 @@ Tách frontend thành các **ứng dụng nhỏ độc lập**, mỗi cái có t
 
 ```mermaid
 graph TD
-    Shell["Shell App\n(App Shell / Root)"]
-    Shell --> MF1["MFE: Auth\n(React Team)"]
-    Shell --> MF2["MFE: Dashboard\n(Angular Team)"]
-    Shell --> MF3["MFE: Reports\n(Vue Team)"]
+    Shell["Shell App<br/>(App Shell / Root)"]
+    Shell --> MF1["MFE: Auth<br/>(React Team)"]
+    Shell --> MF2["MFE: Dashboard<br/>(Angular Team)"]
+    Shell --> MF3["MFE: Reports<br/>(Vue Team)"]
 
     subgraph Integration
         WC["Web Components"]
-        MF["Module Federation\n(Webpack 5 / Vite)"]
+        MF["Module Federation<br/>(Webpack 5 / Vite)"]
         IF["iframe isolation"]
     end
 ```
@@ -275,17 +275,17 @@ flowchart TD
     Start([Bắt đầu project mới]) --> Q1{Số lượng teams?}
     
     Q1 -->|"1 team"| Q2{Project size?}
-    Q1 -->|"3+ teams\nindependent"| MFE["🏗️ Micro-Frontends\n+ Module Federation"]
+    Q1 -->|"3+ teams<br/>independent"| MFE["🏗️ Micro-Frontends<br/>+ Module Federation"]
     
-    Q2 -->|"Prototype / < 3 months"| MVC["📦 Layered / MVC\nSimple folder by type"]
+    Q2 -->|"Prototype / < 3 months"| MVC["📦 Layered / MVC<br/>Simple folder by type"]
     Q2 -->|"Medium–Large SPA"| Q3{Domain model rõ ràng?}
     
-    Q3 -->|"Có entities rõ\n(User, Product, Order...)"| FSD["⭐ Feature-Sliced Design\nBest for most SPAs"]
-    Q3 -->|"Use cases độc lập\nít share logic"| VSA["🔪 Vertical Slice\nPer use case isolation"]
+    Q3 -->|"Có entities rõ<br/>(User, Product, Order...)"| FSD["⭐ Feature-Sliced Design<br/>Best for most SPAs"]
+    Q3 -->|"Use cases độc lập<br/>ít share logic"| VSA["🔪 Vertical Slice<br/>Per use case isolation"]
     
-    FSD --> Angular["Angular: FSD\n+ NgModules / Standalone"]
-    FSD --> React["React: FSD\n+ TanStack Query + Zustand"]
-    FSD --> Solid["SolidJS: FSD\n+ SolidStart + Stores"]
+    FSD --> Angular["Angular: FSD<br/>+ NgModules / Standalone"]
+    FSD --> React["React: FSD<br/>+ TanStack Query + Zustand"]
+    FSD --> Solid["SolidJS: FSD<br/>+ SolidStart + Stores"]
 
     style FSD fill:#69db7c,color:#000,stroke:#2f9e44
     style MFE fill:#ffd43b,color:#000
@@ -434,11 +434,11 @@ Nếu bạn có codebase cũ theo style "folders by type", không cần rewrite 
 
 ```mermaid
 graph LR
-    Step1["1. Extract Shared\nMove utils, UI kit\nvào shared/"] -->
-    Step2["2. Extract Entities\nIdentify domain objects\n(User, Product...)"] -->
-    Step3["3. Extract Features\nWrap user actions\nvào features/"] -->
-    Step4["4. Compose Pages\nPages chỉ compose\nwidgets + features"] -->
-    Step5["5. Add ESLint rules\nEnforce import rules\ntự động"]
+    Step1["1. Extract Shared<br/>Move utils, UI kit<br/>vào shared/"] -->
+    Step2["2. Extract Entities<br/>Identify domain objects<br/>(User, Product...)"] -->
+    Step3["3. Extract Features<br/>Wrap user actions<br/>vào features/"] -->
+    Step4["4. Compose Pages<br/>Pages chỉ compose<br/>widgets + features"] -->
+    Step5["5. Add ESLint rules<br/>Enforce import rules<br/>tự động"]
 ```
 
 > Làm từng bước, feature by feature. Không cần "big rewrite".

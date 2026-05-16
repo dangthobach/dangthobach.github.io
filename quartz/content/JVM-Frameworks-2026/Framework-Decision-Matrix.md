@@ -14,23 +14,23 @@ status: evergreen
 
 ```mermaid
 flowchart TD
-    A([Bắt đầu: cần chọn framework]) --> B{Đang có Spring Boot\ncodebase không?}
+    A([Bắt đầu: cần chọn framework]) --> B{Đang có Spring Boot<br/>codebase không?}
 
-    B -->|Có, large codebase| C{Vấn đề hiện tại\nlà gì?}
-    B -->|Không, greenfield| D{Workload chính\nlà gì?}
+    B -->|Có, large codebase| C{Vấn đề hiện tại<br/>là gì?}
+    B -->|Không, greenfield| D{Workload chính<br/>là gì?}
 
-    C -->|Startup/RAM cao| E[Xem xét Quarkus\nhoặc Micronaut]
+    C -->|Startup/RAM cao| E[Xem xét Quarkus<br/>hoặc Micronaut]
     C -->|Không vấn đề gì| F[Giữ Spring Boot ✅]
-    C -->|High concurrency\nI/O bound| G[Xem xét Vert.x\nhoặc WebFlux]
+    C -->|High concurrency<br/>I/O bound| G[Xem xét Vert.x<br/>hoặc WebFlux]
 
-    D -->|CRUD + business logic| H{Native image\ncần thiết?}
-    D -->|High I/O, streaming| I[Quarkus + Vert.x\nhoặc Vert.x standalone]
+    D -->|CRUD + business logic| H{Native image<br/>cần thiết?}
+    D -->|High I/O, streaming| I[Quarkus + Vert.x<br/>hoặc Vert.x standalone]
     D -->|Team nhỏ, quen Spring| F
 
     H -->|Có — K8s scale, serverless| J[Quarkus ⬡]
     H -->|Không bắt buộc| K{Team size?}
 
-    K -->|≤ 5 người, quen Spring| L[Micronaut ◈\ngần Spring nhất]
+    K -->|≤ 5 người, quen Spring| L[Micronaut ◈<br/>gần Spring nhất]
     K -->|≥ 5, sẵn sàng học mới| J
 
     style J fill:#1a1a2e,color:#E8293B,stroke:#E8293B

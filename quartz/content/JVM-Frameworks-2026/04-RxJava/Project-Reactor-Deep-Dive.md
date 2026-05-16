@@ -17,11 +17,11 @@ cross-ref: rxjava, mutiny, loom
 
 ```mermaid
 graph LR
-    RS["Reactive Streams Spec\n(Publisher/Subscriber/Subscription)"]
+    RS["Reactive Streams Spec<br/>(Publisher/Subscriber/Subscription)"]
     
-    RS --> RXJ["RxJava 3\nObservable/Flowable\n5 types"]
-    RS --> RCT["Project Reactor\nFlux/Mono\n2 types ⭐"]
-    RS --> MUT["Mutiny\nMulti/Uni\n2 types"]
+    RS --> RXJ["RxJava 3<br/>Observable/Flowable<br/>5 types"]
+    RS --> RCT["Project Reactor<br/>Flux/Mono<br/>2 types ⭐"]
+    RS --> MUT["Mutiny<br/>Multi/Uni<br/>2 types"]
     
     RCT --> WF["Spring WebFlux"]
     RCT --> R2["Spring Data R2DBC"]

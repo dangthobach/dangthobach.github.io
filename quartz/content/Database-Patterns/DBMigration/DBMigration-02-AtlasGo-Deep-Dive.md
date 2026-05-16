@@ -11,15 +11,15 @@
 ```mermaid
 graph TB
     subgraph "Imperative (Flyway/Liquibase)"
-        A["Developer viết:\nALTER TABLE document\nADD COLUMN priority INT;"] --> B["Tool thực thi\nđúng như viết"]
+        A["Developer viết:<br/>ALTER TABLE document<br/>ADD COLUMN priority INT;"] --> B["Tool thực thi<br/>đúng như viết"]
         B --> C["DB State mới"]
     end
     
     subgraph "Declarative (Atlas)"
-        D["Developer khai báo\nTRẠNG THÁI MUỐN ĐẾN:"] --> E["table 'document' {\n  column 'priority' {\n    type = int\n  }\n}"]
+        D["Developer khai báo<br/>TRẠNG THÁI MUỐN ĐẾN:"] --> E["table 'document' {<br/>  column 'priority' {<br/>    type = int<br/>  }<br/>}"]
         F["DB State hiện tại"] --> G["Atlas Diff Engine"]
         E --> G
-        G --> H["Auto-generate:\nALTER TABLE ADD COLUMN..."]
+        G --> H["Auto-generate:<br/>ALTER TABLE ADD COLUMN..."]
         H --> C2["DB State mới"]
     end
     
@@ -34,10 +34,10 @@ graph TB
 ```mermaid
 graph LR
     subgraph "Input Sources"
-        A[HCL Schema Files\n.hcl]
-        B[SQL Schema Files\n.sql]
-        C[Existing Database\nPostgreSQL/MySQL...]
-        D[ORM Models\nGORM/Ent/Django]
+        A[HCL Schema Files<br/>.hcl]
+        B[SQL Schema Files<br/>.sql]
+        C[Existing Database<br/>PostgreSQL/MySQL...]
+        D[ORM Models<br/>GORM/Ent/Django]
     end
     
     subgraph "Atlas Core"
@@ -281,10 +281,10 @@ atlas migrate status \
 ```mermaid
 graph TB
     subgraph "Tình huống: Staging vs Production drift"
-        A[("STAGING DB\nCurrent state")] --> C[Atlas Diff Engine]
-        B[("PRODUCTION DB\nTarget state")] --> C
-        C --> D["Diff Report:\n+ Missing: idx_document_tenant\n+ Extra column: debug_flag\n+ Changed type: status_id INT→BIGINT"]
-        D --> E["Auto-generated SQL:\nCREATE INDEX...\nDROP COLUMN...\nALTER TYPE..."]
+        A[("STAGING DB<br/>Current state")] --> C[Atlas Diff Engine]
+        B[("PRODUCTION DB<br/>Target state")] --> C
+        C --> D["Diff Report:<br/>+ Missing: idx_document_tenant<br/>+ Extra column: debug_flag<br/>+ Changed type: status_id INT→BIGINT"]
+        D --> E["Auto-generated SQL:<br/>CREATE INDEX...<br/>DROP COLUMN...<br/>ALTER TYPE..."]
     end
     
     style C fill:#4CAF50,color:#fff
@@ -333,9 +333,9 @@ graph LR
     subgraph "Checks"
         G[DROP TABLE detect]
         H[DROP COLUMN detect]
-        I[Non-backward-compat\ntype change]
-        J[Missing index\nfor FK]
-        K[Lock timeout risk\non large table]
+        I[Non-backward-compat<br/>type change]
+        J[Missing index<br/>for FK]
+        K[Lock timeout risk<br/>on large table]
     end
     
     B --> G & H & I & J & K
@@ -496,10 +496,10 @@ atlas schema inspect \
 
 ```mermaid
 graph TB
-    A[Stored Procedures\nFunctions\nTriggers] --> B{Atlas hỗ trợ?}
-    B -->|Hạn chế| C["Atlas chỉ track\nschema structure\nKHÔNG phải SP logic"]
-    B -->|Workaround 1| D["Dùng atlas migrate diff\nvới raw SQL files\nchứa SP definitions"]
-    B -->|Workaround 2| E["Kết hợp với Flyway:\nAtlas → DDL\nFlyway Repeatable → SP"]
+    A[Stored Procedures<br/>Functions<br/>Triggers] --> B{Atlas hỗ trợ?}
+    B -->|Hạn chế| C["Atlas chỉ track<br/>schema structure<br/>KHÔNG phải SP logic"]
+    B -->|Workaround 1| D["Dùng atlas migrate diff<br/>với raw SQL files<br/>chứa SP definitions"]
+    B -->|Workaround 2| E["Kết hợp với Flyway:<br/>Atlas → DDL<br/>Flyway Repeatable → SP"]
     
     style C fill:#FF5722,color:#fff
     style D fill:#FF9800,color:#fff

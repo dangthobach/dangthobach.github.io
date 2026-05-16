@@ -31,21 +31,21 @@ React Hook Form dùng uncontrolled inputs + ref để tránh re-render. Trong So
 ```mermaid
 flowchart TD
     subgraph "Form Architecture"
-        FV["Form Values Store\ncreateStore(initialValues)"]
-        FE["Form Errors Store\ncreateStore({})"]
-        FT["Field Touched Store\ncreateStore({})"]
-        FD["Form Dirty Signal\ncreateSignal(false)"]
-        FS["Form Submitting\ncreateSignal(false)"]
+        FV["Form Values Store<br/>createStore(initialValues)"]
+        FE["Form Errors Store<br/>createStore({})"]
+        FT["Field Touched Store<br/>createStore({})"]
+        FD["Form Dirty Signal<br/>createSignal(false)"]
+        FS["Form Submitting<br/>createSignal(false)"]
     end
 
     subgraph "Validation Layer"
-        SCHEMA["Zod Schema\nz.object({...})"]
-        VALIDATE["validateField()\nvalidateForm()"]
+        SCHEMA["Zod Schema<br/>z.object({...})"]
+        VALIDATE["validateField()<br/>validateForm()"]
     end
 
     subgraph "UI Layer"
-        FIELD["<Field> component\nreads value + error"]
-        SUBMIT["handleSubmit()\nvalidate all → call onSubmit"]
+        FIELD["<Field> component<br/>reads value + error"]
+        SUBMIT["handleSubmit()<br/>validate all → call onSubmit"]
     end
 
     FV --> FIELD
@@ -358,22 +358,22 @@ function NewCreditCasePage() {
 ```mermaid
 flowchart LR
     subgraph "Data Layer"
-        RAW["Raw data\nStore<Row[]>"]
-        FILTER["filteredData\ncreateMemo"]
-        SORT["sortedData\ncreateMemo"]
-        PAGE["pagedData\ncreateMemo"]
+        RAW["Raw data<br/>Store<Row[]>"]
+        FILTER["filteredData<br/>createMemo"]
+        SORT["sortedData<br/>createMemo"]
+        PAGE["pagedData<br/>createMemo"]
     end
 
     subgraph "State Signals"
-        SF["filterValues\nStore"]
-        SS["sortConfig\nSignal"]
-        SP["pageConfig\nStore"]
+        SF["filterValues<br/>Store"]
+        SS["sortConfig<br/>Signal"]
+        SP["pageConfig<br/>Store"]
     end
 
     subgraph "Render Layer"
-        HEAD["<thead>\nSort indicators"]
-        BODY["<For> rows\nEach row: own reactive scope"]
-        FOOT["Pagination\nPage controls"]
+        HEAD["<thead><br/>Sort indicators"]
+        BODY["<For> rows<br/>Each row: own reactive scope"]
+        FOOT["Pagination<br/>Page controls"]
     end
 
     SF --> FILTER
@@ -646,9 +646,9 @@ flowchart TD
     end
 
     subgraph "DOM"
-        SPACER_T["Spacer top div\nheight = scrollTop"]
+        SPACER_T["Spacer top div<br/>height = scrollTop"]
         ITEMS["19 rendered rows"]
-        SPACER_B["Spacer bottom div\nheight = remaining"]
+        SPACER_B["Spacer bottom div<br/>height = remaining"]
     end
 
     ALL --> VIS

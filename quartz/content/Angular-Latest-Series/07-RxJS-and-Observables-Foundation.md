@@ -9,17 +9,17 @@
 ```mermaid
 graph LR
     subgraph Producer
-        A["Observable\n(Nguồn dữ liệu)"]
+        A["Observable<br/>(Nguồn dữ liệu)"]
     end
     subgraph Pipeline
-        B["pipe()\nOperators"]
+        B["pipe()<br/>Operators"]
     end
     subgraph Consumer
-        C["subscribe()\nObserver"]
+        C["subscribe()<br/>Observer"]
     end
 
-    A -- "emit values\nnext / error / complete" --> B
-    B -- "transformed\nvalues" --> C
+    A -- "emit values<br/>next / error / complete" --> B
+    B -- "transformed<br/>values" --> C
 
     style A fill:#1565C0,color:#fff
     style B fill:#6A1B9A,color:#fff
@@ -412,13 +412,13 @@ export class ApprovalDashboardComponent {
 ```mermaid
 graph TD
     Q{Nguồn dữ liệu}
-    Q --> A["HTTP / WebSocket\n(1 lần hoặc stream)"]
-    Q --> B["State trong component\n(user interaction)"]
-    Q --> C["Kết hợp nhiều stream\n(filter + search + sort)"]
+    Q --> A["HTTP / WebSocket<br/>(1 lần hoặc stream)"]
+    Q --> B["State trong component<br/>(user interaction)"]
+    Q --> C["Kết hợp nhiều stream<br/>(filter + search + sort)"]
 
-    A --> RxJS1["✅ RxJS Observable\n+ toSignal() để dùng trong template"]
-    B --> SIG["✅ Signal\n(signal, computed, effect)"]
-    C --> RxJS2["✅ RxJS combineLatest\nhoặc computed signal"]
+    A --> RxJS1["✅ RxJS Observable<br/>+ toSignal() để dùng trong template"]
+    B --> SIG["✅ Signal<br/>(signal, computed, effect)"]
+    C --> RxJS2["✅ RxJS combineLatest<br/>hoặc computed signal"]
 ```
 
 ---

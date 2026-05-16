@@ -16,11 +16,11 @@ framework: rxjava
 
 ```mermaid
 graph TD
-    A["RxJava Types"] --> B["Observable&lt;T&gt;\n0..∞ items\nKHÔNG có backpressure"]
-    A --> C["Flowable&lt;T&gt;\n0..∞ items\nCÓ backpressure"]
-    A --> D["Single&lt;T&gt;\nexactly 1 item\nhoặc error"]
-    A --> E["Maybe&lt;T&gt;\n0 hoặc 1 item"]
-    A --> F["Completable\n0 items\nchỉ complete/error"]
+    A["RxJava Types"] --> B["Observable&lt;T&gt;<br/>0..∞ items<br/>KHÔNG có backpressure"]
+    A --> C["Flowable&lt;T&gt;<br/>0..∞ items<br/>CÓ backpressure"]
+    A --> D["Single&lt;T&gt;<br/>exactly 1 item<br/>hoặc error"]
+    A --> E["Maybe&lt;T&gt;<br/>0 hoặc 1 item"]
+    A --> F["Completable<br/>0 items<br/>chỉ complete/error"]
     
     B -.->|"convert"| C
     D -.->|"toObservable()"| B

@@ -11,21 +11,21 @@
 ```mermaid
 graph TB
     subgraph "Flyway — Imperative SQL"
-        FA["Developer\nviết SQL"] --> FB["Flyway\nthực thi đúng như viết"]
+        FA["Developer<br/>viết SQL"] --> FB["Flyway<br/>thực thi đúng như viết"]
         FB --> FC["DB thay đổi"]
-        FP["Triết lý:\nBạn viết gì\n→ DB làm đúng vậy"]
+        FP["Triết lý:<br/>Bạn viết gì<br/>→ DB làm đúng vậy"]
     end
     
     subgraph "Liquibase — Structured Changesets"
-        LA["Developer\nviết Changeset\n(XML/YAML/SQL)"] --> LB["Liquibase\nparse + track\n+ execute"]
+        LA["Developer<br/>viết Changeset<br/>(XML/YAML/SQL)"] --> LB["Liquibase<br/>parse + track<br/>+ execute"]
         LB --> LC["DB thay đổi"]
-        LP["Triết lý:\nAudit trail + control\nmọi thứ phải tracked"]
+        LP["Triết lý:<br/>Audit trail + control<br/>mọi thứ phải tracked"]
     end
     
     subgraph "Atlas — Declarative State"
-        AA["Developer\nkhai báo\nDesired State"] --> AB["Atlas\ncalculate diff\nauto-generate SQL"]
+        AA["Developer<br/>khai báo<br/>Desired State"] --> AB["Atlas<br/>calculate diff<br/>auto-generate SQL"]
         AB --> AC["DB thay đổi"]
-        AP["Triết lý:\nBạn nói muốn gì\n→ Atlas tự tính cách đến"]
+        AP["Triết lý:<br/>Bạn nói muốn gì<br/>→ Atlas tự tính cách đến"]
     end
     
     style FP fill:#FF9800,color:#fff
@@ -70,19 +70,19 @@ xychart-beta
 
 ```mermaid
 flowchart TD
-    START([Chọn Migration Tool]) --> Q1{Team có\nSQL background\nmạnh không?}
+    START([Chọn Migration Tool]) --> Q1{Team có<br/>SQL background<br/>mạnh không?}
     
-    Q1 -->|Yes| Q2{Cần auto-diff\nschema không?}
-    Q1 -->|No| Q3{Cần audit trail\nphức tạp không?}
+    Q1 -->|Yes| Q2{Cần auto-diff<br/>schema không?}
+    Q1 -->|No| Q3{Cần audit trail<br/>phức tạp không?}
     
-    Q2 -->|Yes| Q4{Có nhiều\nStored Procs?}
-    Q2 -->|No| FLYWAY[🟠 Flyway\nSQL-first, simple]
+    Q2 -->|Yes| Q4{Có nhiều<br/>Stored Procs?}
+    Q2 -->|No| FLYWAY[🟠 Flyway<br/>SQL-first, simple]
     
-    Q4 -->|Yes| COMBO1[🟣 Atlas + Flyway\nAtlas cho DDL\nFlyway Repeatable cho SP]
-    Q4 -->|No| ATLAS[🟢 Atlas Go\nDeclarative, auto-diff]
+    Q4 -->|Yes| COMBO1[🟣 Atlas + Flyway<br/>Atlas cho DDL<br/>Flyway Repeatable cho SP]
+    Q4 -->|No| ATLAS[🟢 Atlas Go<br/>Declarative, auto-diff]
     
-    Q3 -->|Yes| LIQUIBASE[🔵 Liquibase\nRich audit, preconditions]
-    Q3 -->|No| Q5{Cần CI/CD\nschema linting?}
+    Q3 -->|Yes| LIQUIBASE[🔵 Liquibase<br/>Rich audit, preconditions]
+    Q3 -->|No| Q5{Cần CI/CD<br/>schema linting?}
     
     Q5 -->|Yes| ATLAS
     Q5 -->|No| FLYWAY
@@ -377,7 +377,7 @@ graph TD
     C2 & C4 & C5 --> REC1[🟠 Flyway làm core tool]
     C3 & C7 --> REC2[+ Atlas CI linting]
     
-    REC1 & REC2 --> FINAL[🏆 Khuyến nghị: Flyway + Atlas CI\nHoặc Liquibase standalone\nnếu audit trail là priority]
+    REC1 & REC2 --> FINAL[🏆 Khuyến nghị: Flyway + Atlas CI<br/>Hoặc Liquibase standalone<br/>nếu audit trail là priority]
     
     style FINAL fill:#4CAF50,color:#fff
     style REC1 fill:#FF9800,color:#fff

@@ -29,8 +29,8 @@ graph TD
 
     subgraph F3["🟡 Phase 3: Data & Performance (Bài 10-15)"]
         direction LR
-        R10[10. Data Fetching\nTanStack Query]
-        R11[11. Performance\nVirtualization]
+        R10[10. Data Fetching<br/>TanStack Query]
+        R11[11. Performance<br/>Virtualization]
         R12[12. Concurrent Features]
         R13[13. Server Components]
         R14[14. Testing]

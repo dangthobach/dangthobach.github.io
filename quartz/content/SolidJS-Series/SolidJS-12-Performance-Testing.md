@@ -583,10 +583,10 @@ src/
 
 ```mermaid
 flowchart TD
-    PAGES["pages/\n(thin composers)"]
-    FEATURES["features/\n(business logic)"]
-    SHARED["shared/\n(generic tools)"]
-    ENTITIES["entities/\n(domain types)"]
+    PAGES["pages/<br/>(thin composers)"]
+    FEATURES["features/<br/>(business logic)"]
+    SHARED["shared/<br/>(generic tools)"]
+    ENTITIES["entities/<br/>(domain types)"]
 
     PAGES --> FEATURES
     PAGES --> SHARED

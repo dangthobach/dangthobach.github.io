@@ -8,12 +8,12 @@
 
 ```mermaid
 graph TD
-    A[Ứng dụng chậm] --> B["Đo với\nReact DevTools Profiler"]
+    A[Ứng dụng chậm] --> B["Đo với<br/>React DevTools Profiler"]
     B --> C{Tìm bottleneck}
-    C --> D["Re-render thừa\n→ React.memo / useMemo"]
-    C --> E["Danh sách dài\n→ Virtualization"]
-    C --> F["Bundle nặng\n→ Code splitting / lazy"]
-    C --> G["Tính toán nặng\n→ useMemo / Web Worker"]
+    C --> D["Re-render thừa<br/>→ React.memo / useMemo"]
+    C --> E["Danh sách dài<br/>→ Virtualization"]
+    C --> F["Bundle nặng<br/>→ Code splitting / lazy"]
+    C --> G["Tính toán nặng<br/>→ useMemo / Web Worker"]
     D & E & F & G --> H["Đo lại → confirm improve"]
 ```
 
@@ -351,11 +351,11 @@ const router = createBrowserRouter([
 
 ```mermaid
 graph TD
-    A["Danh sách > 100 items?"] -->|Có| B["react-window\nVirtualization"]
-    C["Component re-render vô ích?"] -->|Có| D["React.memo\n+ useCallback\n+ useMemo"]
-    E["Bundle > 200KB?"] -->|Có| F["lazy() + Suspense\nCode splitting"]
-    G["Tính toán nặng > 10ms?"] -->|Có| H["useMemo\nhoặc Web Worker"]
-    I["Image nặng?"] -->|Có| J["Next/Image hoặc\nlazy loading + WebP"]
+    A["Danh sách > 100 items?"] -->|Có| B["react-window<br/>Virtualization"]
+    C["Component re-render vô ích?"] -->|Có| D["React.memo<br/>+ useCallback<br/>+ useMemo"]
+    E["Bundle > 200KB?"] -->|Có| F["lazy() + Suspense<br/>Code splitting"]
+    G["Tính toán nặng > 10ms?"] -->|Có| H["useMemo<br/>hoặc Web Worker"]
+    I["Image nặng?"] -->|Có| J["Next/Image hoặc<br/>lazy loading + WebP"]
 ```
 
 ---

@@ -10,7 +10,7 @@
 ```mermaid
 graph TD
     Error[Lỗi xảy ra] --> L1{Tầng 1: HTTP Interceptor}
-    L1 -- Lỗi HTTP --> HttpHandler[Xử lý theo status code\n401/403/404/500...]
+    L1 -- Lỗi HTTP --> HttpHandler[Xử lý theo status code<br/>401/403/404/500...]
     L1 -- Lỗi khác --> L2{Tầng 2: Component Error}
     
     HttpHandler --> Toast[Toast notification]

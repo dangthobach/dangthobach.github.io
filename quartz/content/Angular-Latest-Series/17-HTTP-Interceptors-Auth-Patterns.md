@@ -16,9 +16,9 @@ graph LR
     App[Ứng dụng Angular]
     
     subgraph Interceptor Chain
-        I1[Auth Interceptor\nGắn JWT token]
-        I2[Logging Interceptor\nGhi log request]
-        I3[Error Interceptor\nXử lý lỗi tập trung]
+        I1[Auth Interceptor<br/>Gắn JWT token]
+        I2[Logging Interceptor<br/>Ghi log request]
+        I3[Error Interceptor<br/>Xử lý lỗi tập trung]
     end
     
     API[Backend API]

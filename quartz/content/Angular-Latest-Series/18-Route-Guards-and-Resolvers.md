@@ -11,13 +11,13 @@
 
 ```mermaid
 graph LR
-    User[Người dùng\nmuốn vào phòng] --> Receptionist[canActivate\nKiểm tra thẻ từ]
-    Receptionist -- Có quyền --> Inside[canActivateChild\nKiểm tra từng phòng con]
-    Receptionist -- Không quyền --> Login[Redirect đến\nTrang đăng nhập]
+    User[Người dùng<br/>muốn vào phòng] --> Receptionist[canActivate<br/>Kiểm tra thẻ từ]
+    Receptionist -- Có quyền --> Inside[canActivateChild<br/>Kiểm tra từng phòng con]
+    Receptionist -- Không quyền --> Login[Redirect đến<br/>Trang đăng nhập]
     
-    InsideRoom[Đang ở trong phòng\nmuốn rời đi] --> Exit[canDeactivate\nXác nhận thoát?\nForm chưa lưu?]
+    InsideRoom[Đang ở trong phòng<br/>muốn rời đi] --> Exit[canDeactivate<br/>Xác nhận thoát?<br/>Form chưa lưu?]
     
-    LoadData[Trước khi vào phòng] --> Resolver[resolve\nChuẩn bị dữ liệu\nnhư setup phòng họp]
+    LoadData[Trước khi vào phòng] --> Resolver[resolve<br/>Chuẩn bị dữ liệu<br/>như setup phòng họp]
 ```
 
 ---

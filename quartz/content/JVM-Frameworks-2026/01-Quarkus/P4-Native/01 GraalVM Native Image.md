@@ -19,7 +19,7 @@ framework: quarkus
 ```mermaid
 graph LR
     A[Java Source] -->|javac| B[Bytecode .class]
-    B -->|AOT Compilation\nGraalVM native-image| C[Native Binary]
+    B -->|AOT Compilation<br/>GraalVM native-image| C[Native Binary]
     
     subgraph "Native Binary chứa"
         D[App Code]

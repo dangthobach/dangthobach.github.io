@@ -31,16 +31,16 @@ graph TD
         SR2[Request 2] --> ST2[Thread 2 - blocked I/O]
         SR3[Request 3] --> ST3[Thread 3 - waiting...]
         SR4[Request 4] --> ST4[Thread 4 - sleeping]
-        note1["1000 concurrent reqs\n= 1000 threads\n= high memory!"]
+        note1["1000 concurrent reqs<br/>= 1000 threads<br/>= high memory!"]
     end
 
     subgraph "Vert.x — Event Loop"
-        VR1[Request 1] --> VEL[Event Loop\n2-4 threads\nnon-blocking]
+        VR1[Request 1] --> VEL[Event Loop<br/>2-4 threads<br/>non-blocking]
         VR2[Request 2] --> VEL
         VR3[Request 3] --> VEL
         VR4[Request 4] --> VEL
-        VEL --> VP[Worker Pool\nchỉ cho blocking ops]
-        note2["1000 concurrent reqs\n= 2-4 event loop threads\n= low memory!"]
+        VEL --> VP[Worker Pool<br/>chỉ cho blocking ops]
+        note2["1000 concurrent reqs<br/>= 2-4 event loop threads<br/>= low memory!"]
     end
 ```
 

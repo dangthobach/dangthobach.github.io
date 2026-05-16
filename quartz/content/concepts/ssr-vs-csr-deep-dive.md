@@ -63,10 +63,10 @@ sequenceDiagram
 
 ```mermaid
 flowchart LR
-    A["📡 TTFB\n~100ms\nHTML shell 1KB"] --> B["📦 JS Download\n~1400ms\nbundle 1MB"]
-    B --> C["⚙️ JS Execute\n~1300ms\nparse + run"]
-    C --> D["🌐 API Fetch\n~600ms\nJSON data"]
-    D --> E["✅ FCP + TTI\n~3.5s total\npage interactive"]
+    A["📡 TTFB<br/>~100ms<br/>HTML shell 1KB"] --> B["📦 JS Download<br/>~1400ms<br/>bundle 1MB"]
+    B --> C["⚙️ JS Execute<br/>~1300ms<br/>parse + run"]
+    C --> D["🌐 API Fetch<br/>~600ms<br/>JSON data"]
+    D --> E["✅ FCP + TTI<br/>~3.5s total<br/>page interactive"]
 
     style A fill:#4ade80,color:#000
     style B fill:#f59e0b,color:#000
@@ -149,15 +149,15 @@ sequenceDiagram
 ```mermaid
 flowchart LR
     subgraph SERVER["🖥️ Server"]
-        A["React Component\n(renderToString)"] --> B["Static HTML String\n(no interactivity)"]
+        A["React Component<br/>(renderToString)"] --> B["Static HTML String<br/>(no interactivity)"]
     end
 
     subgraph BROWSER["🌐 Browser"]
-        C["Receive HTML\nPaint immediately\nFCP done"] --> D["Download bundle.js"]
-        D --> E["React.hydrate()\nMatch virtual DOM\nwith server HTML"]
+        C["Receive HTML<br/>Paint immediately<br/>FCP done"] --> D["Download bundle.js"]
+        D --> E["React.hydrate()<br/>Match virtual DOM<br/>with server HTML"]
         E --> F{"Mismatch?"}
-        F -->|"Match OK"| G["Attach Event Listeners\nTTI done"]
-        F -->|"Mismatch"| H["RE-RENDER entire tree\nHydration Error\nFlicker visible"]
+        F -->|"Match OK"| G["Attach Event Listeners<br/>TTI done"]
+        F -->|"Mismatch"| H["RE-RENDER entire tree<br/>Hydration Error<br/>Flicker visible"]
     end
 
     B --> C
@@ -186,11 +186,11 @@ function Post() {
 
 ```mermaid
 flowchart LR
-    A["🖥️ Server Work\n~400ms\nDB query + renderToString"] --> B["📡 Network\n~300ms\nFull HTML 50KB"]
-    B --> C["🖼️ FCP\n~700ms\ncontent visible!"]
-    C --> D["📦 JS Download\n~1300ms\nbundle 1MB"]
-    D --> E["💧 Hydration\n~300ms\nattach events"]
-    E --> F["✅ TTI\n~2.8s total\nfully interactive"]
+    A["🖥️ Server Work<br/>~400ms<br/>DB query + renderToString"] --> B["📡 Network<br/>~300ms<br/>Full HTML 50KB"]
+    B --> C["🖼️ FCP<br/>~700ms<br/>content visible!"]
+    C --> D["📦 JS Download<br/>~1300ms<br/>bundle 1MB"]
+    D --> E["💧 Hydration<br/>~300ms<br/>attach events"]
+    E --> F["✅ TTI<br/>~2.8s total<br/>fully interactive"]
 
     style A fill:#8b5cf6,color:#fff
     style C fill:#4ade80,color:#000
@@ -204,12 +204,12 @@ flowchart LR
 ```mermaid
 flowchart TD
     subgraph FAST_TTFB["✅ Fast TTFB"]
-        CSR_T["CSR\n(tiny HTML shell)"]
+        CSR_T["CSR<br/>(tiny HTML shell)"]
     end
 
     subgraph FAST_FCP["✅ Fast FCP"]
-        SSR_F["SSR\n(full HTML from server)"]
-        SSG_F["SSG\n(pre-built HTML)"]
+        SSR_F["SSR<br/>(full HTML from server)"]
+        SSG_F["SSG<br/>(pre-built HTML)"]
     end
 
     subgraph GOOD_SEO["✅ Good SEO"]
@@ -219,8 +219,8 @@ flowchart TD
     end
 
     subgraph LOW_COST["✅ Low Server Cost"]
-        CSR_C["CSR\n(CDN only)"]
-        SSG_C["SSG\n(CDN only)"]
+        CSR_C["CSR<br/>(CDN only)"]
+        SSG_C["SSG<br/>(CDN only)"]
     end
 ```
 
@@ -292,19 +292,19 @@ không gửi JS về client cho những component thuần display.
 
 ```mermaid
 flowchart TD
-    A["Rendering Strategy"] --> B["SSG\nStatic Site Gen"]
-    A --> C["SSR\nServer-Side Render"]
-    A --> D["CSR\nClient-Side Render"]
-    A --> E["ISR\nIncremental Static Regen"]
-    A --> F["RSC\nReact Server Components"]
-    A --> G["Streaming SSR\nReact 18+"]
+    A["Rendering Strategy"] --> B["SSG<br/>Static Site Gen"]
+    A --> C["SSR<br/>Server-Side Render"]
+    A --> D["CSR<br/>Client-Side Render"]
+    A --> E["ISR<br/>Incremental Static Regen"]
+    A --> F["RSC<br/>React Server Components"]
+    A --> G["Streaming SSR<br/>React 18+"]
 
-    B --> B1["Build time render\nBest: blogs, docs, marketing\nWorst: personalized content"]
-    C --> C1["Per-request render\nBest: dashboards, auth pages\nWorst: high traffic, no cache"]
-    D --> D1["Browser render\nBest: apps, admin panels\nWorst: SEO-critical, slow devices"]
-    E --> E1["Stale-While-Revalidate\nBest: e-commerce, news\nWorst: real-time data"]
-    F --> F1["Zero JS for server parts\nBest: data-heavy UIs\nWorst: highly interactive"]
-    G --> G1["HTML streamed in chunks\nBest: slow data sources\nWorst: streaming not supported"]
+    B --> B1["Build time render<br/>Best: blogs, docs, marketing<br/>Worst: personalized content"]
+    C --> C1["Per-request render<br/>Best: dashboards, auth pages<br/>Worst: high traffic, no cache"]
+    D --> D1["Browser render<br/>Best: apps, admin panels<br/>Worst: SEO-critical, slow devices"]
+    E --> E1["Stale-While-Revalidate<br/>Best: e-commerce, news<br/>Worst: real-time data"]
+    F --> F1["Zero JS for server parts<br/>Best: data-heavy UIs<br/>Worst: highly interactive"]
+    G --> G1["HTML streamed in chunks<br/>Best: slow data sources<br/>Worst: streaming not supported"]
 
     style B fill:#4ade80,color:#000
     style C fill:#60a5fa,color:#000
@@ -347,17 +347,17 @@ sequenceDiagram
 flowchart TD
     Start(["Trang web cua ban la?"]) --> Q1{"Can SEO khong?"}
 
-    Q1 -->|"Khong"| Q2{"Admin panel\nhoac app phuc tap?"}
-    Q1 -->|"Co"| Q3{"Data thay doi\nthuong xuyen?"}
+    Q1 -->|"Khong"| Q2{"Admin panel<br/>hoac app phuc tap?"}
+    Q1 -->|"Co"| Q3{"Data thay doi<br/>thuong xuyen?"}
 
-    Q2 -->|"Co"| CSR["CSR\nReact SPA / Vite"]
+    Q2 -->|"Co"| CSR["CSR<br/>React SPA / Vite"]
     Q2 -->|"Khong"| Q3
 
-    Q3 -->|"Khong - data static"| SSG["SSG\nNext.js getStaticProps"]
-    Q3 -->|"Thinh thoang"| ISR["ISR\nNext.js revalidate"]
-    Q3 -->|"Moi request"| Q4{"Personalized\nper user?"}
+    Q3 -->|"Khong - data static"| SSG["SSG<br/>Next.js getStaticProps"]
+    Q3 -->|"Thinh thoang"| ISR["ISR<br/>Next.js revalidate"]
+    Q3 -->|"Moi request"| Q4{"Personalized<br/>per user?"}
 
-    Q4 -->|"Co"| SSR["SSR\nNext.js getServerSideProps"]
+    Q4 -->|"Co"| SSR["SSR<br/>Next.js getServerSideProps"]
     Q4 -->|"Khong - chung"| ISR
 
     style CSR fill:#f59e0b,color:#000

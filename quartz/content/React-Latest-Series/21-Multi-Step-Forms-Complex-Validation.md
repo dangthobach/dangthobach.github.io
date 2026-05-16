@@ -9,13 +9,13 @@
 
 ```mermaid
 graph LR
-    Step1[Bước 1:\nThông tin cá nhân] --> Step2[Bước 2:\nMục đích vay]
-    Step2 --> Step3[Bước 3:\nTài sản đảm bảo]
-    Step3 --> Step4[Bước 4:\nTài liệu đính kèm]
-    Step4 --> Step5[Bước 5:\nXác nhận & Nộp]
+    Step1[Bước 1:<br/>Thông tin cá nhân] --> Step2[Bước 2:<br/>Mục đích vay]
+    Step2 --> Step3[Bước 3:<br/>Tài sản đảm bảo]
+    Step3 --> Step4[Bước 4:<br/>Tài liệu đính kèm]
+    Step4 --> Step5[Bước 5:<br/>Xác nhận & Nộp]
     
     subgraph State Management
-        FormData[(Zustand / Context\nGiữ data xuyên suốt)]
+        FormData[(Zustand / Context<br/>Giữ data xuyên suốt)]
     end
     
     Step1 --> FormData
@@ -340,9 +340,9 @@ function Step3Collateral() {
 
 ```mermaid
 flowchart LR
-    Schema[Zod Schema\nTách theo step] --> Validation[Validation per step\nform.trigger fields]
-    FormProvider[FormProvider\nchia sẻ form context] --> Steps[Step Components\ndùng useFormContext]
-    State[useLoanApplicationForm\nCustom Hook] --> Logic[Tách logic ra khỏi UI]
+    Schema[Zod Schema<br/>Tách theo step] --> Validation[Validation per step<br/>form.trigger fields]
+    FormProvider[FormProvider<br/>chia sẻ form context] --> Steps[Step Components<br/>dùng useFormContext]
+    State[useLoanApplicationForm<br/>Custom Hook] --> Logic[Tách logic ra khỏi UI]
     
     style Schema fill:#c8e6c9
     style FormProvider fill:#c8e6c9

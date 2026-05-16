@@ -8,11 +8,11 @@
 
 ```mermaid
 graph LR
-    Component --> Service["Feature Service\n(CaseService)"]
-    Service --> BaseService["Base HTTP Service\n(ApiService)"]
-    BaseService --> IC1["Interceptor 1\nAuth Token"]
-    IC1 --> IC2["Interceptor 2\nLogging"]
-    IC2 --> IC3["Interceptor 3\nError Handler"]
+    Component --> Service["Feature Service<br/>(CaseService)"]
+    Service --> BaseService["Base HTTP Service<br/>(ApiService)"]
+    BaseService --> IC1["Interceptor 1<br/>Auth Token"]
+    IC1 --> IC2["Interceptor 2<br/>Logging"]
+    IC2 --> IC3["Interceptor 3<br/>Error Handler"]
     IC3 --> Server[("Backend API")]
 
     Server --> IC3

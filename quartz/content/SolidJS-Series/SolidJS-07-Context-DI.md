@@ -50,20 +50,20 @@ function NavMenu() {
 
 ```mermaid
 flowchart TD
-    CREATE["createContext(defaultValue)\n→ Context object với symbol key"]
-    PROVIDER["<Context.Provider value={...}>\n→ set giá trị cho subtree này"]
-    CONSUMER["useContext(Context)\n→ đọc giá trị từ Provider gần nhất"]
+    CREATE["createContext(defaultValue)<br/>→ Context object với symbol key"]
+    PROVIDER["<Context.Provider value={...}><br/>→ set giá trị cho subtree này"]
+    CONSUMER["useContext(Context)<br/>→ đọc giá trị từ Provider gần nhất"]
 
     CREATE --> PROVIDER
     PROVIDER --> CONSUMER
 
     subgraph "Component Tree"
-        APP["App\n(Provider ở đây)"]
+        APP["App<br/>(Provider ở đây)"]
         A["Layout"]
         B["Sidebar"]
-        C["NavMenu\n← useContext đọc giá trị từ App"]
+        C["NavMenu<br/>← useContext đọc giá trị từ App"]
         D["Content"]
-        E["LoanList\n← useContext đọc giá trị từ App"]
+        E["LoanList<br/>← useContext đọc giá trị từ App"]
     end
 
     APP --> A --> B --> C
@@ -275,15 +275,15 @@ export function App() {
 
 ```mermaid
 graph TD
-    APP["App\nAuthProvider\nThemeProvider"]
+    APP["App<br/>AuthProvider<br/>ThemeProvider"]
     LAYOUT["MainLayout"]
-    HEADER["Header\nuseAuth ✓\nuseTheme ✓"]
-    SIDEBAR["Sidebar\nuseAuth ✓"]
+    HEADER["Header<br/>useAuth ✓<br/>useTheme ✓"]
+    SIDEBAR["Sidebar<br/>useAuth ✓"]
     CONTENT["Content Area"]
-    LOAN_PAGE["LoanPage\nLoanWorkflowProvider"]
-    LOAN_LIST["LoanList\nuseAuth ✓\nuseLoanWorkflow ✓"]
-    LOAN_DETAIL["LoanDetail\nuseLoanWorkflow ✓"]
-    SETTINGS["Settings Page\n(no LoanWorkflow)"]
+    LOAN_PAGE["LoanPage<br/>LoanWorkflowProvider"]
+    LOAN_LIST["LoanList<br/>useAuth ✓<br/>useLoanWorkflow ✓"]
+    LOAN_DETAIL["LoanDetail<br/>useLoanWorkflow ✓"]
+    SETTINGS["Settings Page<br/>(no LoanWorkflow)"]
 
     APP --> LAYOUT
     LAYOUT --> HEADER

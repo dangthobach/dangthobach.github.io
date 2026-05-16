@@ -9,11 +9,11 @@
 ```mermaid
 graph TD
     subgraph FormModel["Form Model (TypeScript)"]
-        FG["FormGroup\n(loanApplicationForm)"]
-        FG --> B1["FormControl\n(borrowerName)"]
-        FG --> B2["FormControl\n(cifCode) — async validator"]
-        FG --> B3["FormGroup\n(loanInfo)"]
-        FG --> B4["FormArray\n(collaterals) — dynamic"]
+        FG["FormGroup<br/>(loanApplicationForm)"]
+        FG --> B1["FormControl<br/>(borrowerName)"]
+        FG --> B2["FormControl<br/>(cifCode) — async validator"]
+        FG --> B3["FormGroup<br/>(loanInfo)"]
+        FG --> B4["FormArray<br/>(collaterals) — dynamic"]
         B3 --> B31["FormControl (amount)"]
         B3 --> B32["FormControl (term)"]
         B4 --> B41["FormGroup (collateral 1)"]

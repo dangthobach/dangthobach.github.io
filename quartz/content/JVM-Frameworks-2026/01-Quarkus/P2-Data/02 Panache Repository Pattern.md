@@ -19,13 +19,13 @@ framework: quarkus
 ```mermaid
 graph LR
     subgraph "Active Record — Entity-centric"
-        AR["User.findByEmail()\nUser.persist()\nUser.listAll()"]
-        note1["✅ CRUD đơn giản\n✅ Ít code\n❌ Khó mock trong test\n❌ Entity biết về DB"]
+        AR["User.findByEmail()<br/>User.persist()<br/>User.listAll()"]
+        note1["✅ CRUD đơn giản<br/>✅ Ít code<br/>❌ Khó mock trong test<br/>❌ Entity biết về DB"]
     end
 
     subgraph "Repository — Layer separation"
-        RE["userRepo.findByEmail()\nuserRepo.save()\nuserRepo.findAll()"]
-        note2["✅ Separation of concerns\n✅ Dễ mock/test\n✅ Phức tạp như PDMS\n❌ Nhiều class hơn"]
+        RE["userRepo.findByEmail()<br/>userRepo.save()<br/>userRepo.findAll()"]
+        note2["✅ Separation of concerns<br/>✅ Dễ mock/test<br/>✅ Phức tạp như PDMS<br/>❌ Nhiều class hơn"]
     end
 ```
 

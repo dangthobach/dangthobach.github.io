@@ -9,14 +9,14 @@
 
 ```mermaid
 graph TD
-    Login[Login Form] --> AuthService[Auth Service\nGọi API Login]
-    AuthService --> Store[Zustand Auth Store\nLưu token + user]
-    Store --> LocalStorage[localStorage\nPersist token]
+    Login[Login Form] --> AuthService[Auth Service<br/>Gọi API Login]
+    AuthService --> Store[Zustand Auth Store<br/>Lưu token + user]
+    Store --> LocalStorage[localStorage<br/>Persist token]
     
-    Request[Mọi API Request] --> Interceptor[Axios Interceptor\nGắn Bearer Token]
+    Request[Mọi API Request] --> Interceptor[Axios Interceptor<br/>Gắn Bearer Token]
     Interceptor --> API[Backend API]
     
-    Route[Truy cập Route] --> ProtectedRoute[ProtectedRoute Component\nKiểm tra isAuthenticated]
+    Route[Truy cập Route] --> ProtectedRoute[ProtectedRoute Component<br/>Kiểm tra isAuthenticated]
     ProtectedRoute -- Chưa đăng nhập --> LoginPage[Redirect /login]
     ProtectedRoute -- Không đủ quyền --> ForbiddenPage[Trang 403]
     ProtectedRoute -- OK --> Page[Render Page]

@@ -11,7 +11,7 @@ Hãy tưởng tượng Kafka chỉ là **một file log duy nhất** trên disk,
 ```mermaid
 graph LR
     subgraph NAIVE["Thiết kế ngây thơ — 1 file log toàn cục"]
-        P1["Producer 1"] --> LOG["📄 orders.log\n(1 file duy nhất)"]
+        P1["Producer 1"] --> LOG["📄 orders.log<br/>(1 file duy nhất)"]
         P2["Producer 2"] --> LOG
         P3["Producer 3"] --> LOG
         LOG --> C1["Consumer 1"]
@@ -19,10 +19,10 @@ graph LR
     end
 
     subgraph PROBLEMS["Vấn đề phát sinh"]
-        PR1["① Throughput bị giới hạn bởi\n   tốc độ ghi 1 file trên 1 disk"]
-        PR2["② Tất cả consumer phải\n   tranh nhau đọc 1 file\n   → lock contention"]
-        PR3["③ File to mãi → không thể\n   phân tán ra nhiều máy chủ"]
-        PR4["④ 1 máy chủ chết →\n   toàn bộ hệ thống sập"]
+        PR1["① Throughput bị giới hạn bởi<br/>   tốc độ ghi 1 file trên 1 disk"]
+        PR2["② Tất cả consumer phải<br/>   tranh nhau đọc 1 file<br/>   → lock contention"]
+        PR3["③ File to mãi → không thể<br/>   phân tán ra nhiều máy chủ"]
+        PR4["④ 1 máy chủ chết →<br/>   toàn bộ hệ thống sập"]
     end
 
     style NAIVE fill:#b71c1c,color:#fff
@@ -43,16 +43,16 @@ graph LR
 graph TB
     subgraph TOPIC["Topic: orders"]
         subgraph B1["Broker 1"]
-            P0["Partition 0\n📄 orders-0.log\n[Leader]"]
+            P0["Partition 0<br/>📄 orders-0.log<br/>[Leader]"]
         end
         subgraph B2["Broker 2"]
-            P1["Partition 1\n📄 orders-1.log\n[Leader]"]
-            P0R["Partition 0\n📄 orders-0.log\n[Replica]"]
+            P1["Partition 1<br/>📄 orders-1.log<br/>[Leader]"]
+            P0R["Partition 0<br/>📄 orders-0.log<br/>[Replica]"]
         end
         subgraph B3["Broker 3"]
-            P2["Partition 2\n📄 orders-2.log\n[Leader]"]
-            P1R["Partition 1\n📄 orders-1.log\n[Replica]"]
-            P2R["Partition 2 không tự\nreplicate chính mình"]
+            P2["Partition 2<br/>📄 orders-2.log<br/>[Leader]"]
+            P1R["Partition 1<br/>📄 orders-1.log<br/>[Replica]"]
+            P2R["Partition 2 không tự<br/>replicate chính mình"]
         end
     end
 
@@ -69,22 +69,22 @@ Một partition trên disk không phải là 1 file duy nhất — nó là một
 flowchart LR
     subgraph PARTITION["Partition 0 — Thư mục: /data/kafka/orders-0/"]
         subgraph SEG1["Segment 1 (đã đóng — immutable)"]
-            L1["00000000000000000000.log\n(messages offset 0→999)"]
-            I1["00000000000000000000.index\n(sparse offset index)"]
-            T1["00000000000000000000.timeindex\n(timestamp index)"]
+            L1["00000000000000000000.log<br/>(messages offset 0→999)"]
+            I1["00000000000000000000.index<br/>(sparse offset index)"]
+            T1["00000000000000000000.timeindex<br/>(timestamp index)"]
         end
 
         subgraph SEG2["Segment 2 (đã đóng)"]
-            L2["00000000000000001000.log\n(messages offset 1000→1999)"]
+            L2["00000000000000001000.log<br/>(messages offset 1000→1999)"]
             I2["00000000000000001000.index"]
             T2["00000000000000001000.timeindex"]
         end
 
         subgraph SEG3["Active Segment (đang ghi)"]
-            L3["00000000000000002000.log\n(messages từ offset 2000→...)"]
+            L3["00000000000000002000.log<br/>(messages từ offset 2000→...)"]
             I3["00000000000000002000.index"]
             T3["00000000000000002000.timeindex"]
-            WRITE["✍️ Mọi message mới ghi vào đây\n(append-only, không sửa)"]
+            WRITE["✍️ Mọi message mới ghi vào đây<br/>(append-only, không sửa)"]
         end
     end
 
@@ -119,9 +119,9 @@ flowchart TB
     end
 
     subgraph LOOKUP["Tìm offset=275"]
-        S1["1. Binary search index\n   → offset=200, pos=8192"]
+        S1["1. Binary search index<br/>   → offset=200, pos=8192"]
         S2["2. Seek to pos 8192 trong .log"]
-        S3["3. Scan tuần tự từ offset 200\n   đến khi tìm offset 275"]
+        S3["3. Scan tuần tự từ offset 200<br/>   đến khi tìm offset 275"]
         S4["✅ Tìm thấy trong O(log n) + scan nhỏ"]
         S1 --> S2 --> S3 --> S4
     end
@@ -143,14 +143,14 @@ graph LR
         RW1["Ghi offset 100"] --> RW2["Seek đầu đọc → vị trí 100"]
         RW2 --> RW3["Ghi offset 500"] --> RW4["Seek → vị trí 500"]
         RW4 --> RW5["Ghi offset 200"] --> RW6["Seek → vị trí 200"]
-        PERF1["⚠️ HDD: ~100 seeks/s\nSSD: vẫn tốn IOPS"]
+        PERF1["⚠️ HDD: ~100 seeks/s<br/>SSD: vẫn tốn IOPS"]
     end
 
     subgraph APPEND["Append-Only — Kafka"]
         AW1["Ghi message 1 → cuối file"]
         AW1 --> AW2["Ghi message 2 → cuối file"]
         AW2 --> AW3["Ghi message 3 → cuối file"]
-        PERF2["✅ HDD: ~MB/s throughput\nSSD: gần như tốc độ tối đa\nOS page cache tối ưu tự động"]
+        PERF2["✅ HDD: ~MB/s throughput<br/>SSD: gần như tốc độ tối đa<br/>OS page cache tối ưu tự động"]
     end
 
     style RANDOM fill:#b71c1c,color:#fff
@@ -165,16 +165,16 @@ graph LR
 graph TB
     subgraph SOLUTION["Cách Partition Giải Quyết"]
         PR1["① Throughput giới hạn"]
-        SOL1["→ Mỗi partition = 1 file độc lập\n   N partitions = N file ghi song song\n   Throughput scale tuyến tính"]
+        SOL1["→ Mỗi partition = 1 file độc lập<br/>   N partitions = N file ghi song song<br/>   Throughput scale tuyến tính"]
         
         PR2["② Consumer tranh nhau"]
-        SOL2["→ Mỗi consumer đọc partition riêng\n   Không có lock, không tranh chấp\n   Read hoàn toàn độc lập"]
+        SOL2["→ Mỗi consumer đọc partition riêng<br/>   Không có lock, không tranh chấp<br/>   Read hoàn toàn độc lập"]
         
         PR3["③ Không phân tán được"]
-        SOL3["→ Các partition nằm trên\n   các brokers khác nhau\n   Scale horizontal thực sự"]
+        SOL3["→ Các partition nằm trên<br/>   các brokers khác nhau<br/>   Scale horizontal thực sự"]
         
         PR4["④ Single point of failure"]
-        SOL4["→ Mỗi partition có replicas\n   Leader chết → replica lên thay\n   Không mất data, không downtime"]
+        SOL4["→ Mỗi partition có replicas<br/>   Leader chết → replica lên thay<br/>   Không mất data, không downtime"]
 
         PR1 --> SOL1
         PR2 --> SOL2
@@ -196,21 +196,21 @@ graph TB
 ```mermaid
 flowchart LR
     subgraph PARTITION["Partition 0 — immutable log"]
-        M0["offset=0\n{orderId: 'A001'\namount: 500}"]
-        M1["offset=1\n{orderId: 'B002'\namount: 1200}"]
-        M2["offset=2\n{orderId: 'C003'\namount: 300}"]
-        M3["offset=3\n{orderId: 'D004'\namount: 800}"]
+        M0["offset=0<br/>{orderId: 'A001'<br/>amount: 500}"]
+        M1["offset=1<br/>{orderId: 'B002'<br/>amount: 1200}"]
+        M2["offset=2<br/>{orderId: 'C003'<br/>amount: 300}"]
+        M3["offset=3<br/>{orderId: 'D004'<br/>amount: 800}"]
         MDOT["..."]
-        M999["offset=999\n{orderId: 'Z999'\namount: 99}"]
+        M999["offset=999<br/>{orderId: 'Z999'<br/>amount: 99}"]
 
         M0 --> M1 --> M2 --> M3 --> MDOT --> M999
     end
 
     subgraph RULES["Tính chất của Offset"]
-        R1["① Monotonically increasing\n   offset N+1 > offset N — luôn luôn"]
-        R2["② Immutable per partition\n   offset 5 luôn là message đó, mãi mãi"]
-        R3["③ Scoped to partition\n   offset 5 của P0 ≠ offset 5 của P1"]
-        R4["④ Không tái sử dụng\n   message xoá → offset đó biến mất\n   không được cấp lại"]
+        R1["① Monotonically increasing<br/>   offset N+1 > offset N — luôn luôn"]
+        R2["② Immutable per partition<br/>   offset 5 luôn là message đó, mãi mãi"]
+        R3["③ Scoped to partition<br/>   offset 5 của P0 ≠ offset 5 của P1"]
+        R4["④ Không tái sử dụng<br/>   message xoá → offset đó biến mất<br/>   không được cấp lại"]
     end
 
     style PARTITION fill:#1565C0,color:#fff
@@ -236,12 +236,12 @@ sequenceDiagram
     Q->>C: Deliver B
     Note over C: 💥 Consumer crash!
 
-    Note over Q: B đã deliver nhưng chưa ACK\nQ không biết B đã xử lý chưa
+    Note over Q: B đã deliver nhưng chưa ACK<br/>Q không biết B đã xử lý chưa
 
     C->>Q: Reconnect — "Tôi cần B lại"
     Q-->>C: ❌ B đã bị xoá rồi!
 
-    Note over Q,C: Hoặc: Q re-deliver B\n→ B được xử lý 2 lần (duplicate)
+    Note over Q,C: Hoặc: Q re-deliver B<br/>→ B được xử lý 2 lần (duplicate)
 ```
 
 **Vấn đề:** Queue truyền thống phải chọn một trong hai: hoặc **mất message** (đã xoá trước khi ACK), hoặc **duplicate** (re-deliver không biết đã xử lý chưa). Không có cách trung lập.
@@ -264,14 +264,14 @@ sequenceDiagram
     C->>K: poll() → nhận offset 0,1,2
     C->>C: Process A (offset=0) ✅
     C->>C: Process B (offset=1) ✅
-    C->>OT: commit(offset=2) — "Tôi đã xử lý xong đến offset 1,\n                               lần sau đọc từ offset 2"
+    C->>OT: commit(offset=2) — "Tôi đã xử lý xong đến offset 1,<br/>                               lần sau đọc từ offset 2"
 
     Note over C: 💥 Consumer crash sau khi commit offset=2!
 
     C->>OT: Restart → fetch committed offset
     OT-->>C: offset=2
     C->>K: poll(from=2) → nhận offset=2 (Message C)
-    Note over C,K: ✅ Không mất, không duplicate!\n   Chính xác tiếp tục từ nơi dừng lại
+    Note over C,K: ✅ Không mất, không duplicate!<br/>   Chính xác tiếp tục từ nơi dừng lại
 ```
 
 **Sự khác biệt then chốt:**
@@ -284,20 +284,20 @@ Offset không được lưu trong memory của Kafka broker — nó được lư
 
 ```mermaid
 graph TB
-    subgraph OT["Internal Topic: __consumer_offsets\n(50 partitions, RF=3)"]
+    subgraph OT["Internal Topic: __consumer_offsets<br/>(50 partitions, RF=3)"]
         subgraph RECORD["Mỗi record là key-value:"]
-            KEY["Key: {group_id, topic, partition}\nVí dụ: {order-processor, orders, 0}"]
-            VAL["Value: {offset, metadata, timestamp}\nVí dụ: {offset=1523, committed_at=...}"]
+            KEY["Key: {group_id, topic, partition}<br/>Ví dụ: {order-processor, orders, 0}"]
+            VAL["Value: {offset, metadata, timestamp}<br/>Ví dụ: {offset=1523, committed_at=...}"]
         end
-        subgraph COMPACT["cleanup.policy=compact\n→ Giữ record mới nhất per key\n→ History không cần thiết"]
+        subgraph COMPACT["cleanup.policy=compact<br/>→ Giữ record mới nhất per key<br/>→ History không cần thiết"]
         end
     end
 
     subgraph WHY["Tại sao dùng Kafka topic để lưu offset?"]
-        W1["① Durability: offset được replicate như mọi Kafka message\n   Broker chết → offset không mất"]
-        W2["② Consistency: commit offset = ghi Kafka message\n   Atomic, có acks guarantee"]
-        W3["③ Scalability: 50 partitions → phân tán load\n   Hàng nghìn consumer groups đồng thời"]
-        W4["④ Self-contained: Kafka không cần external storage\n   (trước đây dùng ZooKeeper → phức tạp hơn)"]
+        W1["① Durability: offset được replicate như mọi Kafka message<br/>   Broker chết → offset không mất"]
+        W2["② Consistency: commit offset = ghi Kafka message<br/>   Atomic, có acks guarantee"]
+        W3["③ Scalability: 50 partitions → phân tán load<br/>   Hàng nghìn consumer groups đồng thời"]
+        W4["④ Self-contained: Kafka không cần external storage<br/>   (trước đây dùng ZooKeeper → phức tạp hơn)"]
     end
 
     style OT fill:#1565C0,color:#fff
@@ -309,15 +309,15 @@ graph TB
 ```mermaid
 flowchart LR
     subgraph TIMELINE["Timeline của một Partition"]
-        M0["offset=0"] --> M1["offset=1"] --> M2["offset=2"] --> M3["offset=3"] --> M4["offset=4"] --> M5["offset=5\n(chưa có)"]
+        M0["offset=0"] --> M1["offset=1"] --> M2["offset=2"] --> M3["offset=3"] --> M4["offset=4"] --> M5["offset=5<br/>(chưa có)"]
 
         subgraph TYPES["Ba mốc offset"]
-            LOG_END["Log End Offset (LEO) = 5\nOffset TIẾP THEO sẽ được ghi\n= tổng số messages + 1"]
-            HIGH_WATER["High Watermark (HW) = 4\nOffset cao nhất đã được\nTẤT CẢ ISR replicate\nConsumer chỉ đọc được đến HW"]
-            COMMITTED["Committed Offset = 2\nOffset consumer đã commit\n= đã xử lý xong đến offset 1"]
+            LOG_END["Log End Offset (LEO) = 5<br/>Offset TIẾP THEO sẽ được ghi<br/>= tổng số messages + 1"]
+            HIGH_WATER["High Watermark (HW) = 4<br/>Offset cao nhất đã được<br/>TẤT CẢ ISR replicate<br/>Consumer chỉ đọc được đến HW"]
+            COMMITTED["Committed Offset = 2<br/>Offset consumer đã commit<br/>= đã xử lý xong đến offset 1"]
         end
 
-        LAG["Consumer Lag = HW - Committed = 4 - 2 = 2\n(consumer còn 2 messages chưa xử lý)"]
+        LAG["Consumer Lag = HW - Committed = 4 - 2 = 2<br/>(consumer còn 2 messages chưa xử lý)"]
     end
 
     style LOG_END fill:#b71c1c,color:#fff
@@ -340,7 +340,7 @@ Nếu consumer đọc message chưa replicate xong (giữa HW và LEO), rồi le
 sequenceDiagram
     participant APP as Application Code
     participant PROD as Producer (Spring)
-    participant PART as Partition Leader\n(Broker 2)
+    participant PART as Partition Leader<br/>(Broker 2)
     participant REP1 as Replica (Broker 1)
     participant REP2 as Replica (Broker 3)
     participant CONS as Consumer
@@ -349,15 +349,15 @@ sequenceDiagram
     APP->>PROD: kafkaTemplate.send("orders", "key-123", event)
     PROD->>PROD: Serialize → batch → compress
 
-    PROD->>PART: Batch gửi đến leader của partition\n(key "key-123" → murmur2 hash → partition X)
-    PART->>PART: Ghi vào active segment\nGán offset=1523
+    PROD->>PART: Batch gửi đến leader của partition<br/>(key "key-123" → murmur2 hash → partition X)
+    PART->>PART: Ghi vào active segment<br/>Gán offset=1523
 
     PART->>REP1: Replicate (async)
     PART->>REP2: Replicate (async)
     REP1-->>PART: ACK
     REP2-->>PART: ACK
 
-    Note over PART: ISR đã replicate\nHigh Watermark tăng lên 1524
+    Note over PART: ISR đã replicate<br/>High Watermark tăng lên 1524
     PART-->>PROD: ACK (offset=1523, partition=X)
 
     Note over CONS: Consumer poll()
@@ -365,23 +365,23 @@ sequenceDiagram
     PART-->>CONS: Messages offset 1523, 1524, 1525...
 
     CONS->>CONS: Process messages
-    CONS->>OT: commitSync(group=order-processor,\n              topic=orders, partition=X,\n              offset=1526)
+    CONS->>OT: commitSync(group=order-processor,<br/>              topic=orders, partition=X,<br/>              offset=1526)
 ```
 
 ### 3.2 — Key Quyết Định Partition Nào: Cơ Chế Routing
 
 ```mermaid
 flowchart TB
-    MSG["Message\nkey = 'contract-VPB-2025-001'"]
+    MSG["Message<br/>key = 'contract-VPB-2025-001'"]
 
-    MSG --> HASH["murmur2('contract-VPB-2025-001')\n= 0x7A3F2B1C (ví dụ)"]
-    HASH --> MOD["0x7A3F2B1C % 12 partitions\n= partition 4"]
-    MOD --> P4["Partition 4\n(luôn luôn — deterministic)"]
+    MSG --> HASH["murmur2('contract-VPB-2025-001')<br/>= 0x7A3F2B1C (ví dụ)"]
+    HASH --> MOD["0x7A3F2B1C % 12 partitions<br/>= partition 4"]
+    MOD --> P4["Partition 4<br/>(luôn luôn — deterministic)"]
 
     subgraph GUARANTEE["Đảm bảo từ thiết kế này"]
-        G1["✅ Mọi message cùng key → cùng partition\n   → cùng consumer trong group\n   → ordering đảm bảo per key"]
-        G2["✅ Deterministic — không cần lookup\n   Producer tính được ngay, không hỏi broker"]
-        G3["⚠️ Nếu thêm partition → key mapping thay đổi\n   → Messages cùng key có thể vào partition khác\n   → Ordering bị phá với messages cũ vs mới"]
+        G1["✅ Mọi message cùng key → cùng partition<br/>   → cùng consumer trong group<br/>   → ordering đảm bảo per key"]
+        G2["✅ Deterministic — không cần lookup<br/>   Producer tính được ngay, không hỏi broker"]
+        G3["⚠️ Nếu thêm partition → key mapping thay đổi<br/>   → Messages cùng key có thể vào partition khác<br/>   → Ordering bị phá với messages cũ vs mới"]
     end
 
     style P4 fill:#1b5e20,color:#fff
@@ -399,7 +399,7 @@ graph TB
         AM2["commit(110) — 'đã nhận'"]
         AM3["process() — xử lý"]
         AM4["💥 Crash trong process()"]
-        AM5["Restart → đọc từ 110\nOffset 100-109 KHÔNG được xử lý lại\n❌ DATA LOSS"]
+        AM5["Restart → đọc từ 110<br/>Offset 100-109 KHÔNG được xử lý lại<br/>❌ DATA LOSS"]
         AM1 --> AM2 --> AM3 --> AM4 --> AM5
     end
 
@@ -408,15 +408,15 @@ graph TB
         AL2["process() — xử lý"]
         AL3["commit(110) — 'đã xử lý xong'"]
         AL4["💥 Crash SAU process() TRƯỚC commit()"]
-        AL5["Restart → đọc lại từ 100\nOffset 100-109 xử lý lần 2\n⚠️ DUPLICATE — cần idempotency"]
+        AL5["Restart → đọc lại từ 100<br/>Offset 100-109 xử lý lần 2<br/>⚠️ DUPLICATE — cần idempotency"]
         AL1 --> AL2 --> AL3
         AL2 --> AL4 --> AL5
     end
 
     subgraph EXACTLY["Exactly-once — Kafka Transactions"]
-        EX1["Kafka Transaction:\nprocess() + commitOffset()\ntrong 1 atomic operation"]
-        EX2["Hoặc: Idempotent consumer\n(check DB trước khi xử lý)"]
-        EX3["✅ Không mất, không duplicate\n   Chi phí: latency cao hơn"]
+        EX1["Kafka Transaction:<br/>process() + commitOffset()<br/>trong 1 atomic operation"]
+        EX2["Hoặc: Idempotent consumer<br/>(check DB trước khi xử lý)"]
+        EX3["✅ Không mất, không duplicate<br/>   Chi phí: latency cao hơn"]
         EX1 --> EX3
         EX2 --> EX3
     end
@@ -437,11 +437,11 @@ graph TB
 ```mermaid
 flowchart LR
     subgraph TRADITIONAL["Traditional — 4 lần copy data"]
-        DISK1["Disk"] -->|"1. read()"| KC1["Kernel Buffer\n(Page Cache)"]
-        KC1 -->|"2. copy"| UC1["User Space Buffer\n(Application RAM)"]
+        DISK1["Disk"] -->|"1. read()"| KC1["Kernel Buffer<br/>(Page Cache)"]
+        KC1 -->|"2. copy"| UC1["User Space Buffer<br/>(Application RAM)"]
         UC1 -->|"3. write()"| KC2["Kernel Socket Buffer"]
         KC2 -->|"4. send"| NIC1["Network Card"]
-        CPU1["⚠️ 2 lần context switch\n2 lần copy trong kernel"]
+        CPU1["⚠️ 2 lần context switch<br/>2 lần copy trong kernel"]
     end
 
     style TRADITIONAL fill:#b71c1c,color:#fff
@@ -450,10 +450,10 @@ flowchart LR
 ```mermaid
 flowchart LR
     subgraph ZEROCOPY["Zero-Copy (sendfile syscall) — Kafka dùng"]
-        DISK2["Disk"] -->|"1. read vào Page Cache"| KC3["Kernel Buffer\n(Page Cache)"]
+        DISK2["Disk"] -->|"1. read vào Page Cache"| KC3["Kernel Buffer<br/>(Page Cache)"]
         KC3 -->|"2. sendfile() — kernel copy thẳng"| KC4["Kernel Socket Buffer"]
         KC4 -->|"3. DMA send"| NIC2["Network Card"]
-        CPU2["✅ 0 copy vào user space\n1 lần context switch\nCPU gần như không làm gì"]
+        CPU2["✅ 0 copy vào user space<br/>1 lần context switch<br/>CPU gần như không làm gì"]
     end
 
     style ZEROCOPY fill:#1b5e20,color:#fff
@@ -466,19 +466,19 @@ flowchart LR
 ```mermaid
 graph TB
     subgraph PAGECACHE["Linux Page Cache — Kafka tận dụng triệt để"]
-        WRITE["Producer ghi message\n→ ghi vào Page Cache (RAM)\n→ OS flush xuống disk async"]
-        READ_HOT["Consumer đọc message mới\n→ message vẫn trong Page Cache\n→ Phục vụ từ RAM, không đụng disk"]
-        READ_COLD["Consumer đọc message cũ\n→ không còn trong cache\n→ OS load từ disk vào cache\n→ Phục vụ từ RAM"]
+        WRITE["Producer ghi message<br/>→ ghi vào Page Cache (RAM)<br/>→ OS flush xuống disk async"]
+        READ_HOT["Consumer đọc message mới<br/>→ message vẫn trong Page Cache<br/>→ Phục vụ từ RAM, không đụng disk"]
+        READ_COLD["Consumer đọc message cũ<br/>→ không còn trong cache<br/>→ OS load từ disk vào cache<br/>→ Phục vụ từ RAM"]
         
-        WRITE --> PAGE_CACHE["Page Cache\n(OS-managed RAM)"]
+        WRITE --> PAGE_CACHE["Page Cache<br/>(OS-managed RAM)"]
         PAGE_CACHE --> READ_HOT
         PAGE_CACHE --> READ_COLD
     end
 
     subgraph IMPLICATION["Hệ quả thực tế"]
-        I1["Kafka broker không cần quản lý cache riêng\nOS làm tốt hơn với LRU eviction"]
-        I2["Consumer realtime (lag thấp) → gần như\n100% serve từ RAM, throughput = RAM bandwidth"]
-        I3["Restart broker → warm up cache tự động\nkhông cần warm-up code phức tạp"]
+        I1["Kafka broker không cần quản lý cache riêng<br/>OS làm tốt hơn với LRU eviction"]
+        I2["Consumer realtime (lag thấp) → gần như<br/>100% serve từ RAM, throughput = RAM bandwidth"]
+        I3["Restart broker → warm up cache tự động<br/>không cần warm-up code phức tạp"]
     end
 
     style PAGECACHE fill:#1565C0,color:#fff
@@ -497,29 +497,29 @@ graph TB
 graph TB
     subgraph CLUSTER["Kafka Cluster — 3 Brokers"]
         subgraph BR1["Broker 1"]
-            P0L["orders-P0 [Leader]\noffset: 0→15,230"]
-            P1F["orders-P1 [Follower]\n(replica)"]
+            P0L["orders-P0 [Leader]<br/>offset: 0→15,230"]
+            P1F["orders-P1 [Follower]<br/>(replica)"]
         end
         subgraph BR2["Broker 2"]
-            P1L["orders-P1 [Leader]\noffset: 0→14,891"]
-            P2F["orders-P2 [Follower]\n(replica)"]
-            P0F["orders-P0 [Follower]\n(replica)"]
+            P1L["orders-P1 [Leader]<br/>offset: 0→14,891"]
+            P2F["orders-P2 [Follower]<br/>(replica)"]
+            P0F["orders-P0 [Follower]<br/>(replica)"]
         end
         subgraph BR3["Broker 3"]
-            P2L["orders-P2 [Leader]\noffset: 0→15,102"]
-            P1F2["orders-P1 [Follower]\n(replica)"]
+            P2L["orders-P2 [Leader]<br/>offset: 0→15,102"]
+            P1F2["orders-P1 [Follower]<br/>(replica)"]
         end
     end
 
     subgraph PRODUCERS["Producers"]
-        PROD1["Service A\nkey=contract-001\n→ P0 (deterministic)"]
-        PROD2["Service B\nkey=contract-002\n→ P1 (deterministic)"]
+        PROD1["Service A<br/>key=contract-001<br/>→ P0 (deterministic)"]
+        PROD2["Service B<br/>key=contract-002<br/>→ P1 (deterministic)"]
     end
 
     subgraph CONSUMERS["Consumer Group: pdms-processor"]
-        C1["Pod 1\nĐọc P0\nCommitted offset=15,200\nLag=30"]
-        C2["Pod 2\nĐọc P1\nCommitted offset=14,850\nLag=41"]
-        C3["Pod 3\nĐọc P2\nCommitted offset=15,090\nLag=12"]
+        C1["Pod 1<br/>Đọc P0<br/>Committed offset=15,200<br/>Lag=30"]
+        C2["Pod 2<br/>Đọc P1<br/>Committed offset=14,850<br/>Lag=41"]
+        C3["Pod 3<br/>Đọc P2<br/>Committed offset=15,090<br/>Lag=12"]
     end
 
     PROD1 -->|"write"| P0L

@@ -26,10 +26,10 @@ Solid        → SolidStart
 ```mermaid
 flowchart LR
     subgraph "Per-route rendering modes"
-        SSR["SSR\nServer-Side Rendering\n→ HTML từ server mỗi request"]
-        SSG["SSG\nStatic Generation\n→ HTML tại build time"]
-        SPA["SPA\nClient-Side Only\n→ Empty shell + JS hydration"]
-        HYBRID["Hybrid\nMix per-route"]
+        SSR["SSR<br/>Server-Side Rendering<br/>→ HTML từ server mỗi request"]
+        SSG["SSG<br/>Static Generation<br/>→ HTML tại build time"]
+        SPA["SPA<br/>Client-Side Only<br/>→ Empty shell + JS hydration"]
+        HYBRID["Hybrid<br/>Mix per-route"]
     end
 
     subgraph "Banking Use Cases"
@@ -320,12 +320,12 @@ Islands = phần lớn trang là static HTML (no JS), chỉ những "đảo" int
 ```mermaid
 graph TD
     subgraph "Report Page HTML"
-        HEADER["Header\n(static HTML, no JS)"]
-        REPORT_TEXT["Report Text\n(static HTML, no JS)"]
-        CHART["📊 Chart Island\n(hydrated, interactive JS)"]
-        TABLE_STATIC["Summary Table\n(static HTML, no JS)"]
-        FILTER["🔍 Filter Island\n(hydrated, interactive JS)"]
-        FOOTER["Footer\n(static HTML, no JS)"]
+        HEADER["Header<br/>(static HTML, no JS)"]
+        REPORT_TEXT["Report Text<br/>(static HTML, no JS)"]
+        CHART["📊 Chart Island<br/>(hydrated, interactive JS)"]
+        TABLE_STATIC["Summary Table<br/>(static HTML, no JS)"]
+        FILTER["🔍 Filter Island<br/>(hydrated, interactive JS)"]
+        FOOTER["Footer<br/>(static HTML, no JS)"]
     end
 
     style CHART fill:#E1F5EE,stroke:#0F6E56

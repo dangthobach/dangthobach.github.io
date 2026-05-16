@@ -28,7 +28,7 @@ graph TD
 
     subgraph "Micronaut Compile-time DI"
         G[Build Time] --> H[Annotation Processor]
-        H --> I[Generate Injection code\nas bytecode]
+        H --> I[Generate Injection code<br/>as bytecode]
         I --> J[.class files với wiring code]
 
         K[App Start] --> L[Execute generated code]
