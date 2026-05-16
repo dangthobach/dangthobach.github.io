@@ -122,7 +122,7 @@ pre:hover > .expand-button {
 </blockquote>
 <hr/>
 <h2 id="-spring-data-jpa-vs-panache">🆚 Spring Data JPA vs Panache<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-spring-data-jpa-vs-panache" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
-<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;graph LR\n    subgraph \&quot;Spring Data JPA\&quot;\n        A[User Entity] --- B[UserRepository interface]\n        B --> C[userRepo.findById]\n        B --> D[userRepo.save]\n    end\n\n    subgraph \&quot;Panache Active Record\&quot;\n        E[\&quot;User Entity\\nextends PanacheEntity\\n+ static query methods\&quot;]\n        E --> F[\&quot;User.findById(id)\&quot;]\n        E --> F2[\&quot;User.persist(user)\&quot;]\n        E --> G[\&quot;User.findByEmail(email)\&quot;]\n    end&quot;">graph LR
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;graph LR\n    subgraph \&quot;Spring Data JPA\&quot;\n        A[User Entity] --- B[UserRepository interface]\n        B --> C[userRepo.findById]\n        B --> D[userRepo.save]\n    end\n\n    subgraph \&quot;Panache Active Record\&quot;\n        E[\&quot;User Entity&lt;br/>extends PanacheEntity&lt;br/>+ static query methods\&quot;]\n        E --> F[\&quot;User.findById(id)\&quot;]\n        E --> F2[\&quot;User.persist(user)\&quot;]\n        E --> G[\&quot;User.findByEmail(email)\&quot;]\n    end&quot;">graph LR
     subgraph &quot;Spring Data JPA&quot;
         A[User Entity] --- B[UserRepository interface]
         B --> C[userRepo.findById]
@@ -130,7 +130,7 @@ pre:hover > .expand-button {
     end
 
     subgraph &quot;Panache Active Record&quot;
-        E[&quot;User Entity\nextends PanacheEntity\n+ static query methods&quot;]
+        E[&quot;User Entity&lt;br/>extends PanacheEntity&lt;br/>+ static query methods&quot;]
         E --> F[&quot;User.findById(id)&quot;]
         E --> F2[&quot;User.persist(user)&quot;]
         E --> G[&quot;User.findByEmail(email)&quot;]

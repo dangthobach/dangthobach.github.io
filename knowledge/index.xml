@@ -6,65 +6,65 @@
       <description>Last 10 notes on Dang Tho Bach&#039;s Knowledge Base</description>
       <generator>Quartz -- quartz.jzhao.xyz</generator>
       <item>
-    <title>25-vDOM-vs-SolidJS-Reactivity</title>
-    <link>https://dangthobach.github.io/knowledge/React-Latest-Series/25-vDOM-vs-SolidJS-Reactivity</link>
-    <guid>https://dangthobach.github.io/knowledge/React-Latest-Series/25-vDOM-vs-SolidJS-Reactivity</guid>
-    <description><![CDATA[ React Virtual DOM vs SolidJS Fine-grained Reactivity tags: react solidjs virtual-dom performance reconciler fiber Bài so sánh chi tiết: SolidJS-vs-React-Reactivity-Model Tóm tắt nhanh React dùng Virtual DOM — mỗi setState trigger re-run component function, build new vDOM tree, diff (reconcile), rồi ... ]]></description>
-    <pubDate>Fri, 15 May 2026 01:28:37 GMT</pubDate>
+    <title>02-Components-The-Building-Blocks</title>
+    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/02-Components-The-Building-Blocks</link>
+    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/02-Components-The-Building-Blocks</guid>
+    <description><![CDATA[ 02. Component: Viên gạch xây nhà 🧱 Bài học nền tảng — Mọi thứ trong Angular đều là Component. ]]></description>
+    <pubDate>Sat, 16 May 2026 17:39:23 GMT</pubDate>
   </item><item>
-    <title>SolidJS-15-Reactivity-vs-React-vDOM</title>
-    <link>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-15-Reactivity-vs-React-vDOM</link>
-    <guid>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-15-Reactivity-vs-React-vDOM</guid>
-    <description><![CDATA[ SolidJS Reactivity vs React Virtual DOM — Performance Deep Dive tags: solidjs react reactivity performance virtual-dom Bài so sánh chi tiết: SolidJS-vs-React-Reactivity-Model Tóm tắt nhanh SolidJS không re-run component function khi state thay đổi. ]]></description>
-    <pubDate>Fri, 15 May 2026 01:28:37 GMT</pubDate>
+    <title>03-Data-Binding-and-Event-Handling</title>
+    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/03-Data-Binding-and-Event-Handling</link>
+    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/03-Data-Binding-and-Event-Handling</guid>
+    <description><![CDATA[ 03. ]]></description>
+    <pubDate>Sat, 16 May 2026 17:39:23 GMT</pubDate>
   </item><item>
-    <title>React-Compiler-Internals-Memoization</title>
-    <link>https://dangthobach.github.io/knowledge/concepts/React-Compiler-Internals-Memoization</link>
-    <guid>https://dangthobach.github.io/knowledge/concepts/React-Compiler-Internals-Memoization</guid>
-    <description><![CDATA[ React Compiler — Cơ chế thu hẹp gap với SolidJS tags: react react-compiler memoization performance compiler HIR SSA internals 1. ]]></description>
-    <pubDate>Fri, 15 May 2026 01:28:37 GMT</pubDate>
+    <title>07-RxJS-and-Observables-Foundation</title>
+    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/07-RxJS-and-Observables-Foundation</link>
+    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/07-RxJS-and-Observables-Foundation</guid>
+    <description><![CDATA[ 07. ]]></description>
+    <pubDate>Sat, 16 May 2026 17:39:23 GMT</pubDate>
   </item><item>
-    <title>SolidJS-vs-React-Reactivity-Model</title>
-    <link>https://dangthobach.github.io/knowledge/concepts/SolidJS-vs-React-Reactivity-Model</link>
-    <guid>https://dangthobach.github.io/knowledge/concepts/SolidJS-vs-React-Reactivity-Model</guid>
-    <description><![CDATA[ SolidJS vs React — Fine-grained Reactivity vs Virtual DOM tags: solidjs react reactivity virtual-dom signals performance internals 1. ]]></description>
-    <pubDate>Fri, 15 May 2026 01:28:37 GMT</pubDate>
+    <title>09-Reactive-Forms-Mastery</title>
+    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/09-Reactive-Forms-Mastery</link>
+    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/09-Reactive-Forms-Mastery</guid>
+    <description><![CDATA[ 09. ]]></description>
+    <pubDate>Sat, 16 May 2026 17:39:23 GMT</pubDate>
   </item><item>
-    <title>24-Two-Way-Binding-Internals</title>
-    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/24-Two-Way-Binding-Internals</link>
-    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/24-Two-Way-Binding-Internals</guid>
-    <description><![CDATA[ Angular Two-Way Data Binding — Cơ chế bên dưới tags: angular data-binding zone-js change-detection signals internals 1. ]]></description>
-    <pubDate>Thu, 14 May 2026 13:56:35 GMT</pubDate>
+    <title>12-HTTP-Client-and-Data-Fetching</title>
+    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/12-HTTP-Client-and-Data-Fetching</link>
+    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/12-HTTP-Client-and-Data-Fetching</guid>
+    <description><![CDATA[ 12. ]]></description>
+    <pubDate>Sat, 16 May 2026 17:39:23 GMT</pubDate>
   </item><item>
-    <title>22-Routing-Layout-SearchState</title>
-    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/22-Routing-Layout-SearchState</link>
-    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/22-Routing-Layout-SearchState</guid>
-    <description><![CDATA[ Angular Routing — Layout Cố Định &amp; Search State Preservation tags: angular routing layout search-state frontend 1. ]]></description>
-    <pubDate>Thu, 14 May 2026 06:35:10 GMT</pubDate>
+    <title>15-Change-Detection-and-OnPush</title>
+    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/15-Change-Detection-and-OnPush</link>
+    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/15-Change-Detection-and-OnPush</guid>
+    <description><![CDATA[ 15. ]]></description>
+    <pubDate>Sat, 16 May 2026 17:39:23 GMT</pubDate>
   </item><item>
-    <title>23-Multiple-Router-Outlets-Named-Auxiliary</title>
-    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/23-Multiple-Router-Outlets-Named-Auxiliary</link>
-    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/23-Multiple-Router-Outlets-Named-Auxiliary</guid>
-    <description><![CDATA[ Multiple Router Outlets trong SPA — Named &amp; Auxiliary Routes tags: angular react solidjs routing named-outlet auxiliary-route 1. ]]></description>
-    <pubDate>Thu, 14 May 2026 06:35:10 GMT</pubDate>
+    <title>16-NgRx-State-Management</title>
+    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/16-NgRx-State-Management</link>
+    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/16-NgRx-State-Management</guid>
+    <description><![CDATA[ 16. ]]></description>
+    <pubDate>Sat, 16 May 2026 17:39:23 GMT</pubDate>
   </item><item>
-    <title>23-Routing-Layout-SearchState</title>
-    <link>https://dangthobach.github.io/knowledge/React-Latest-Series/23-Routing-Layout-SearchState</link>
-    <guid>https://dangthobach.github.io/knowledge/React-Latest-Series/23-Routing-Layout-SearchState</guid>
-    <description><![CDATA[ React Routing — Layout Cố Định &amp; Search State Preservation tags: react react-router routing layout search-state frontend 1. ]]></description>
-    <pubDate>Thu, 14 May 2026 06:35:10 GMT</pubDate>
+    <title>17-HTTP-Interceptors-Auth-Patterns</title>
+    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/17-HTTP-Interceptors-Auth-Patterns</link>
+    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/17-HTTP-Interceptors-Auth-Patterns</guid>
+    <description><![CDATA[ 17. ]]></description>
+    <pubDate>Sat, 16 May 2026 17:39:23 GMT</pubDate>
   </item><item>
-    <title>24-Multiple-Router-Outlets-Pattern</title>
-    <link>https://dangthobach.github.io/knowledge/React-Latest-Series/24-Multiple-Router-Outlets-Pattern</link>
-    <guid>https://dangthobach.github.io/knowledge/React-Latest-Series/24-Multiple-Router-Outlets-Pattern</guid>
-    <description><![CDATA[ Multiple Router Outlets trong React — Parallel Rendering Pattern tags: react react-router routing parallel-routes named-outlet Bài này cover phần React của chủ đề Multiple Router Outlets. ]]></description>
-    <pubDate>Thu, 14 May 2026 06:35:10 GMT</pubDate>
+    <title>18-Route-Guards-and-Resolvers</title>
+    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/18-Route-Guards-and-Resolvers</link>
+    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/18-Route-Guards-and-Resolvers</guid>
+    <description><![CDATA[ 18. Route Guards &amp; Resolvers: Kiểm soát điều hướng 🛡️ Tại sao quan trọng? Guards là “bảo vệ” đứng trước cánh cửa mỗi route. ]]></description>
+    <pubDate>Sat, 16 May 2026 17:39:23 GMT</pubDate>
   </item><item>
-    <title>SolidJS-13-Routing-Layout-SearchState</title>
-    <link>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-13-Routing-Layout-SearchState</link>
-    <guid>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-13-Routing-Layout-SearchState</guid>
-    <description><![CDATA[ SolidJS Routing — Layout Cố Định &amp; Search State Preservation tags: solidjs solid-router routing layout search-state frontend 1. ]]></description>
-    <pubDate>Thu, 14 May 2026 06:35:10 GMT</pubDate>
+    <title>20-Lazy-Loading-and-Code-Splitting</title>
+    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/20-Lazy-Loading-and-Code-Splitting</link>
+    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/20-Lazy-Loading-and-Code-Splitting</guid>
+    <description><![CDATA[ 20. Lazy Loading &amp; Code Splitting: Tối ưu Bundle Size 🚀 Tại sao quan trọng với enterprise? Dự án banking có hàng chục màn hình. ]]></description>
+    <pubDate>Sat, 16 May 2026 17:39:23 GMT</pubDate>
   </item>
     </channel>
   </rss>
