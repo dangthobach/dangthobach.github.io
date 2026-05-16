@@ -62,6 +62,9 @@ WHERE uba.user_id = :userId
 | **3. Permission Token (JWT Claim)** | Eventual (token TTL) | Rất thấp (0 RTT) | Thấp | Permission set nhỏ, TTL chấp nhận được |
 | **4. Local AuthZ Cache** | Eventual (TTL) | Thấp (cache hit) | Trung bình | Read/write ratio cao, hot data |
 | **5. Shared Read Replica** | Strong (replication lag) | Thấp (local JOIN) | Trung bình | Đội nhỏ, migration từ monolith |
+| **6. GraphQL Federation** | Strong/Eventual | Thấp (Gateway aggregate) | Trung bình | UI-driven aggregation, nhiều subgraphs |
+| **7. CQRS Read Model** | Eventual | Thấp nhất (0 JOIN) | Rất cao | Extreme scale, query phức tạp/flat data |
+| **8. In-Memory Data Grid** | Strong (distributed) | Cực thấp (Near-cache) | Cao | High-frequency low-latency checks |
 
 ---
 
@@ -546,14 +549,117 @@ OPTIONS (schema_name 'public', table_name 'user_branch_access');
 
 ---
 
+## 🟣 Pattern 6: GraphQL Federation (UI-driven Aggregation)
+
+**Ý tưởng:** Đẩy việc JOIN lên tầng Gateway. Mỗi service là một "Subgraph". Gateway (Apollo/Buckle) sử dụng Entity Resolvers để tự động "khâu" dữ liệu từ nhiều service.
+
+```mermaid
+graph TD
+    UI[Frontend / Mobile] -- "Query { documents { id, title, branch { name } } }" --> GW[GraphQL Federation Gateway]
+    
+    subgraph Subgraphs
+        GW --> DS[Document Service<br/>Subgraph]
+        GW --> AS[AuthZ Service<br/>Subgraph]
+    end
+    
+    DS -- "Returns Documents<br/>(with branchId)" --> GW
+    GW -- "Queries Branches by IDs" --> AS
+    AS -- "Returns Branch Details" --> GW
+    
+    GW -- "Merges into single JSON" --> UI
+```
+
+### Khi nào dùng & giới hạn
+- ✅ **Ưu điểm**: Giảm logic JOIN ở Backend, UI chỉ gọi 1 endpoint, hỗ trợ "Lazy fetching" tốt.
+- ❌ **Giới hạn**: Vẫn tốn network call giữa Gateway và Subgraphs. Không giải quyết được bài toán Filter/Search phức tạp trên bảng JOIN (ví dụ: Tìm document thuộc các branch mà user có quyền).
+
+---
+
+## 🚀 Pattern 7: CQRS Pre-computed Read Model (Extreme Scale)
+
+**Ý tưởng:** Sử dụng Event Sourcing hoặc CDC để xây dựng một **Flat Table (Read Model)** đã được JOIN sẵn. Khi query, service chỉ cần SELECT từ bảng này, 0 JOIN, 0 Network call.
+
+```mermaid
+graph LR
+    subgraph Write Services
+        AS[AuthZ Service] -- "PermissionChanged" --> K[Kafka]
+        DS[Document Service] -- "DocumentCreated" --> K
+    end
+    
+    K --> VS[View / Read Model Service]
+    
+    VS -- "Pre-compute & Join" --> RS[(Read DB<br/>Flat Table)]
+    
+    Client -- "Fast Query (No Join)" --> VS
+    VS -- "SELECT * FROM user_doc_access" --> RS
+```
+
+### Implementation (Flat Table Schema)
+```sql
+-- Bảng này đã được tinh chỉnh cho tốc độ đọc
+CREATE TABLE read_model.user_document_permissions (
+    user_id     BIGINT,
+    document_id BIGINT,
+    branch_name VARCHAR(255), -- Denormalized
+    status      VARCHAR(50),
+    granted_at  TIMESTAMP,
+    PRIMARY KEY (user_id, document_id)
+);
+```
+
+### Khi nào dùng & giới hạn
+- ✅ **Ưu điểm**: Tốc độ nhanh nhất tuyệt đối. Phù hợp cho Full-text search (Elasticsearch) hoặc Dashboard phức tạp.
+- ❌ **Giới hạn**: Độ phức tạp cực cao trong việc xử lý "Eventual Consistency" và "Re-sync" dữ liệu khi logic JOIN thay đổi.
+
+---
+
+## 🧊 Pattern 8: In-Memory Data Grid (IMDG) - Hazelcast/Ignite
+
+**Ý tưởng:** Lưu trữ permission data trong RAM của một cluster phân tán. Tận dụng **Near Cache** để lưu bản copy ngay tại RAM của Consumer Service.
+
+```mermaid
+graph LR
+    subgraph IMDG Cluster
+        HZ[(Hazelcast / Ignite<br/>Distributed Map)]
+    end
+    
+    subgraph Consumer Service
+        DS[Document Service] -- "Fast Lookup" --> NC[Near Cache<br/>In-process RAM]
+        NC -- "Miss" --> HZ
+    end
+    
+    AS[AuthZ Service] -- "Put / Update" --> HZ
+```
+
+### Khi nào dùng & giới hạn
+- ✅ **Ưu điểm**: Độ trễ Microsecond. Rất mạnh cho bài toán High-frequency access.
+- ❌ **Giới hạn**: Tốn RAM, chi phí vận hành cluster IMDG lớn.
+
+---
+
 ## 🏆 Decision Framework — Chọn Pattern nào?
 
 ```
 Bắt đầu ở đây:
                     ↓
+Bài toán là Aggregation để hiển thị (UI)?
+    ├── Yes → Pattern 6 (GraphQL Federation)
+    │          Gateway tự resolve, UI đơn giản
+    └── No ↓
+
+Cần tốc độ query tối đa (Dashboard/Search 0ms)?
+    ├── Yes → Pattern 7 (CQRS Read Model)
+    │          Chấp nhận độ phức tạp để đổi lấy speed
+    └── No ↓
+
 Permission set mỗi user có nhỏ (< 200 IDs)?
     ├── Yes → Pattern 3 (Permission Token)
     │          Đơn giản nhất, zero dependency
+    └── No ↓
+
+Dữ liệu thay đổi liên tục, cần độ trễ cực thấp?
+    ├── Yes → Pattern 8 (In-Memory Data Grid)
+    │          Near-cache cho Microsecond latency
     └── No ↓
 
 AuthZ data thay đổi thường xuyên (> vài lần/ngày)?
