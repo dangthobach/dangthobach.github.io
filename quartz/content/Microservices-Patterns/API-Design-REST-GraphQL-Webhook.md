@@ -644,3 +644,239 @@ Caching:
 - [[Transactional-Outbox]] — Webhook reliability via outbox pattern
 - [[02-Communication]] — Microservice communication patterns overview
 - [[Kafka-Partition-and-Offset-Internals]] — Khi webhook không đủ, dùng Kafka
+
+---
+
+## 12. gRPC vs RPC cũ — Tại sao gRPC thắng?
+
+![[diagrams/rpc-evolution-timeline.svg]]
+
+### 12.1 Lịch sử vắn tắt — RPC không phải ý tưởng mới
+
+RPC (Remote Procedure Call) đã tồn tại từ thập niên 1980. Ý tưởng cốt lõi luôn giống nhau: **gọi function trên một máy khác như gọi local function**, che đi sự phức tạp của network. Vấn đề là mỗi thế hệ đều giải quyết được một số pain point nhưng tạo ra pain point mới.
+
+```
+Thế hệ 1 — CORBA / DCE RPC (1991)
+  Ý tưởng đúng: IDL (Interface Definition Language) → code gen
+  Thực thi sai:  Vendor lock-in, binary protocol riêng, cực kỳ phức tạp
+  Chết vì:       Không ai muốn implement spec 1000 trang
+
+Thế hệ 2 — XML-RPC / SOAP (1998–2007)
+  Giải quyết:    Firewall-friendly (HTTP), interoperable (XML)
+  Thực thi sai:  XML quá verbose → payload khổng lồ, WSDL hell
+  Chết vì:       REST đơn giản hơn, JSON nhẹ hơn
+
+Thế hệ 2.5 — Apache Thrift / Avro (2007–2010)
+  Giải quyết:    Binary serialization (compact, fast)
+  Thực thi sai:  Transport tự làm (TCP trực tiếp), không có streaming chuẩn
+  Vẫn sống:      Kafka dùng Avro, Thrift dùng trong Facebook
+
+Thế hệ 3 — gRPC (2015, Google open-source)
+  Kế thừa:       IDL từ CORBA, binary từ Thrift, code gen từ tất cả
+  Cải tiến:      HTTP/2 (không tự làm transport), Protobuf, 4 streaming modes
+```
+
+**Insight quan trọng:** gRPC không phải ý tưởng mới — nó là **tập hợp đúng các ý tưởng cũ**, kết hợp vào thời điểm HTTP/2 đã chín muồi (2015).
+
+---
+
+### 12.2 So sánh từng lớp kiến trúc
+
+![[diagrams/grpc-vs-oldrpc-internals.svg]]
+
+#### Lớp 1: Transport — HTTP/2 vs HTTP/1.1
+
+Đây là cải tiến **cốt lõi nhất** phân biệt gRPC với các RPC framework trước.
+
+```
+HTTP/1.1 (SOAP, REST):              HTTP/2 (gRPC):
+
+Client  Server                      Client          Server
+  │──req1──►│                         │──stream 1──►│
+  │◄──res1──│  (phải đợi res1)         │──stream 2──►│  (song song)
+  │──req2──►│  trước khi gửi req2      │──stream 3──►│
+  │◄──res2──│                         │◄──res 1─────│
+                                      │◄──res 2─────│  (out-of-order OK)
+  → Head-of-line blocking             │◄──res 3─────│
+
+  Mỗi request mở 1 TCP connection     Multiplexing: N streams / 1 connection
+  (dù có connection pool vẫn bị       No head-of-line blocking
+  serialized trong 1 connection)       Persistent connection reuse
+```
+
+**HPACK Header Compression:**
+
+```
+HTTP/1.1 header (text, mỗi request):    HTTP/2 (binary, HPACK compressed):
+  Content-Type: application/json    →   [table index 31]        = 1 byte
+  Authorization: Bearer eyJhbGci… →   [index + huffman encode] ≈ 8 bytes
+  Accept-Encoding: gzip, deflate    →   [table index 16]        = 1 byte
+  → ~400 bytes mỗi request              → ~40 bytes (90% giảm)
+```
+
+Sau lần đầu handshake, các header lặp lại chỉ còn **một index integer** — không gửi lại chuỗi text nữa.
+
+#### Lớp 2: Serialization — Protobuf vs JSON/XML
+
+**Cách Protobuf encode dữ liệu:**
+
+```
+JSON:
+  {"id":"doc-123","status":"APPROVED","pageCount":42}
+  → 50 bytes, parse string-by-string, key tên lặp lại mỗi record
+
+Protobuf wire format cho cùng data:
+  message Document { string id = 1; string status = 2; int32 page_count = 3; }
+
+  0x0a 0x07 "doc-123"    ← field 1 (id), length 7
+  0x12 0x08 "APPROVED"   ← field 2 (status), length 8
+  0x18 0x2a              ← field 3 (page_count), varint(42) = 1 byte
+  → ~24 bytes (~52% nhỏ hơn)
+```
+
+**Varint encoding** — số nhỏ = compact cực:
+```
+  value = 1       → 1 byte   (0x01)
+  value = 127     → 1 byte   (0x7f)
+  value = 128     → 2 bytes  (0x80 0x01)
+  value = 300     → 2 bytes
+  value = 16383   → 2 bytes
+  value = 16384   → 3 bytes
+```
+
+**Schema evolution** — không thể làm với JSON thuần:
+```protobuf
+// v1 — đang chạy production
+message Document { string id = 1; string status = 2; }
+
+// v2 — thêm field, BACKWARD COMPATIBLE
+message Document {
+  string id         = 1;
+  string status     = 2;
+  int32  page_count = 3;   // client v1 sẽ ignore field này
+  reserved 4;              // field 4 đã bị xóa — không tái dùng số!
+}
+// Consumer v1 đọc message v2 → OK (unknown field = ignore)
+// Consumer v2 đọc message v1 → OK (page_count = default 0)
+```
+
+#### Lớp 3: Schema Contract — .proto vs WSDL/OpenAPI
+
+```
+WSDL (SOAP):    XML ~500 dòng, tooling nặng, thường sai → debug hellish
+OpenAPI (REST): Tốt hơn, nhưng OPTIONAL — server có thể không validate
+.proto (gRPC):  Ngắn gọn, strongly typed, compile-time check bắt buộc
+                → Breaking change (xóa field, đổi type) = BUILD FAIL ngay
+                → protoc gen client + server cho 10+ ngôn ngữ
+```
+
+#### Lớp 4: Streaming — Native vs Workaround
+
+```
+Usecase: Export 500,000 documents từ PDMS
+
+Với REST pagination:
+  5000 × GET /documents?page={n}&size=100
+  → 5000 round trips, 5000 JSON parse, connection overhead × 5000
+  → Client code phức tạp, stateful pagination, timeout risk
+
+Với gRPC Server Streaming:
+  stub.exportDocuments(ExportRequest{filter:...})
+  ├── Server stream Document messages liên tục qua 1 HTTP/2 stream
+  ├── Client nhận từng record, process ngay (backpressure native)
+  ├── Progress = đếm messages nhận được
+  └── Error ở record #45678 → client biết ngay, không mất 45677 records
+```
+
+Bidi streaming — thứ RPC cũ không thể làm clean:
+```java
+// Typed, schema-enforced, full-duplex
+rpc CollaborateOnDocument(stream AnnotationOp) returns (stream AnnotationOp);
+
+// WebSocket tương đương: untyped JSON blob, no schema, tự define protocol
+ws.send(JSON.stringify({type:"annotation", ...}))
+```
+
+---
+
+### 12.3 Những thứ gRPC kế thừa từ RPC cũ
+
+gRPC không từ bỏ những gì tốt từ quá khứ:
+
+| Concept | Nguồn gốc | gRPC implementation |
+|---|---|---|
+| IDL / Schema | CORBA (1991) | `.proto` file |
+| Code generation | CORBA, Thrift | `protoc` plugin system |
+| Interceptors | EJB, CORBA | gRPC interceptors (≈ HTTP middleware) |
+| Metadata | HTTP headers | gRPC metadata (binary-safe key-value) |
+| Error codes | DCE RPC | 16 gRPC Status codes chuẩn |
+| Binary serialization | Thrift, Avro | Protobuf (3–10× nhỏ hơn JSON) |
+| Service registry | CORBA naming service | gRPC + Consul / etcd / Kubernetes |
+
+---
+
+### 12.4 gRPC vẫn tệ hơn RPC cũ ở đâu?
+
+```
+Debugging:
+  SOAP/REST: curl, Postman, browser DevTools — zero setup
+  gRPC:      Binary wire format — cần grpcurl, Postman gRPC mode
+             Log payload = hex dump vô nghĩa nếu không có .proto
+             Phải ship .proto file cùng tooling cho mọi developer
+
+Firewall / Proxy:
+  HTTP/1.1:  Mọi corporate proxy đều hiểu
+  HTTP/2:    Một số load balancer cũ không proxy đúng
+             gRPC long-lived streams → timeout ở L7 LB 60s
+             Cần configure: keepalive, max-stream-age, proxy grpc
+
+Browser:
+  REST:      fetch API — native, zero setup
+  gRPC:      Browser không support HTTP/2 trailers (gRPC status)
+             → Cần gRPC-Web proxy (Envoy) hoặc Connect protocol
+
+Learning curve:
+  REST:      Junior dev học trong 1 ngày
+  gRPC:      Protobuf syntax, field numbers, code gen pipeline,
+             stub types (blocking/async/future), StreamObserver,
+             deadline propagation, channel lifecycle management
+```
+
+---
+
+### 12.5 Migration Path thực tế cho PDMS
+
+```
+Phase 0 (hiện tại): All REST internal
+  pdms-service ──REST──► pdms-iam-service
+  pdms-service ──REST──► pdms-process-management
+
+Phase 1: gRPC cho hot paths (latency-sensitive, high-frequency)
+  pdms-service ──gRPC Unary──► pdms-iam-service     (CheckPermission)
+  pdms-service ──gRPC Unary──► pdms-warehouse-service (GenerateCode)
+
+Phase 2: gRPC Streaming thay SSE cho ETL progress
+  pdms-etl-coordinator ──gRPC Server Stream──► pdms-frontend-bff
+
+Phase 3: GraphQL BFF + gRPC backends (best of both worlds)
+  pdms-gateway (GraphQL) ──gRPC──► tất cả internal services
+  Browser chỉ biết GraphQL endpoint
+
+Không bao giờ:
+  Browser → gRPC trực tiếp (luôn cần REST/GraphQL/gRPC-Web ở edge)
+```
+
+---
+
+## References (cập nhật)
+
+- [gRPC Documentation](https://grpc.io/docs/)
+- [Protocol Buffers Language Guide](https://protobuf.dev/programming-guides/proto3/)
+- [HTTP/2 RFC 7540](https://tools.ietf.org/html/rfc7540)
+- [HPACK Header Compression RFC 7541](https://tools.ietf.org/html/rfc7541)
+- [grpc-spring-boot-starter](https://yidongnan.github.io/grpc-spring-boot-starter/)
+- [Connect Protocol](https://connectrpc.com/) — gRPC-compatible, browser-friendly
+- [Protobuf Evolution Guide](https://protobuf.dev/programming-guides/proto3/#updating)
+- [[Transactional-Outbox]] — Webhook reliability via outbox pattern
+- [[02-Communication]] — Microservice communication patterns overview
+- [[Kafka-Partition-and-Offset-Internals]] — Khi Webhook không đủ
