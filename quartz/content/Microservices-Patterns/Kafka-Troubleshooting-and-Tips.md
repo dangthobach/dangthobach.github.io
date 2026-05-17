@@ -8,19 +8,19 @@
 
 ```mermaid
 flowchart LR
-    subgraph Producer Side
-        APP["Application<br/>Code"] -->|send()| ACC["RecordAccumulator<br/>(buffer)"]
+    subgraph "Producer Side"
+        APP["Application<br/>Code"] -->|send| ACC["RecordAccumulator<br/>(buffer)"]
         ACC -->|batch full / linger.ms| SENDER["I/O Sender<br/>Thread"]
         SENDER -->|TCP| BROKER
     end
 
-    subgraph Kafka Cluster
+    subgraph "Kafka Cluster"
         BROKER["Leader<br/>Broker"] -->|replicate| F1["Follower 1"]
         BROKER -->|replicate| F2["Follower 2"]
         BROKER -.->|ISR ACK| SENDER
     end
 
-    subgraph Consumer Side
+    subgraph "Consumer Side"
         BROKER -->|fetch| POLL["poll()<br/>Consumer Thread"]
         POLL -->|process| BIZ["Business<br/>Logic"]
         BIZ -->|ack/commit| OT["__consumer_offsets"]
@@ -49,13 +49,13 @@ org.apache.kafka.common.errors.TimeoutException:
 
 ```mermaid
 flowchart TD
-    ERR["TimeoutException<br/>(Producer)"] --> Q1{Buffer đầy?}
-    Q1 -->|Yes: buffer.memory exhausted| FIX1["Tăng buffer.memory<br/>Hoặc tăng max.block.ms<br/>Hoặc scale producer instances"]
+    ERR["TimeoutException<br>(Producer)"] --> Q1{Buffer đầy?}
+    Q1 -->|Yes: buffer.memory exhausted| FIX1["Tăng buffer.memory<br>Hoặc tăng max.block.ms<br>Hoặc scale producer instances"]
     Q1 -->|No| Q2{Broker không phản hồi?}
     Q2 -->|Yes| Q3{Network issue?}
-    Q3 -->|Yes| FIX2["Kiểm tra firewall<br/>Kiểm tra broker health<br/>Kiểm tra request.timeout.ms"]
-    Q3 -->|No: broker quá tải| FIX3["Giảm batch rate<br/>Tăng số partitions<br/>Kiểm tra broker CPU/disk I/O"]
-    Q2 -->|No: delivery.timeout.ms quá thấp| FIX4["Tăng delivery.timeout.ms<br/>(default 120s)<br/>Phải > request.timeout.ms + linger.ms"]
+    Q3 -->|Yes| FIX2["Kiểm tra firewall<br>Kiểm tra broker health<br>Kiểm tra request.timeout.ms"]
+    Q3 -->|No: broker quá tải| FIX3["Giảm batch rate<br>Tăng số partitions<br>Kiểm tra broker CPU/disk I/O"]
+    Q2 -->|No: delivery.timeout.ms quá thấp| FIX4["Tăng delivery.timeout.ms<br>(default 120s)<br>Phải > request.timeout.ms + linger.ms"]
 ```
 
 | Config liên quan | Giá trị hay gặp sự cố | Fix |
@@ -126,16 +126,12 @@ org.apache.kafka.common.errors.RecordTooLargeException:
 
 ```mermaid
 flowchart LR
-    ERR["RecordTooLargeException"] --> CHK1["Kiểm tra message size<br/>thực tế (bytes)"]
+    ERR["RecordTooLargeException"] --> CHK1["Kiểm tra message size<br>thực tế (bytes)"]
     CHK1 --> CHK2{"> max.message.bytes?"}
-    CHK2 -->|Yes| FIX["Tăng ĐỒNG BỘ 3 nơi:
-    1. Broker: message.max.bytes
-    2. Topic: max.message.bytes  
-    3. Consumer: fetch.max.bytes
-    max.partition.fetch.bytes"]
-    CHK2 -->|No| CHK3{"Compression<br/>bị tắt?"}
-    CHK3 -->|Yes| FIX2["Bật compression.type=lz4<br/>Giảm kích thước thực"]
-    CHK3 -->|No| FIX3["Xem xét chunking message<br/>hoặc dùng Claim Check pattern<br/>(lưu payload S3/MinIO)"]
+    CHK2 -->|Yes| FIX["Tăng ĐỒNG BỘ 3 nơi:<br>1. Broker: message.max.bytes<br>2. Topic: max.message.bytes<br>3. Consumer: fetch.max.bytes<br>max.partition.fetch.bytes"]
+    CHK2 -->|No| CHK3{"Compression<br>bị tắt?"}
+    CHK3 -->|Yes| FIX2["Bật compression.type=lz4<br>Giảm kích thước thực"]
+    CHK3 -->|No| FIX3["Xem xét chunking message<br>hoặc dùng Claim Check pattern<br>(lưu payload S3/MinIO)"]
 ```
 
 **Fix đồng bộ (quan trọng — phải update cả 3 chỗ):**
@@ -166,8 +162,8 @@ org.apache.kafka.common.errors.ProducerFencedException:
 
 ```mermaid
 sequenceDiagram
-    participant P1 as Producer (epoch=1)<br/>[OLD instance]
-    participant P2 as Producer (epoch=2)<br/>[NEW instance - restarted]
+    participant P1 as Producer (epoch=1)<br>[OLD instance]
+    participant P2 as Producer (epoch=2)<br>[NEW instance - restarted]
     participant TC as Transaction Coordinator
 
     P2->>TC: initTransactions() with same transactionalId
@@ -175,7 +171,7 @@ sequenceDiagram
     TC-->>P2: PID + epoch=2
 
     P1->>TC: send() with epoch=1
-    TC-->>P1: ❌ ProducerFencedException<br/>(epoch 1 < current epoch 2)
+    TC-->>P1: ❌ ProducerFencedException<br>(epoch 1 < current epoch 2)
 ```
 
 **Fix:**
@@ -246,7 +242,7 @@ sequenceDiagram
     GC->>GC: Remove consumer from group
     GC->>GC: Rebalance → assign partitions to others
     C->>GC: commitSync() after processing done
-    GC-->>C: ❌ CommitFailedException<br/>(you're no longer in the group!)
+    GC-->>C: ❌ CommitFailedException<br>(you're no longer in the group!)
 ```
 
 **Fix theo thứ tự ưu tiên:**
@@ -278,9 +274,9 @@ flowchart TD
     TRIGGER --> CAUSE2["session.timeout.ms không nhận heartbeat"]
     TRIGGER --> CAUSE3["Network partition tạm thời"]
     
-    CAUSE1 --> FIX["Xem fix CommitFailedException<br/>(section 2.1)"]
-    CAUSE2 --> FIX2["Kiểm tra GC pause<br/>Kiểm tra network latency<br/>Tăng session.timeout.ms"]
-    CAUSE3 --> FIX3["Consumer tự rejoin group<br/>Kafka tự handle — không cần action<br/>Nhưng cần alert nếu thường xuyên"]
+    CAUSE1 --> FIX["Xem fix CommitFailedException<br>(section 2.1)"]
+    CAUSE2 --> FIX2["Kiểm tra GC pause<br>Kiểm tra network latency<br>Tăng session.timeout.ms"]
+    CAUSE3 --> FIX3["Consumer tự rejoin group<br>Kafka tự handle — không cần action<br>Nhưng cần alert nếu thường xuyên"]
 ```
 
 ---
@@ -333,8 +329,8 @@ flowchart LR
     MSG["Message từ Broker"] --> DESER["JsonDeserializer"]
     DESER -->|Schema mismatch| ERR["DeserializationException"]
     ERR --> Q1{Có DLQ config?}
-    Q1 -->|Yes| DLQ["→ orders.DLT<br/>(Dead Letter Topic)"]
-    Q1 -->|No| STOP["❌ Consumer STOP<br/>Blockage!"]
+    Q1 -->|Yes| DLQ["→ orders.DLT<br>(Dead Letter Topic)"]
+    Q1 -->|No| STOP["❌ Consumer STOP<br>Blockage!"]
     DLQ --> ALERT["Alert + Manual review"]
 ```
 
@@ -360,21 +356,21 @@ public DefaultErrorHandler errorHandler(KafkaOperations<String, Object> ops) {
 
 ```mermaid
 flowchart TD
-    ALERT["🚨 Alert: Consumer lag > threshold"] --> CHK1["kafka-consumer-groups.sh<br/>--describe --group my-group"]
+    ALERT["🚨 Alert: Consumer lag > threshold"] --> CHK1["kafka-consumer-groups.sh<br>--describe --group my-group"]
     CHK1 --> Q1{Lag tăng đều hay burst?}
     
     Q1 -->|Tăng đều - throughput không đủ| PATH1["Consumer không xử lý kịp"]
-    PATH1 --> P1A{"Số consumer<br/>< số partitions?"}
-    P1A -->|Yes| FIX1A["Scale up consumers<br/>Thêm instances"]
-    P1A -->|No| FIX1B["Tối ưu processing logic<br/>Dùng async/batch processing<br/>Kiểm tra downstream DB slow"]
+    PATH1 --> P1A{"Số consumer<br>< số partitions?"}
+    P1A -->|Yes| FIX1A["Scale up consumers<br>Thêm instances"]
+    P1A -->|No| FIX1B["Tối ưu processing logic<br>Dùng async/batch processing<br>Kiểm tra downstream DB slow"]
 
     Q1 -->|Burst rồi recover| PATH2["Temporary spike"]
     PATH2 --> P2A{Rebalance xảy ra?}
-    P2A -->|Yes| FIX2["Xem section 3.2<br/>Rebalance Storm"]
-    P2A -->|No| FIX2B["Normal traffic spike<br/>Xem xét scale consumer"]
+    P2A -->|Yes| FIX2["Xem section 3.2<br>Rebalance Storm"]
+    P2A -->|No| FIX2B["Normal traffic spike<br>Xem xét scale consumer"]
 
     Q1 -->|Lag chỉ 1 partition| PATH3["Partition-specific issue"]
-    PATH3 --> FIX3["Kiểm tra partition leader<br/>Kiểm tra broker health<br/>Kiểm tra message size bất thường"]
+    PATH3 --> FIX3["Kiểm tra partition leader<br>Kiểm tra broker health<br>Kiểm tra message size bất thường"]
 ```
 
 **Lệnh chẩn đoán nhanh:**
@@ -445,7 +441,7 @@ sequenceDiagram
     Note over C: Pod restart (deploy)
     C->>GC: JoinGroup với instance.id=pod-1
     GC->>GC: Nhận ra instance.id quen biết
-    GC-->>C: ✅ Assign lại partitions cũ ngay<br/>KHÔNG trigger full rebalance
+    GC-->>C: ✅ Assign lại partitions cũ ngay<br>KHÔNG trigger full rebalance
     Note over C,GC: Zero-downtime rebalance!
 ```
 
@@ -457,15 +453,15 @@ sequenceDiagram
 
 ```mermaid
 flowchart TD
-    ALERT["🚨 UnderReplicatedPartitions > 0"] --> CHK1["kafka-topics.sh --describe<br/>Tìm partition có ISR < RF"]
+    ALERT["🚨 UnderReplicatedPartitions > 0"] --> CHK1["kafka-topics.sh --describe<br>Tìm partition có ISR < RF"]
     CHK1 --> Q1{Follower nào bị kick khỏi ISR?}
-    Q1 --> CHK2["Kiểm tra broker bị kick:<br/>kafka-log-dirs.sh --describe"]
+    Q1 --> CHK2["Kiểm tra broker bị kick:<br>kafka-log-dirs.sh --describe"]
     CHK2 --> Q2{Broker còn alive?}
-    Q2 -->|No - broker down| FIX1["Restart broker<br/>Kiểm tra disk space<br/>Kiểm tra OOM"]
+    Q2 -->|No - broker down| FIX1["Restart broker<br>Kiểm tra disk space<br>Kiểm tra OOM"]
     Q2 -->|Yes - nhưng lag| Q3{Nguyên nhân lag?}
-    Q3 -->|Disk I/O slow| FIX2["Kiểm tra disk utilization<br/>Di chuyển log dir sang SSD<br/>Tăng num.replica.fetchers"]
-    Q3 -->|Network bottleneck| FIX3["Kiểm tra bandwidth<br/>Tăng replica.fetch.max.bytes"]
-    Q3 -->|Broker overloaded| FIX4["Rebalance partitions<br/>kafka-reassign-partitions.sh"]
+    Q3 -->|Disk I/O slow| FIX2["Kiểm tra disk utilization<br>Di chuyển log dir sang SSD<br>Tăng num.replica.fetchers"]
+    Q3 -->|Network bottleneck| FIX3["Kiểm tra bandwidth<br>Tăng replica.fetch.max.bytes"]
+    Q3 -->|Broker overloaded| FIX4["Rebalance partitions<br>kafka-reassign-partitions.sh"]
 ```
 
 ```bash
@@ -494,7 +490,7 @@ flowchart LR
     
     EFFECT3 --> ACTION1["Tăng disk (ưu tiên nhất)"]
     EFFECT3 --> ACTION2["Giảm retention ngay lập tức"]
-    EFFECT3 --> ACTION3["Xoá old segments thủ công<br/>(cẩn thận!)"]
+    EFFECT3 --> ACTION3["Xoá old segments thủ công<br>(cẩn thận!)"]
 ```
 
 **Response khi disk > 90%:**
@@ -531,15 +527,15 @@ kafka-configs.sh --alter --entity-type topics --entity-name big-topic \
 
 ```mermaid
 flowchart TD
-    ROOT["Ordering bị phá vỡ"] --> C1["Messages cùng key<br/>nhưng khác partition?"]
-    ROOT --> C2["Retry producer gây<br/>out-of-order?"]
-    ROOT --> C3["Multiple consumers<br/>xử lý song song?"]
+    ROOT["Ordering bị phá vỡ"] --> C1["Messages cùng key<br>nhưng khác partition?"]
+    ROOT --> C2["Retry producer gây<br>out-of-order?"]
+    ROOT --> C3["Multiple consumers<br>xử lý song song?"]
     
-    C1 -->|Kiểm tra partitioner| FIX1["Đảm bảo dùng<br/>DefaultPartitioner với key<br/>Không random partition"]
+    C1 -->|Kiểm tra partitioner| FIX1["Đảm bảo dùng<br>DefaultPartitioner với key<br>Không random partition"]
     
-    C2 -->|enable.idempotence=false| FIX2["Bật enable.idempotence=true<br/>Hoặc max.in.flight=1"]
+    C2 -->|enable.idempotence=false| FIX2["Bật enable.idempotence=true<br>Hoặc max.in.flight=1"]
     
-    C3 -->|Concurrency > 1| FIX3["Dùng 1 thread per partition<br/>Hoặc implement sequence number<br/>Trong message để re-order"]
+    C3 -->|Concurrency > 1| FIX3["Dùng 1 thread per partition<br>Hoặc implement sequence number<br>Trong message để re-order"]
 ```
 
 ---
@@ -799,10 +795,10 @@ public class GracefulShutdownListener implements ApplicationListener<ContextClos
 
 ```mermaid
 flowchart LR
-    V1["Message v1<br/>{orderId, amount}"] --> V2["Message v2<br/>{orderId, amount,<br/>currency (optional)}"]
-    V2 --> V3["Message v3<br/>{orderId, amount,<br/>currency,<br/>timestamp (optional)}"]
+    V1["Message v1<br>{orderId, amount}"] --> V2["Message v2<br>{orderId, amount,<br>currency (optional)}"]
+    V2 --> V3["Message v3<br>{orderId, amount,<br>currency,<br>timestamp (optional)}"]
 
-    V1 -.->|❌ Breaking| BAD["Message v1 BAD<br/>{orderId} // removed amount<br/>{totalAmount} // renamed"]
+    V1 -.->|❌ Breaking| BAD["Message v1 BAD<br>{orderId} // removed amount<br>{totalAmount} // renamed"]
 
     style V1 fill:#4CAF50,color:#fff
     style V2 fill:#4CAF50,color:#fff
