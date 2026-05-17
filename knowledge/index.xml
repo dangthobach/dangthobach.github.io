@@ -10,7 +10,7 @@
     <link>https://dangthobach.github.io/knowledge/Microservices-Patterns/API-Design-REST-GraphQL-Webhook</link>
     <guid>https://dangthobach.github.io/knowledge/Microservices-Patterns/API-Design-REST-GraphQL-Webhook</guid>
     <description><![CDATA[ REST API vs GraphQL vs Webhook vs gRPC — Lựa Chọn Khoa Học Tags: api-design rest graphql webhook grpc architecture microservices Related: 02-Communication · PDMS-Workflow-Optimal-Communication · Transactional-Outbox Status: 🟢 Complete TL;DR — Decision Matrix Tiêu chíREST APIGraphQLWebhookgRPCLuồng ... ]]></description>
-    <pubDate>Sat, 16 May 2026 18:01:57 GMT</pubDate>
+    <pubDate>Sun, 17 May 2026 03:17:38 GMT</pubDate>
   </item><item>
     <title>Cross-Service-Join-AuthZ-Fine-Grained-Filter</title>
     <link>https://dangthobach.github.io/knowledge/Microservices-Patterns/Cross-Service-Join-AuthZ-Fine-Grained-Filter</link>
