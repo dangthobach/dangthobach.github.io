@@ -78,10 +78,10 @@ CREATE TABLE role_permission (
 );
 
 CREATE TABLE user_role (
-    user_id          UUID NOT NULL REFERENCES user_account(id),
-    role_id          UUID NOT NULL REFERENCES role(id),
+    user_id           UUID NOT NULL REFERENCES user_account(id),
+    role_id           UUID NOT NULL REFERENCES role(id),
     resource_scope_id UUID REFERENCES resource_instance(id),  -- scoped role
-    expires_at       TIMESTAMPTZ DEFAULT NULL,                 -- temporary permission
+    expires_at        TIMESTAMPTZ DEFAULT NULL,                -- temporary permission
     PRIMARY KEY(user_id, role_id)
 );
 ```
@@ -89,7 +89,7 @@ CREATE TABLE user_role (
 **Design decisions:**
 - `role.parent_role_id` self-reference → role hierarchy. `BRANCH_MANAGER` kế thừa toàn bộ permission của `STAFF` — engine traverse lên cây khi evaluate.
 - `permission.scope`: `own` = chỉ resource mình tạo, `branch` = cả branch, `all` = toàn hệ thống.
-- `user_role.resource_scope_id`: gán role **scoped theo resource cụ thể** — VD: user A là `REVIEWER` chỉ trên contract batch `#456`.
+- `user_role.resource_scope_id`: gán role scoped theo resource cụ thể — VD: user A là `REVIEWER` chỉ trên contract batch `#456`.
 - `user_role.expires_at`: temporary permission, tự hết hạn không cần cleanup job.
 
 ---
@@ -109,18 +109,18 @@ CREATE TABLE resource_type (
 CREATE TABLE resource_instance (
     id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     resource_type_id UUID NOT NULL REFERENCES resource_type(id),
-    external_ref     VARCHAR(300),     -- ID trong service domain (doc ID, contract ID)
+    external_ref     VARCHAR(300),      -- ID trong service domain (doc ID, contract ID)
     owner_id         UUID REFERENCES user_account(id),
-    attributes       JSONB DEFAULT '{}' -- {"branch_code":"HN01","status":"PENDING","contract_type":"MORTGAGE"}
+    attributes       JSONB DEFAULT '{}'  -- {"branch_code":"HN01","status":"PENDING","contract_type":"MORTGAGE"}
 );
 
 CREATE TABLE resource_acl (
-    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id                   UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     resource_instance_id UUID NOT NULL REFERENCES resource_instance(id),
-    subject_id          UUID NOT NULL,
-    subject_type        VARCHAR(20) NOT NULL, -- 'USER', 'ROLE', 'GROUP'
-    actions             VARCHAR(50)[] NOT NULL,
-    conditions          JSONB DEFAULT NULL
+    subject_id           UUID NOT NULL,
+    subject_type         VARCHAR(20) NOT NULL, -- 'USER', 'ROLE', 'GROUP'
+    actions              VARCHAR(50)[] NOT NULL,
+    conditions           JSONB DEFAULT NULL
 );
 ```
 
@@ -227,16 +227,16 @@ CREATE INDEX idx_row_filter_permission ON row_filter(permission_id, resource_typ
 
 ```sql
 CREATE TABLE authz_decision_log (
-    id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    tenant_id     UUID        NOT NULL,
-    user_id       UUID        NOT NULL,
-    resource_type VARCHAR(100) NOT NULL,
-    resource_ref  VARCHAR(300),
-    action        VARCHAR(50)  NOT NULL,
-    decision      VARCHAR(10)  NOT NULL CHECK (decision IN ('ALLOW', 'DENY')),
+    id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    tenant_id         UUID        NOT NULL,
+    user_id           UUID        NOT NULL,
+    resource_type     VARCHAR(100) NOT NULL,
+    resource_ref      VARCHAR(300),
+    action            VARCHAR(50)  NOT NULL,
+    decision          VARCHAR(10)  NOT NULL CHECK (decision IN ('ALLOW', 'DENY')),
     matched_policy_id UUID REFERENCES policy(id),
-    context       JSONB        NOT NULL,  -- toàn bộ evaluation context tại thời điểm quyết định
-    decided_at    TIMESTAMPTZ  DEFAULT now()
+    context           JSONB        NOT NULL,  -- toàn bộ evaluation context tại thời điểm quyết định
+    decided_at        TIMESTAMPTZ  DEFAULT now()
 );
 
 CREATE INDEX idx_authz_log_user ON authz_decision_log(user_id, decided_at DESC);
@@ -249,7 +249,7 @@ CREATE INDEX idx_authz_log_resource ON authz_decision_log(resource_type, resourc
 
 ## Row Filter — Evaluation Engine (Spring Boot)
 
-### Expression Evaluator
+### Expression Evaluator (naive — xem phần Performance để optimize)
 
 ```java
 @Service
@@ -269,7 +269,6 @@ public class RowFilterEvaluator {
 
         for (RowFilter filter : filters) {
             if (filter.getSqlFragment() != null) {
-                // Escape hatch: DBA-defined, trusted
                 predicates.add(filter.getSqlFragment());
                 continue;
             }
@@ -284,7 +283,6 @@ public class RowFilterEvaluator {
                                   Map<String, Object> params) {
         String op = node.get("operator").asText(null);
         if (op != null) {
-            // Compound: AND / OR
             List<String> parts = new ArrayList<>();
             for (JsonNode child : node.get("conditions"))
                 parts.add(evalNode(child, ctx, params).sql());
@@ -292,7 +290,6 @@ public class RowFilterEvaluator {
             return new SqlPredicate("(" + String.join(joiner, parts) + ")");
         }
 
-        // Leaf condition
         String left  = resolveRef(node.get("left"),  ctx, params);
         String right = resolveRef(node.get("right"), ctx, params);
         String sqlOp = switch (node.get("op").asText()) {
@@ -308,7 +305,6 @@ public class RowFilterEvaluator {
         return new SqlPredicate(left + " " + sqlOp + " " + right);
     }
 
-    // Column whitelist — bắt buộc để tránh SQL injection qua JSON
     private static final Set<String> ALLOWED_COLUMNS = Set.of(
         "branch_code", "status", "created_by", "department_code",
         "contract_type", "owner_id", "tenant_id"
@@ -347,7 +343,7 @@ public class RowFilterEvaluator {
 
 ## PostgreSQL RLS — Safety Net Layer
 
-RLS là tầng bảo vệ **tại DB level**, hoàn toàn độc lập với application code. Không thể bypass kể cả khi dùng raw JDBC.
+RLS là tầng bảo vệ tại DB level, hoàn toàn độc lập với application code. Không thể bypass kể cả khi dùng raw JDBC.
 
 ### Enable và tạo policy
 
@@ -365,7 +361,7 @@ CREATE POLICY doc_branch_isolation ON document
         OR current_setting('app.bypass_rls', true) = 'true'
     );
 
--- Policy cho REVIEWER: thấy doc cần review bất kể branch
+-- Policy cho REVIEWER (naive version — xem Performance P5 để optimize)
 CREATE POLICY doc_reviewer_access ON document
     FOR SELECT TO pdms_reviewer_role
     USING (
@@ -375,9 +371,6 @@ CREATE POLICY doc_reviewer_access ON document
             WHERE document_id = document.id
         )
     );
-
--- PERMISSIVE policies được OR với nhau tự động
--- → user có nhiều role thấy union của tất cả policies match
 ```
 
 ### Set context per-request trong Spring Boot
@@ -390,9 +383,8 @@ public class RlsContextSetter {
     private DataSource dataSource;
 
     /**
-     * Wrap query execution với RLS context.
-     * set_config(..., false) = chỉ apply cho transaction hiện tại → safe với HikariCP pool
-     * KHÔNG dùng set_config(..., true) với connection pool vì connection được reuse
+     * set_config(..., false) = transaction-scoped → safe với HikariCP pool
+     * KHÔNG dùng set_config(..., true) vì connection được reuse giữa các request
      */
     public <T> T withRlsContext(AuthzContext ctx, Callable<T> action) throws Exception {
         try (Connection conn = dataSource.getConnection()) {
@@ -411,7 +403,7 @@ public class RlsContextSetter {
 }
 ```
 
-> ⚠️ **Critical:** `set_config('key', value, false)` = transaction-scoped. `set_config('key', value, true)` = session-scoped. **Chỉ dùng `false` với connection pool** để tránh context leak sang request tiếp theo.
+> ⚠️ **Critical:** `set_config('key', value, false)` = transaction-scoped. `set_config('key', value, true)` = session-scoped. Chỉ dùng `false` với connection pool để tránh context leak sang request tiếp theo.
 
 ---
 
@@ -423,37 +415,271 @@ public class RlsContextSetter {
 | **Cấu hình** | DB-driven, fully dynamic | SQL DDL, cần migration |
 | **Flexibility** | Cao — JSON AST, bất kỳ logic | Trung bình — SQL expression |
 | **Performance** | Thêm 1 query load filter + eval | Zero overhead (tích hợp vào query plan) |
-| **Bypass** | Có thể nếu developer quên inject | **Không thể bypass** (kể cả superuser nếu FORCE) |
+| **Bypass** | Có thể nếu developer quên inject | Không thể bypass (kể cả superuser nếu FORCE) |
 | **Debug** | Dễ — log predicate generated | Khó hơn — dùng `EXPLAIN` với RLS context |
 | **Vai trò** | Primary filter logic | Safety net / defense in depth |
 
 ---
 
-## Cache Strategy — Redis + CDC Invalidation
+## Performance — 5 điểm nghẽn và cách fix
+
+> **Nguyên tắc:** Business logic không đổi — chỉ thay đổi cách evaluate và cache. Priority: logic đúng trước, optimize sau.
+
+### P1 — Gộp N+1 query thành 1 JOIN duy nhất (High impact)
+
+Vấn đề: mỗi request load tuần tự user_role → role_permission → row_filter → policy_rule = 4–6 DB round-trips × 1000 RPS = DB bottleneck.
+
+Giải pháp: gộp thành 1 query với role hierarchy dùng `WITH RECURSIVE`, cache kết quả:
+
+```sql
+SELECT
+    p.id              AS permission_id,
+    p.code            AS permission_code,
+    p.resource_type,
+    p.action,
+    p.scope,
+    r.id              AS role_id,
+    r.code            AS role_code,
+    rf.filter_expr    AS row_filter_expr,
+    rf.sql_fragment   AS row_filter_sql,
+    ff.allowed_fields,
+    ff.masked_fields,
+    ff.mask_pattern,
+    pr.condition_expr AS policy_condition,
+    pol.effect        AS policy_effect,
+    pol.priority      AS policy_priority
+FROM user_role ur
+-- Role hierarchy: traverse parent roles
+JOIN LATERAL (
+    WITH RECURSIVE role_tree AS (
+        SELECT id, parent_role_id FROM role WHERE id = ur.role_id
+        UNION ALL
+        SELECT r2.id, r2.parent_role_id
+        FROM role r2
+        JOIN role_tree rt ON r2.id = rt.parent_role_id
+    )
+    SELECT id FROM role_tree
+) r_hier ON true
+JOIN role r ON r.id = r_hier.id
+JOIN role_permission rp ON rp.role_id = r.id
+JOIN permission p ON p.id = rp.permission_id
+    AND p.resource_type = :resourceType
+LEFT JOIN row_filter rf ON rf.permission_id = p.id
+    AND rf.resource_type = :resourceType
+    AND rf.is_active = true
+LEFT JOIN field_filter ff ON ff.permission_id = p.id
+    AND ff.resource_type = :resourceType
+LEFT JOIN policy_rule pr ON pr.resource_type = :resourceType
+    AND pr.action = p.action
+JOIN policy pol ON pol.id = pr.policy_id
+    AND pol.is_active = true
+WHERE ur.user_id   = :userId
+  AND ur.tenant_id = :tenantId
+  AND (ur.expires_at IS NULL OR ur.expires_at > NOW())
+ORDER BY pol.priority DESC;
+```
+
+Kết quả query này cache vào Redis TTL 5 phút — 1 request đầu trả về full context, các request sau đọc từ cache.
+
+---
+
+### P2 — Compiled predicate cache thay vì eval AST mỗi lần (High impact)
+
+Vấn đề: `filter_expr` JSONB được deserialize và traverse lại mỗi request. 1000 RPS × cùng 1 permission = eval AST 1000 lần cho cùng 1 expression.
+
+Giải pháp: cache kết quả compile (SQL template + param names), chỉ bind user attribute value tại runtime:
 
 ```java
-// Cache key format
-private String cacheKey(UUID permissionId, String resourceType, String userId) {
-    return String.format("authz:rowfilter:%s:%s:%s", permissionId, resourceType, userId);
+@Component
+public class CompiledFilterCache {
+
+    // Cache compiled predicate — key: permissionId:resourceType
+    private final Cache<String, CompiledPredicate> cache = Caffeine.newBuilder()
+        .maximumSize(10_000)
+        .expireAfterWrite(10, MINUTES)
+        .recordStats()   // expose qua Micrometer
+        .build();
+
+    public CompiledPredicate getOrCompile(UUID permissionId, String resourceType,
+                                           JsonNode filterExpr) {
+        String key = permissionId + ":" + resourceType;
+        return cache.get(key, k -> compile(filterExpr));
+    }
+
+    private CompiledPredicate compile(JsonNode expr) {
+        // Traverse AST 1 lần → SQL template với named placeholders
+        // VD: "branch_code = :user_branch_code AND status = ANY(:allowed_statuses)"
+        // Lưu mapping: placeholder → user attribute key
+        var builder = new PredicateBuilder();
+        traverseNode(expr, builder);
+        return builder.build();
+    }
 }
 
-// Debezium CDC consumer — invalidate khi row_filter thay đổi
-@KafkaListener(topics = "pdms.public.row_filter")
-public void onRowFilterChange(RowFilterCdcEvent event) {
-    String pattern = "authz:rowfilter:" + event.getPermissionId() + ":*";
-    Set<String> keys = redisTemplate.keys(pattern);
-    if (!keys.isEmpty()) redisTemplate.delete(keys);
-    log.info("Invalidated {} row_filter cache entries for permission {}",
-        keys.size(), event.getPermissionId());
+// Runtime: chỉ bind values, không traverse AST
+public FilterResult bind(CompiledPredicate compiled, AuthzContext ctx) {
+    Map<String, Object> params = new LinkedHashMap<>();
+    for (var binding : compiled.bindings()) {
+        params.put(binding.placeholder(), switch (binding.source()) {
+            case USER_ATTR -> ctx.getUserAttr(binding.key());
+            case LITERAL   -> binding.value();
+            case ENV_NOW   -> Instant.now();
+        });
+    }
+    return new FilterResult(compiled.sqlTemplate(), params);
+}
+```
+
+Compile xảy ra đúng 1 lần per permission, sau đó chỉ bind. Business logic không đổi.
+
+---
+
+### P3 — Piggyback SET vào query đầu tiên thay vì round-trip riêng (Medium impact)
+
+Vấn đề: mỗi request chạy thêm 1 PreparedStatement chỉ để set RLS session variable — thêm 1 DB round-trip.
+
+Giải pháp: dùng CTE để set context và query trong cùng 1 statement:
+
+```java
+String query = """
+    WITH ctx AS (
+        SELECT
+            set_config('app.branch_code', :branchCode, false),
+            set_config('app.user_id',     :userId,     false),
+            set_config('app.bypass_rls',  :bypass,     false)
+    )
+    SELECT d.*
+    FROM document d, ctx
+    WHERE d.tenant_id = :tenantId
+      AND {rowFilterPredicate}
+    """;
+```
+
+Hoặc dùng AOP interceptor set context ngay khi `@Transactional` bắt đầu — cùng connection, không thêm round-trip:
+
+```java
+@Around("@annotation(RequiresAuthzContext)")
+public Object setRlsContext(ProceedingJoinPoint pjp) throws Throwable {
+    AuthzContext ctx = AuthzContextHolder.current();
+    jdbcTemplate.execute(
+        "SELECT set_config('app.branch_code',:b,false), set_config('app.user_id',:u,false)",
+        (PreparedStatementCallback<Void>) ps -> {
+            ps.setString(1, ctx.getBranchCode());
+            ps.setString(2, ctx.getUserId().toString());
+            ps.execute(); return null;
+        });
+    return pjp.proceed();
+}
+```
+
+---
+
+### P4 — Thay `KEYS` pattern scan bằng `SMEMBERS` + secondary index set (Medium impact)
+
+Vấn đề: `redisTemplate.keys("authz:rowfilter:*")` là O(N) scan, block toàn bộ Redis event loop. Production Redis với 100k+ keys → latency spike >100ms.
+
+Giải pháp: dùng Redis Set làm index — mỗi permission có 1 Set chứa tất cả cache key của nó:
+
+```java
+@Service
+public class AuthzCacheManager {
+
+    private static final String KEY_PREFIX   = "authz:rf:";
+    private static final String INDEX_PREFIX = "authz:idx:perm:";
+
+    public void put(UUID permissionId, String resourceType, String userId,
+                    CompiledPredicate predicate) {
+        String cacheKey = KEY_PREFIX + permissionId + ":" + resourceType + ":" + userId;
+        String indexKey = INDEX_PREFIX + permissionId;
+
+        redisTemplate.executePipelined((RedisCallback<?>) conn -> {
+            conn.setEx(cacheKey.getBytes(), 300, serialize(predicate));  // TTL 5 phút
+            conn.sAdd(indexKey.getBytes(), cacheKey.getBytes());         // đăng ký vào index
+            conn.expire(indexKey.getBytes(), 600);                       // index TTL 10 phút
+            return null;
+        });
+    }
+
+    // Invalidate: SMEMBERS → DELETE tất cả — không block Redis
+    @KafkaListener(topics = "pdms.public.row_filter")
+    public void onRowFilterChange(RowFilterCdcEvent event) {
+        String indexKey = INDEX_PREFIX + event.getPermissionId();
+        Set<String> cacheKeys = redisTemplate.opsForSet().members(indexKey);
+        if (cacheKeys != null && !cacheKeys.isEmpty()) {
+            List<String> toDelete = new ArrayList<>(cacheKeys);
+            toDelete.add(indexKey);
+            redisTemplate.delete(toDelete);
+            log.info("Invalidated {} cache entries for permission {}",
+                cacheKeys.size(), event.getPermissionId());
+        }
+    }
 }
 ```
 
 ```sql
 -- Bắt buộc để Debezium capture full row data khi UPDATE/DELETE
-ALTER TABLE row_filter REPLICA IDENTITY FULL;
-ALTER TABLE policy      REPLICA IDENTITY FULL;
+ALTER TABLE row_filter      REPLICA IDENTITY FULL;
+ALTER TABLE policy          REPLICA IDENTITY FULL;
 ALTER TABLE role_permission REPLICA IDENTITY FULL;
 ```
+
+---
+
+### P5 — Rewrite RLS correlated subquery thành EXISTS + index (Medium impact)
+
+Vấn đề: policy `USING` clause dùng correlated subquery chạy lại với mỗi row của result set. 1000-row result → 1000 subquery executions.
+
+Giải pháp A — `EXISTS` với proper index:
+
+```sql
+-- Tạo index trước
+CREATE INDEX idx_reviewer_assignment_lookup
+    ON document_reviewer_assignment(document_id, reviewer_id);
+
+-- Rewrite policy
+CREATE POLICY doc_reviewer_access ON document
+    FOR SELECT TO pdms_reviewer_role
+    USING (
+        status = 'PENDING_REVIEW'
+        AND EXISTS (
+            SELECT 1 FROM document_reviewer_assignment dra
+            WHERE dra.document_id = document.id
+              AND dra.reviewer_id = current_setting('app.user_id', true)::uuid
+        )
+    );
+```
+
+Giải pháp B (tốt hơn với PDMS) — service pre-compute list rồi pass vào session:
+
+```sql
+-- set_config('app.reviewable_doc_ids', 'uuid1,uuid2,...', false) từ service layer
+
+CREATE POLICY doc_reviewer_access ON document
+    FOR SELECT TO pdms_reviewer_role
+    USING (
+        status = 'PENDING_REVIEW'
+        AND id = ANY(
+            string_to_array(
+                current_setting('app.reviewable_doc_ids', true), ','
+            )::uuid[]
+        )
+    );
+-- ANY(small array) nhanh hơn nhiều so với correlated subquery
+```
+
+---
+
+### Tổng hợp — business logic không đổi ở đâu
+
+| Điểm nghẽn | Thay đổi | Business logic ảnh hưởng? |
+|---|---|---|
+| P1 — N+1 query | Gộp thành 1 JOIN + cache AuthZ context | Không — cùng data, khác query shape |
+| P2 — AST eval lặp | Compile 1 lần, cache SQL template | Không — cùng logic, khác execution path |
+| P3 — set_config round-trip | Piggyback vào CTE hoặc AOP | Không — cùng RLS behavior |
+| P4 — KEYS scan | SMEMBERS + Redis Set index | Không — invalidation đúng như cũ |
+| P5 — Correlated subquery | Rewrite EXISTS + index | Không — cùng security semantic |
+
+**Priority cho PDMS:** P1 + P2 là critical — giải quyết xong 2 cái này sẽ cảm nhận được ngay ở production scale. P3–P5 là polish tier, giải quyết khi hệ thống đã stable.
 
 ---
 
@@ -474,14 +700,14 @@ pdms-service
     │
     ▼
 pdms-iam-service
-    ├── Evaluate policy_rule + condition_expr
-    ├── Build row_filter SQL predicate
+    ├── Evaluate policy_rule + condition_expr (compiled cache)
+    ├── Build row_filter SQL predicate (compiled cache)
     └── Return: decision (ALLOW/DENY) + predicate string
     │
     ▼
 PostgreSQL
     ├── Layer E-1: row_filter predicate injected vào WHERE clause
-    └── Layer E-2: RLS policy tự động apply (safety net)
+    └── Layer E-2: RLS policy tự động apply (safety net, branch isolation only)
     │
     ▼
 Filtered resultset
@@ -493,8 +719,55 @@ pdms-service
 
 **Recommendation cho PDMS:**
 - `row_filter` handle toàn bộ business logic về phân quyền data.
-- PostgreSQL RLS chỉ làm **một rule đơn giản** — `branch_code isolation` — như safety net.
+- PostgreSQL RLS chỉ làm một rule đơn giản — `branch_code isolation` — như safety net.
 - Tránh để business logic phức tạp trong RLS vì debug rất khó khi production incident.
+
+---
+
+---
+
+## Hạn chế & Gaps hiện tại
+
+Mặc dù thiết kế 5 lớp bao phủ hầu hết các kịch bản enterprise, vẫn còn một số điểm cần lưu ý khi scale:
+
+1.  **Resource Instance Explosion:** Lưu mọi instance vào bảng `resource_instance` (Layer C) cho các hệ thống có hàng trăm triệu bản ghi sẽ gây áp lực cực lớn lên storage và performance của bảng ACL.
+2.  **Data Consistency:** Việc duy trì attribute của user/resource tại `iam-service` song song với domain service dễ dẫn đến tình trạng "lệch dữ liệu" (out-of-sync) nếu cơ chế đồng bộ (CDC/Kafka) bị delay.
+3.  **Thiếu ReBAC (Relationship-based):** Hiện tại tập trung vào ABAC. Các quan hệ phức tạp (VD: "người được ủy quyền của chủ hợp đồng") phải được transform thành attributes, gây khó khăn khi quản lý các quan hệ bắc cầu hoặc dạng đồ thị.
+4.  **Centralized Bottleneck:** Toàn bộ service gọi về IAM để check quyền tạo ra độ trễ mạng (Network Latency) và Single Point of Failure nếu không có cơ chế Local Execution.
+
+---
+
+## Đề xuất cải tiến & Tầm nhìn Universal AuthZ
+
+Để biến mô hình này thành một nền tảng AuthZ linh động cho mọi yêu cầu, cần thực hiện các cải tiến sau:
+
+### 1. Hybrid ReBAC + ABAC (Zanzibar style)
+Bổ sung bảng quan hệ dạng bộ ba (tuple): `(subject) --[relation]--> (object)`.
+- Ví dụ: `(User:A) --[manager]--> (Branch:HN)`.
+- Quyền "Manager xem được tài liệu của Branch" sẽ được giải quyết bằng Graph Traversal thay vì chỉ so khớp attributes phẳng.
+
+### 2. Local Policy Execution (Sidecar Pattern)
+Thay vì request-response tới IAM service:
+- **IAM Service** đóng vai trò **Control Plane** (quản lý policy).
+- **Domain Services** tích hợp **Data Plane** (như OPA - Open Policy Agent).
+- Policy được sync xuống local của từng service. Việc check quyền diễn ra in-memory (0ms network latency).
+
+### 3. Cross-Platform Filter Engine
+Mở rộng AST Evaluator (Layer E) để không chỉ sinh SQL WHERE clause mà còn sinh ra:
+- **Elasticsearch Filter Query** cho tìm kiếm hồ sơ.
+- **MongoDB Match Expression** cho các hệ thống NoSQL.
+Điều này đảm bảo một Policy duy nhất được áp dụng đồng nhất trên mọi loại database.
+
+### 4. Policy-as-Code & Versioning
+Bổ sung quy trình quản lý policy chuyên nghiệp:
+- `Draft` -> `Test` -> `Peer Review` -> `Publish`.
+- Hỗ trợ **Dry-run mode (Shadow mode)**: Log lại quyết định của policy mới mà không thực sự áp dụng để đánh giá tác động trước khi Go-live.
+
+### 5. Policy Debugger (Explainability)
+Xây dựng công cụ "Explain" chi tiết: Khi một request bị DENY, hệ thống phải chỉ rõ được:
+- Rule nào đã khớp?
+- Attribute nào bị thiếu hoặc sai lệch?
+- Trace-log của quá trình evaluate AST.
 
 ---
 
@@ -508,4 +781,4 @@ pdms-service
 
 ## Tags
 
-#authz #security #pdms #postgresql #rls #spring-boot #microservices #data-model
+#authz #security #pdms #postgresql #rls #spring-boot #microservices #data-model #performance
