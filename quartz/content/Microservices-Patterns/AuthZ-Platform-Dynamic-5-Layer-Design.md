@@ -968,3 +968,611 @@ pdms-service
 ## Tags
 
 #authz #security #pdms #postgresql #rls #spring-boot #microservices #data-model #performance #rebac #abac #policy-versioning
+
+---
+
+## Advanced Edge Cases — Giải pháp Triệt để
+
+> Bốn vấn đề dưới đây không phải "nice to have" — chúng là những điểm gãy thực sự khi hệ thống gặp bài toán doanh nghiệp phức tạp. Mỗi giải pháp được thiết kế để không phá vỡ kiến trúc hiện tại.
+
+---
+
+### EC-1 — Complex Temporal Context (Ngữ cảnh thời gian & môi trường động)
+
+**Vấn đề gốc rễ:** Các điều kiện như "chỉ trong giờ hành chính", "chỉ từ IP nội bộ", "chỉ khi đang trong ca trực" không thể cache được nếu nhúng thẳng vào `condition_expr` — mỗi request có `env.now()` khác nhau, compiled predicate cache (P2) sẽ miss liên tục. Nhưng nếu không xử lý, policy thiếu chiều temporal là lỗ hổng nghiêm trọng với banking.
+
+**Giải pháp: Tách temporal conditions ra khỏi compiled cache path**
+
+Nguyên tắc: phân loại condition thành 2 nhóm với vòng đời cache khác nhau:
+
+| Loại | Ví dụ | Cache strategy |
+|------|-------|----------------|
+| **Static predicate** | `user.branch_code eq resource.branchCode` | Compile 1 lần, cache đến khi policy thay đổi |
+| **Temporal gate** | `env.now gte 09:00 AND env.now lte 17:00` | Evaluate tại runtime, KHÔNG cache, không sinh SQL |
+
+**Schema bổ sung — temporal policy:**
+
+```sql
+-- Tách temporal condition ra thành bảng riêng, không nhúng vào filter_expr
+CREATE TABLE temporal_policy (
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    permission_id   UUID         NOT NULL REFERENCES permission(id),
+    name            VARCHAR(200) NOT NULL,
+    allowed_days    SMALLINT[]   DEFAULT '{1,2,3,4,5}',  -- 1=Mon..7=Sun (ISO)
+    allowed_from    TIME         NOT NULL DEFAULT '08:00',
+    allowed_until   TIME         NOT NULL DEFAULT '17:30',
+    timezone        VARCHAR(50)  NOT NULL DEFAULT 'Asia/Ho_Chi_Minh',
+    allowed_cidr    INET[]       DEFAULT NULL,            -- NULL = không giới hạn IP
+    require_shift   BOOLEAN      DEFAULT false,
+    shift_table_ref VARCHAR(300) DEFAULT NULL,            -- 'shift_schedule:user_id'
+    is_active       BOOLEAN      DEFAULT true
+);
+
+CREATE INDEX idx_temporal_permission ON temporal_policy(permission_id)
+    WHERE is_active = true;
+```
+
+**Evaluation flow — temporal gate trước, compiled predicate sau:**
+
+```java
+@Service
+public class AuthzEvaluationPipeline {
+
+    public AuthzDecision evaluate(AuthzRequest req) {
+        // Bước 1: Temporal gate — pure in-memory arithmetic, KHÔNG cache
+        // Fail → DENY ngay, không đánh giá ABAC/ReBAC
+        TemporalCheckResult temporal = temporalEngine.check(
+            req.getPermissionId(), req.getEnvContext());
+        if (!temporal.isAllowed())
+            return AuthzDecision.deny("TEMPORAL_GATE: " + temporal.getReason());
+
+        // Bước 2: Static predicate — dùng compiled cache bình thường
+        CompiledPredicate compiled = compiledFilterCache.getOrCompile(
+            req.getPermissionId(), req.getResourceType(), req.getFilterExpr());
+        FilterResult filter = compiledFilterCache.bind(compiled, req.getAuthzContext());
+
+        // Bước 3: ReBAC graph (nếu AST có relation node)
+        if (req.hasRelationNodes()) {
+            boolean relationAllowed = reBacEngine.check(req);
+            if (!relationAllowed) return AuthzDecision.deny("REBAC_GRAPH");
+        }
+
+        return AuthzDecision.allow(filter);
+    }
+}
+
+@Service
+public class TemporalEngine {
+
+    public TemporalCheckResult check(UUID permissionId, EnvContext env) {
+        List<TemporalPolicy> policies = temporalPolicyRepo.findActive(permissionId);
+        if (policies.isEmpty()) return TemporalCheckResult.allowed();
+
+        for (TemporalPolicy tp : policies) {
+            ZonedDateTime now = env.getRequestTime().atZone(ZoneId.of(tp.getTimezone()));
+            DayOfWeek day     = now.getDayOfWeek();
+            LocalTime  time   = now.toLocalTime();
+
+            if (!tp.getAllowedDays().contains(day.getValue()))
+                return TemporalCheckResult.denied("Not allowed on " + day);
+
+            if (time.isBefore(tp.getAllowedFrom()) || time.isAfter(tp.getAllowedUntil()))
+                return TemporalCheckResult.denied("Outside working hours: " + time);
+
+            if (tp.getAllowedCidr() != null
+                    && !matchesCidr(env.getClientIp(), tp.getAllowedCidr()))
+                return TemporalCheckResult.denied("IP not in allowlist: " + env.getClientIp());
+
+            if (tp.isRequireShift()
+                    && !hasActiveShift(permissionId, env.getUserId(), now))
+                return TemporalCheckResult.denied("No active shift for user");
+        }
+        return TemporalCheckResult.allowed();
+    }
+}
+```
+
+**Tại sao tách bảng thay vì nhúng vào AST:**
+- `temporal_policy` được load và check trước mọi cache operation — không làm ô nhiễm compiled predicate.
+- Temporal check là pure in-memory arithmetic — không cần DB round-trip sau lần load đầu (cache local bundle).
+- Policy quản lý temporal rule riêng biệt với policy quản lý data filter → SRP rõ ràng.
+- Shift-based condition (`require_shift`) check qua JIT Attribute Fetching (xem EC-4).
+
+---
+
+### EC-2 — ReBAC Performance: Cycle Detection & Materialized Graph
+
+**Vấn đề gốc rễ:** `WITH RECURSIVE` trên PostgreSQL có 2 điểm yếu thực tế:
+1. **Cycle:** Nếu graph có cycle (`A → B → A`) — query loop vô hạn hoặc timeout.
+2. **Deep graph:** Tập đoàn với 1000 công ty con, chain ủy quyền 5 cấp → traverse 5000 nodes per request → DB chết ở high throughput.
+
+**Giải pháp 3 lớp:**
+
+#### Lớp 1 — Cycle detection tại write time
+
+```sql
+CREATE OR REPLACE FUNCTION check_relation_cycle()
+RETURNS TRIGGER AS $$
+DECLARE cycle_exists BOOLEAN;
+BEGIN
+    -- Nếu insert A → B, kiểm tra B có path nào về A không
+    WITH RECURSIVE reachable AS (
+        SELECT object AS node FROM relation_tuple
+        WHERE tenant_id = NEW.tenant_id
+          AND subject   = NEW.object
+          AND relation  = NEW.relation
+        UNION
+        SELECT rt.object FROM relation_tuple rt
+        JOIN reachable r ON rt.subject = r.node
+        WHERE rt.tenant_id = NEW.tenant_id AND rt.relation = NEW.relation
+    )
+    SELECT EXISTS (SELECT 1 FROM reachable WHERE node = NEW.subject)
+    INTO cycle_exists;
+
+    IF cycle_exists THEN
+        RAISE EXCEPTION 'Cycle detected: (%) -[%]-> (%) would create a cycle',
+            NEW.subject, NEW.relation, NEW.object;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_check_relation_cycle
+    BEFORE INSERT ON relation_tuple
+    FOR EACH ROW EXECUTE FUNCTION check_relation_cycle();
+```
+
+#### Lớp 2 — Materialized reachability với incremental update
+
+```sql
+-- Pre-computed reachability — maintained bởi CDC trigger
+CREATE TABLE relation_reachability (
+    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    tenant_id   UUID         NOT NULL,
+    subject     VARCHAR(300) NOT NULL,
+    relation    VARCHAR(100) NOT NULL,
+    object      VARCHAR(300) NOT NULL,  -- mọi object reachable từ subject
+    depth       INT          NOT NULL,  -- số hop
+    path        TEXT[]       NOT NULL,  -- ['user:A','user:B','user:C'] để debug
+    computed_at TIMESTAMPTZ  DEFAULT now()
+);
+
+CREATE UNIQUE INDEX idx_reachability_unique  ON relation_reachability(tenant_id, subject, relation, object);
+CREATE INDEX        idx_reachability_lookup  ON relation_reachability(tenant_id, object, relation);
+```
+
+```java
+// Incremental recompute khi relation_tuple thay đổi
+@KafkaListener(topics = "pdms.public.relation_tuple")
+public void onRelationTupleChange(RelationTupleCdcEvent event) {
+    // Chỉ recompute subgraph bị ảnh hưởng — không recompute toàn bộ
+    reachabilityService.recomputeSubgraph(
+        event.getTenantId(), event.getRelation(), event.getSubject());
+}
+
+// Query: O(1) lookup thay vì O(depth) recursive traversal
+public boolean canReach(String tenantId, String subject, String relation, String object) {
+    return reachabilityRepo.exists(tenantId, subject, relation, object);
+}
+```
+
+#### Lớp 3 — Circuit Breaker với depth limit
+
+```java
+@Service
+public class ReBacEngine {
+
+    private static final int  MAX_DEPTH   = 10;  // đủ cho mọi tổ chức thực tế
+    private static final long MAX_TIMEOUT = 50;  // ms
+
+    public boolean check(AuthzRequest req) {
+        // Thử lookup materialized table trước — O(1)
+        if (reachabilityRepo.exists(req.getTenantId(), req.getSubject(),
+                req.getRelation(), req.getObject())) return true;
+
+        // Fallback: live traversal với circuit breaker
+        try {
+            return withCircuitBreaker(() -> liveTraversal(
+                req.getTenantId(), req.getSubject(),
+                req.getRelation(), req.getObject(), 0));
+        } catch (CircuitBreakerOpenException e) {
+            log.warn("ReBAC circuit open for tenant={}", req.getTenantId());
+            auditLog.record(req, "REBAC_CIRCUIT_OPEN", "DENY");
+            return false;  // fail-closed
+        }
+    }
+
+    private boolean liveTraversal(String tenantId, String subject,
+                                   String relation, String target, int depth) {
+        if (depth > MAX_DEPTH) throw new ReBacDepthExceededException(depth);
+        List<String> next = relationTupleRepo.findObjects(tenantId, subject, relation);
+        if (next.contains(target)) return true;
+        return next.stream().anyMatch(n ->
+            liveTraversal(tenantId, n, relation, target, depth + 1));
+    }
+}
+```
+
+**Quy tắc vận hành:**
+- `MAX_DEPTH = 10` đủ cho mọi tổ chức doanh nghiệp thực tế.
+- Khi circuit open → ghi `REBAC_CIRCUIT_OPEN` vào audit log → alert on-call → không để request treo.
+- Materialized table cần rebuild full sau khi restore DB từ backup (`authz-cli rebuild-reachability`).
+
+---
+
+### EC-3 — Audit Log Durability trong Data Plane (Sidecar)
+
+**Vấn đề gốc rễ:** Sidecar thực hiện AuthZ cục bộ → quyết định ALLOW/DENY xảy ra in-process → nếu push audit log về IAM Service qua Kafka mà sidecar crash trước khi commit → mất log. Với banking, mất 1 dòng "who denied what" là vi phạm tuân thủ.
+
+**Giải pháp: Local WAL buffer → guaranteed delivery**
+
+Nguyên tắc: ghi log vào local disk-persisted store trước khi return response (đồng bộ), sau đó async relay về IAM — tương tự Outbox Pattern.
+
+```java
+@Service
+public class DurableAuditLogger {
+
+    // Chronicle Queue: off-heap, persisted to disk, ~1μs write latency, zero GC pressure
+    private final ChronicleQueue localWal;
+    private final KafkaTemplate<String, AuditEvent> kafkaTemplate;
+
+    /**
+     * Ghi ĐỒNG BỘ vào local WAL TRƯỚC KHI return AuthzDecision.
+     * Chronicle Queue write ~1μs — không ảnh hưởng latency AuthZ đáng kể.
+     */
+    public void record(AuthzRequest req, AuthzDecision decision) {
+        AuditEvent event = AuditEvent.builder()
+            .id(UUID.randomUUID())
+            .tenantId(req.getTenantId())
+            .userId(req.getUserId())
+            .resourceType(req.getResourceType())
+            .resourceRef(req.getResourceRef())
+            .action(req.getAction())
+            .decision(decision.name())
+            .evalTrace(decision.getTrace())
+            .context(req.toContextSnapshot())
+            .decidedAt(Instant.now())
+            .sidecardId(System.getenv("POD_NAME"))
+            .build();
+
+        // Ghi vào local WAL trước — atomic, không mất khi crash
+        try (ExcerptAppender appender = localWal.acquireAppender()) {
+            appender.writeDocument(w -> w.getValueOut().object(event));
+        }
+
+        // Async forward — best effort, WAL là source of truth
+        kafkaTemplate.send("authz.decision.log", event.getId().toString(), event)
+            .whenComplete((result, ex) -> {
+                if (ex != null)
+                    log.warn("Kafka send failed, event {} will be retried from WAL", event.getId());
+            });
+    }
+}
+```
+
+**WAL relay agent — chạy song song trong cùng pod:**
+
+```java
+@Component
+public class WalRelayAgent {
+
+    @Scheduled(fixedDelay = 5_000)
+    public void relay() {
+        try (ExcerptTailer tailer = localWal.createTailer("iam-relay")) {
+            while (tailer.nextIndex()) {
+                AuditEvent event = tailer.readDocument(
+                    r -> r.getValueIn().object(AuditEvent.class));
+                if (event == null) break;
+
+                boolean sent = iamAuditClient.submitWithRetry(event, 3);
+                if (sent) tailer.moveToIndex(tailer.index() + 1);
+                // Nếu không sent → giữ lại, retry ở lần sau
+            }
+        }
+    }
+}
+```
+
+**IAM Service — idempotent ingestion:**
+
+```sql
+-- Dedup bằng event.id — safe khi WAL relay gửi lại nhiều lần
+INSERT INTO authz_decision_log (id, tenant_id, user_id, resource_type,
+    resource_ref, action, decision, eval_trace, context, sidecar_id, decided_at)
+VALUES (:id, :tenantId, :userId, :resourceType,
+    :resourceRef, :action, :decision, :evalTrace, :context, :sidecarId, :decidedAt)
+ON CONFLICT (id) DO NOTHING;  -- idempotent: duplicate từ retry bị bỏ qua
+```
+
+**Kubernetes preStop hook — flush WAL trước khi terminate:**
+
+```yaml
+lifecycle:
+  preStop:
+    exec:
+      command: ["/bin/sh", "-c",
+        "curl -X POST localhost:8080/actuator/wal-flush && sleep 5"]
+```
+
+`/actuator/wal-flush` trigger `WalRelayAgent.relay()` synchronously, block đến khi toàn bộ WAL entries được IAM confirm — sau đó K8s mới terminate pod. Kết hợp `terminationGracePeriodSeconds: 30` để đủ thời gian flush.
+
+---
+
+### EC-4 — JIT Attribute Fetching & Cross-Domain Data Join
+
+**Vấn đề gốc rễ:** Hai bài toán có cùng root cause — AuthZ cần attribute hoặc dữ liệu từ service khác tại evaluation time:
+
+1. **JIT Attribute:** Policy cần `user.shift_status` nhưng attribute này sống ở `shift-service`, không có trong `user_account.attributes`. Pre-replicate tất cả về IAM → coupling cao, schema phình.
+2. **Cross-domain join:** "Filter document của những người có cùng level với tôi" — level ở `hr-service`, document ở `pdms-service`. AST translator không thể tự sinh JOIN xuyên service.
+
+**Phân loại và chiến lược xử lý:**
+
+| Loại data | Tần suất thay đổi | Chiến lược |
+|-----------|-------------------|------------|
+| Shift status, session state | Cao (theo phút) | JIT fetch + cache 30s + circuit breaker |
+| Level, department, position | Thấp (theo tuần) | Pre-materialize vào `relation_tuple` qua event |
+
+#### Schema — external attribute source registry
+
+```sql
+CREATE TABLE external_attribute_source (
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    tenant_id       UUID         NOT NULL REFERENCES tenant(id),
+    code            VARCHAR(100) NOT NULL,         -- 'shift_service', 'hr_service'
+    base_url        VARCHAR(500) NOT NULL,
+    attribute_path  VARCHAR(200) NOT NULL,         -- '/internal/users/{userId}/attributes'
+    cacheable       BOOLEAN      DEFAULT true,
+    cache_ttl_sec   INT          DEFAULT 30,       -- ngắn: data động
+    timeout_ms      INT          DEFAULT 200,      -- phải nhanh: không block AuthZ
+    fallback_value  JSONB        DEFAULT NULL,
+    UNIQUE(tenant_id, code)
+);
+```
+
+**AST node type mới — `external_attr`:**
+
+```json
+{
+  "left":  {
+    "type":   "external_attr",
+    "source": "shift_service",
+    "key":    "current_shift_status"
+  },
+  "op":    "eq",
+  "right": { "type": "literal", "value": "ON_DUTY" }
+}
+```
+
+**JIT Attribute Fetcher:**
+
+```java
+@Service
+public class JitAttributeFetcher {
+
+    // 30s cache — đủ giảm tải, đủ ngắn để reflect thực tế
+    private final Cache<String, JsonNode> shortCache = Caffeine.newBuilder()
+        .maximumSize(50_000).expireAfterWrite(30, SECONDS).build();
+
+    @CircuitBreaker(name = "jit-attr", fallbackMethod = "fetchFallback")
+    @TimeLimiter(name = "jit-attr")   // timeout 200ms
+    public JsonNode fetch(String sourceCode, UUID userId,
+                          String attributeKey, String tenantId) {
+        String cacheKey = sourceCode + ":" + userId + ":" + attributeKey;
+        return shortCache.get(cacheKey, k -> {
+            ExternalAttributeSource src = sourceRegistry.get(tenantId, sourceCode);
+            String url = src.getBaseUrl()
+                + src.getAttributePath().replace("{userId}", userId.toString());
+            return webClient.get().uri(url)
+                .header("X-Internal-Token", internalTokenProvider.get())
+                .retrieve().bodyToMono(JsonNode.class)
+                .map(body -> body.get(attributeKey))
+                .block(Duration.ofMillis(src.getTimeoutMs()));
+        });
+    }
+
+    public JsonNode fetchFallback(String sourceCode, UUID userId, String key,
+                                   String tenantId, Throwable ex) {
+        ExternalAttributeSource src = sourceRegistry.get(tenantId, sourceCode);
+        if (src.getFallbackValue() != null) {
+            log.warn("JIT fetch failed for source={}, key={}, using fallback", sourceCode, key);
+            return src.getFallbackValue().get(key);
+        }
+        throw new JitAttributeUnavailableException(sourceCode, key);
+    }
+}
+```
+
+**Cross-domain join — Pre-materialization vào `relation_tuple`:**
+
+```java
+// hr-service: khi user thay đổi level → publish event → pre-materialize
+@KafkaListener(topics = "hr.user.level.changed")
+public void onLevelChanged(UserLevelChangedEvent event) {
+    // Xóa quan hệ same_level_as cũ của user này
+    relationTupleRepo.deleteBySubjectAndRelation(
+        "user:" + event.getUserId(), "same_level_as");
+
+    // Tìm tất cả user cùng level mới → insert relation_tuple 2 chiều
+    List<UUID> sameLevel = hrUserRepo.findByLevel(
+        event.getTenantId(), event.getNewLevel());
+    List<RelationTuple> tuples = sameLevel.stream()
+        .filter(uid -> !uid.equals(event.getUserId()))
+        .flatMap(uid -> Stream.of(
+            RelationTuple.of(event.getTenantId(),
+                "user:" + event.getUserId(), "same_level_as", "user:" + uid),
+            RelationTuple.of(event.getTenantId(),
+                "user:" + uid, "same_level_as", "user:" + event.getUserId())
+        )).toList();
+    relationTupleRepo.saveAll(tuples);
+}
+```
+
+Sau đó AST dùng `relation` node bình thường — không cần cross-service call tại evaluation time:
+
+```json
+{
+  "left":  { "type": "relation", "key": "same_level_as", "target": "resource.created_by_user" },
+  "op":    "exists"
+}
+```
+
+**Quy tắc vận hành:**
+- Không bao giờ để AuthZ engine tự HTTP call xuyên service mà không có circuit breaker + timeout cứng.
+- Nếu JIT fetch fail và không có fallback → `deny` với lý do `JIT_UNAVAILABLE` — fail-closed.
+- Pre-materialization chỉ dùng cho data thay đổi chậm — data thay đổi nhanh dùng JIT.
+
+---
+
+### EC-5 — AuthZ Governance: Policy-as-Code & Schema Standardization
+
+**Vấn đề gốc rễ:** Hai rủi ro kỹ thuật dài hạn mà thuần kỹ thuật không giải quyết:
+
+1. **Escape hatch abuse:** `sql_fragment`, `es_fragment` được thiết kế cho edge case nhưng nếu developer dùng vì "viết SQL dễ hơn viết AST" → policy phân tán về SQL, mất khả năng audit qua AST debugger, mất Universal tính.
+2. **Field naming chaos:** `branch_id` vs `branchCode` vs `branch_code` trên các service khác nhau → `schema_def.field_mappings` trở thành đống mapping thủ công không scale.
+
+#### Policy-as-Code: Git → CI/CD → Control Plane
+
+```yaml
+# policies/pdms/branch-isolation.yaml — lưu trong Git, review qua PR
+apiVersion: authz.enterprise/v1
+kind: Policy
+metadata:
+  name: branch-isolation
+  tenant: pdms
+  version: "3"
+spec:
+  effect: ALLOW
+  priority: 100
+  rules:
+    - subjectType: ROLE
+      resourceType: document
+      action: read
+      condition:
+        operator: AND
+        conditions:
+          - left:  { type: user_attr,      key: branchCode }
+            op:    eq
+            right: { type: resource_field, key: branchCode }
+          - left:  { type: resource_field, key: status }
+            op:    in
+            right: { type: literal, value: [ACTIVE, PENDING_REVIEW] }
+  temporalPolicy:
+    allowedDays: [1,2,3,4,5]
+    allowedFrom: "08:00"
+    allowedUntil: "17:30"
+    timezone: Asia/Ho_Chi_Minh
+```
+
+```yaml
+# .github/workflows/policy-deploy.yml
+steps:
+  - name: Validate policy schema & AST
+    run: authz-cli validate policies/**/*.yaml
+    # Kiểm tra: không có escape hatch, field names tồn tại trong schema registry
+
+  - name: Deploy to Shadow mode
+    run: authz-cli shadow-deploy --policy branch-isolation --duration 24h
+
+  - name: Check divergence threshold
+    run: authz-cli check-divergence --policy branch-isolation --max-pct 5
+    # Block promote nếu diverge > 5%
+
+  - name: Promote to ACTIVE
+    if: steps.divergence.outcome == 'success'
+    run: authz-cli promote --policy branch-isolation
+```
+
+```java
+// Policy validator — chạy trong CI, reject nếu vi phạm
+public class PolicyValidator {
+    public ValidationResult validate(PolicyYaml policy) {
+        // Rule 1: không cho escape hatch trong policy file
+        if (containsEscapeHatch(policy))
+            return ValidationResult.fail(
+                "Policy contains escape hatch — use AST instead. " +
+                "If unavoidable, submit PR to row_filter with approval.");
+
+        // Rule 2: tất cả resource_field phải có trong schema registry
+        for (var rule : policy.getSpec().getRules()) {
+            Set<String> declared = schemaRegistry.getFields(rule.getResourceType());
+            Set<String> used     = extractResourceFields(rule.getCondition());
+            Set<String> unknown  = Sets.difference(used, declared);
+            if (!unknown.isEmpty())
+                return ValidationResult.fail(
+                    "Unknown fields: " + unknown + " not in schema_field_registry for " + rule.getResourceType());
+        }
+        return ValidationResult.ok();
+    }
+}
+```
+
+#### Schema Registry — single source of truth cho field naming
+
+```sql
+CREATE TABLE schema_field_registry (
+    id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    tenant_id      UUID         NOT NULL REFERENCES tenant(id),
+    resource_type  VARCHAR(100) NOT NULL,
+    canonical_name VARCHAR(100) NOT NULL,  -- tên chuẩn trong AST: 'branchCode'
+    sql_name       VARCHAR(100) NOT NULL,  -- PostgreSQL: 'branch_code'
+    es_name        VARCHAR(100),           -- Elasticsearch: 'branch_code'
+    mongo_name     VARCHAR(100),           -- MongoDB: 'branchCode'
+    data_type      VARCHAR(50)  NOT NULL,  -- 'string', 'uuid', 'timestamp', 'enum'
+    enum_values    TEXT[]       DEFAULT NULL,
+    description    TEXT,
+    UNIQUE(tenant_id, resource_type, canonical_name)
+);
+```
+
+`schema_def.field_mappings` trong `resource_type` được **generate tự động** từ bảng này — không nhập tay. Mỗi service mới onboard phải đăng ký field của mình vào `schema_field_registry` trước khi viết policy.
+
+#### Escape hatch governance — khi nào được phép dùng
+
+Escape hatch không bị xóa — có những edge case hợp lý mà AST chưa model được. Nhưng cần approval workflow:
+
+```sql
+-- Mọi escape hatch phải được document và approve
+ALTER TABLE row_filter ADD COLUMN escape_hatch_reason      TEXT;
+ALTER TABLE row_filter ADD COLUMN escape_hatch_approved_by UUID;
+ALTER TABLE row_filter ADD COLUMN escape_hatch_approved_at TIMESTAMPTZ;
+ALTER TABLE row_filter ADD COLUMN escape_hatch_ticket_ref  VARCHAR(100);  -- Jira/Linear ref
+
+-- Trigger: block insert escape hatch mà không có approval
+CREATE OR REPLACE FUNCTION enforce_escape_hatch_approval()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF (NEW.sql_fragment IS NOT NULL
+        OR NEW.es_fragment IS NOT NULL
+        OR NEW.mongo_fragment IS NOT NULL)
+       AND NEW.escape_hatch_approved_by IS NULL THEN
+        RAISE EXCEPTION
+            'Escape hatch requires approval: set escape_hatch_approved_by, '
+            'escape_hatch_reason, and escape_hatch_ticket_ref';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_escape_hatch_approval
+    BEFORE INSERT OR UPDATE ON row_filter
+    FOR EACH ROW EXECUTE FUNCTION enforce_escape_hatch_approval();
+```
+
+---
+
+## Gap Resolution Matrix — Final (v2)
+
+| Gap | Vấn đề | Giải pháp | Status |
+|-----|---------|-----------|--------|
+| G1 — Resource explosion | 100M instance rows | Type-level vs Instance-level; instance chỉ tạo khi cần ACL đặc biệt | ✅ |
+| G2 — Attribute out-of-sync | Stale cache sau khi đổi branch | Keycloak SPI → Kafka push sync + `attributes_version` trong cache key | ✅ |
+| G3 — ReBAC thiếu | Quan hệ bắc cầu không express bằng ABAC | `relation_tuple` + cycle detection trigger + materialized reachability + circuit breaker | ✅ |
+| G4 — Centralized bottleneck | Network latency + SPOF | Control Plane / Data Plane split + emergency revoke + fail-open/closed | ✅ |
+| G5 — Single-backend AST | AST bind với SQL column | Backend-agnostic IR + `schema_field_registry` + multi-backend translator | ✅ |
+| G6 — Policy versioning | Không có rollback, không có shadow | `policy_version` + `policy_shadow_log` + DRAFT→SHADOW→ACTIVE lifecycle + divergence gate | ✅ |
+| G7 — Policy debugger | Không trace được tại sao DENY | `eval_trace` per AST node + Explain API + Replay API | ✅ |
+| EC-1 — Temporal context | Cache miss liên tục với env.now() | `temporal_policy` bảng riêng + evaluate trước compiled cache, không cache temporal gate | ✅ |
+| EC-2 — ReBAC performance | Cycle + deep graph + SQL recursive limit | Cycle detection trigger + `relation_reachability` materialized + circuit breaker depth=10 | ✅ |
+| EC-3 — Audit durability | Mất log khi sidecar crash | Local WAL (Chronicle Queue) → async relay → IAM idempotent ingestion + K8s preStop flush | ✅ |
+| EC-4 — Cross-domain join | Attribute ở service khác | JIT fetch + 30s cache + circuit breaker (data động); pre-materialize vào `relation_tuple` (data chậm) | ✅ |
+| EC-5 — Governance | Escape hatch abuse + field naming chaos | Policy-as-Code GitOps + CI/CD validation + `schema_field_registry` + escape hatch approval trigger | ✅ |
