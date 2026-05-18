@@ -1,26 +1,24 @@
 # AuthZ Platform — Dynamic 5-Layer Design
 
-> **Context:** Thiết kế nền tảng phân quyền động cho enterprise system, đặc biệt áp dụng cho PDMS (Physical Document Management System) tại VPBank. Toàn bộ policy, role, permission, field/row filter được cấu hình xuống database — không hardcode logic trong code.
+> **Context:** Thiết kế nền tảng phân quyền động cho enterprise system, áp dụng cho PDMS (Physical Document Management System) tại VPBank và mọi bài toán doanh nghiệp quy mô lớn. Toàn bộ policy, role, permission, field/row filter, relation tuple đều cấu hình xuống database — không hardcode logic trong code.
 
 ---
 
 ## Tổng quan 5 lớp phân quyền
 
-Một enterprise AuthZ system cần giải quyết 5 câu hỏi khác nhau, mỗi câu hỏi là một layer riêng:
-
 | Layer | Câu hỏi | Cơ chế |
 |-------|---------|--------|
 | A — Identity | Mày là ai? Token hợp lệ không? | JWT / OAuth2 / OIDC / mTLS |
-| B — RBAC | Role của mày có permission gì? | role → permission mapping |
-| C — Resource | Mày có quyền trên object cụ thể này không? | ACL per resource instance |
-| D — ABAC | Context hiện tại có cho phép không? | Policy engine, JSON AST eval |
-| E — Data filter | Response trả về field/row nào? | Field masking + Row filter |
+| B — RBAC | Role của mày có permission gì? | Hierarchical role → permission |
+| C — Resource | Mày có quyền trên object cụ thể này không? | Type-level policy + Instance ACL |
+| D — ABAC + ReBAC | Context + quan hệ có cho phép không? | JSON AST eval + graph traversal |
+| E — Data filter | Response trả về field/row nào? | Field masking + Row filter (multi-backend) |
 
-> **Rule:** Layer 1–2 xử lý ở Gateway (Keycloak + Spring Cloud Gateway). Layer 3–4 delegate sang `pdms-iam-service`. Layer 5 xử lý ở service layer hoặc DB (PostgreSQL RLS).
+> **Rule:** Layer A–B xử lý ở Gateway (Keycloak + Spring Cloud Gateway). Layer C–D delegate sang `pdms-iam-service` (control plane) hoặc local sidecar (data plane). Layer E xử lý ở service layer + PostgreSQL RLS.
 
 ---
 
-## Data Model — 5 nhóm bảng
+## Data Model — Full Schema
 
 ### Layer A — Identity & Multi-tenancy
 
@@ -33,17 +31,30 @@ CREATE TABLE tenant (
 );
 
 CREATE TABLE user_account (
-    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    tenant_id   UUID        NOT NULL REFERENCES tenant(id),
-    username    VARCHAR(100) NOT NULL,
-    external_id VARCHAR(200),          -- Keycloak subject
-    attributes  JSONB DEFAULT '{}',    -- {"branch_code":"HN01","level":3,"department":"credit"}
-    is_active   BOOLEAN DEFAULT true,
+    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    tenant_id           UUID         NOT NULL REFERENCES tenant(id),
+    username            VARCHAR(100) NOT NULL,
+    external_id         VARCHAR(200),              -- Keycloak subject
+    attributes          JSONB        DEFAULT '{}', -- {"branch_code":"HN01","level":3}
+    attributes_version  BIGINT       DEFAULT 0,    -- monotonic version, tăng mỗi lần sync
+    is_active           BOOLEAN      DEFAULT true,
     UNIQUE(tenant_id, username)
 );
+
+-- Audit trail cho mọi thay đổi attribute — dùng cho G2 (out-of-sync)
+CREATE TABLE user_attribute_history (
+    id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id      UUID         NOT NULL REFERENCES user_account(id),
+    attribute    VARCHAR(100) NOT NULL,
+    old_value    TEXT,
+    new_value    TEXT,
+    changed_at   TIMESTAMPTZ  DEFAULT now(),
+    changed_by   UUID                             -- admin hoặc system sync job
+);
+CREATE INDEX idx_attr_history_user ON user_attribute_history(user_id, changed_at DESC);
 ```
 
-`user_account.attributes` là JSONB — lưu attribute động của user dùng làm input cho ABAC engine (Layer D).
+`user_account.attributes_version` là monotonic counter — tăng mỗi khi sync từ Keycloak. Cache key mang version này → stale cache bị reject ngay mà không cần TTL dài.
 
 ---
 
@@ -52,110 +63,112 @@ CREATE TABLE user_account (
 ```sql
 CREATE TABLE role (
     id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    tenant_id      UUID        NOT NULL REFERENCES tenant(id),
+    tenant_id      UUID         NOT NULL REFERENCES tenant(id),
     code           VARCHAR(100) NOT NULL,
     name           VARCHAR(200) NOT NULL,
-    parent_role_id UUID REFERENCES role(id),  -- self-reference: role hierarchy
-    priority       INT DEFAULT 0,
+    parent_role_id UUID REFERENCES role(id),   -- self-reference: role hierarchy
+    priority       INT          DEFAULT 0,
     UNIQUE(tenant_id, code)
 );
 
 CREATE TABLE permission (
     id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    tenant_id     UUID        NOT NULL REFERENCES tenant(id),
+    tenant_id     UUID         NOT NULL REFERENCES tenant(id),
     code          VARCHAR(100) NOT NULL,
-    resource_type VARCHAR(100) NOT NULL,  -- 'document', 'contract', 'cif'
-    action        VARCHAR(50)  NOT NULL,  -- 'read', 'write', 'approve', 'archive'
-    scope         VARCHAR(50)  NOT NULL,  -- 'own', 'branch', 'all'
+    resource_type VARCHAR(100) NOT NULL,        -- 'document', 'contract', 'cif'
+    action        VARCHAR(50)  NOT NULL,        -- 'read', 'write', 'approve', 'archive'
+    scope         VARCHAR(50)  NOT NULL,        -- 'own', 'branch', 'all'
     UNIQUE(tenant_id, code)
 );
 
 CREATE TABLE role_permission (
     role_id       UUID NOT NULL REFERENCES role(id),
     permission_id UUID NOT NULL REFERENCES permission(id),
-    conditions    JSONB DEFAULT NULL,     -- optional extra ABAC conditions
+    conditions    JSONB DEFAULT NULL,            -- optional extra ABAC conditions
     PRIMARY KEY(role_id, permission_id)
 );
 
 CREATE TABLE user_role (
-    user_id           UUID NOT NULL REFERENCES user_account(id),
-    role_id           UUID NOT NULL REFERENCES role(id),
-    resource_scope_id UUID REFERENCES resource_instance(id),  -- scoped role
-    expires_at        TIMESTAMPTZ DEFAULT NULL,                -- temporary permission
+    user_id           UUID        NOT NULL REFERENCES user_account(id),
+    role_id           UUID        NOT NULL REFERENCES role(id),
+    resource_scope_id UUID REFERENCES resource_instance(id), -- scoped role (instance-level)
+    expires_at        TIMESTAMPTZ DEFAULT NULL,               -- temporary permission
     PRIMARY KEY(user_id, role_id)
 );
 ```
 
 **Design decisions:**
-- `role.parent_role_id` self-reference → role hierarchy. `BRANCH_MANAGER` kế thừa toàn bộ permission của `STAFF` — engine traverse lên cây khi evaluate.
+- `role.parent_role_id` self-reference → role hierarchy. Engine traverse lên cây khi evaluate bằng `WITH RECURSIVE`.
 - `permission.scope`: `own` = chỉ resource mình tạo, `branch` = cả branch, `all` = toàn hệ thống.
-- `user_role.resource_scope_id`: gán role scoped theo resource cụ thể — VD: user A là `REVIEWER` chỉ trên contract batch `#456`.
+- `user_role.resource_scope_id`: gán role scoped theo resource instance cụ thể — VD: user A là `REVIEWER` chỉ trên contract batch `#456`.
 - `user_role.expires_at`: temporary permission, tự hết hạn không cần cleanup job.
 
 ---
 
-### Layer C — Resource Registry
+### Layer C — Resource Registry (G1: Type-level vs Instance-level)
+
+**Nguyên tắc phân loại:** 90% use case dùng type-level policy (policy áp dụng cho cả loại resource, không cần lưu instance). Chỉ dùng instance-level cho các object đặc biệt cần ACL riêng ngoài luồng thường.
 
 ```sql
+-- Type-level: mô tả cấu trúc và actions hợp lệ của một loại resource
 CREATE TABLE resource_type (
     id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    tenant_id  UUID        NOT NULL REFERENCES tenant(id),
+    tenant_id  UUID         NOT NULL REFERENCES tenant(id),
     code       VARCHAR(100) NOT NULL,
     name       VARCHAR(200) NOT NULL,
-    schema_def JSONB NOT NULL,    -- định nghĩa attributes + actions hợp lệ
+    schema_def JSONB        NOT NULL,   -- {"attributes":["branch_code","status"],"actions":["read","approve"]}
     UNIQUE(tenant_id, code)
 );
 
+-- Instance-level: CHỈ tạo khi resource cần ACL đặc biệt ngoài type-level policy
+-- Với PDMS 100M records: KHÔNG lưu mọi document — chỉ lưu ~1% có ACL đặc biệt
 CREATE TABLE resource_instance (
     id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     resource_type_id UUID NOT NULL REFERENCES resource_type(id),
-    external_ref     VARCHAR(300),      -- ID trong service domain (doc ID, contract ID)
+    external_ref     VARCHAR(300),              -- ID trong domain service
     owner_id         UUID REFERENCES user_account(id),
-    attributes       JSONB DEFAULT '{}'  -- {"branch_code":"HN01","status":"PENDING","contract_type":"MORTGAGE"}
+    attributes       JSONB DEFAULT '{}',
+    created_at       TIMESTAMPTZ DEFAULT now()
 );
 
+-- ACL cho instance cụ thể — chỉ tồn tại khi có instance
 CREATE TABLE resource_acl (
     id                   UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    resource_instance_id UUID NOT NULL REFERENCES resource_instance(id),
-    subject_id           UUID NOT NULL,
-    subject_type         VARCHAR(20) NOT NULL, -- 'USER', 'ROLE', 'GROUP'
+    resource_instance_id UUID        NOT NULL REFERENCES resource_instance(id),
+    subject_id           UUID        NOT NULL,
+    subject_type         VARCHAR(20) NOT NULL,  -- 'USER', 'ROLE', 'GROUP'
     actions              VARCHAR(50)[] NOT NULL,
     conditions           JSONB DEFAULT NULL
 );
+
+CREATE INDEX idx_acl_instance ON resource_acl(resource_instance_id, subject_type, subject_id);
 ```
 
-`resource_type.schema_def` ví dụ:
-
-```json
-{
-  "attributes": ["branch_code", "status", "created_by", "contract_type"],
-  "actions": ["read", "write", "approve", "archive"]
-}
-```
-
-`resource_instance.attributes` là context phía resource cho ABAC — combined với `user_account.attributes` để evaluate policy.
+Evaluation order: **Type-level policy (row_filter + ABAC) → Instance ACL override**. Instance ACL chỉ được check nếu resource có `external_ref` tồn tại trong `resource_instance`. Điều này tránh full scan 100M rows.
 
 ---
 
-### Layer D — Policy Engine (ABAC)
+### Layer D — Policy Engine: ABAC + ReBAC (G3: Relationship-based)
+
+#### ABAC — JSON AST Policy
 
 ```sql
 CREATE TABLE policy (
     id        UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    tenant_id UUID        NOT NULL REFERENCES tenant(id),
+    tenant_id UUID         NOT NULL REFERENCES tenant(id),
     name      VARCHAR(200) NOT NULL,
     effect    VARCHAR(10)  NOT NULL CHECK (effect IN ('ALLOW', 'DENY')),
-    priority  INT          NOT NULL DEFAULT 0,  -- DENY higher priority → deny-override
+    priority  INT          NOT NULL DEFAULT 0,   -- DENY higher priority → deny-override
     is_active BOOLEAN      DEFAULT true
 );
 
 CREATE TABLE policy_rule (
     id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    policy_id      UUID        NOT NULL REFERENCES policy(id),
-    subject_type   VARCHAR(50) NOT NULL,   -- 'ROLE', 'USER', 'GROUP'
+    policy_id      UUID         NOT NULL REFERENCES policy(id),
+    subject_type   VARCHAR(50)  NOT NULL,        -- 'ROLE', 'USER', 'GROUP'
     resource_type  VARCHAR(100) NOT NULL,
     action         VARCHAR(50)  NOT NULL,
-    condition_expr JSONB        NOT NULL   -- JSON AST
+    condition_expr JSONB        NOT NULL          -- JSON AST
 );
 ```
 
@@ -176,40 +189,98 @@ CREATE TABLE policy_rule (
       "right": { "type": "literal",      "value": ["PENDING", "DRAFT"] }
     },
     {
-      "left":  { "type": "user_attr",    "key": "level" },
-      "op":    "gte",
-      "right": { "type": "literal",      "value": 3 }
+      "left":  { "type": "relation",     "key": "delegate_of", "target": "resource.owner_id" },
+      "op":    "exists"
     }
   ]
 }
 ```
 
-**Allowed node types:** `user_attr`, `resource_col`, `literal`, `env` (`now()`, `current_date`, `request_ip`).
-**Allowed operators:** `eq`, `neq`, `in`, `not_in`, `gte`, `lte`, `like`, `is_null`.
+Allowed node types: `user_attr`, `resource_col`, `literal`, `env` (`now()`, `current_date`, `request_ip`), `relation` (trigger ReBAC graph check — xem bên dưới).
+Allowed operators: `eq`, `neq`, `in`, `not_in`, `gte`, `lte`, `like`, `is_null`, `exists` (dùng với `relation` node).
 
-`policy.effect + priority` cho phép **deny-override**: DENY với priority cao hơn sẽ block dù có ALLOW phía dưới — quan trọng với banking (VD: block ngoài giờ hành chính).
+#### ReBAC — Relation Tuple (G3: Zanzibar-style)
+
+```sql
+-- Bảng quan hệ bộ ba: (subject) --[relation]--> (object)
+CREATE TABLE relation_tuple (
+    id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    tenant_id  UUID         NOT NULL REFERENCES tenant(id),
+    subject    VARCHAR(300) NOT NULL,  -- 'user:uuid-A', 'group:uuid-G'
+    relation   VARCHAR(100) NOT NULL,  -- 'delegate_of', 'member_of', 'owner_of', 'reviewer_of'
+    object     VARCHAR(300) NOT NULL,  -- 'user:uuid-B', 'branch:HN01', 'contract:uuid-C'
+    created_at TIMESTAMPTZ  DEFAULT now(),
+    expires_at TIMESTAMPTZ  DEFAULT NULL
+);
+
+-- Index cho graph traversal cả chiều forward và backward
+CREATE INDEX idx_tuple_subject ON relation_tuple(tenant_id, subject, relation);
+CREATE INDEX idx_tuple_object  ON relation_tuple(tenant_id, object,  relation);
+CREATE INDEX idx_tuple_active  ON relation_tuple(tenant_id, subject, relation, object)
+    WHERE expires_at IS NULL OR expires_at > NOW();
+```
+
+Ví dụ PDMS — ủy quyền 3 cấp:
+
+```
+(user:A) --[delegate_of]--> (user:B)   -- A ủy quyền cho B
+(user:B) --[delegate_of]--> (user:C)   -- B ủy quyền cho C
+(user:B) --[reviewer_of]--> (contract:456)
+```
+
+Graph traversal query — tìm tất cả subject có quan hệ `delegate_of` đến user X (bắc cầu):
+
+```sql
+WITH RECURSIVE delegate_chain AS (
+    -- Base: các user trực tiếp ủy quyền cho X
+    SELECT subject FROM relation_tuple
+    WHERE tenant_id = :tenantId
+      AND relation  = 'delegate_of'
+      AND object    = 'user:' || :targetUserId
+      AND (expires_at IS NULL OR expires_at > NOW())
+    UNION
+    -- Recursive: đi ngược chuỗi ủy quyền
+    SELECT rt.subject FROM relation_tuple rt
+    JOIN delegate_chain dc ON rt.object = dc.subject
+    WHERE rt.tenant_id = :tenantId
+      AND rt.relation  = 'delegate_of'
+      AND (rt.expires_at IS NULL OR rt.expires_at > NOW())
+)
+SELECT subject FROM delegate_chain;
+```
+
+**Khi nào dùng ABAC vs ReBAC:**
+- ABAC: quyền dựa trên attribute phẳng — `user.branch_code == resource.branch_code`. 90% use case.
+- ReBAC: quyền dựa trên quan hệ bắc cầu — "người được ủy quyền của chủ hợp đồng", "thành viên của nhóm reviewer". Dùng khi ABAC phải denormalize quan hệ thành attribute → không scale.
+
+Trong `condition_expr`, node `{ "type": "relation", "key": "delegate_of", "target": "resource.owner_id" }` trigger engine gọi graph traversal thay vì flat attribute comparison.
 
 ---
 
-### Layer E — Data Filter (field & row)
+### Layer E — Data Filter (field & row, multi-backend)
+
+#### G5: Backend-agnostic AST → Multi-backend translator
 
 ```sql
 CREATE TABLE field_filter (
     id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    permission_id  UUID        NOT NULL REFERENCES permission(id),
+    permission_id  UUID         NOT NULL REFERENCES permission(id),
     resource_type  VARCHAR(100) NOT NULL,
     allowed_fields VARCHAR(100)[],   -- whitelist fields được trả về
-    masked_fields  VARCHAR(100)[],   -- fields bị mask (không block, nhưng che giá trị)
+    masked_fields  VARCHAR(100)[],   -- fields bị mask, không block
     mask_pattern   VARCHAR(50)       -- '****', '***-***-####'
 );
 
 CREATE TABLE row_filter (
     id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    permission_id UUID        NOT NULL REFERENCES permission(id),
+    permission_id UUID         NOT NULL REFERENCES permission(id),
     resource_type VARCHAR(100) NOT NULL,
-    filter_expr   JSONB        NOT NULL,  -- JSON AST → translate sang SQL WHERE
-    sql_fragment  TEXT,                   -- escape hatch cho DBA, trusted
-    priority      INT DEFAULT 0,          -- nhiều filter cùng permission → AND tất cả
+    filter_expr   JSONB        NOT NULL,  -- backend-agnostic AST
+    -- Escape hatch per backend (DBA-defined, trusted, chỉ dùng khi AST không đủ)
+    sql_fragment  TEXT,
+    es_fragment   JSONB,                  -- Elasticsearch raw filter
+    mongo_fragment JSONB,                 -- MongoDB raw $match
+    priority      INT     DEFAULT 0,
     is_active     BOOLEAN DEFAULT true
 );
 
@@ -217,9 +288,85 @@ CREATE INDEX idx_row_filter_permission ON row_filter(permission_id, resource_typ
     WHERE is_active = true;
 ```
 
-**Phân biệt `allowed_fields` vs `masked_fields`:**
-- `allowed_fields`: field không có trong list → bị strip khỏi response hoàn toàn.
-- `masked_fields`: field có trong response nhưng value bị thay bằng `mask_pattern`. Dùng khi cần biết field tồn tại nhưng không thấy nội dung (VD: hiển thị `****` để user biết có CCCD nhưng không đọc được).
+**Backend-agnostic IR (Intermediate Representation):**
+
+AST hiện tại được redesign với node `resource_field` thay vì `resource_col` để không bind với SQL column:
+
+```json
+{
+  "operator": "AND",
+  "conditions": [
+    {
+      "left":  { "type": "user_attr",     "key": "branch_code" },
+      "op":    "eq",
+      "right": { "type": "resource_field","key": "branchCode" }
+    },
+    {
+      "left":  { "type": "resource_field","key": "status" },
+      "op":    "in",
+      "right": { "type": "literal",       "value": ["ACTIVE","PENDING"] }
+    }
+  ]
+}
+```
+
+`resource_field` map sang tên field trong từng backend qua `resource_type.schema_def`:
+
+```json
+{
+  "field_mappings": {
+    "branchCode": { "sql": "branch_code", "es": "branch_code", "mongo": "branchCode" },
+    "status":     { "sql": "status",      "es": "status",      "mongo": "status" }
+  }
+}
+```
+
+Multi-backend translator:
+
+```java
+public interface FilterTranslator<T> {
+    T translate(JsonNode ast, AuthzContext ctx, ResourceType resourceType);
+}
+
+// SQL translator → WHERE clause string + params
+@Component("sql")
+public class SqlFilterTranslator implements FilterTranslator<FilterResult> { ... }
+
+// Elasticsearch translator → Map<String,Object> ES filter DSL
+@Component("elasticsearch")
+public class EsFilterTranslator implements FilterTranslator<Map<String, Object>> {
+    @Override
+    public Map<String, Object> translate(JsonNode ast, AuthzContext ctx, ResourceType rt) {
+        return switch (ast.get("operator").asText("")) {
+            case "AND" -> Map.of("bool", Map.of("must",
+                StreamSupport.stream(ast.get("conditions").spliterator(), false)
+                    .map(c -> translate(c, ctx, rt)).toList()));
+            case "OR"  -> Map.of("bool", Map.of("should",
+                StreamSupport.stream(ast.get("conditions").spliterator(), false)
+                    .map(c -> translate(c, ctx, rt)).toList()));
+            default    -> translateLeaf(ast, ctx, rt);
+        };
+    }
+    private Map<String, Object> translateLeaf(JsonNode node, AuthzContext ctx, ResourceType rt) {
+        String field = rt.mapField(node.get("left").get("key").asText(), "es");
+        Object value = resolveValue(node.get("right"), ctx);
+        return switch (node.get("op").asText()) {
+            case "eq"   -> Map.of("term",  Map.of(field, value));
+            case "in"   -> Map.of("terms", Map.of(field, value));
+            case "gte"  -> Map.of("range", Map.of(field, Map.of("gte", value)));
+            case "lte"  -> Map.of("range", Map.of(field, Map.of("lte", value)));
+            case "like" -> Map.of("wildcard", Map.of(field, value));
+            default     -> throw new IllegalArgumentException("Unsupported op for ES: " + node.get("op").asText());
+        };
+    }
+}
+
+// MongoDB translator → Document $match expression
+@Component("mongodb")
+public class MongoFilterTranslator implements FilterTranslator<Document> { ... }
+```
+
+Một policy duy nhất được áp dụng đồng nhất trên PostgreSQL, Elasticsearch, và MongoDB — không viết filter logic riêng cho từng backend.
 
 ---
 
@@ -228,22 +375,343 @@ CREATE INDEX idx_row_filter_permission ON row_filter(permission_id, resource_typ
 ```sql
 CREATE TABLE authz_decision_log (
     id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    tenant_id         UUID        NOT NULL,
-    user_id           UUID        NOT NULL,
+    tenant_id         UUID         NOT NULL,
+    user_id           UUID         NOT NULL,
     resource_type     VARCHAR(100) NOT NULL,
     resource_ref      VARCHAR(300),
     action            VARCHAR(50)  NOT NULL,
     decision          VARCHAR(10)  NOT NULL CHECK (decision IN ('ALLOW', 'DENY')),
     matched_policy_id UUID REFERENCES policy(id),
-    context           JSONB        NOT NULL,  -- toàn bộ evaluation context tại thời điểm quyết định
+    policy_version_id UUID REFERENCES policy_version(id), -- G6: link to version
+    eval_trace        JSONB        NOT NULL,   -- AST node-by-node trace (G7)
+    context           JSONB        NOT NULL,   -- snapshot: user attrs + resource attrs
     decided_at        TIMESTAMPTZ  DEFAULT now()
 );
 
-CREATE INDEX idx_authz_log_user ON authz_decision_log(user_id, decided_at DESC);
+CREATE INDEX idx_authz_log_user     ON authz_decision_log(user_id, decided_at DESC);
 CREATE INDEX idx_authz_log_resource ON authz_decision_log(resource_type, resource_ref, decided_at DESC);
+CREATE INDEX idx_authz_log_diverged ON authz_decision_log(policy_version_id, decided_at DESC)
+    WHERE eval_trace->>'shadow_diverged' = 'true';  -- nhanh chóng tìm diverged cases
 ```
 
-`context` lưu snapshot đầy đủ: user attrs, resource attrs, matched rules — dùng để audit "tại sao user X không xem được doc Y" và replay quyết định khi incident.
+`eval_trace` lưu kết quả từng node trong AST khi evaluate — xem G7 để biết format.
+
+---
+
+## G2 — Attribute Out-of-Sync: Keycloak Event Sync
+
+**Vấn đề:** User chuyển branch → Keycloak cập nhật ngay nhưng `user_account.attributes` trong IAM DB + Redis cache vẫn còn giá trị cũ. Với banking, đây là security risk — user vẫn thấy data của branch cũ trong suốt TTL.
+
+**Giải pháp: Push-based sync với version vector**
+
+Keycloak Event Listener → Kafka topic `iam.user.attribute.changed` → IAM service update `user_account` + invalidate cache ngay:
+
+```java
+// Keycloak SPI: EventListenerProvider
+public class KeycloakAttributeSyncListener implements EventListenerProvider {
+
+    @Override
+    public void onEvent(AdminEvent event, boolean includeRepresentation) {
+        if (event.getResourceType() == ResourceType.USER
+                && (event.getOperationType() == OperationType.UPDATE
+                    || event.getOperationType() == OperationType.ACTION)) {
+            kafkaProducer.send("iam.user.attribute.changed", UserAttributeChangedEvent.from(event));
+        }
+    }
+}
+
+// IAM service Kafka consumer
+@KafkaListener(topics = "iam.user.attribute.changed")
+@Transactional
+public void onAttributeChanged(UserAttributeChangedEvent event) {
+    userAccountRepo.updateAttributes(
+        event.getUserId(),
+        event.getNewAttributes(),
+        event.getVersion()              // Keycloak entity version — optimistic lock
+    );
+    // Ghi audit trail
+    attributeHistoryRepo.save(UserAttributeHistory.of(event));
+    // Invalidate ngay — không đợi TTL
+    invalidateUserCache(event.getUserId());
+}
+```
+
+```sql
+-- Optimistic lock: chỉ update nếu version mới hơn version hiện tại
+UPDATE user_account
+SET attributes         = :newAttributes,
+    attributes_version = :newVersion
+WHERE id                  = :userId
+  AND attributes_version  < :newVersion;  -- idempotent, ignore stale events
+```
+
+Cache key mang `attributes_version`: `authz:ctx:{userId}:{version}`. Khi service nhận token JWT, extract `attr_version` claim → lookup cache với version đó → miss nếu version cũ → reload từ DB. Không cần global invalidate, chỉ cần version mismatch là đủ.
+
+---
+
+## G4 — Centralized Bottleneck: Control Plane / Data Plane Split
+
+**Vấn đề:** Mọi AuthZ check gọi về IAM service → network latency + single point of failure.
+
+**Giải pháp: Control Plane / Data Plane tách biệt**
+
+```
+┌─────────────────────────────────────┐
+│  IAM Service (Control Plane)        │
+│  - Quản lý policy, role, permission │
+│  - Expose Policy Bundle API         │
+│  - Nhận policy change events        │
+└────────────────┬────────────────────┘
+                 │ Push policy bundle (Kafka / gRPC stream)
+    ┌────────────┴──────────┬───────────────────┐
+    ▼                       ▼                   ▼
+┌──────────┐         ┌──────────┐         ┌──────────┐
+│ pdms-svc │         │ tsdb-svc │         │ proc-svc │
+│ sidecar  │         │ sidecar  │         │ sidecar  │
+│ (local)  │         │ (local)  │         │ (local)  │
+└──────────┘         └──────────┘         └──────────┘
+```
+
+**Policy Bundle — được sync xuống local:**
+
+```java
+@Component
+public class LocalPolicyEngine {
+
+    // In-memory store — được refresh khi nhận push từ control plane
+    private volatile PolicyBundle bundle;
+    private volatile long bundleVersion;
+
+    @KafkaListener(topics = "iam.policy.bundle.updated")
+    public void onBundleUpdate(PolicyBundleEvent event) {
+        if (event.getVersion() <= this.bundleVersion) return;  // idempotent
+        this.bundle = event.getBundle();
+        this.bundleVersion = event.getVersion();
+        log.info("Policy bundle updated to version {}", event.getVersion());
+    }
+
+    // AuthZ check: in-memory, 0ms network latency
+    public AuthzDecision evaluate(AuthzRequest req) {
+        if (bundle == null) return fallback(req);   // xem Emergency Revoke
+        return bundle.evaluate(req);
+    }
+}
+```
+
+**Emergency Revoke — consistency window:**
+
+Vấn đề: khi admin revoke quyền user khẩn cấp (VD: phát hiện tài khoản bị compromise), sidecar vẫn có policy cũ trong consistency window (thời gian push đến khi nhận).
+
+Giải pháp: **short-circuit revoke list** — IAM service maintain một Redis Set chứa các `userId` bị revoke khẩn cấp. Sidecar check list này trước khi dùng local bundle:
+
+```java
+public AuthzDecision evaluate(AuthzRequest req) {
+    // Check emergency revoke list trước — O(1) Redis lookup
+    if (emergencyRevokeCache.isRevoked(req.getUserId())) {
+        return AuthzDecision.DENY_EMERGENCY;
+    }
+    if (bundle == null) return fallback(req);
+    return bundle.evaluate(req);
+}
+```
+
+```java
+// IAM service — khi admin revoke khẩn cấp
+public void emergencyRevoke(UUID userId) {
+    redisTemplate.opsForSet().add("authz:revoked", userId.toString());
+    redisTemplate.expire("authz:revoked", 24, HOURS);
+    // Đồng thời push bundle update — revoke list chỉ là safety net trong window
+    kafkaProducer.send("iam.policy.bundle.updated", buildBundle());
+}
+```
+
+**Fallback khi sidecar mất kết nối với control plane:**
+
+```java
+private AuthzDecision fallback(AuthzRequest req) {
+    // Fail-open vs fail-closed — cấu hình per tenant
+    String mode = tenantConfig.getFailMode(req.getTenantId());
+    return switch (mode) {
+        case "CLOSED" -> AuthzDecision.DENY;    // banking: deny khi không chắc
+        case "OPEN"   -> AuthzDecision.ALLOW;   // internal tool: allow khi không chắc
+        default       -> AuthzDecision.DENY;
+    };
+}
+```
+
+---
+
+## G6 — Policy Versioning & Shadow Mode
+
+**Vấn đề:** Deploy policy mới trong banking cần kiểm chứng tác động trước khi áp dụng thật.
+
+### Schema
+
+```sql
+-- Snapshot đầy đủ của policy tại thời điểm publish
+CREATE TABLE policy_version (
+    id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    policy_id     UUID         NOT NULL REFERENCES policy(id),
+    version_num   INT          NOT NULL,
+    snapshot      JSONB        NOT NULL,   -- full policy + all rules tại thời điểm publish
+    status        VARCHAR(20)  NOT NULL CHECK (status IN ('DRAFT','SHADOW','ACTIVE','ARCHIVED')),
+    published_by  UUID,
+    published_at  TIMESTAMPTZ,
+    notes         TEXT,
+    UNIQUE(policy_id, version_num)
+);
+
+-- Shadow mode: ghi lại divergence giữa policy đang active và policy đang shadow
+CREATE TABLE policy_shadow_log (
+    id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    policy_version_id UUID         NOT NULL REFERENCES policy_version(id),
+    user_id           UUID,
+    resource_ref      VARCHAR(300),
+    action            VARCHAR(50),
+    shadow_decision   VARCHAR(10)  NOT NULL,   -- ALLOW/DENY theo policy SHADOW
+    active_decision   VARCHAR(10)  NOT NULL,   -- ALLOW/DENY theo policy ACTIVE
+    diverged          BOOLEAN GENERATED ALWAYS AS (shadow_decision != active_decision) STORED,
+    context_snapshot  JSONB,                   -- để replay và debug
+    logged_at         TIMESTAMPTZ  DEFAULT now()
+);
+
+CREATE INDEX idx_shadow_diverged  ON policy_shadow_log(policy_version_id, diverged, logged_at DESC);
+CREATE INDEX idx_shadow_version   ON policy_shadow_log(policy_version_id, logged_at DESC);
+```
+
+### Lifecycle: Draft → Shadow → Active → Archived
+
+```
+DRAFT ──publish──> SHADOW ──(review divergence)──> ACTIVE ──(superseded)──> ARCHIVED
+         (song song với ACTIVE)       (rollback nếu divergence cao)
+```
+
+### Shadow mode evaluation
+
+```java
+@Service
+public class PolicyVersionEngine {
+
+    public AuthzDecision evaluate(AuthzRequest req) {
+        PolicyVersion active = policyVersionRepo.findActive(req.getTenantId(), req.getResourceType());
+        AuthzDecision decision = evaluateVersion(active, req);
+
+        // Evaluate shadow policy song song (async, không ảnh hưởng latency)
+        policyVersionRepo.findShadow(req.getTenantId(), req.getResourceType())
+            .ifPresent(shadow -> CompletableFuture.runAsync(() -> {
+                AuthzDecision shadowDecision = evaluateVersion(shadow, req);
+                if (shadowDecision != decision) {
+                    shadowLogRepo.save(PolicyShadowLog.builder()
+                        .policyVersionId(shadow.getId())
+                        .userId(req.getUserId())
+                        .resourceRef(req.getResourceRef())
+                        .action(req.getAction())
+                        .shadowDecision(shadowDecision.name())
+                        .activeDecision(decision.name())
+                        .contextSnapshot(req.toJson())
+                        .build());
+                }
+            }));
+
+        return decision;
+    }
+}
+```
+
+**Divergence report** — trước khi promote SHADOW → ACTIVE:
+
+```sql
+SELECT
+    COUNT(*) FILTER (WHERE diverged)                                  AS diverged_count,
+    COUNT(*)                                                          AS total_count,
+    ROUND(100.0 * COUNT(*) FILTER (WHERE diverged) / COUNT(*), 2)    AS diverge_pct,
+    COUNT(*) FILTER (WHERE shadow_decision='DENY' AND active_decision='ALLOW') AS new_denials,
+    COUNT(*) FILTER (WHERE shadow_decision='ALLOW' AND active_decision='DENY') AS new_allows
+FROM policy_shadow_log
+WHERE policy_version_id = :shadowVersionId
+  AND logged_at > NOW() - INTERVAL '7 days';
+```
+
+Nếu `diverge_pct` > ngưỡng cho phép (VD: 5%) → block promote, yêu cầu review.
+
+---
+
+## G7 — Policy Debugger: Explain & Trace API
+
+**Vấn đề:** Khi user bị DENY, cần biết chính xác node nào trong AST đã fail.
+
+### AST Eval Trace format
+
+`authz_decision_log.eval_trace` lưu kết quả từng node:
+
+```json
+{
+  "decision": "DENY",
+  "matched_policy": "branch-isolation-v2",
+  "shadow_diverged": false,
+  "trace": [
+    {
+      "node": "AND",
+      "result": false,
+      "children": [
+        {
+          "node": "user_attr[branch_code] eq resource_field[branch_code]",
+          "left_value": "HN01",
+          "right_value": "HCM01",
+          "result": false,
+          "reason": "HN01 != HCM01"
+        },
+        {
+          "node": "resource_field[status] in [PENDING, DRAFT]",
+          "left_value": "ACTIVE",
+          "result": false,
+          "reason": "ACTIVE not in allowed set"
+        }
+      ]
+    }
+  ]
+}
+```
+
+### Explain API
+
+```java
+// GET /authz/explain?userId={}&resourceRef={}&action={}
+@GetMapping("/authz/explain")
+public ExplainResponse explain(@RequestParam UUID userId,
+                                @RequestParam String resourceRef,
+                                @RequestParam String action) {
+    // Tìm decision log gần nhất
+    AuthzDecisionLog log = decisionLogRepo
+        .findLatest(userId, resourceRef, action)
+        .orElseThrow(() -> new NotFoundException("No decision found"));
+
+    return ExplainResponse.builder()
+        .decision(log.getDecision())
+        .decidedAt(log.getDecidedAt())
+        .matchedPolicy(log.getMatchedPolicyId())
+        .policyVersion(log.getPolicyVersionId())
+        .trace(log.getEvalTrace())               // full AST trace
+        .userAttributeSnapshot(log.getContext().get("user"))
+        .resourceAttributeSnapshot(log.getContext().get("resource"))
+        .build();
+}
+
+// POST /authz/replay — evaluate lại decision cũ với policy hiện tại
+@PostMapping("/authz/replay")
+public ReplayResponse replay(@RequestBody ReplayRequest req) {
+    AuthzDecisionLog original = decisionLogRepo.findById(req.getDecisionId());
+    AuthzContext replayCtx    = AuthzContext.fromSnapshot(original.getContext());
+    AuthzDecision newDecision = policyEngine.evaluate(replayCtx);
+    return ReplayResponse.builder()
+        .originalDecision(original.getDecision())
+        .replayDecision(newDecision)
+        .changed(original.getDecision() != newDecision.name())
+        .build();
+}
+```
+
+Replay API cho phép trace "nếu policy hiện tại được áp dụng cho request cũ thì kết quả có khác không?" — cực kỳ hữu ích khi audit sau incident.
 
 ---
 
@@ -255,86 +723,32 @@ CREATE INDEX idx_authz_log_resource ON authz_decision_log(resource_type, resourc
 @Service
 public class RowFilterEvaluator {
 
-    @Autowired
-    private RowFilterRepository rowFilterRepo;
+    @Autowired private RowFilterRepository rowFilterRepo;
 
-    public FilterResult evaluate(UUID permissionId, String resourceType, AuthzContext ctx) {
+    public FilterResult evaluate(UUID permissionId, String resourceType,
+                                  AuthzContext ctx, String backend) {
         List<RowFilter> filters = rowFilterRepo
             .findActiveByPermissionAndResource(permissionId, resourceType);
-
         if (filters.isEmpty()) return FilterResult.noFilter();
 
         List<String> predicates = new ArrayList<>();
         Map<String, Object> params = new LinkedHashMap<>();
 
         for (RowFilter filter : filters) {
-            if (filter.getSqlFragment() != null) {
-                predicates.add(filter.getSqlFragment());
-                continue;
-            }
-            SqlPredicate pred = evalNode(filter.getFilterExpr(), ctx, params);
-            predicates.add(pred.sql());
-        }
-
-        return new FilterResult(String.join(" AND ", predicates), params);
-    }
-
-    private SqlPredicate evalNode(JsonNode node, AuthzContext ctx,
-                                  Map<String, Object> params) {
-        String op = node.get("operator").asText(null);
-        if (op != null) {
-            List<String> parts = new ArrayList<>();
-            for (JsonNode child : node.get("conditions"))
-                parts.add(evalNode(child, ctx, params).sql());
-            String joiner = op.equals("OR") ? " OR " : " AND ";
-            return new SqlPredicate("(" + String.join(joiner, parts) + ")");
-        }
-
-        String left  = resolveRef(node.get("left"),  ctx, params);
-        String right = resolveRef(node.get("right"), ctx, params);
-        String sqlOp = switch (node.get("op").asText()) {
-            case "eq"     -> "=";
-            case "neq"    -> "!=";
-            case "gte"    -> ">=";
-            case "lte"    -> "<=";
-            case "in"     -> "= ANY(?)";
-            case "not_in" -> "!= ALL(?)";
-            case "like"   -> "LIKE ?";
-            default       -> throw new IllegalArgumentException("Unknown op: " + node.get("op").asText());
-        };
-        return new SqlPredicate(left + " " + sqlOp + " " + right);
-    }
-
-    private static final Set<String> ALLOWED_COLUMNS = Set.of(
-        "branch_code", "status", "created_by", "department_code",
-        "contract_type", "owner_id", "tenant_id"
-    );
-
-    private String resolveRef(JsonNode ref, AuthzContext ctx, Map<String, Object> params) {
-        return switch (ref.get("type").asText()) {
-            case "resource_col" -> {
-                String col = ref.get("key").asText();
-                if (!ALLOWED_COLUMNS.contains(col))
-                    throw new SecurityException("Column not allowed in filter: " + col);
-                yield col;
-            }
-            case "user_attr" -> {
-                String paramKey = "p_" + params.size();
-                params.put(paramKey, ctx.getUserAttr(ref.get("key").asText()));
-                yield ":" + paramKey;
-            }
-            case "literal" -> {
-                String paramKey = "p_" + params.size();
-                params.put(paramKey, extractLiteral(ref.get("value")));
-                yield ":" + paramKey;
-            }
-            case "env" -> switch (ref.get("key").asText()) {
-                case "now"          -> "NOW()";
-                case "current_date" -> "CURRENT_DATE";
-                default -> throw new IllegalArgumentException("Unknown env key");
+            // Escape hatch per backend
+            String fragment = switch (backend) {
+                case "sql"   -> filter.getSqlFragment();
+                case "es"    -> filter.getEsFragment() != null ? filter.getEsFragment().toString() : null;
+                case "mongo" -> filter.getMongoFragment() != null ? filter.getMongoFragment().toString() : null;
+                default      -> null;
             };
-            default -> throw new IllegalArgumentException("Unknown ref type: " + ref.get("type").asText());
-        };
+            if (fragment != null) { predicates.add(fragment); continue; }
+
+            // Translate AST per backend
+            FilterTranslator<?> translator = translatorRegistry.get(backend);
+            predicates.add(translator.translate(filter.getFilterExpr(), ctx, resourceTypeRepo.findByCode(resourceType)).toString());
+        }
+        return new FilterResult(String.join(" AND ", predicates), params);
     }
 }
 ```
@@ -343,81 +757,46 @@ public class RowFilterEvaluator {
 
 ## PostgreSQL RLS — Safety Net Layer
 
-RLS là tầng bảo vệ tại DB level, hoàn toàn độc lập với application code. Không thể bypass kể cả khi dùng raw JDBC.
-
-### Enable và tạo policy
-
 ```sql
 ALTER TABLE document ENABLE ROW LEVEL SECURITY;
-ALTER TABLE document FORCE ROW LEVEL SECURITY;  -- bắt buộc cả table owner
+ALTER TABLE document FORCE ROW LEVEL SECURITY;
 
--- Policy cơ bản: branch isolation
+-- Safety net: branch isolation — rule đơn giản nhất
 CREATE POLICY doc_branch_isolation ON document
-    AS PERMISSIVE
-    FOR ALL
-    TO pdms_app_role
+    AS PERMISSIVE FOR ALL TO pdms_app_role
     USING (
         branch_code = current_setting('app.branch_code', true)
         OR current_setting('app.bypass_rls', true) = 'true'
     );
 
--- Policy cho REVIEWER (naive version — xem Performance P5 để optimize)
+-- Reviewer access — dùng pre-computed array từ service (G5: tránh correlated subquery)
 CREATE POLICY doc_reviewer_access ON document
     FOR SELECT TO pdms_reviewer_role
     USING (
         status = 'PENDING_REVIEW'
-        AND current_setting('app.user_id', true) = ANY(
-            SELECT reviewer_id::text FROM document_reviewer_assignment
-            WHERE document_id = document.id
+        AND id = ANY(
+            string_to_array(current_setting('app.reviewable_doc_ids', true), ',')::uuid[]
         )
     );
-```
 
-### Set context per-request trong Spring Boot
+CREATE INDEX idx_reviewer_assignment_lookup
+    ON document_reviewer_assignment(document_id, reviewer_id);
+```
 
 ```java
-@Component
-public class RlsContextSetter {
-
-    @Autowired
-    private DataSource dataSource;
-
-    /**
-     * set_config(..., false) = transaction-scoped → safe với HikariCP pool
-     * KHÔNG dùng set_config(..., true) vì connection được reuse giữa các request
-     */
-    public <T> T withRlsContext(AuthzContext ctx, Callable<T> action) throws Exception {
-        try (Connection conn = dataSource.getConnection()) {
-            try (PreparedStatement ps = conn.prepareStatement(
-                    "SELECT set_config('app.branch_code', ?, false), " +
-                           "set_config('app.user_id', ?, false),     " +
-                           "set_config('app.bypass_rls', ?, false)")) {
-                ps.setString(1, ctx.getBranchCode());
-                ps.setString(2, ctx.getUserId().toString());
-                ps.setString(3, String.valueOf(ctx.isAdmin()));
-                ps.execute();
-            }
-            return action.call();
-        }
-    }
-}
+// set_config(..., false) = transaction-scoped → safe với HikariCP pool
+// KHÔNG dùng true → session leak giữa pooled connections
+String query = """
+    WITH ctx AS (
+        SELECT set_config('app.branch_code',       :branchCode, false),
+               set_config('app.user_id',            :userId,     false),
+               set_config('app.bypass_rls',         :bypass,     false),
+               set_config('app.reviewable_doc_ids', :reviewIds,  false)
+    )
+    SELECT d.* FROM document d, ctx
+    WHERE d.tenant_id = :tenantId AND {rowFilterPredicate}
+    """;
 ```
-
-> ⚠️ **Critical:** `set_config('key', value, false)` = transaction-scoped. `set_config('key', value, true)` = session-scoped. Chỉ dùng `false` với connection pool để tránh context leak sang request tiếp theo.
-
----
-
-## So sánh 2 tầng bảo vệ
-
-| | `row_filter` (service layer) | PostgreSQL RLS (DB layer) |
-|---|---|---|
-| **Vị trí** | Application layer | Database engine |
-| **Cấu hình** | DB-driven, fully dynamic | SQL DDL, cần migration |
-| **Flexibility** | Cao — JSON AST, bất kỳ logic | Trung bình — SQL expression |
-| **Performance** | Thêm 1 query load filter + eval | Zero overhead (tích hợp vào query plan) |
-| **Bypass** | Có thể nếu developer quên inject | Không thể bypass (kể cả superuser nếu FORCE) |
-| **Debug** | Dễ — log predicate generated | Khó hơn — dùng `EXPLAIN` với RLS context |
-| **Vai trò** | Primary filter logic | Safety net / defense in depth |
 
 ---
 
@@ -427,19 +806,11 @@ public class RlsContextSetter {
 
 ### P1 — Gộp N+1 query thành 1 JOIN duy nhất (High impact)
 
-Vấn đề: mỗi request load tuần tự user_role → role_permission → row_filter → policy_rule = 4–6 DB round-trips × 1000 RPS = DB bottleneck.
-
-Giải pháp: gộp thành 1 query với role hierarchy dùng `WITH RECURSIVE`, cache kết quả:
-
 ```sql
 SELECT
     p.id              AS permission_id,
-    p.code            AS permission_code,
-    p.resource_type,
     p.action,
     p.scope,
-    r.id              AS role_id,
-    r.code            AS role_code,
     rf.filter_expr    AS row_filter_expr,
     rf.sql_fragment   AS row_filter_sql,
     ff.allowed_fields,
@@ -449,74 +820,45 @@ SELECT
     pol.effect        AS policy_effect,
     pol.priority      AS policy_priority
 FROM user_role ur
--- Role hierarchy: traverse parent roles
 JOIN LATERAL (
     WITH RECURSIVE role_tree AS (
         SELECT id, parent_role_id FROM role WHERE id = ur.role_id
         UNION ALL
-        SELECT r2.id, r2.parent_role_id
-        FROM role r2
+        SELECT r2.id, r2.parent_role_id FROM role r2
         JOIN role_tree rt ON r2.id = rt.parent_role_id
     )
     SELECT id FROM role_tree
 ) r_hier ON true
 JOIN role r ON r.id = r_hier.id
 JOIN role_permission rp ON rp.role_id = r.id
-JOIN permission p ON p.id = rp.permission_id
-    AND p.resource_type = :resourceType
-LEFT JOIN row_filter rf ON rf.permission_id = p.id
-    AND rf.resource_type = :resourceType
-    AND rf.is_active = true
-LEFT JOIN field_filter ff ON ff.permission_id = p.id
-    AND ff.resource_type = :resourceType
-LEFT JOIN policy_rule pr ON pr.resource_type = :resourceType
-    AND pr.action = p.action
-JOIN policy pol ON pol.id = pr.policy_id
-    AND pol.is_active = true
-WHERE ur.user_id   = :userId
-  AND ur.tenant_id = :tenantId
+JOIN permission p ON p.id = rp.permission_id AND p.resource_type = :resourceType
+LEFT JOIN row_filter  rf ON rf.permission_id = p.id AND rf.resource_type = :resourceType AND rf.is_active = true
+LEFT JOIN field_filter ff ON ff.permission_id = p.id AND ff.resource_type = :resourceType
+LEFT JOIN policy_rule pr ON pr.resource_type = :resourceType AND pr.action = p.action
+JOIN policy pol ON pol.id = pr.policy_id AND pol.is_active = true
+WHERE ur.user_id = :userId AND ur.tenant_id = :tenantId
   AND (ur.expires_at IS NULL OR ur.expires_at > NOW())
 ORDER BY pol.priority DESC;
 ```
 
-Kết quả query này cache vào Redis TTL 5 phút — 1 request đầu trả về full context, các request sau đọc từ cache.
+Cache kết quả vào Redis TTL 5 phút với key mang `attributes_version` — stale nếu version không khớp.
 
 ---
 
-### P2 — Compiled predicate cache thay vì eval AST mỗi lần (High impact)
-
-Vấn đề: `filter_expr` JSONB được deserialize và traverse lại mỗi request. 1000 RPS × cùng 1 permission = eval AST 1000 lần cho cùng 1 expression.
-
-Giải pháp: cache kết quả compile (SQL template + param names), chỉ bind user attribute value tại runtime:
+### P2 — Compiled predicate cache (High impact)
 
 ```java
 @Component
 public class CompiledFilterCache {
 
-    // Cache compiled predicate — key: permissionId:resourceType
     private final Cache<String, CompiledPredicate> cache = Caffeine.newBuilder()
-        .maximumSize(10_000)
-        .expireAfterWrite(10, MINUTES)
-        .recordStats()   // expose qua Micrometer
-        .build();
+        .maximumSize(10_000).expireAfterWrite(10, MINUTES).recordStats().build();
 
-    public CompiledPredicate getOrCompile(UUID permissionId, String resourceType,
-                                           JsonNode filterExpr) {
-        String key = permissionId + ":" + resourceType;
-        return cache.get(key, k -> compile(filterExpr));
-    }
-
-    private CompiledPredicate compile(JsonNode expr) {
-        // Traverse AST 1 lần → SQL template với named placeholders
-        // VD: "branch_code = :user_branch_code AND status = ANY(:allowed_statuses)"
-        // Lưu mapping: placeholder → user attribute key
-        var builder = new PredicateBuilder();
-        traverseNode(expr, builder);
-        return builder.build();
+    public CompiledPredicate getOrCompile(UUID permissionId, String resourceType, JsonNode filterExpr) {
+        return cache.get(permissionId + ":" + resourceType, k -> compile(filterExpr));
     }
 }
 
-// Runtime: chỉ bind values, không traverse AST
 public FilterResult bind(CompiledPredicate compiled, AuthzContext ctx) {
     Map<String, Object> params = new LinkedHashMap<>();
     for (var binding : compiled.bindings()) {
@@ -530,156 +872,53 @@ public FilterResult bind(CompiledPredicate compiled, AuthzContext ctx) {
 }
 ```
 
-Compile xảy ra đúng 1 lần per permission, sau đó chỉ bind. Business logic không đổi.
-
 ---
 
-### P3 — Piggyback SET vào query đầu tiên thay vì round-trip riêng (Medium impact)
-
-Vấn đề: mỗi request chạy thêm 1 PreparedStatement chỉ để set RLS session variable — thêm 1 DB round-trip.
-
-Giải pháp: dùng CTE để set context và query trong cùng 1 statement:
+### P3 — Piggyback SET + P4 — Redis SMEMBERS index + P5 — EXISTS rewrite
 
 ```java
-String query = """
-    WITH ctx AS (
-        SELECT
-            set_config('app.branch_code', :branchCode, false),
-            set_config('app.user_id',     :userId,     false),
-            set_config('app.bypass_rls',  :bypass,     false)
-    )
-    SELECT d.*
-    FROM document d, ctx
-    WHERE d.tenant_id = :tenantId
-      AND {rowFilterPredicate}
-    """;
-```
+// P3: CTE piggyback — 1 round-trip thay vì 2
+String query = "WITH ctx AS (SELECT set_config(...)) SELECT d.* FROM document d, ctx WHERE ...";
 
-Hoặc dùng AOP interceptor set context ngay khi `@Transactional` bắt đầu — cùng connection, không thêm round-trip:
-
-```java
-@Around("@annotation(RequiresAuthzContext)")
-public Object setRlsContext(ProceedingJoinPoint pjp) throws Throwable {
-    AuthzContext ctx = AuthzContextHolder.current();
-    jdbcTemplate.execute(
-        "SELECT set_config('app.branch_code',:b,false), set_config('app.user_id',:u,false)",
-        (PreparedStatementCallback<Void>) ps -> {
-            ps.setString(1, ctx.getBranchCode());
-            ps.setString(2, ctx.getUserId().toString());
-            ps.execute(); return null;
-        });
-    return pjp.proceed();
-}
-```
-
----
-
-### P4 — Thay `KEYS` pattern scan bằng `SMEMBERS` + secondary index set (Medium impact)
-
-Vấn đề: `redisTemplate.keys("authz:rowfilter:*")` là O(N) scan, block toàn bộ Redis event loop. Production Redis với 100k+ keys → latency spike >100ms.
-
-Giải pháp: dùng Redis Set làm index — mỗi permission có 1 Set chứa tất cả cache key của nó:
-
-```java
-@Service
-public class AuthzCacheManager {
-
-    private static final String KEY_PREFIX   = "authz:rf:";
-    private static final String INDEX_PREFIX = "authz:idx:perm:";
-
-    public void put(UUID permissionId, String resourceType, String userId,
-                    CompiledPredicate predicate) {
-        String cacheKey = KEY_PREFIX + permissionId + ":" + resourceType + ":" + userId;
-        String indexKey = INDEX_PREFIX + permissionId;
-
-        redisTemplate.executePipelined((RedisCallback<?>) conn -> {
-            conn.setEx(cacheKey.getBytes(), 300, serialize(predicate));  // TTL 5 phút
-            conn.sAdd(indexKey.getBytes(), cacheKey.getBytes());         // đăng ký vào index
-            conn.expire(indexKey.getBytes(), 600);                       // index TTL 10 phút
-            return null;
-        });
-    }
-
-    // Invalidate: SMEMBERS → DELETE tất cả — không block Redis
-    @KafkaListener(topics = "pdms.public.row_filter")
-    public void onRowFilterChange(RowFilterCdcEvent event) {
-        String indexKey = INDEX_PREFIX + event.getPermissionId();
-        Set<String> cacheKeys = redisTemplate.opsForSet().members(indexKey);
-        if (cacheKeys != null && !cacheKeys.isEmpty()) {
-            List<String> toDelete = new ArrayList<>(cacheKeys);
-            toDelete.add(indexKey);
-            redisTemplate.delete(toDelete);
-            log.info("Invalidated {} cache entries for permission {}",
-                cacheKeys.size(), event.getPermissionId());
-        }
-    }
-}
+// P4: Redis Set làm index — không dùng KEYS pattern scan
+redisTemplate.executePipelined(conn -> {
+    conn.setEx(cacheKey, 300, data);
+    conn.sAdd(indexKey, cacheKey);    // O(1) add
+    conn.expire(indexKey, 600);
+    return null;
+});
+// Invalidate: SMEMBERS → DELETE — không block Redis event loop
+Set<String> keys = redisTemplate.opsForSet().members(indexKey);
+redisTemplate.delete(keys);
 ```
 
 ```sql
--- Bắt buộc để Debezium capture full row data khi UPDATE/DELETE
+-- P5: EXISTS + index thay vì correlated subquery per row
+CREATE INDEX idx_reviewer_assignment_lookup ON document_reviewer_assignment(document_id, reviewer_id);
+-- Hoặc dùng pre-computed array trong session (xem RLS section)
+```
+
+```sql
+-- CDC: bắt buộc cho Debezium capture
 ALTER TABLE row_filter      REPLICA IDENTITY FULL;
 ALTER TABLE policy          REPLICA IDENTITY FULL;
 ALTER TABLE role_permission REPLICA IDENTITY FULL;
+ALTER TABLE user_account    REPLICA IDENTITY FULL;  -- thêm cho G2 attribute sync
 ```
 
 ---
 
-### P5 — Rewrite RLS correlated subquery thành EXISTS + index (Medium impact)
+## Tổng hợp — Gap Resolution Matrix
 
-Vấn đề: policy `USING` clause dùng correlated subquery chạy lại với mỗi row của result set. 1000-row result → 1000 subquery executions.
-
-Giải pháp A — `EXISTS` với proper index:
-
-```sql
--- Tạo index trước
-CREATE INDEX idx_reviewer_assignment_lookup
-    ON document_reviewer_assignment(document_id, reviewer_id);
-
--- Rewrite policy
-CREATE POLICY doc_reviewer_access ON document
-    FOR SELECT TO pdms_reviewer_role
-    USING (
-        status = 'PENDING_REVIEW'
-        AND EXISTS (
-            SELECT 1 FROM document_reviewer_assignment dra
-            WHERE dra.document_id = document.id
-              AND dra.reviewer_id = current_setting('app.user_id', true)::uuid
-        )
-    );
-```
-
-Giải pháp B (tốt hơn với PDMS) — service pre-compute list rồi pass vào session:
-
-```sql
--- set_config('app.reviewable_doc_ids', 'uuid1,uuid2,...', false) từ service layer
-
-CREATE POLICY doc_reviewer_access ON document
-    FOR SELECT TO pdms_reviewer_role
-    USING (
-        status = 'PENDING_REVIEW'
-        AND id = ANY(
-            string_to_array(
-                current_setting('app.reviewable_doc_ids', true), ','
-            )::uuid[]
-        )
-    );
--- ANY(small array) nhanh hơn nhiều so với correlated subquery
-```
-
----
-
-### Tổng hợp — business logic không đổi ở đâu
-
-| Điểm nghẽn | Thay đổi | Business logic ảnh hưởng? |
-|---|---|---|
-| P1 — N+1 query | Gộp thành 1 JOIN + cache AuthZ context | Không — cùng data, khác query shape |
-| P2 — AST eval lặp | Compile 1 lần, cache SQL template | Không — cùng logic, khác execution path |
-| P3 — set_config round-trip | Piggyback vào CTE hoặc AOP | Không — cùng RLS behavior |
-| P4 — KEYS scan | SMEMBERS + Redis Set index | Không — invalidation đúng như cũ |
-| P5 — Correlated subquery | Rewrite EXISTS + index | Không — cùng security semantic |
-
-**Priority cho PDMS:** P1 + P2 là critical — giải quyết xong 2 cái này sẽ cảm nhận được ngay ở production scale. P3–P5 là polish tier, giải quyết khi hệ thống đã stable.
+| Gap | Vấn đề | Giải pháp | Status |
+|-----|---------|-----------|--------|
+| G1 — Resource explosion | 100M instance rows | Type-level vs Instance-level phân loại; instance chỉ tạo khi cần ACL đặc biệt | ✅ Triệt để |
+| G2 — Attribute out-of-sync | Stale cache sau khi đổi branch | Keycloak event → Kafka → push sync + `attributes_version` trong cache key | ✅ Triệt để |
+| G3 — ReBAC thiếu | Quan hệ bắc cầu không express được bằng ABAC | `relation_tuple` + recursive graph traversal + `relation` node type trong AST | ✅ Triệt để |
+| G4 — Centralized bottleneck | Network latency + SPOF | Control Plane / Data Plane split + emergency revoke list + fail-open/closed config | ✅ Triệt để |
+| G5 — Single-backend AST | AST bind với SQL column name | Backend-agnostic IR + field mapping trong `schema_def` + multi-backend translator | ✅ Triệt để |
+| G6 — Policy versioning | Không có rollback, không có shadow test | `policy_version` + `policy_shadow_log` + lifecycle DRAFT→SHADOW→ACTIVE→ARCHIVED + divergence report | ✅ Triệt để |
+| G7 — Policy debugger | Không trace được tại sao DENY | `eval_trace` JSONB per node + Explain API + Replay API | ✅ Triệt để |
 
 ---
 
@@ -690,84 +929,31 @@ Request từ client
     │
     ▼
 Spring Cloud Gateway
-    ├── Layer A: Keycloak validate JWT
+    ├── Layer A: Keycloak validate JWT (extract attributes_version claim)
     └── Layer B: Check coarse-grained role (RBAC)
     │
     ▼
-pdms-service
-    ├── Layer C: Resource-level ACL check → call pdms-iam-service
-    └── Layer D: ABAC policy eval → call pdms-iam-service
+pdms-service (local sidecar data plane)
+    ├── Check emergency revoke list (Redis, O(1))
+    ├── Layer C: Resource-level — type-level policy first, instance ACL nếu có
+    ├── Layer D: ABAC eval (local bundle) + ReBAC graph traversal nếu relation node
+    └── Backend: SQL/ES/Mongo → dùng đúng translator
     │
     ▼
-pdms-iam-service
-    ├── Evaluate policy_rule + condition_expr (compiled cache)
-    ├── Build row_filter SQL predicate (compiled cache)
-    └── Return: decision (ALLOW/DENY) + predicate string
+IAM Service (control plane) — chỉ nhận khi local bundle miss/outdated
+    ├── Evaluate với policy version active
+    ├── Shadow eval song song nếu có version SHADOW
+    └── Ghi authz_decision_log với eval_trace
     │
     ▼
 PostgreSQL
-    ├── Layer E-1: row_filter predicate injected vào WHERE clause
-    └── Layer E-2: RLS policy tự động apply (safety net, branch isolation only)
-    │
-    ▼
-Filtered resultset
+    ├── Layer E-1: row_filter predicate (SQL translator)
+    └── Layer E-2: RLS branch isolation (safety net)
     │
     ▼
 pdms-service
-    └── Layer E-3: field_filter — strip/mask sensitive fields trước khi response
+    └── Layer E-3: field_filter — strip/mask sensitive fields
 ```
-
-**Recommendation cho PDMS:**
-- `row_filter` handle toàn bộ business logic về phân quyền data.
-- PostgreSQL RLS chỉ làm một rule đơn giản — `branch_code isolation` — như safety net.
-- Tránh để business logic phức tạp trong RLS vì debug rất khó khi production incident.
-
----
-
----
-
-## Hạn chế & Gaps hiện tại
-
-Mặc dù thiết kế 5 lớp bao phủ hầu hết các kịch bản enterprise, vẫn còn một số điểm cần lưu ý khi scale:
-
-1.  **Resource Instance Explosion:** Lưu mọi instance vào bảng `resource_instance` (Layer C) cho các hệ thống có hàng trăm triệu bản ghi sẽ gây áp lực cực lớn lên storage và performance của bảng ACL.
-2.  **Data Consistency:** Việc duy trì attribute của user/resource tại `iam-service` song song với domain service dễ dẫn đến tình trạng "lệch dữ liệu" (out-of-sync) nếu cơ chế đồng bộ (CDC/Kafka) bị delay.
-3.  **Thiếu ReBAC (Relationship-based):** Hiện tại tập trung vào ABAC. Các quan hệ phức tạp (VD: "người được ủy quyền của chủ hợp đồng") phải được transform thành attributes, gây khó khăn khi quản lý các quan hệ bắc cầu hoặc dạng đồ thị.
-4.  **Centralized Bottleneck:** Toàn bộ service gọi về IAM để check quyền tạo ra độ trễ mạng (Network Latency) và Single Point of Failure nếu không có cơ chế Local Execution.
-
----
-
-## Đề xuất cải tiến & Tầm nhìn Universal AuthZ
-
-Để biến mô hình này thành một nền tảng AuthZ linh động cho mọi yêu cầu, cần thực hiện các cải tiến sau:
-
-### 1. Hybrid ReBAC + ABAC (Zanzibar style)
-Bổ sung bảng quan hệ dạng bộ ba (tuple): `(subject) --[relation]--> (object)`.
-- Ví dụ: `(User:A) --[manager]--> (Branch:HN)`.
-- Quyền "Manager xem được tài liệu của Branch" sẽ được giải quyết bằng Graph Traversal thay vì chỉ so khớp attributes phẳng.
-
-### 2. Local Policy Execution (Sidecar Pattern)
-Thay vì request-response tới IAM service:
-- **IAM Service** đóng vai trò **Control Plane** (quản lý policy).
-- **Domain Services** tích hợp **Data Plane** (như OPA - Open Policy Agent).
-- Policy được sync xuống local của từng service. Việc check quyền diễn ra in-memory (0ms network latency).
-
-### 3. Cross-Platform Filter Engine
-Mở rộng AST Evaluator (Layer E) để không chỉ sinh SQL WHERE clause mà còn sinh ra:
-- **Elasticsearch Filter Query** cho tìm kiếm hồ sơ.
-- **MongoDB Match Expression** cho các hệ thống NoSQL.
-Điều này đảm bảo một Policy duy nhất được áp dụng đồng nhất trên mọi loại database.
-
-### 4. Policy-as-Code & Versioning
-Bổ sung quy trình quản lý policy chuyên nghiệp:
-- `Draft` -> `Test` -> `Peer Review` -> `Publish`.
-- Hỗ trợ **Dry-run mode (Shadow mode)**: Log lại quyết định của policy mới mà không thực sự áp dụng để đánh giá tác động trước khi Go-live.
-
-### 5. Policy Debugger (Explainability)
-Xây dựng công cụ "Explain" chi tiết: Khi một request bị DENY, hệ thống phải chỉ rõ được:
-- Rule nào đã khớp?
-- Attribute nào bị thiếu hoặc sai lệch?
-- Trace-log của quá trình evaluate AST.
 
 ---
 
@@ -781,4 +967,4 @@ Xây dựng công cụ "Explain" chi tiết: Khi một request bị DENY, hệ t
 
 ## Tags
 
-#authz #security #pdms #postgresql #rls #spring-boot #microservices #data-model #performance
+#authz #security #pdms #postgresql #rls #spring-boot #microservices #data-model #performance #rebac #abac #policy-versioning
