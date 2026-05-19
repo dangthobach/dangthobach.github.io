@@ -1951,3 +1951,1465 @@ Khi @Transactional method chạy:
 ---
 
 *Tags: #hibernate #jpa #internals #persistence-context #dirty-checking #snapshot #proxy #memory*
+
+
+---
+
+## 🔬 persist / save / update / merge / saveOrUpdate — Bản Chất Cơ Chế
+
+> Đây là phần gây nhiều bug nhất trong thực tế, đặc biệt khi kết hợp với `@ManyToMany`, detached entity từ REST layer, và cascade config sai. Đọc kỹ từng dòng.
+
+---
+
+### Mental model trước khi đọc
+
+Hibernate quản lý một **Identity Map** (L1 Cache) bên trong Session. Khi bạn gọi bất kỳ method nào dưới đây, Hibernate phải trả lời 3 câu hỏi:
+
+```
+1. Entity này có đang trong Identity Map chưa? (kiểm tra bằng id)
+2. Nên sinh SQL gì? (INSERT / UPDATE / không gì cả)
+3. Trả về instance nào cho caller? (input object hay managed copy?)
+```
+
+Hiểu 3 câu hỏi này là hiểu tất cả behavior.
+
+---
+
+### `persist()` — JPA Standard
+
+**Spec behavior:**
+
+```
+TRANSIENT  → scheduled INSERT, entity trở thành MANAGED
+MANAGED    → no-op (đã trong session rồi)
+DETACHED   → throws IllegalStateException (spec yêu cầu)
+REMOVED    → entity được re-persisted, trở lại MANAGED
+```
+
+**Cơ chế bên trong:**
+
+```java
+// Bạn gọi:
+em.persist(newUser);
+
+// Hibernate làm:
+// 1. Kiểm tra: id == null? → yes → entity là TRANSIENT
+// 2. Tạo EntityEntry trong PersistenceContext
+// 3. Thêm vào Action Queue: InsertAction(newUser)
+// 4. Sinh ID nếu dùng SEQUENCE (ngay lập tức)
+//    hoặc chờ flush nếu IDENTITY (auto-increment)
+// 5. Tạo snapshot của entity state hiện tại
+// → Entity giờ là MANAGED, ID đã được set
+```
+
+**Key point — `persist()` KHÔNG gửi SQL ngay:**
+
+```java
+@Transactional
+public void demo() {
+    User u = new User("Bach");
+    em.persist(u);
+    // SQL chưa chạy! Chỉ có InsertAction trong queue
+    System.out.println(u.getId()); // null nếu IDENTITY, có giá trị nếu SEQUENCE
+    
+    // SQL INSERT chạy khi:
+    // - em.flush() gọi tường minh
+    // - Transaction commit
+    // - Hibernate AUTO flush trước một query cùng bảng
+}
+```
+
+**Lỗi hay gặp — persist() trên DETACHED:**
+
+```java
+// Tình huống phổ biến trong REST API:
+@GetMapping("/{id}")
+public User getUser(@PathVariable Long id) {
+    return userRepo.findById(id).get(); // transaction đóng sau method này
+}
+
+@PutMapping("/{id}")
+public void updateUser(@RequestBody User user) { // user là DETACHED!
+    em.persist(user); // ❌ IllegalStateException!
+    // JPA spec: persist() trên DETACHED là undefined behavior hoặc exception
+    // Hibernate cụ thể: throw EntityExistsException
+}
+```
+
+---
+
+### `save()` — Hibernate Specific (KHÔNG phải JPA)
+
+**Behavior:**
+
+```
+TRANSIENT  → INSERT scheduled, trả về generated ID (kiểu Serializable)
+MANAGED    → no-op, trả về existing ID
+DETACHED   → ⚠️ INSERT MỚI! Tạo row trùng lặp trong DB — BUG NGUY HIỂM
+REMOVED    → INSERT mới
+```
+
+**Tại sao `save()` trên DETACHED lại INSERT thay vì UPDATE:**
+
+```
+Hibernate xác định "là entity mới" hay "đã tồn tại" dựa vào:
+  1. unsaved-value mapping: nếu id == null → mới
+  2. Implementor của Interceptor.isUnsaved()
+  3. @Version field: nếu version == null → mới
+
+Detached entity có id != null, nhưng save() KHÔNG kiểm tra DB existence.
+Nó chỉ check: "entity này có trong PersistenceContext không?"
+→ Không có → treated as new → INSERT!
+```
+
+**Minh họa bug:**
+
+```java
+// Transaction 1: load
+@Transactional
+public User loadUser(Long id) {
+    return userRepo.findById(id).get(); // managed trong tx1
+} // tx1 đóng → user trở thành DETACHED
+
+// Bên ngoài transaction:
+User user = loadUser(1L);
+user.setName("Alice");
+
+// Transaction 2: sai cách
+@Transactional
+public void badSave(User user) { // user vào đây là DETACHED
+    session.save(user);
+    // Hibernate thấy: user không trong PersistenceContext hiện tại
+    // → INSERT row mới với name="Alice"
+    // → DB giờ có 2 rows: id=1 (Bach) và id=2 (Alice) ← DUPLICATE!
+    // Hoặc: id=1 vẫn tồn tại, và một row mới với auto-generated id
+}
+```
+
+> **Quy tắc:** Đừng bao giờ dùng `save()` cho entity đến từ HTTP layer hoặc bất kỳ nguồn nào có thể là DETACHED. Dùng `merge()` thay thế.
+
+---
+
+### `update()` — Hibernate Specific (KHÔNG phải JPA)
+
+**Behavior:**
+
+```
+TRANSIENT  → throws TransientObjectException
+MANAGED    → ⚠️ NonUniqueObjectException nếu id đã trong L1 với instance khác
+DETACHED   → re-attach entity vào session, UPDATE scheduled
+REMOVED    → throws IllegalArgumentException
+```
+
+**Cơ chế:**
+
+```java
+// update() làm gì:
+session.update(detachedUser);
+
+// Hibernate làm:
+// 1. Kiểm tra Identity Map: có entity với id này không?
+//    → Có (different instance) → ném NonUniqueObjectException
+//    → Không → đăng ký entity vào PersistenceContext
+// 2. Tạo snapshot của CURRENT state của entity
+// 3. Thêm UpdateAction vào Action Queue
+// 4. Khi flush: chạy UPDATE với ALL columns (trừ khi @DynamicUpdate)
+```
+
+**Vấn đề lớn nhất của `update()` — mất dữ liệu lúc concurrent:**
+
+```java
+// HTTP Request 1: load user, gửi về client
+User user = findById(1L); // {id:1, name:"Bach", email:"bach@vp", age:28}
+
+// Client modify chỉ name, gửi lại:
+// {id:1, name:"Alice", email:"bach@vp", age:28}
+
+// HTTP Request 2 (concurrently): update age
+// DB giờ có: {id:1, name:"Bach", email:"bach@vp", age:29}
+
+// HTTP Request 1 tiếp tục:
+user.setName("Alice");
+session.update(user); // UPDATE với toàn bộ state của user object
+// → UPDATE users SET name='Alice', email='bach@vp', age=28 WHERE id=1
+// → age=29 của Request 2 bị ghi đè thành 28 ← DỮ LIỆU MẤT!
+```
+
+**Cách phòng:** Dùng `@Version` để optimistic locking, và dùng `merge()` thay `update()`.
+
+---
+
+### `merge()` — JPA Standard (Method duy nhất nên dùng cho DETACHED)
+
+**Behavior:**
+
+```
+TRANSIENT  → INSERT scheduled, trả về MANAGED copy (không phải input!)
+MANAGED    → copy state vào instance đó, trả về cùng instance
+DETACHED   → SELECT from DB (hoặc L1), copy state, trả về MANAGED copy
+REMOVED    → re-persist, trả về MANAGED copy
+```
+
+**Cơ chế chi tiết — newbie cần đọc kỹ:**
+
+```
+em.merge(detached)
+        │
+        ▼
+Bước 1: entity.id == null?
+        ├─ YES → tạo new managed instance, copy state từ input, INSERT scheduled
+        └─ NO  → tiếp tục
+        │
+        ▼
+Bước 2: id này có trong L1 Cache không?
+        ├─ YES (L1 hit) → lấy managed instance từ L1
+        │                  copy state từ detached vào managed instance
+        │                  trả về managed instance (L1 instance, KHÔNG phải input!)
+        └─ NO  → tiếp tục
+        │
+        ▼
+Bước 3: SELECT từ DB bằng id
+        ├─ Found → tạo managed instance từ DB data
+        │          copy state từ detached vào managed instance
+        │          trả về managed instance
+        └─ Not found → tạo new managed instance, INSERT scheduled
+        │
+        ▼
+Bước 4: Dirty checking khi flush
+        → So sánh managed instance với snapshot
+        → Sinh UPDATE nếu có thay đổi
+```
+
+**Trap quan trọng nhất — return value bị bỏ qua:**
+
+```java
+// ❌ SAI — bug cực kỳ phổ biến
+@Transactional
+public void updateUser(User detached) {
+    detached.setName("Alice");
+    em.merge(detached);          // gọi merge nhưng bỏ qua return value!
+    detached.setEmail("x@y.z"); // thay đổi input (DETACHED), không phải managed!
+    // Kết quả: name="Alice" được save (từ bước merge),
+    //          email="x@y.z" KHÔNG được save (thay đổi sau merge trên detached object)
+}
+
+// ✅ ĐÚNG
+@Transactional
+public void updateUser(User detached) {
+    detached.setName("Alice");
+    User managed = em.merge(detached); // lấy managed instance
+    managed.setEmail("x@y.z");        // thay đổi managed instance → sẽ được flush
+    // Hoặc đơn giản hơn:
+    // detached.setName("Alice");
+    // detached.setEmail("x@y.z");
+    // User managed = em.merge(detached); // merge một lần với full state
+}
+```
+
+**Spring Data JPA `save()` dùng merge() bên trong:**
+
+```java
+// SimpleJpaRepository.save() (source code của Spring Data):
+@Transactional
+public <S extends T> S save(S entity) {
+    if (entityInformation.isNew(entity)) {
+        em.persist(entity);
+        return entity;
+    } else {
+        return em.merge(entity); // ← gọi merge() cho entity có id
+    }
+}
+
+// isNew() kiểm tra:
+// - id == null → new
+// - Nếu implement Persistable: gọi isNew() method
+// - Nếu có @Version và version == null → new
+
+// Hệ quả:
+User user = new User();
+user.setId(1L); // set id thủ công
+userRepo.save(user); // → gọi merge() vì id != null
+                     // → SELECT từ DB, nếu không tìm thấy → INSERT
+                     // → tốn thêm 1 SELECT so với persist()!
+```
+
+---
+
+### `saveOrUpdate()` — Hibernate Specific
+
+**Behavior:**
+
+```
+TRANSIENT  → như save(): INSERT
+MANAGED    → ⚠️ NonUniqueObjectException nếu id đã trong L1 (khác instance)
+DETACHED   → như update(): re-attach, UPDATE scheduled
+REMOVED    → ném Exception
+```
+
+**Tại sao tránh dùng:**
+
+```java
+// saveOrUpdate() là "intelligent" version của save/update
+// nhưng vẫn có tất cả vấn đề của cả hai:
+
+// 1. Với MANAGED entity có id trong L1:
+User u1 = repo.findById(1L); // trong L1
+User u2 = new User();
+u2.setId(1L); // cùng id, khác instance
+session.saveOrUpdate(u2); // ❌ NonUniqueObjectException
+                          // Hibernate: "đã có u1 với id=1, u2 là gì?"
+
+// 2. Không xử lý đúng object graph phức tạp
+// merge() với cascade xử lý tốt hơn nhiều
+
+// ✅ Trong thực tế: dùng merge() hoặc Spring Data save() thay thế
+```
+
+---
+
+### So Sánh Tổng Hợp
+
+```
+Method          JPA?  Return type   DETACHED behavior       Recommended?
+─────────────────────────────────────────────────────────────────────────
+persist()       ✅    void          Exception               Chỉ cho NEW entity
+save()          ❌    Serializable  INSERT (BUG!)           ❌ Không dùng
+update()        ❌    void          Re-attach, UPDATE       ❌ Không dùng
+merge()         ✅    T (managed)   Load+copy, UPDATE       ✅ Cho DETACHED
+saveOrUpdate()  ❌    void          Re-attach, UPDATE       ❌ Không dùng
+
+Spring Data:
+  repo.save(new)    → persist()
+  repo.save(hasId)  → merge()
+```
+
+---
+
+## 💣 ManyToMany — Data Loss Patterns Chuyên Sâu
+
+`@ManyToMany` là relationship phức tạp nhất vì nó quản lý một **join table** trung gian. Có ít nhất 5 pattern gây mất dữ liệu mà nhiều developer không biết.
+
+---
+
+### Hiểu join table ownership trước
+
+```java
+// Luôn có một "owning side" và một "inverse side":
+
+@Entity
+public class Student {
+    @ManyToMany
+    @JoinTable(
+        name = "student_course",        // ← join table
+        joinColumns = @JoinColumn(name = "student_id"),
+        inverseJoinColumns = @JoinColumn(name = "course_id")
+    )
+    private Set<Course> courses = new HashSet<>();
+    // Student là OWNING SIDE — nó quản lý join table
+}
+
+@Entity
+public class Course {
+    @ManyToMany(mappedBy = "courses") // ← inverse side, không quản lý join table
+    private Set<Student> students = new HashSet<>();
+}
+```
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  Quy tắc vàng ManyToMany:                                       │
+│                                                                 │
+│  Chỉ có thay đổi trên OWNING SIDE mới được ghi vào join table  │
+│  Inverse side (mappedBy) chỉ để đọc, Hibernate IGNORE thay đổi │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+### Bug #1 — Update Inverse Side (join table không được ghi)
+
+```java
+// ❌ Sai — thêm vào inverse side
+@Transactional
+public void enrollStudent(Long courseId, Long studentId) {
+    Course course = courseRepo.findById(courseId).get();
+    Student student = studentRepo.findById(studentId).get();
+    
+    course.getStudents().add(student); // course là INVERSE side (mappedBy)
+    // Hibernate IGNORE thay đổi này!
+    // join table student_course KHÔNG được INSERT
+    // Không có exception, không có lỗi, chỉ... không ghi gì cả
+}
+
+// ✅ Đúng — thêm vào owning side
+@Transactional
+public void enrollStudent(Long courseId, Long studentId) {
+    Course course = courseRepo.findById(courseId).get();
+    Student student = studentRepo.findById(studentId).get();
+    
+    student.getCourses().add(course); // student là OWNING side
+    // join table được INSERT: (student_id, course_id)
+    
+    // Best practice: sync cả hai chiều để in-memory consistent
+    course.getStudents().add(student); // chỉ cho in-memory nhất quán
+}
+```
+
+---
+
+### Bug #2 — Replace Collection Reference (mất toàn bộ relationship)
+
+```java
+// Tình huống: client gửi list course mới cho student
+
+// ❌ Cực kỳ nguy hiểm
+@Transactional
+public void updateStudentCourses(Long studentId, List<Long> newCourseIds) {
+    Student student = studentRepo.findById(studentId).get();
+    List<Course> newCourses = courseRepo.findAllById(newCourseIds);
+    
+    student.setCourses(new HashSet<>(newCourses)); // ← REPLACE reference!
+    // Vấn đề 1: Hibernate đang track PersistentSet cũ
+    //           setCourses() replace bằng plain HashSet
+    //           Hibernate mất track → behavior không xác định
+    //
+    // Vấn đề 2: Nếu orphanRemoval = true:
+    //           Hibernate nhìn vào PersistentSet cũ → không thấy entries
+    //           → DELETE ALL cũ + INSERT mới (có thể đúng)
+    //
+    // Vấn đề 3: Nếu orphanRemoval = false:
+    //           Có thể không xóa gì, hoặc thêm mới nhưng giữ cũ
+    //           → duplicate relationships trong join table
+}
+
+// ✅ Đúng — modify in-place
+@Transactional
+public void updateStudentCourses(Long studentId, List<Long> newCourseIds) {
+    Student student = studentRepo.findById(studentId).get();
+    Set<Course> newCourses = new HashSet<>(courseRepo.findAllById(newCourseIds));
+    
+    // Modify existing PersistentSet, không replace
+    student.getCourses().clear();       // Hibernate track việc clear
+    student.getCourses().addAll(newCourses); // Hibernate track việc add
+    
+    // Khi flush:
+    // DELETE FROM student_course WHERE student_id = ?
+    // INSERT INTO student_course VALUES (?, ?)  -- cho mỗi course mới
+}
+```
+
+---
+
+### Bug #3 — CascadeType sai với DETACHED entity trong graph
+
+```java
+// Setup:
+@Entity
+public class Order {
+    @OneToMany(cascade = {}) // không cascade gì
+    private List<OrderItem> items;
+}
+
+// Bug scenario:
+Order detachedOrder = getOrderFromSomewhere(); // DETACHED
+detachedOrder.getItems().get(0).setQuantity(5); // thay đổi item
+
+@Transactional
+public void updateOrder(Order detachedOrder) {
+    Order managed = em.merge(detachedOrder);
+    // merge() chỉ merge Order entity
+    // OrderItem vẫn DETACHED
+    // quantity=5 KHÔNG được flush
+    // Không exception! Chỉ data loss im lặng
+}
+
+// ✅ Fix: cascade MERGE
+@Entity
+public class Order {
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+    @JoinColumn(name = "order_id")
+    private List<OrderItem> items;
+}
+// Hoặc dùng CascadeType.ALL nếu hợp lý với business logic
+```
+
+**Quy tắc cascade cho ManyToMany — cẩn thận:**
+
+```java
+// ⚠️ CascadeType.ALL trên ManyToMany = nguy hiểm
+
+@ManyToMany(cascade = CascadeType.ALL) // ← SAI cho ManyToMany
+private Set<Course> courses;
+
+// Vấn đề: CascadeType.REMOVE trên ManyToMany
+// Nếu xóa một Student → cascade REMOVE đến Course
+// Course bị xóa → tất cả Student khác mất Course đó!
+
+// ✅ Đúng cho ManyToMany: chỉ PERSIST và MERGE
+@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+private Set<Course> courses;
+
+// REMOVE không cascade: xóa Student chỉ xóa rows trong join table,
+// không xóa Course entity
+```
+
+---
+
+### Bug #4 — Multiple representations of same entity trong ManyToMany
+
+```java
+// Tình huống thực tế trong PDMS: update document kèm theo tags
+
+@Transactional
+public void updateDocumentWithTags(DocumentDTO dto) {
+    Document doc = docRepo.findById(dto.getId()).get(); // managed, id=1
+    
+    // Tạo tag từ DTO
+    Tag tag = new Tag();
+    tag.setId(dto.getTagIds().get(0)); // id=5, nhưng chưa load từ DB
+    
+    doc.getTags().add(tag); // tag là TRANSIENT với id set thủ công
+    
+    // Khi flush: Hibernate thấy tag có id=5
+    // Nhưng tag chưa trong PersistenceContext
+    // → có thể gây TransientPropertyValueException
+    // hoặc INSERT một Tag mới thay vì reference Tag id=5
+}
+
+// ❌ Cũng sai: load tag rồi load lại document trong cùng session
+@Transactional
+public void updateBug(Long docId, Long tagId) {
+    Tag tag = tagRepo.findById(tagId).get();          // tag id=5 vào L1
+    Document doc = docRepo.findById(docId).get();     // doc vào L1
+    
+    // Giả sử doc.getTags() đã chứa tag với id=5 (vì eager load)
+    Tag tagFromDoc = doc.getTags().stream()
+        .filter(t -> t.getId().equals(tagId)).findFirst().get();
+    // tagFromDoc và tag là CÙNG INSTANCE (Identity Map đảm bảo)
+    // → ok, không có vấn đề ở đây
+    
+    // Vấn đề xảy ra khi:
+    Tag anotherTagRef = new Tag();
+    anotherTagRef.setId(tagId); // khác instance, cùng id
+    doc.getTags().add(anotherTagRef);
+    // → NonUniqueObjectException hoặc duplicate trong collection
+}
+
+// ✅ Đúng: luôn load entity qua repo trong cùng transaction
+@Transactional
+public void updateCorrect(Long docId, Long tagId) {
+    Document doc = docRepo.findById(docId).get();
+    Tag tag = tagRepo.findById(tagId).get(); // Hibernate trả về L1 instance
+    
+    doc.getTags().add(tag); // tag là managed instance từ L1
+    // không cần save/merge, dirty checking sẽ detect thay đổi trong collection
+}
+```
+
+---
+
+### Bug #5 — Hibernate delete toàn bộ join table khi flush với Set
+
+```java
+// Bug vi tế liên quan đến equals()/hashCode() với Set
+
+@Entity
+public class Course {
+    @ManyToMany(mappedBy = "courses")
+    private Set<Student> students = new HashSet<>();
+    
+    // ❌ Nếu không override equals/hashCode:
+    // HashSet dùng Object.hashCode() (địa chỉ memory)
+    // Sau khi deserialize hoặc detach/merge, cùng entity có hashCode khác
+    // → Set xem như phần tử khác → duplicate hoặc không tìm thấy để remove
+}
+
+// ❌ Sai: equals/hashCode dựa vào mutable fields
+@Override
+public boolean equals(Object o) {
+    if (!(o instanceof Course)) return false;
+    Course c = (Course) o;
+    return Objects.equals(name, c.name); // name có thể thay đổi!
+}
+
+// ✅ Đúng: dựa vào id (immutable sau khi persist)
+@Override
+public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof Course)) return false;
+    Course c = (Course) o;
+    return id != null && id.equals(c.id);
+}
+
+@Override
+public int hashCode() {
+    return getClass().hashCode(); // constant, không dùng id vì id có thể null trước persist
+}
+```
+
+**Tại sao `hashCode()` không dùng id:**
+
+```
+Vòng đời của entity trong Set:
+  1. new Course() → id = null → hashCode = X
+  2. set.add(course) → lưu vào bucket dựa vào hashCode = X
+  3. em.persist(course) → id = 42
+  4. course.hashCode() = hash(42) = Y ≠ X
+  5. set.remove(course) → tìm ở bucket Y → không thấy!
+  → course "kẹt" trong Set, không xóa được
+
+Giải pháp: hashCode() = getClass().hashCode() (constant)
+equals() = id != null && id.equals(other.id)
+```
+
+---
+
+### Bug #6 — Eager load + merge() = N+1 ẩn + data overwrite
+
+```java
+// Setup nguy hiểm:
+@ManyToMany(fetch = FetchType.EAGER) // EAGER trên ManyToMany
+private Set<Role> roles;
+
+// Khi merge() một User với EAGER roles:
+@Transactional
+public User updateUser(User detachedUser) {
+    // detachedUser có roles = [ADMIN] (từ client)
+    return (User) em.merge(detachedUser);
+    // merge() flow:
+    // 1. SELECT user WHERE id=? → tải về DB state (roles = [ADMIN, USER, VIEWER])
+    // 2. Copy state từ detachedUser → managed
+    //    roles của managed bị overwrite bởi roles của detachedUser = [ADMIN]
+    // 3. Dirty check: roles changed → DELETE + INSERT join table
+    // → USER, VIEWER bị xóa khỏi join table!
+    // Nếu client chỉ gửi roles hiện có của user (không load đủ) → data loss
+}
+
+// ✅ Fix: không dùng entity trực tiếp từ HTTP, dùng DTO pattern
+@Transactional
+public void updateUserName(Long id, String newName) {
+    User user = userRepo.findById(id).get(); // load từ DB
+    user.setName(newName); // chỉ update field cần update
+    // roles không bị touch → không có change trong join table
+}
+```
+
+---
+
+### Checklist phòng tránh data loss với ManyToMany
+
+```
+□ Luôn update OWNING side (@JoinTable), không update inverse side (mappedBy)
+□ Luôn modify collection in-place (clear + addAll), không replace reference (setX(new...))
+□ Không dùng CascadeType.REMOVE hoặc ALL trên @ManyToMany
+□ Cascade MERGE nếu muốn merge cả child entity trong graph
+□ Override equals/hashCode đúng cách cho entity trong Set
+□ Không tạo entity với id set thủ công rồi add vào collection — luôn load qua repo
+□ Khi dùng merge(): lấy return value và chỉ dùng managed instance
+□ DTO pattern cho HTTP layer: không expose entity ra ngoài persistence layer
+□ Sync cả hai chiều in-memory khi add/remove để tránh stale cache
+```
+
+**Helper method nên có trong entity:**
+
+```java
+@Entity
+public class Student {
+    @ManyToMany
+    @JoinTable(name = "student_course", ...)
+    private Set<Course> courses = new HashSet<>();
+    
+    // Helper: sync cả hai chiều
+    public void addCourse(Course course) {
+        this.courses.add(course);       // owning side
+        course.getStudents().add(this); // inverse side (in-memory sync)
+    }
+    
+    public void removeCourse(Course course) {
+        this.courses.remove(course);       // owning side → xóa join table
+        course.getStudents().remove(this); // inverse side (in-memory sync)
+    }
+}
+
+// Usage:
+student.addCourse(javaCourse); // không cần gọi courseRepo.save() hay gì cả
+// dirty checking tự detect thay đổi trong collection và sinh SQL
+```
+
+---
+
+### Multiple Same Entity Instance — NonUniqueObjectException
+
+```
+Lỗi này xảy ra khi Hibernate tìm thấy 2 Java object khác nhau đại diện
+cho cùng một DB row (cùng class + cùng id) trong cùng một Session.
+```
+
+**Scenario 1 — load hai lần qua path khác nhau:**
+
+```java
+@Transactional
+public void bug() {
+    // Path 1: load user trực tiếp
+    User user1 = userRepo.findById(1L).get();
+    
+    // Path 2: load order, order có user với id=1
+    Order order = orderRepo.findById(5L).get();
+    User user2FromOrder = order.getUser(); // user2FromOrder.id = 1
+    
+    // user1 và user2FromOrder là CÙNG INSTANCE (Identity Map)
+    // user1 == user2FromOrder → true ✅
+    // → không có vấn đề trong cùng session/transaction
+}
+
+// Vấn đề xảy ra khi TRỘN managed và detached:
+@Transactional
+public void realBug(User detachedUser) { // id=1, detached từ session khác
+    User managed = userRepo.findById(1L).get(); // id=1, vào L1
+    
+    session.update(detachedUser); // ❌ NonUniqueObjectException!
+    // L1 đã có instance cho id=1 (managed)
+    // update() cố thêm detachedUser (khác instance, cùng id) vào L1
+    // → conflict
+    
+    // ✅ Fix: dùng merge() thay update()
+    User managed2 = em.merge(detachedUser); // copy state vào L1 instance
+}
+```
+
+**Scenario 2 — loop với repo.save() trong transaction:**
+
+```java
+@Transactional
+public void processBatch(List<UserDTO> dtos) {
+    for (UserDTO dto : dtos) {
+        User user = new User();
+        user.setId(dto.getId()); // set id thủ công từ DTO
+        user.setName(dto.getName());
+        
+        userRepo.save(user); // → gọi merge() vì id != null
+        // merge() → SELECT user WHERE id=?
+        // → tạo managed copy → copy state từ 'user'
+        // Lần 1: ok
+        // Lần 2: 'user' từ loop 1 có thể vẫn trong L1...
+        // Nếu các DTO có id trùng nhau → conflict
+    }
+}
+
+// ✅ Fix: load từ DB trước, không tự tạo entity với id
+@Transactional
+public void processBatch(List<UserDTO> dtos) {
+    List<Long> ids = dtos.stream().map(UserDTO::getId).toList();
+    Map<Long, User> userMap = userRepo.findAllById(ids).stream()
+        .collect(Collectors.toMap(User::getId, u -> u));
+    
+    for (UserDTO dto : dtos) {
+        User user = userMap.get(dto.getId());
+        if (user != null) {
+            user.setName(dto.getName()); // thay đổi managed instance
+            // dirty checking sẽ detect và sinh UPDATE
+        }
+    }
+    // flush một lần khi transaction commit
+}
+```
+
+---
+
+*Tags: #hibernate #jpa #persist #merge #manytomany #data-loss #entity-state #spring-data*
+
+
+---
+
+## 📋 Entity Field Definition — Những Lưu Ý Quan Trọng
+
+> Phần này tổng hợp các pitfall khi khai báo field trong `@Entity`. Phần lớn không gây exception ngay — chúng là **silent bugs**: data bị sai, mất, hoặc truncate mà không có lỗi nào được throw.
+
+---
+
+### 1. `@Column` — Các Thuộc Tính Hay Bị Bỏ Qua
+
+#### `nullable = false` — Chỉ ảnh hưởng DDL, không validate runtime
+
+```java
+// ❌ Hiểu lầm phổ biến
+@Column(nullable = false)
+private String name;
+
+// nullable=false CHỈ ảnh hưởng đến schema generation (ddl-auto=create/update)
+// → Tạo column NOT NULL trong DB
+// Nhưng Hibernate KHÔNG tự validate trước khi INSERT
+// Nếu name=null → INSERT NULL → DB constraint violation ở tầng DB
+// → Muốn validate ở tầng Java: dùng @NotNull (Bean Validation)
+
+// ✅ Đúng: kết hợp cả hai
+@NotNull                   // validate ở application layer (Hibernate Validator)
+@Column(nullable = false)  // enforce ở DB layer (DDL constraint)
+private String name;
+```
+
+#### `length` — Mặc định 255, truncation không exception
+
+```java
+// ❌ Nguy hiểm — không khai báo length
+@Column
+private String description; // mặc định length=255
+
+// Nếu description > 255 ký tự:
+// - Với MySQL: tự truncate im lặng (strict mode off)
+// - Với PostgreSQL: DataException (value too long)
+// Hibernate KHÔNG truncate, không cảnh báo trước
+
+// ✅ Khai báo rõ ràng theo business requirement
+@Column(length = 2000)
+private String description;
+
+// Hoặc dùng @Lob cho TEXT không giới hạn (xem mục Lob bên dưới)
+
+// ❌ Đừng dùng length=Integer.MAX_VALUE — không có ý nghĩa trong DDL
+```
+
+#### `precision` và `scale` — Bắt buộc cho `BigDecimal`
+
+```java
+// ❌ Cực kỳ nguy hiểm với tiền tệ
+@Column
+private BigDecimal amount; // Hibernate tự chọn precision/scale → không xác định
+
+// Với PostgreSQL: NUMERIC(19,2) mặc định của Hibernate
+// Với Oracle: NUMBER(19,2)
+// Với MySQL: DECIMAL(19,2)
+// → Phụ thuộc vào dialect, không nhất quán
+
+// ✅ Luôn khai báo tường minh
+@Column(precision = 19, scale = 4) // 15 chữ số nguyên + 4 chữ số thập phân
+private BigDecimal amount;
+
+// Với banking/PDMS: precision=19, scale=2 cho VND, scale=4 cho tỉ giá
+// precision=19 vì Long.MAX_VALUE = 9,223,372,036,854,775,807 (19 chữ số)
+```
+
+#### `updatable = false` — Field chỉ được ghi một lần
+
+```java
+// Dùng cho audit field hoặc immutable business key
+@Column(updatable = false)
+private String contractNumber; // sau khi tạo, không được sửa
+
+// ✅ Kết hợp với @CreationTimestamp
+@CreationTimestamp
+@Column(updatable = false, nullable = false)
+private LocalDateTime createdAt;
+
+// ⚠️ Gotcha: nếu bạn gọi merge() với entity có contractNumber khác,
+// Hibernate KHÔNG cập nhật contractNumber (updatable=false)
+// nhưng cũng KHÔNG báo lỗi — field bị ignore im lặng
+```
+
+#### `insertable = false` — Thường dùng khi field được quản lý bởi DB
+
+```java
+// Trường hợp dùng: DB default hoặc trigger quản lý giá trị
+@Column(insertable = false, updatable = false)
+private LocalDateTime createdAt; // DB tự set qua DEFAULT NOW()
+
+// ⚠️ Gotcha phổ biến với @JoinColumn:
+@ManyToOne
+@JoinColumn(name = "user_id")
+private User user;
+
+@Column(name = "user_id", insertable = false, updatable = false)
+private Long userId; // đọc FK value mà không duplicate quản lý
+
+// Nếu thiếu insertable=false ở đây → Hibernate cố INSERT cả hai
+// → "Repeated column in mapping for entity" MappingException
+```
+
+#### `unique = false` — Chỉ DDL, không enforce ở application layer
+
+```java
+// ❌ Nghĩ unique=true là đủ
+@Column(unique = true)
+private String email;
+
+// unique=true tạo UNIQUE INDEX trong DB khi ddl-auto=create
+// Nhưng nếu DB schema tạo tay mà không có unique index → không enforce gì cả
+// Và Hibernate không check duplicate trước INSERT → exception từ DB
+
+// ✅ Kết hợp với @Table index nếu muốn composite unique
+@Table(
+    uniqueConstraints = @UniqueConstraint(
+        name = "uk_user_email_tenant",
+        columnNames = {"email", "tenant_id"}
+    )
+)
+```
+
+---
+
+### 2. Type Mapping — Các Lỗi Ngầm
+
+#### `String` — Mặc định `VARCHAR(255)`, dùng `TEXT` khi cần
+
+```java
+// ❌ Dùng String cho content dài mà không khai báo
+@Column
+private String content; // VARCHAR(255) → truncation
+
+// ✅ Cách 1: khai báo length lớn
+@Column(length = 65535)
+private String content; // TEXT trong MySQL
+
+// ✅ Cách 2: dùng @Lob (xem mục riêng)
+@Lob
+@Column
+private String content; // TEXT/CLOB tùy DB
+
+// ✅ Cách 3: PostgreSQL specific — TEXT không giới hạn
+@Column(columnDefinition = "TEXT")
+private String content;
+// columnDefinition bypass Hibernate type system → dùng raw SQL type
+// Không portable sang DB khác nhưng explicit và rõ ràng
+```
+
+#### `LocalDateTime` vs `Instant` vs `ZonedDateTime`
+
+```java
+// Đây là nguồn gây bug timezone cực kỳ phổ biến
+
+// ❌ LocalDateTime lưu timezone-naive
+@Column
+private LocalDateTime createdAt;
+// Nếu server ở UTC, DB ở UTC+7: giá trị bị lưu sai timezone
+// Không có cách biết timezone nào được dùng khi đọc lại
+
+// ✅ Instant — luôn UTC, không có timezone ambiguity
+@Column
+private Instant createdAt; // maps to TIMESTAMPTZ trong PostgreSQL
+
+// ✅ Kết hợp với @CreationTimestamp
+@CreationTimestamp
+@Column(nullable = false, updatable = false)
+private Instant createdAt;
+
+@UpdateTimestamp
+@Column(nullable = false)
+private Instant updatedAt;
+
+// Cấu hình bắt buộc trong application.yml khi dùng LocalDateTime:
+// spring.jpa.properties.hibernate.jdbc.time_zone=UTC
+// Nếu không có config này: Hibernate dùng JVM timezone → inconsistency
+
+// ⚠️ PostgreSQL: TIMESTAMP (no TZ) vs TIMESTAMPTZ
+// LocalDateTime → TIMESTAMP (lưu as-is, không convert)
+// Instant → TIMESTAMPTZ (lưu UTC, convert khi đọc)
+// Luôn dùng TIMESTAMPTZ + Instant cho production
+```
+
+#### `boolean` / `Boolean` — Mapping với DB char/number
+
+```java
+// PostgreSQL: boolean → BOOLEAN native ✅
+// Oracle: boolean → NUMBER(1) hoặc CHAR(1) — cần config
+
+// ❌ Với Oracle/MySQL không có boolean native
+@Column
+private boolean active; // có thể map sai tùy dialect
+
+// ✅ Tường minh
+@Column(columnDefinition = "BOOLEAN")
+private boolean active; // PostgreSQL
+
+// Với legacy DB dùng CHAR(1) 'Y'/'N':
+@Convert(converter = BooleanToYNConverter.class)
+@Column(length = 1)
+private boolean active;
+
+// ❌ Đừng dùng int 0/1 để represent boolean trong entity field
+// Dùng int chỉ khi có lý do legacy schema không đổi được
+```
+
+#### `Long` vs `long` — Null safety
+
+```java
+// ❌ primitive long cho nullable column
+@Column(nullable = true) // mâu thuẫn! primitive không thể null
+private long amount;
+// Hibernate phải gán 0 khi column NULL → silent data corruption
+
+// ✅ Wrapper Long cho nullable
+@Column(nullable = true)
+private Long amount; // null-safe
+
+// ✅ primitive long CHỈ khi nullable = false (NOT NULL constraint)
+@Column(nullable = false)
+private long amount; // ok, DB đảm bảo không null
+```
+
+---
+
+### 3. `@Enumerated` — Trap Quan Trọng Nhất
+
+```java
+// ❌ ORDINAL — nguy hiểm cho production
+@Enumerated(EnumType.ORDINAL)
+@Column
+private Status status;
+
+public enum Status {
+    PENDING,    // ordinal = 0
+    APPROVED,   // ordinal = 1
+    REJECTED    // ordinal = 2
+}
+
+// DB lưu: 0, 1, 2
+// Vấn đề: thêm enum value mới ở giữa
+public enum Status {
+    PENDING,    // ordinal = 0
+    IN_REVIEW,  // ordinal = 1 ← thêm mới
+    APPROVED,   // ordinal = 2 ← DỊCH CHUYỂN từ 1 lên 2!
+    REJECTED    // ordinal = 3
+}
+// → Tất cả rows trong DB có status=1 (APPROVED cũ) giờ là IN_REVIEW
+// → DATA CORRUPTION SILENT, không exception, không warning
+
+// ✅ STRING — luôn dùng cho production
+@Enumerated(EnumType.STRING)
+@Column(length = 20, nullable = false)
+private Status status;
+// DB lưu: "PENDING", "APPROVED", "REJECTED"
+// Thêm enum mới ở giữa → không ảnh hưởng data cũ ✅
+// Rename enum value → cần migration script ⚠️
+
+// ✅ Tốt hơn nữa: dùng @Convert với custom converter
+// Giúp kiểm soát hoàn toàn giá trị DB
+@Convert(converter = StatusConverter.class)
+@Column(length = 10, nullable = false)
+private Status status;
+
+@Converter(autoApply = false)
+public class StatusConverter implements AttributeConverter<Status, String> {
+    @Override
+    public String convertToDatabaseColumn(Status attribute) {
+        return attribute == null ? null : attribute.getDbValue();
+        // getDbValue() trả về giá trị cố định, không phụ thuộc enum name
+    }
+
+    @Override
+    public Status convertToEntityAttribute(String dbData) {
+        return Status.fromDbValue(dbData);
+    }
+}
+
+public enum Status {
+    PENDING("PND"),
+    APPROVED("APR"),
+    REJECTED("REJ");
+
+    private final String dbValue;
+    // constructor + getter...
+    // dbValue không thay đổi dù rename enum constant
+}
+```
+
+---
+
+### 4. `@Id` và Strategy — Ảnh Hưởng Đến Performance
+
+```java
+// ❌ IDENTITY — vô hiệu hóa JDBC batch insert
+@Id
+@GeneratedValue(strategy = GenerationType.IDENTITY)
+private Long id;
+// Với IDENTITY (auto_increment MySQL, SERIAL PostgreSQL):
+// Hibernate phải INSERT xong mới biết ID
+// → không thể batch vì cần ID ngay sau mỗi INSERT
+// → với 1000 inserts: 1000 round-trips riêng lẻ
+
+// ✅ SEQUENCE — cho phép batch insert
+@Id
+@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "doc_seq")
+@SequenceGenerator(
+    name = "doc_seq",
+    sequenceName = "document_id_seq",
+    allocationSize = 50  // Hibernate lấy 50 IDs một lần từ sequence
+)
+private Long id;
+// allocationSize=50 → 1 round-trip DB lấy 50 IDs, dùng dần
+// → 1000 inserts cần ~20 round-trips lấy ID + batch INSERT
+
+// ✅ UUID — distributed, không cần sequence
+@Id
+@UuidGenerator  // Hibernate 6.2+
+private UUID id;
+// Hoặc legacy:
+@Id
+@GeneratedValue(generator = "uuid2")
+@GenericGenerator(name = "uuid2", strategy = "uuid2")
+@Column(columnDefinition = "uuid", updatable = false, nullable = false)
+private UUID id;
+
+// ⚠️ UUID index performance: UUID là random → B-tree index fragmentation cao
+// → PostgreSQL: dùng gen_random_uuid() (v4) hoặc uuid_generate_v7() (ordered)
+// → Hibernate: @UuidGenerator(style = UuidGenerator.Style.TIME) cho ordered UUID
+```
+
+---
+
+### 5. `@Lob` — Eager Load Ẩn, Memory Explosion
+
+```java
+// ❌ @Lob luôn được load EAGER dù FetchType.LAZY
+@Lob
+@Column
+private byte[] content; // PDF, file binary
+
+// Mặc dù:
+@Lob
+@Basic(fetch = FetchType.LAZY)
+@Column
+private byte[] content;
+// FetchType.LAZY trên @Lob CÓ THỂ không hoạt động
+// tùy Hibernate version và có bytecode enhancement không
+
+// Khi load entity:
+Document doc = docRepo.findById(id).get();
+// → SELECT id, name, status, ..., content FROM documents WHERE id=?
+//                                           ^^^^^^^^^ load cả binary content!
+// → Nếu content = 10MB PDF, và load 100 documents → 1GB trong RAM
+
+// ✅ Tách LOB ra entity riêng hoặc dùng lazy loading đúng cách
+@Entity
+public class Document {
+    @Id private Long id;
+    private String name;
+    // KHÔNG có content ở đây
+    
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "document")
+    private DocumentContent content; // load riêng khi cần
+}
+
+@Entity
+public class DocumentContent {
+    @Id private Long id;
+    
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "document_id")
+    private Document document;
+    
+    @Lob
+    @Column
+    private byte[] data;
+}
+
+// ✅ Hoặc: dùng @Basic(fetch = LAZY) với bytecode enhancement
+// application.yml:
+// spring.jpa.properties.hibernate.enhancer.enableLazyInitialization=true
+// spring.jpa.properties.hibernate.enhancer.enableDirtyTracking=true
+
+// ✅ Best practice PDMS: lưu file trong object storage (MinIO/S3),
+// chỉ lưu URL/path trong DB
+@Column(length = 500)
+private String contentPath; // "s3://bucket/docs/12345.pdf"
+```
+
+---
+
+### 6. `@Transient` — Field Không Được Persist
+
+```java
+// Có 2 cách đánh dấu field không persist:
+
+// Cách 1: @Transient annotation (JPA)
+@Transient
+private String computedDisplayName; // không map vào DB
+
+// Cách 2: Java transient keyword
+private transient String cacheValue; // cũng không persist
+
+// ⚠️ Không nhầm hai cái này:
+// @Transient → Hibernate bỏ qua field
+// transient keyword → Java serialization bỏ qua field
+// Chúng KHÔNG tương đương nhau!
+
+// ⚠️ Gotcha: field không annotate mà không phải relationship
+// Hibernate sẽ cố map field vào DB column!
+@Entity
+public class User {
+    private String name;       // ← Hibernate map vào column "name"
+    private String fullName;   // ← Hibernate cũng map! Nếu không có column → error
+    
+    @Transient
+    private String displayName; // ← Hibernate bỏ qua, tính toán runtime
+}
+
+// ✅ Dùng @Formula cho computed field đọc từ DB
+@Formula("(first_name || ' ' || last_name)")
+private String fullName; // Hibernate sinh: SELECT ..., (first_name || ' ' || last_name) AS fullName
+                         // READ ONLY, không INSERT/UPDATE
+
+// ✅ Dùng @Transient + method tính toán
+@Transient
+private String displayName;
+
+public String getDisplayName() {
+    if (displayName == null) {
+        displayName = firstName + " " + lastName; // tính lại khi cần
+    }
+    return displayName;
+}
+```
+
+---
+
+### 7. Collection Type — `List` vs `Set` vs `Bag`
+
+```java
+// Hibernate xử lý 3 loại collection khác nhau:
+
+// LIST (với @OrderColumn): ordered, có thể duplicate, dùng index column
+@OneToMany
+@OrderColumn(name = "item_order") // thêm column thứ tự vào DB
+private List<OrderItem> items;
+// Mỗi lần thêm/xóa phần tử giữa: UPDATE index của các phần tử còn lại → tốn
+
+// BAG (List không có @OrderColumn): unordered, có thể duplicate
+@OneToMany
+private List<OrderItem> items; // không có @OrderColumn → Bag semantics
+// Bag + JOIN FETCH → Hibernate cảnh báo HHH90003004
+// và có thể load kết quả trùng lặp (Cartesian product)
+// ❌ Không dùng List với nhiều eager-join cùng lúc
+
+// SET: unordered, không duplicate
+@OneToMany
+private Set<OrderItem> items;
+// ✅ Tốt cho: unique relationships, ManyToMany
+// ⚠️ Yêu cầu equals/hashCode đúng trên entity (xem mục ManyToMany bên trên)
+
+// MAP: key-value
+@ElementCollection
+@MapKeyColumn(name = "meta_key")
+@Column(name = "meta_value")
+@CollectionTable(name = "document_metadata")
+private Map<String, String> metadata;
+
+// ✅ Rule of thumb:
+// - OneToMany, ManyToMany: dùng Set (tránh duplicate, tránh Bag warning)
+// - Cần thứ tự: dùng List + @OrderBy (sort bằng DB) thay @OrderColumn (sort bằng index)
+// - @ElementCollection key-value: dùng Map
+
+@OneToMany
+@OrderBy("createdAt DESC") // sort bằng SQL ORDER BY, không cần index column
+private List<Comment> comments;
+```
+
+---
+
+### 8. `@Version` — Optimistic Locking Field
+
+```java
+// ✅ Luôn thêm @Version cho entity có thể được update concurrently
+@Version
+@Column(nullable = false)
+private Integer version; // hoặc Long
+
+// Hibernate sinh: UPDATE ... SET ..., version=version+1 WHERE id=? AND version=?
+// Nếu version không match (row đã được update bởi transaction khác):
+// → 0 rows affected → StaleObjectStateException
+
+// ⚠️ Gotcha 1: version field KHÔNG được set thủ công
+version = 0; // ❌ Hibernate quản lý, không tự set
+
+// ⚠️ Gotcha 2: merge() và @Version
+User detached = ...; // version = 3
+detached.setVersion(0); // ❌ Nếu set sai version
+em.merge(detached); // UPDATE WHERE version=0 → 0 rows → OptimisticLockException
+// → Nhớ include version trong DTO và gửi đúng giá trị từ client
+
+// ⚠️ Gotcha 3: @Version không protect Lob và @ElementCollection update
+// Optimistic lock chỉ theo dõi scalar fields của entity chính
+
+// ✅ Với Spring Data REST hoặc REST API: include version trong response DTO
+public record UserDTO(Long id, String name, Integer version) {}
+// Client gửi lại version khi update → server merge với đúng version
+```
+
+---
+
+### 9. Audit Fields — `@CreatedDate`, `@LastModifiedDate`
+
+```java
+// ✅ Setup Spring Data JPA auditing
+@Configuration
+@EnableJpaAuditing
+public class JpaConfig {}
+
+@Entity
+@EntityListeners(AuditingEntityListener.class)
+public class Document {
+    
+    @CreatedDate
+    @Column(nullable = false, updatable = false)
+    private Instant createdAt;
+    
+    @LastModifiedDate
+    @Column(nullable = false)
+    private Instant updatedAt;
+    
+    @CreatedBy
+    @Column(updatable = false, length = 100)
+    private String createdBy;
+    
+    @LastModifiedBy
+    @Column(length = 100)
+    private String updatedBy;
+}
+
+// ⚠️ Gotcha 1: @CreatedDate không hoạt động nếu thiếu @EntityListeners
+// Không có exception, chỉ là null trong DB
+
+// ⚠️ Gotcha 2: @CreatedBy cần AuditorAware bean
+@Bean
+public AuditorAware<String> auditorProvider() {
+    return () -> Optional.ofNullable(SecurityContextHolder.getContext())
+        .map(ctx -> ctx.getAuthentication())
+        .filter(auth -> auth != null && auth.isAuthenticated())
+        .map(auth -> auth.getName());
+}
+
+// ⚠️ Gotcha 3: merge() entity với @CreatedDate từ client
+// Nếu createdAt trong DTO = null, sau merge() → createdAt bị set null
+// → Vi phạm NOT NULL constraint khi flush
+// Fix: updatable=false đảm bảo Hibernate ignore createdAt khi UPDATE
+```
+
+---
+
+### 10. `@Embedded` và `@Embeddable` — Value Object
+
+```java
+// Tốt cho: address, money, period, coordinates
+
+@Embeddable
+public class Money {
+    @Column(name = "amount", precision = 19, scale = 4, nullable = false)
+    private BigDecimal value;
+    
+    @Column(name = "currency", length = 3, nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Currency currency;
+}
+
+@Entity
+public class Contract {
+    @Embedded
+    private Money totalValue; // maps vào: amount, currency columns
+    
+    // ✅ Dùng @AttributeOverride nếu có 2 Money trong cùng entity
+    @Embedded
+    @AttributeOverrides({
+        @AttributeOverride(name = "value", column = @Column(name = "deposit_amount", precision = 19, scale = 4)),
+        @AttributeOverride(name = "currency", column = @Column(name = "deposit_currency", length = 3))
+    })
+    private Money depositValue;
+}
+
+// ⚠️ Gotcha 1: toàn bộ @Embeddable bị null khi ALL columns là NULL
+// Hibernate trả về null thay vì Money{value=null, currency=null}
+// → Dùng @ColumnTransformer hoặc check null trước khi dùng
+
+// ⚠️ Gotcha 2: @Embeddable không có @Id → không cache được ở L2
+// Dirty check embedded object: Hibernate compare toàn bộ Embeddable
+// → equals/hashCode trên @Embeddable nên được implement đúng
+
+// ⚠️ Gotcha 3: @Embedded + inheritance không được hỗ trợ tốt
+// Tránh inheritance trong @Embeddable class
+```
+
+---
+
+### 11. `@OneToMany` Field — Initialization Gotcha
+
+```java
+// ❌ Không initialize collection
+@OneToMany(mappedBy = "order")
+private List<OrderItem> items; // = null
+
+// Vấn đề khi entity chưa persist:
+Order order = new Order();
+order.getItems().add(item); // NullPointerException!
+
+// ✅ Luôn initialize collection
+@OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+private List<OrderItem> items = new ArrayList<>();
+
+// ✅ Hoặc Set cho unique relationship
+@OneToMany(mappedBy = "document", cascade = CascadeType.ALL, orphanRemoval = true)
+private Set<Tag> tags = new HashSet<>();
+
+// ⚠️ Gotcha: initialize với non-empty list
+@OneToMany(mappedBy = "order")
+private List<OrderItem> items = new ArrayList<>(Arrays.asList(defaultItem));
+// defaultItem chưa được persist → TransientPropertyValueException khi flush
+
+// ✅ orphanRemoval = true: khi remove item khỏi collection → DELETE row
+// Nếu không có orphanRemoval: item bị remove khỏi collection nhưng vẫn còn trong DB
+// với FK = null (nếu nullable) hoặc ConstraintViolation (nếu NOT NULL)
+```
+
+---
+
+### 12. Quick Reference — Field Definition Checklist
+
+```
+Khi khai báo mỗi field trong @Entity, tự hỏi:
+
+☐ Kiểu dữ liệu
+  - String → length phù hợp? (default 255 có đủ không?)
+  - BigDecimal → precision + scale khai báo tường minh?
+  - Temporal → Instant (UTC) hay LocalDateTime (timezone-aware cấu hình chưa)?
+  - boolean/Boolean → nullable = false nếu dùng primitive?
+  - Long/long → wrapper nếu column có thể NULL?
+
+☐ @Column
+  - nullable → kết hợp với @NotNull ở Bean Validation?
+  - length → có khai báo tường minh cho String?
+  - updatable=false → cho createdAt, contractNumber, business key?
+  - insertable=false → khi field được quản lý bởi DB default/trigger?
+
+☐ Enum
+  - @Enumerated(EnumType.STRING) bắt buộc, không dùng ORDINAL?
+  - length phù hợp với giá trị String của enum?
+
+☐ ID
+  - SEQUENCE thay IDENTITY nếu cần batch insert?
+  - allocationSize hợp lý (thường 50-100)?
+
+☐ @Lob
+  - Có bị load EAGER không mong muốn không?
+  - Có nên tách ra entity riêng không?
+  - Có nên lưu path thay vì binary không?
+
+☐ Collection
+  - Initialize với new ArrayList<>() hoặc new HashSet<>()?
+  - Dùng Set cho unique, List + @OrderBy cho ordered?
+  - orphanRemoval = true nếu muốn xóa child khi remove khỏi collection?
+  - Cascade type phù hợp với business logic?
+
+☐ Audit
+  - @EntityListeners(AuditingEntityListener.class) có trên entity không?
+  - createdAt: updatable=false?
+  - AuditorAware bean được cấu hình chưa?
+
+☐ @Version
+  - Entity có cần optimistic locking không?
+  - Version được include trong DTO gửi về client không?
+
+☐ @Transient
+  - Field tính toán runtime: có @Transient không?
+  - Field đọc từ DB nhưng không ghi: dùng @Formula?
+```
+
+---
+
+*Tags: #hibernate #jpa #entity #field-mapping #column #annotation #gotcha #bigdecimal #enum #lob #audit #version*
