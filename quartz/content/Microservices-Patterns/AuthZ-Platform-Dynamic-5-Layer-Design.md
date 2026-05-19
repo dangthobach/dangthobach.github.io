@@ -1576,3 +1576,749 @@ CREATE TRIGGER trg_escape_hatch_approval
 | EC-3 — Audit durability | Mất log khi sidecar crash | Local WAL (Chronicle Queue) → async relay → IAM idempotent ingestion + K8s preStop flush | ✅ |
 | EC-4 — Cross-domain join | Attribute ở service khác | JIT fetch + 30s cache + circuit breaker (data động); pre-materialize vào `relation_tuple` (data chậm) | ✅ |
 | EC-5 — Governance | Escape hatch abuse + field naming chaos | Policy-as-Code GitOps + CI/CD validation + `schema_field_registry` + escape hatch approval trigger | ✅ |
+
+---
+
+## Advanced Edge Cases — Batch 2
+
+> Tiếp nối Batch 1. Các gap dưới đây liên quan đến hiệu năng tài nguyên, đa dạng backend, quản trị vận hành và edge case multi-tenancy cực đoan.
+
+---
+
+### Gap 4 — "Big Node" trong ReBAC Graph: Sub-graph Partitioning & Max Fan-out
+
+**Vấn đề gốc rễ:** Group `ALL_EMPLOYEES` có 20,000 members. Khi insert 1 member mới → trigger recompute materialized graph cho toàn bộ subgraph của node này → 20,000 rows UPDATE trong `relation_reachability` → CDC pipeline bị nghẽn → các downstream consumer (cache invalidation, audit) bị delay hàng chục giây.
+
+Worse case: xóa node `ALL_EMPLOYEES` → cascade delete 20,000 × số relation types rows.
+
+**Giải pháp 3 lớp:**
+
+#### Lớp 1 — Max Fan-out constraint tại write time
+
+```sql
+-- Giới hạn số lượng object mà 1 subject có thể có với cùng 1 relation
+ALTER TABLE relation_type ADD COLUMN max_fanout INT DEFAULT NULL;  -- NULL = không giới hạn
+
+-- Ví dụ: relation 'member_of' giới hạn 10,000 members per group
+INSERT INTO relation_type (tenant_id, relation, max_fanout)
+VALUES (:tenantId, 'member_of', 10000);
+
+CREATE OR REPLACE FUNCTION enforce_fanout_limit()
+RETURNS TRIGGER AS $$
+DECLARE
+    current_count INT;
+    max_allowed   INT;
+BEGIN
+    SELECT max_fanout INTO max_allowed
+    FROM relation_type
+    WHERE tenant_id = NEW.tenant_id AND relation = NEW.relation;
+
+    IF max_allowed IS NOT NULL THEN
+        SELECT COUNT(*) INTO current_count
+        FROM relation_tuple
+        WHERE tenant_id = NEW.tenant_id
+          AND subject   = NEW.subject
+          AND relation  = NEW.relation;
+
+        IF current_count >= max_allowed THEN
+            RAISE EXCEPTION 'Fan-out limit exceeded: subject=% relation=% limit=%',
+                NEW.subject, NEW.relation, max_allowed;
+        END IF;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_enforce_fanout
+    BEFORE INSERT ON relation_tuple
+    FOR EACH ROW EXECUTE FUNCTION enforce_fanout_limit();
+```
+
+#### Lớp 2 — Sub-graph Partitioning: phân rã Big Node thành Virtual Groups
+
+Khi group thực sự cần >10,000 members, thay vì 1 node to, phân rã thành cây node nhỏ:
+
+```
+ALL_EMPLOYEES (virtual root)
+├── ALL_EMPLOYEES_HN  (max 5,000)
+├── ALL_EMPLOYEES_HCM (max 5,000)
+└── ALL_EMPLOYEES_DN  (max 5,000)
+```
+
+Policy engine traverse cây này thay vì 1 flat node. Mỗi sub-group khi thay đổi chỉ recompute subgraph nhỏ, không ảnh hưởng toàn bộ.
+
+```sql
+-- Bảng virtual group hierarchy
+CREATE TABLE group_partition (
+    id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    tenant_id      UUID         NOT NULL,
+    parent_group   VARCHAR(300) NOT NULL,  -- 'group:ALL_EMPLOYEES'
+    child_group    VARCHAR(300) NOT NULL,  -- 'group:ALL_EMPLOYEES_HN'
+    partition_key  VARCHAR(100),           -- 'branch_code=HN' — để biết rule phân chia
+    max_size       INT          NOT NULL DEFAULT 5000
+);
+```
+
+#### Lớp 3 — Async batch recompute với rate limiting
+
+Khi Big Node thay đổi, không recompute ngay trong CDC consumer thread — đẩy vào async queue với rate limit:
+
+```java
+@KafkaListener(topics = "pdms.public.relation_tuple")
+public void onRelationTupleChange(RelationTupleCdcEvent event) {
+    int fanout = relationTupleRepo.countBySubjectAndRelation(
+        event.getTenantId(), event.getSubject(), event.getRelation());
+
+    if (fanout > BIG_NODE_THRESHOLD) {  // VD: 1000
+        // Big node → async queue với rate limit, không block CDC thread
+        recomputeQueue.enqueue(RecomputeTask.of(event), Priority.LOW);
+        log.info("Big node detected subject={} fanout={}, queued async recompute",
+            event.getSubject(), fanout);
+    } else {
+        // Small node → recompute ngay, inline
+        reachabilityService.recomputeSubgraph(
+            event.getTenantId(), event.getRelation(), event.getSubject());
+    }
+}
+
+@Component
+public class RecomputeWorker {
+
+    // Rate limit: tối đa 100 recompute tasks/giây để không làm chết DB
+    private final RateLimiter rateLimiter = RateLimiter.create(100);
+
+    @Scheduled(fixedDelay = 100)
+    public void processQueue() {
+        while (recomputeQueue.hasNext()) {
+            rateLimiter.acquire();
+            RecomputeTask task = recomputeQueue.poll();
+            reachabilityService.recomputeSubgraph(
+                task.getTenantId(), task.getRelation(), task.getSubject());
+        }
+    }
+}
+```
+
+**Hệ quả:** CDC pipeline không bao giờ bị nghẽn vì Big Node. Materialized table có thể lag vài giây với Big Node — acceptable vì ReBacEngine luôn có live traversal làm fallback (EC-2 Lớp 3).
+
+---
+
+### Gap 5 — ReBAC in Row Filter cho NoSQL Backend (ES & MongoDB)
+
+**Vấn đề gốc rễ:** SQL translator có thể sinh `EXISTS (SELECT 1 FROM relation_reachability ...)` vào WHERE clause. Elasticsearch và MongoDB không hỗ trợ subquery/JOIN — không thể dịch node `{ "type": "relation", ... }` sang ES DSL hay MongoDB `$match` theo cùng cơ chế.
+
+Hậu quả nếu không xử lý: row filter với relation node sẽ bị bỏ qua hoặc throw error khi backend là ES/Mongo → security hole hoặc service crash.
+
+**Giải pháp: Query-time ID Enrichment — IAM engine pre-fetch IDs trước, inject `terms` filter**
+
+```
+AuthZ Request (backend=elasticsearch)
+    │
+    ▼
+IAM Engine detect: filter_expr chứa relation node
+    │
+    ▼
+ReBacEngine.resolveIds(subject, relation, tenantId)
+    → query relation_reachability: SELECT object WHERE subject=X AND relation=Y
+    → trả về: ['contract:uuid-1', 'contract:uuid-3', 'contract:uuid-7']
+    │
+    ▼
+Extract IDs: ['uuid-1', 'uuid-3', 'uuid-7']
+    │
+    ▼
+Inject vào ES filter: { "terms": { "id": ["uuid-1","uuid-3","uuid-7"] } }
+    │
+    ▼
+Combine với các filter khác (branch, status) bằng bool.must
+```
+
+```java
+@Component("elasticsearch")
+public class EsFilterTranslator implements FilterTranslator<Map<String, Object>> {
+
+    @Autowired private ReBacEngine reBacEngine;
+
+    @Override
+    public Map<String, Object> translate(JsonNode ast, AuthzContext ctx, ResourceType rt) {
+        if (isRelationNode(ast)) {
+            return translateRelationNode(ast, ctx, rt);
+        }
+        // ... existing translation logic
+    }
+
+    private Map<String, Object> translateRelationNode(JsonNode node, AuthzContext ctx, ResourceType rt) {
+        String relation   = node.get("left").get("key").asText();
+        String targetField = node.get("left").get("target").asText(); // "resource.created_by_user"
+
+        // Pre-fetch: tất cả object mà subject có quan hệ 'relation' với
+        List<String> reachableObjects = reBacEngine.resolveObjects(
+            ctx.getTenantId(),
+            "user:" + ctx.getUserId(),
+            relation
+        );
+
+        if (reachableObjects.isEmpty()) {
+            // Không có quan hệ nào → DENY toàn bộ: dùng match_none
+            return Map.of("match_none", Map.of());
+        }
+
+        // Extract raw IDs từ "user:uuid-X" → "uuid-X"
+        List<String> ids = reachableObjects.stream()
+            .map(obj -> obj.substring(obj.lastIndexOf(':') + 1))
+            .toList();
+
+        // Giới hạn size để tránh ES terms query quá lớn (ES limit: 65,536 terms)
+        if (ids.size() > MAX_TERMS_FILTER_SIZE) {
+            log.warn("ReBAC terms filter truncated: {} > {}, consider pre-materialization",
+                ids.size(), MAX_TERMS_FILTER_SIZE);
+            // Truncate + flag trong eval_trace để audit
+            ids = ids.subList(0, MAX_TERMS_FILTER_SIZE);
+        }
+
+        // targetField "resource.created_by_user" → ES field name qua schema registry
+        String esFieldName = rt.mapField(
+            targetField.replace("resource.", ""), "es");
+
+        return Map.of("terms", Map.of(esFieldName, ids));
+    }
+}
+```
+
+**MongoDB translator — tương tự với `$in`:**
+
+```java
+@Component("mongodb")
+public class MongoFilterTranslator implements FilterTranslator<Document> {
+
+    private Document translateRelationNode(JsonNode node, AuthzContext ctx, ResourceType rt) {
+        String relation = node.get("left").get("key").asText();
+        List<String> reachableObjects = reBacEngine.resolveObjects(
+            ctx.getTenantId(), "user:" + ctx.getUserId(), relation);
+
+        if (reachableObjects.isEmpty())
+            return new Document("$expr", new Document("$eq", List.of(1, 0)));  // always false
+
+        List<String> ids = reachableObjects.stream()
+            .map(obj -> obj.substring(obj.lastIndexOf(':') + 1))
+            .toList();
+
+        String mongoField = rt.mapField(
+            node.get("left").get("target").asText().replace("resource.", ""), "mongo");
+
+        return new Document(mongoField, new Document("$in", ids));
+    }
+}
+```
+
+**Cache pre-fetched IDs — tránh call ReBacEngine lặp lại:**
+
+```java
+// Cache key: tenantId:userId:relation — TTL ngắn vì relation có thể thay đổi
+private final Cache<String, List<String>> resolvedIdsCache = Caffeine.newBuilder()
+    .maximumSize(100_000)
+    .expireAfterWrite(60, SECONDS)   // 60s: đủ ngắn để phản ánh thay đổi delegation
+    .build();
+
+public List<String> resolveObjects(String tenantId, String subject, String relation) {
+    String key = tenantId + ":" + subject + ":" + relation;
+    return resolvedIdsCache.get(key, k ->
+        reachabilityRepo.findAllObjects(tenantId, subject, relation));
+}
+```
+
+**Giới hạn và trade-off:**
+- ES `terms` filter giới hạn 65,536 items — nếu vượt quá → cần pre-materialization (xem Gap 4).
+- Đây là lý do MAX_FANOUT phải được enforce ở Gap 4 — Big Node với 20,000 members sẽ sinh 20,000-item terms filter → ES reject.
+- Relation thay đổi → resolved IDs cache invalid sau 60s → có consistency window nhỏ. Acceptable với ReBAC vì relation không thay đổi tức thời.
+
+---
+
+### Gap 6 — Policy Conflict Resolution: Explicit Strategy per Resource Type
+
+**Vấn đề gốc rễ:** Khi 2 policy cùng priority, cùng match một request nhưng có effect khác nhau (1 ALLOW, 1 DENY) → behavior hiện tại không xác định (undefined). Trong banking, undefined behavior trong AuthZ là không chấp nhận được.
+
+**Giải pháp: Explicit Conflict Resolution Strategy per resource type**
+
+```sql
+-- Thêm conflict_strategy vào resource_type — định nghĩa cách resolve khi conflict
+ALTER TABLE resource_type ADD COLUMN conflict_strategy VARCHAR(30)
+    NOT NULL DEFAULT 'DENY_OVERRIDES'
+    CHECK (conflict_strategy IN (
+        'DENY_OVERRIDES',     -- bất kỳ DENY nào → DENY (banking default, most restrictive)
+        'PERMIT_OVERRIDES',   -- bất kỳ ALLOW nào → ALLOW (internal tool, most permissive)
+        'FIRST_MATCH_WINS',   -- policy có priority cao nhất → win (order matters)
+        'UNANIMOUS_PERMIT'    -- tất cả ALLOW mới → ALLOW (extra sensitive resource)
+    ));
+
+-- Ví dụ:
+-- document: DENY_OVERRIDES (banking default)
+-- internal_report: PERMIT_OVERRIDES (low sensitivity)
+-- secret_contract: UNANIMOUS_PERMIT (extra sensitive)
+```
+
+**Conflict resolution engine:**
+
+```java
+@Service
+public class ConflictResolutionEngine {
+
+    public AuthzDecision resolve(List<PolicyMatch> matches, ResourceType resourceType) {
+        if (matches.isEmpty()) return AuthzDecision.DENY;  // default deny
+
+        return switch (resourceType.getConflictStrategy()) {
+            case DENY_OVERRIDES -> resolveDenyOverrides(matches);
+            case PERMIT_OVERRIDES -> resolvePermitOverrides(matches);
+            case FIRST_MATCH_WINS -> resolveFirstMatchWins(matches);
+            case UNANIMOUS_PERMIT -> resolveUnanimousPermit(matches);
+        };
+    }
+
+    private AuthzDecision resolveDenyOverrides(List<PolicyMatch> matches) {
+        // Bất kỳ DENY nào → DENY toàn bộ, không cần check ALLOW
+        boolean anyDeny = matches.stream()
+            .anyMatch(m -> m.getEffect() == PolicyEffect.DENY);
+        return anyDeny ? AuthzDecision.DENY : AuthzDecision.ALLOW;
+    }
+
+    private AuthzDecision resolvePermitOverrides(List<PolicyMatch> matches) {
+        // Bất kỳ ALLOW nào → ALLOW, chỉ DENY khi tất cả đều DENY
+        boolean anyAllow = matches.stream()
+            .anyMatch(m -> m.getEffect() == PolicyEffect.ALLOW);
+        return anyAllow ? AuthzDecision.ALLOW : AuthzDecision.DENY;
+    }
+
+    private AuthzDecision resolveFirstMatchWins(List<PolicyMatch> matches) {
+        // Sắp xếp theo priority DESC → lấy match đầu tiên
+        return matches.stream()
+            .sorted(Comparator.comparingInt(PolicyMatch::getPriority).reversed())
+            .findFirst()
+            .map(m -> m.getEffect() == PolicyEffect.ALLOW
+                ? AuthzDecision.ALLOW : AuthzDecision.DENY)
+            .orElse(AuthzDecision.DENY);
+    }
+
+    private AuthzDecision resolveUnanimousPermit(List<PolicyMatch> matches) {
+        // Tất cả phải ALLOW — 1 DENY hoặc không match → DENY
+        boolean allAllow = matches.stream()
+            .allMatch(m -> m.getEffect() == PolicyEffect.ALLOW);
+        return allAllow ? AuthzDecision.ALLOW : AuthzDecision.DENY;
+    }
+}
+```
+
+**Tie-breaking khi cùng priority trong FIRST_MATCH_WINS:**
+
+```sql
+-- Nếu 2 policy cùng priority → dùng created_at hoặc name để deterministic
+ALTER TABLE policy ADD COLUMN tiebreak_order INT DEFAULT 0;
+-- Admin set tiebreak_order thủ công khi biết có conflict tiềm năng
+-- policy_validator CI check cảnh báo khi có 2 policy cùng priority + resource_type + action
+```
+
+**Policy conflict detection trong CI:**
+
+```java
+// authz-cli validate — cảnh báo potential conflict khi upload policy
+public List<ConflictWarning> detectConflicts(PolicyYaml newPolicy, List<PolicyYaml> existing) {
+    List<ConflictWarning> warnings = new ArrayList<>();
+    for (PolicyYaml existingPolicy : existing) {
+        for (var newRule : newPolicy.getSpec().getRules()) {
+            for (var existingRule : existingPolicy.getSpec().getRules()) {
+                if (rulesOverlap(newRule, existingRule)
+                        && newPolicy.getSpec().getPriority() == existingPolicy.getSpec().getPriority()
+                        && newPolicy.getSpec().getEffect() != existingPolicy.getSpec().getEffect()) {
+                    warnings.add(ConflictWarning.of(
+                        "Potential conflict: " + newPolicy.getMetadata().getName()
+                        + " vs " + existingPolicy.getMetadata().getName()
+                        + " — same priority, opposite effect on "
+                        + newRule.getResourceType() + "." + newRule.getAction()
+                        + " — ensure conflict_strategy is explicitly set on resource_type"
+                    ));
+                }
+            }
+        }
+    }
+    return warnings;
+}
+```
+
+---
+
+### Gap 7 — Decision Log Explosion: Sampling + Partitioning + Cold Storage
+
+**Vấn đề gốc rễ:** 100M+ requests/ngày × 1 row/request × ~2KB JSONB (eval_trace + context) = ~200GB/ngày → `authz_decision_log` phình TB trong vài ngày → query chậm, storage cost khổng lồ, backup không feasible.
+
+**Giải pháp 3 tầng:**
+
+#### Tầng 1 — Intelligent Sampling
+
+```sql
+-- Thêm sampling config per resource_type + decision
+ALTER TABLE resource_type ADD COLUMN log_sampling JSONB NOT NULL DEFAULT '{
+    "DENY":  1.0,
+    "ALLOW": 0.01
+}';
+-- DENY: log 100% (audit requirement)
+-- ALLOW: log 1% sample (performance monitoring)
+-- Có thể customize per resource_type:
+-- secret_contract: {"DENY": 1.0, "ALLOW": 0.1}   -- sensitive: log 10% ALLOW
+-- internal_report: {"DENY": 1.0, "ALLOW": 0.001}  -- low sensitivity: log 0.1% ALLOW
+```
+
+```java
+@Service
+public class SampledAuditLogger {
+
+    public void maybeRecord(AuthzRequest req, AuthzDecision decision, ResourceType rt) {
+        JsonNode sampling    = rt.getLogSampling();
+        double sampleRate    = sampling.get(decision.name()).asDouble(1.0);
+        boolean shouldLog    = decision.isDeny()           // DENY: always
+            || ThreadLocalRandom.current().nextDouble() < sampleRate;
+
+        if (shouldLog) {
+            // Ghi đầy đủ eval_trace chỉ cho DENY và sampled ALLOW
+            durableAuditLogger.record(req, decision);
+        } else {
+            // ALLOW không được sample → ghi metric counter thay vì full log
+            metricsRegistry.counter("authz.allow",
+                "resource_type", req.getResourceType(),
+                "action", req.getAction(),
+                "tenant", req.getTenantId().toString()
+            ).increment();
+        }
+    }
+}
+```
+
+#### Tầng 2 — Table Partitioning
+
+```sql
+-- Partition by tenant_id + month → mỗi partition ~few GB, manageable
+CREATE TABLE authz_decision_log (
+    id                UUID         NOT NULL,
+    tenant_id         UUID         NOT NULL,
+    user_id           UUID         NOT NULL,
+    resource_type     VARCHAR(100) NOT NULL,
+    resource_ref      VARCHAR(300),
+    action            VARCHAR(50)  NOT NULL,
+    decision          VARCHAR(10)  NOT NULL,
+    matched_policy_id UUID,
+    policy_version_id UUID,
+    eval_trace        JSONB        NOT NULL,
+    context           JSONB        NOT NULL,
+    is_sampled        BOOLEAN      NOT NULL DEFAULT false,  -- flag cho ALLOW samples
+    decided_at        TIMESTAMPTZ  NOT NULL DEFAULT now(),
+    PRIMARY KEY (id, decided_at)   -- decided_at phải có trong PK để partition
+) PARTITION BY RANGE (decided_at);
+
+-- Tạo partition theo tháng (auto-create bằng pg_partman hoặc scheduled job)
+CREATE TABLE authz_decision_log_2025_01
+    PARTITION OF authz_decision_log
+    FOR VALUES FROM ('2025-01-01') TO ('2025-02-01');
+
+CREATE TABLE authz_decision_log_2025_02
+    PARTITION OF authz_decision_log
+    FOR VALUES FROM ('2025-02-01') TO ('2025-03-01');
+
+-- Index chỉ cần trên hot partitions (last 30 days)
+CREATE INDEX idx_log_user_2025_01     ON authz_decision_log_2025_01(user_id, decided_at DESC);
+CREATE INDEX idx_log_resource_2025_01 ON authz_decision_log_2025_01(resource_type, resource_ref);
+CREATE INDEX idx_log_deny_2025_01     ON authz_decision_log_2025_01(tenant_id, decided_at DESC)
+    WHERE decision = 'DENY';
+```
+
+#### Tầng 3 — Cold Storage Tiering
+
+```java
+@Component
+public class AuditLogArchiver {
+
+    @Scheduled(cron = "0 2 1 * *")  // chạy đầu mỗi tháng lúc 2am
+    public void archiveOldPartitions() {
+        // Xác định partition cần archive (> 30 ngày)
+        String partitionName = resolvePartitionName(LocalDate.now().minusMonths(1));
+
+        // Export sang Parquet → S3 (hoặc ClickHouse cho query analytics)
+        s3Exporter.exportPartition(partitionName,
+            "s3://authz-audit-archive/" + partitionName + ".parquet");
+
+        // Verify export thành công
+        long s3Count = s3Exporter.countRows(partitionName);
+        long pgCount  = jdbc.queryForObject(
+            "SELECT COUNT(*) FROM " + partitionName, Long.class);
+        if (!s3Count.equals(pgCount))
+            throw new ArchiveVerificationException(partitionName, pgCount, s3Count);
+
+        // Drop partition khỏi PostgreSQL sau khi verify
+        jdbc.execute("DROP TABLE IF EXISTS " + partitionName);
+        log.info("Archived and dropped partition {} ({} rows)", partitionName, pgCount);
+    }
+}
+```
+
+**Query API cho cold data (audit team):**
+
+```java
+// GET /authz/audit?userId={}&from={}&to={}&decision=DENY
+@GetMapping("/authz/audit")
+public AuditQueryResponse query(@RequestParam UUID userId,
+                                 @RequestParam Instant from,
+                                 @RequestParam Instant to,
+                                 @RequestParam(required=false) String decision) {
+    // Hot data (< 30 ngày): query PostgreSQL partition
+    if (from.isAfter(Instant.now().minus(30, DAYS))) {
+        return AuditQueryResponse.from(
+            decisionLogRepo.query(userId, from, to, decision));
+    }
+    // Cold data: query S3 via Athena hoặc ClickHouse
+    return AuditQueryResponse.from(
+        coldStorageClient.query(userId, from, to, decision));
+}
+```
+
+**Tổng hợp hiệu quả:**
+- Sampling: giảm 99% write volume cho ALLOW (từ 100M → ~1M rows/ngày).
+- Partitioning: mỗi tháng partition ~30M rows DENY + 1M ALLOW sample = ~31M rows ~= 62GB → manageable.
+- Cold storage: sau 30 ngày drop partition → PostgreSQL chỉ giữ 30 ngày hot data (~62GB), phần còn lại trên S3/ClickHouse.
+
+---
+
+### EC-7 — Cross-Tenant Shared Resources: Parent-Child Tenant & Shared Visibility
+
+**Vấn đề gốc rễ:** Multi-tenancy strict (`tenant_id` isolation) không đủ cho enterprise thực tế:
+- **Tập đoàn (parent)** có Master Data dùng chung cho các **công ty con (child tenant)** — VD: danh mục sản phẩm, bảng phí.
+- **Shared services** (VD: template hợp đồng chuẩn) cần visible với nhiều tenant nhưng không phải mọi tenant.
+- Cơ chế hiện tại check `tenant_id = :tenantId` — quá cứng, block mọi cross-tenant access.
+
+**Giải pháp: Parent-Child Tenant Hierarchy + Shared Visibility Policy**
+
+#### Schema
+
+```sql
+-- Hierarchy: tenant có thể có parent
+ALTER TABLE tenant ADD COLUMN parent_tenant_id UUID REFERENCES tenant(id);
+ALTER TABLE tenant ADD COLUMN tenant_type VARCHAR(20) NOT NULL DEFAULT 'STANDALONE'
+    CHECK (tenant_type IN ('ROOT', 'PARENT', 'CHILD', 'STANDALONE'));
+
+CREATE INDEX idx_tenant_parent ON tenant(parent_tenant_id) WHERE parent_tenant_id IS NOT NULL;
+
+-- Shared resource visibility: resource_instance có thể shared với tenant khác
+CREATE TABLE resource_visibility (
+    id                   UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    resource_instance_id UUID        NOT NULL REFERENCES resource_instance(id),
+    visible_to_tenant_id UUID        NOT NULL REFERENCES tenant(id),
+    visibility_type      VARCHAR(20) NOT NULL CHECK (visibility_type IN (
+        'READ_ONLY',    -- child tenant chỉ đọc được
+        'FULL',         -- child tenant đọc + sử dụng
+        'INHERITED'     -- auto-inherited từ parent tenant
+    )),
+    granted_by           UUID,
+    granted_at           TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE UNIQUE INDEX idx_visibility_unique ON resource_visibility(resource_instance_id, visible_to_tenant_id);
+```
+
+#### Tenant-aware AuthZ evaluation
+
+```java
+@Service
+public class TenantAwareAuthzEngine {
+
+    public AuthzDecision evaluate(AuthzRequest req) {
+        // Bước 1: Check trong tenant hiện tại (standard path)
+        AuthzDecision localDecision = standardEngine.evaluate(req);
+        if (localDecision.isAllow()) return localDecision;
+
+        // Bước 2: Check shared visibility từ parent tenant
+        Tenant currentTenant = tenantRepo.findById(req.getTenantId());
+        if (currentTenant.getParentTenantId() == null) return localDecision;  // DENY, no parent
+
+        // Resource có được share từ parent không?
+        boolean sharedFromParent = resourceVisibilityRepo.exists(
+            req.getResourceRef(), req.getTenantId());
+
+        if (sharedFromParent) {
+            // Evaluate policy của parent tenant với resource đó
+            AuthzRequest parentReq = req.toBuilder()
+                .tenantId(currentTenant.getParentTenantId())
+                .build();
+            AuthzDecision parentDecision = standardEngine.evaluate(parentReq);
+            if (parentDecision.isAllow()) {
+                // Downgrade permission: child tenant chỉ được READ_ONLY từ parent
+                ResourceVisibility visibility = resourceVisibilityRepo.find(
+                    req.getResourceRef(), req.getTenantId());
+                if (visibility.getType() == READ_ONLY
+                        && !req.getAction().equals("read")) {
+                    return AuthzDecision.deny("CROSS_TENANT_READ_ONLY: action "
+                        + req.getAction() + " not allowed on shared resource");
+                }
+                return parentDecision.withTag("cross_tenant_shared");
+            }
+        }
+        return localDecision;  // DENY
+    }
+}
+```
+
+**Row filter cho shared resource:** Khi trả về list resource, cần include cả shared resources:
+
+```sql
+-- row_filter cho shared visibility: chỉ include resource mà tenant có visibility
+-- Bổ sung vào filter_expr của permission 'read_shared_master_data':
+-- SQL fragment (approved escape hatch, vì logic phức tạp):
+-- (tenant_id = :currentTenantId)
+-- OR EXISTS (
+--     SELECT 1 FROM resource_visibility rv
+--     JOIN resource_instance ri ON ri.id = rv.resource_instance_id
+--     WHERE rv.visible_to_tenant_id = :currentTenantId
+--       AND ri.external_ref = document.id::text
+-- )
+```
+
+---
+
+### EC-8 — Circular Delegation với Temporal Context
+
+**Vấn đề gốc rễ:** EC-2 đã xử lý cycle detection cho quan hệ tĩnh. Nhưng delegation thường có `valid_until` — một cycle "temporal" có thể hình thành không phải trong đồ thị tĩnh mà trong đồ thị tại một thời điểm cụ thể:
+
+- `A → B` valid từ 01/01 đến 31/01
+- `B → C` valid từ 15/01 đến 28/02
+- `C → A` valid từ 20/01 đến 10/02
+
+Trong khoảng 20/01–28/01: cả 3 relation đều active → cycle tồn tại tại runtime dù không cycle trong đồ thị tĩnh.
+
+EC-2 trigger kiểm tra cycle cho relation không có `expires_at` hoặc `expires_at IS NULL`. Với temporal relation, trigger cần check cycle trong time window giao nhau.
+
+**Giải pháp: Temporal Cycle Detection**
+
+```sql
+CREATE OR REPLACE FUNCTION check_temporal_relation_cycle()
+RETURNS TRIGGER AS $$
+DECLARE
+    cycle_exists BOOLEAN;
+    effective_from TIMESTAMPTZ;
+    effective_until TIMESTAMPTZ;
+BEGIN
+    -- Xác định time window của relation mới
+    effective_from  := COALESCE(NEW.created_at, NOW());
+    effective_until := COALESCE(NEW.expires_at, 'infinity'::TIMESTAMPTZ);
+
+    -- Check cycle trong time window giao nhau
+    WITH RECURSIVE temporal_reachable AS (
+        SELECT
+            object          AS node,
+            created_at      AS rel_from,
+            COALESCE(expires_at, 'infinity'::TIMESTAMPTZ) AS rel_until
+        FROM relation_tuple
+        WHERE tenant_id = NEW.tenant_id
+          AND subject   = NEW.object
+          AND relation  = NEW.relation
+          -- Chỉ lấy relation active trong window giao nhau với NEW
+          AND created_at < effective_until
+          AND COALESCE(expires_at, 'infinity'::TIMESTAMPTZ) > effective_from
+
+        UNION
+
+        SELECT
+            rt.object,
+            GREATEST(tr.rel_from,  rt.created_at)                              AS rel_from,
+            LEAST   (tr.rel_until, COALESCE(rt.expires_at, 'infinity'::TIMESTAMPTZ)) AS rel_until
+        FROM relation_tuple rt
+        JOIN temporal_reachable tr ON rt.subject = tr.node
+        WHERE rt.tenant_id = NEW.tenant_id
+          AND rt.relation  = NEW.relation
+          -- Window giao nhau phải hợp lệ (from < until)
+          AND GREATEST(tr.rel_from, rt.created_at)
+              < LEAST(tr.rel_until, COALESCE(rt.expires_at, 'infinity'::TIMESTAMPTZ))
+    )
+    SELECT EXISTS (
+        SELECT 1 FROM temporal_reachable
+        WHERE node      = NEW.subject
+          AND rel_from  < effective_until
+          AND rel_until > effective_from
+    ) INTO cycle_exists;
+
+    IF cycle_exists THEN
+        RAISE EXCEPTION
+            'Temporal cycle detected: inserting (%) -[%]-> (%) valid [% → %] would create a cycle in overlapping time window',
+            NEW.subject, NEW.relation, NEW.object, effective_from, effective_until;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Thay thế trigger cũ (EC-2) bằng trigger temporal-aware
+DROP TRIGGER IF EXISTS trg_check_relation_cycle ON relation_tuple;
+
+CREATE TRIGGER trg_check_temporal_relation_cycle
+    BEFORE INSERT ON relation_tuple
+    FOR EACH ROW EXECUTE FUNCTION check_temporal_relation_cycle();
+```
+
+**Live traversal temporal-aware trong ReBacEngine:**
+
+```java
+private boolean liveTemporalTraversal(String tenantId, String subject,
+                                       String relation, String target,
+                                       Instant atTime, int depth) {
+    if (depth > MAX_DEPTH) throw new ReBacDepthExceededException(depth);
+
+    // Chỉ traverse relation active tại thời điểm atTime
+    List<String> next = relationTupleRepo.findActiveObjectsAt(
+        tenantId, subject, relation, atTime);  // WHERE created_at <= atTime AND (expires_at IS NULL OR expires_at > atTime)
+
+    if (next.contains(target)) return true;
+    return next.stream().anyMatch(n ->
+        liveTemporalTraversal(tenantId, n, relation, target, atTime, depth + 1));
+}
+```
+
+**Materialized reachability phân tách theo time bucket:**
+
+Với temporal delegation, `relation_reachability` không thể là snapshot tĩnh — cần thêm time dimension:
+
+```sql
+-- Extend relation_reachability với temporal validity
+ALTER TABLE relation_reachability ADD COLUMN valid_from  TIMESTAMPTZ NOT NULL DEFAULT NOW();
+ALTER TABLE relation_reachability ADD COLUMN valid_until TIMESTAMPTZ NOT NULL DEFAULT 'infinity';
+
+CREATE INDEX idx_reachability_temporal ON relation_reachability
+    (tenant_id, subject, relation, object, valid_from, valid_until);
+
+-- Query: check reachability tại thời điểm cụ thể
+SELECT EXISTS (
+    SELECT 1 FROM relation_reachability
+    WHERE tenant_id   = :tenantId
+      AND subject     = :subject
+      AND relation    = :relation
+      AND object      = :object
+      AND valid_from  <= :atTime
+      AND valid_until >  :atTime
+);
+```
+
+---
+
+## Gap Resolution Matrix — Final (v3)
+
+| Gap | Vấn đề | Giải pháp | Status |
+|-----|---------|-----------|--------|
+| G1 — Resource explosion | 100M instance rows | Type-level vs Instance-level; instance chỉ tạo khi cần ACL đặc biệt | ✅ |
+| G2 — Attribute out-of-sync | Stale cache sau khi đổi branch | Keycloak SPI → Kafka push sync + `attributes_version` trong cache key | ✅ |
+| G3 — ReBAC thiếu | Quan hệ bắc cầu không express bằng ABAC | `relation_tuple` + cycle detection + materialized reachability + circuit breaker | ✅ |
+| G4 — Centralized bottleneck | Network latency + SPOF | Control Plane / Data Plane split + emergency revoke + fail-open/closed | ✅ |
+| G5 — Single-backend AST | AST bind với SQL column | Backend-agnostic IR + `schema_field_registry` + multi-backend translator | ✅ |
+| G6 — Policy versioning | Không có rollback, không có shadow | `policy_version` + `policy_shadow_log` + lifecycle + divergence gate | ✅ |
+| G7 — Policy debugger | Không trace được tại sao DENY | `eval_trace` per AST node + Explain API + Replay API | ✅ |
+| EC-1 — Temporal context | Cache miss liên tục với env.now() | `temporal_policy` bảng riêng + gate trước compiled cache | ✅ |
+| EC-2 — ReBAC performance | Cycle + deep graph | Cycle detection trigger + materialized reachability + circuit breaker | ✅ |
+| EC-3 — Audit durability | Mất log khi sidecar crash | Chronicle Queue WAL → relay → IAM idempotent + K8s preStop flush | ✅ |
+| EC-4 — Cross-domain join | Attribute ở service khác | JIT fetch + CB (data động); pre-materialize relation_tuple (data chậm) | ✅ |
+| EC-5 — Governance | Escape hatch abuse + field naming chaos | Policy-as-Code GitOps + CI/CD + schema_field_registry + approval trigger | ✅ |
+| **Gap 4 — Big Node** | Fan-out 20K+ → CDC nghẽn | Max fan-out constraint + sub-graph partitioning + async rate-limited recompute | ✅ |
+| **Gap 5 — ReBAC in NoSQL** | relation node không translate sang ES/Mongo | Query-time ID enrichment: pre-fetch IDs → inject terms/`$in` filter | ✅ |
+| **Gap 6 — Policy conflict** | 2 policy cùng priority, effect khác → undefined | `conflict_strategy` per resource_type + ConflictResolutionEngine + CI conflict detection | ✅ |
+| **Gap 7 — Log explosion** | 100M req/ngày → TB/ngày | Sampling (100% DENY, 1% ALLOW) + monthly partitioning + cold storage S3/ClickHouse | ✅ |
+| **EC-7 — Cross-tenant** | Master data dùng chung, tenant isolation quá cứng | Parent-Child tenant hierarchy + `resource_visibility` + TenantAwareAuthzEngine | ✅ |
+| **EC-8 — Circular delegation** | Temporal cycle không bị detect bởi static trigger | Temporal cycle detection trigger + time-windowed traversal + temporal reachability table | ✅ |
