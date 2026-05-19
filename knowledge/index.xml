@@ -6,6 +6,12 @@
       <description>Last 10 notes on Dang Tho Bach&#039;s Knowledge Base</description>
       <generator>Quartz -- quartz.jzhao.xyz</generator>
       <item>
+    <title>Hibernate-Performance-Deep-Dive</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/Hibernate-Performance-Deep-Dive</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/Hibernate-Performance-Deep-Dive</guid>
+    <description><![CDATA[ Hibernate Performance Deep Dive — Từ Cơ Bản Đến Nâng Cao Audience: Senior engineer, quen RDBMS, muốn hiểu tại sao Hibernate hoạt động thế — không chỉ cách dùng. ]]></description>
+    <pubDate>Tue, 19 May 2026 18:43:35 GMT</pubDate>
+  </item><item>
     <title>AuthZ-Platform-Dynamic-5-Layer-Design</title>
     <link>https://dangthobach.github.io/knowledge/Microservices-Patterns/AuthZ-Platform-Dynamic-5-Layer-Design</link>
     <guid>https://dangthobach.github.io/knowledge/Microservices-Patterns/AuthZ-Platform-Dynamic-5-Layer-Design</guid>
@@ -58,12 +64,6 @@
     <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/09-Reactive-Forms-Mastery</link>
     <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/09-Reactive-Forms-Mastery</guid>
     <description><![CDATA[ 09. ]]></description>
-    <pubDate>Sat, 16 May 2026 17:39:23 GMT</pubDate>
-  </item><item>
-    <title>12-HTTP-Client-and-Data-Fetching</title>
-    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/12-HTTP-Client-and-Data-Fetching</link>
-    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/12-HTTP-Client-and-Data-Fetching</guid>
-    <description><![CDATA[ 12. ]]></description>
     <pubDate>Sat, 16 May 2026 17:39:23 GMT</pubDate>
   </item>
     </channel>
