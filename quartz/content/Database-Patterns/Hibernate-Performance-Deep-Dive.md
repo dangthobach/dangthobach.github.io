@@ -3413,3 +3413,1391 @@ Khi khai báo mỗi field trong @Entity, tự hỏi:
 ---
 
 *Tags: #hibernate #jpa #entity #field-mapping #column #annotation #gotcha #bigdecimal #enum #lob #audit #version*
+
+
+---
+
+## ⚙️ Hibernate/JPA Configuration — Cơ Chế, Rủi Ro Và Khi Nào Cần Cấu Hình
+
+> Mỗi config dưới đây đều có một cơ chế bên trong. Hiểu cơ chế → biết khi nào bật, khi nào tắt, và tại sao config sai gây mất dữ liệu hoặc hiệu năng tệ.
+
+---
+
+### 1. `spring.jpa.open-in-view` — Config Nguy Hiểm Nhất
+
+#### Cơ chế bên trong
+
+`Open Session In View (OSIV)` là một pattern (và implementation của Spring) mở Hibernate Session từ **đầu HTTP request** và chỉ đóng **sau khi response được gửi đi**.
+
+```
+OSIV = true (Spring Boot default):
+
+HTTP Request
+  │
+  ▼
+OpenSessionInViewInterceptor/Filter
+  → Mở Session
+  → Acquire DB Connection từ pool   ← kết nối DB bị giữ từ đây
+  │
+  ▼
+@Transactional Service Layer
+  → BEGIN TRANSACTION
+  → Queries chạy
+  → COMMIT / ROLLBACK
+  → Transaction đóng NHƯNG Session vẫn còn mở
+  │
+  ▼
+Controller Layer (không có @Transactional)
+  → Entity vẫn MANAGED (session mở)
+  → Jackson serialize entity → trigger lazy load
+  → Hibernate chạy thêm query để load lazy collection
+  │
+  ▼
+OpenSessionInViewInterceptor/Filter
+  → Session đóng
+  → Connection trả về pool  ← kết nối DB được giải phóng ở đây
+  │
+  ▼
+HTTP Response
+```
+
+**Tại sao đây là vấn đề:**
+
+```
+Thời gian giữ DB connection = thời gian service + thời gian serialize JSON
+                             = 50ms DB work + 30ms JSON serialization
+                             = 80ms tổng
+
+Với pool size = 10, throughput tối đa = 10 / 0.080s = 125 req/s
+
+Nếu tắt OSIV:
+Thời gian giữ DB connection = chỉ thời gian service = 50ms
+Throughput tối đa = 10 / 0.050s = 200 req/s  ← tăng 60%!
+```
+
+**Vấn đề thứ hai: lazy load ẩn trong Controller**
+
+```java
+// OSIV=true: đây là BUG không phải feature
+@GetMapping("/orders/{id}")
+public OrderDTO getOrder(@PathVariable Long id) {
+    Order order = orderService.findById(id); // entity MANAGED (OSIV)
+    
+    // Jackson serialize, gặp order.getItems() → lazy load trigger!
+    // → 1 query SELECT items
+    // → items có product → lazy load product!
+    // → N queries SELECT product
+    // → N+1 hoàn toàn ẩn, không thấy trong service layer
+    return mapper.toDTO(order);
+}
+
+// OSIV=false: lỗi rõ ràng, buộc phải fix đúng
+// → LazyInitializationException khi serialize
+// → Developer buộc phải load data trong @Transactional
+```
+
+**Config đúng:**
+
+```yaml
+# application.yml — tắt OSIV trong tất cả môi trường
+spring:
+  jpa:
+    open-in-view: false  # mặc định là true, phải tắt tường minh
+```
+
+**Khi tắt OSIV, cách fix LazyInitializationException:**
+
+```java
+// ✅ Cách 1: Load trong @Transactional, trả về DTO (tốt nhất)
+@Transactional(readOnly = true)
+public OrderDTO getOrderWithItems(Long id) {
+    Order order = repo.findById(id).orElseThrow();
+    // Access lazy collection TRONG transaction
+    List<ItemDTO> items = order.getItems().stream()
+        .map(mapper::toItemDTO)
+        .toList();
+    return new OrderDTO(order, items);
+}
+
+// ✅ Cách 2: JOIN FETCH
+@Query("SELECT o FROM Order o JOIN FETCH o.items WHERE o.id = :id")
+Optional<Order> findWithItems(Long id);
+
+// ✅ Cách 3: EntityGraph
+@EntityGraph(attributePaths = {"items", "items.product"})
+Optional<Order> findById(Long id);
+
+// ❌ Cách sai: bật lại OSIV để tắt lỗi
+// spring.jpa.open-in-view=true ← che vấn đề, không fix
+```
+
+---
+
+### 2. `spring.datasource.hikari.auto-commit` — Ảnh Hưởng Đến Transaction Integrity
+
+#### Cơ chế
+
+`autoCommit` là thuộc tính của JDBC Connection. Khi `autoCommit=true`, **mỗi SQL statement tự động được commit** ngay khi thực thi — không cần explicit `COMMIT`.
+
+```
+autoCommit = true (HikariCP default):
+
+Khi connection được borrow từ pool:
+  → HikariCP kiểm tra: connection đang ở trạng thái gì?
+  → Nếu autoCommit không đúng → gọi setAutoCommit(true)
+  → 1 roundtrip network đến DB driver (PostgreSQL JDBC thực sự gửi packet)
+
+Khi @Transactional bắt đầu:
+  → Spring DataSourceTransactionManager gọi setAutoCommit(false)
+  → 1 roundtrip network nữa
+
+Khi @Transactional kết thúc:
+  → commit/rollback
+  → Spring gọi setAutoCommit(true) để reset connection về pool
+  → 1 roundtrip network nữa
+
+Tổng: 3 roundtrips overhead PER TRANSACTION chỉ để flip autoCommit flag!
+```
+
+**autoCommit = false (recommended với Spring/Hibernate):**
+
+```yaml
+spring:
+  datasource:
+    hikari:
+      auto-commit: false  # HikariCP không flip autoCommit
+                          # Spring quản lý transaction thủ công
+                          # → tiết kiệm 2 roundtrips mỗi transaction
+```
+
+**Data loss risk khi code không dùng @Transactional và autoCommit=true:**
+
+```java
+// ❌ Bug tinh vi: không có @Transactional + autoCommit=true
+public void transferMoney(Long fromId, Long toId, BigDecimal amount) {
+    Account from = accountRepo.findById(fromId).get();
+    Account to = accountRepo.findById(toId).get();
+    
+    from.setBalance(from.getBalance().subtract(amount));
+    accountRepo.save(from);  // ← autoCommit=true → COMMIT ngay!
+    
+    // Nếu exception xảy ra ở đây:
+    throw new RuntimeException("System error");
+    
+    to.setBalance(to.getBalance().add(amount));
+    accountRepo.save(to);    // ← KHÔNG được gọi → tiền mất!
+    // from đã bị trừ tiền, to chưa được cộng
+    // autoCommit=true → không có rollback → dữ liệu không nhất quán
+}
+
+// ✅ Đúng: @Transactional đảm bảo atomicity
+@Transactional
+public void transferMoney(Long fromId, Long toId, BigDecimal amount) {
+    Account from = accountRepo.findById(fromId).get();
+    Account to = accountRepo.findById(toId).get();
+    
+    from.setBalance(from.getBalance().subtract(amount));
+    to.setBalance(to.getBalance().add(amount));
+    // Exception ở đây → rollback cả hai → atomicity đảm bảo
+}
+```
+
+---
+
+### 3. `spring.jpa.hibernate.ddl-auto` — Rủi Ro Mất Toàn Bộ Dữ Liệu
+
+#### Các giá trị và cơ chế
+
+```
+none        → Hibernate không làm gì với schema. Dùng cho production.
+
+validate    → Hibernate so sánh entity mapping với schema hiện tại.
+              Nếu không khớp → exception khi startup. KHÔNG thay đổi schema.
+              Phát hiện drift giữa code và DB schema.
+
+update      → Hibernate phân tích diff và thêm column/table còn thiếu.
+              KHÔNG xóa column/table dù đã xóa khỏi entity.
+              NGUY HIỂM: thêm column có thể gây issue với data type.
+
+create      → DROP toàn bộ schema rồi CREATE lại.
+              MẤT TOÀN BỘ DỮ LIỆU.
+              Chỉ dùng cho test/dev với DB tạm thời.
+
+create-drop → Như create, thêm DROP khi SessionFactory đóng.
+              Test integration tests — schema clean sau mỗi test run.
+```
+
+**Bảng quyết định khi nào dùng gì:**
+
+```
+Môi trường          ddl-auto      Lý do
+─────────────────────────────────────────────────────────────────
+Local dev (fresh)   create        Muốn schema tươi mỗi lần start
+Local dev (data)    update        Giữ data, tự sync column mới
+Integration test    create-drop   Schema clean per test class
+Staging             validate      Phát hiện mismatch trước production
+Production          none          Flyway/Liquibase quản lý migration
+```
+
+**Lỗi nguy hiểm nhất — `update` trong production:**
+
+```java
+// Tình huống thực tế tại PDMS:
+// Sprint N: entity có field
+@Column(name = "document_type")
+private String documentType;
+
+// Sprint N+1: rename field
+@Column(name = "doc_type")  // đổi tên column
+private String docType;
+
+// Với ddl-auto=update:
+// Hibernate KHÔNG rename column "document_type" thành "doc_type"
+// Hibernate ADD column mới "doc_type" (null cho tất cả rows cũ!)
+// Column cũ "document_type" vẫn còn với data cũ — KHÔNG bị xóa
+// → Dữ liệu bị split giữa 2 columns
+// → Không có exception, không có warning
+
+// ✅ Đúng: dùng Flyway migration
+// V20240115__rename_document_type.sql:
+// ALTER TABLE documents RENAME COLUMN document_type TO doc_type;
+```
+
+**Config cho từng profile:**
+
+```yaml
+# application.yml (default)
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: none  # production default
+
+---
+# application-dev.yml
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update  # dev convenience
+
+---
+# application-test.yml
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop  # clean state per test
+
+# Tốt hơn: dùng Flyway với test containers
+```
+
+---
+
+### 4. `FlushMode` — Kiểm Soát Khi Nào SQL Được Gửi
+
+#### Cơ chế 4 mode
+
+```
+FlushMode.AUTO (mặc định trong Spring @Transactional):
+  Flush xảy ra:
+    1. Trước khi thực thi JPQL/HQL query cùng bảng (dirty detection)
+    2. Khi transaction commit
+  → An toàn nhất, nhưng có thể flush nhiều lần trong 1 transaction
+
+FlushMode.COMMIT:
+  Flush xảy ra:
+    1. Chỉ khi commit transaction
+  → Query có thể thấy state cũ nếu entity đã dirty chưa flush
+  → Nhanh hơn AUTO (ít flush hơn)
+  → Dùng cho read-heavy operation
+
+FlushMode.MANUAL:
+  Flush xảy ra:
+    1. Chỉ khi gọi em.flush() tường minh
+  → Toàn quyền kiểm soát
+  → Dùng cho batch processing
+
+FlushMode.ALWAYS:
+  Flush xảy ra:
+    1. Trước MỌI query (kể cả native SQL)
+  → An toàn nhất nhưng chậm nhất
+  → Hiếm khi cần
+```
+
+**FlushMode.AUTO — trap phổ biến:**
+
+```java
+@Transactional
+public void bug() {
+    Product p = repo.findById(1L).get();
+    p.setName("New Name");
+    // entity dirty, chưa flush
+
+    // Hibernate chạy JPQL query cùng bảng Product:
+    List<Product> results = em.createQuery(
+        "FROM Product WHERE category = 'ELECTRONICS'", Product.class
+    ).getResultList();
+    // AUTO flush: Hibernate flush UPDATE trước query
+    // → UPDATE products SET name='New Name' WHERE id=1
+    // → SELECT * FROM products WHERE category='ELECTRONICS'
+    // Kết quả: "New Name" XUẤT HIỆN trong results (dù chưa commit)
+    // Behavior đúng — nhưng nhiều developer không biết flush xảy ra ở đây
+}
+
+// Trap: native query KHÔNG trigger AUTO flush
+@Transactional
+public void trap() {
+    Product p = repo.findById(1L).get();
+    p.setName("New Name");
+    // entity dirty, chưa flush
+
+    // Native query KHÔNG trigger flush (Hibernate không biết bảng nào affected)
+    List<Object[]> results = em.createNativeQuery(
+        "SELECT * FROM products WHERE category = 'ELECTRONICS'"
+    ).getResultList();
+    // → Flush KHÔNG xảy ra
+    // → Query thấy state CŨ trong DB (name vẫn là giá trị cũ)
+    // → "New Name" KHÔNG xuất hiện trong results!
+}
+
+// Fix native query:
+@Transactional
+public void fix() {
+    Product p = repo.findById(1L).get();
+    p.setName("New Name");
+    
+    em.flush(); // flush tường minh trước native query
+    
+    List<Object[]> results = em.createNativeQuery(
+        "SELECT * FROM products WHERE category = 'ELECTRONICS'"
+    ).getResultList();
+    // → Thấy "New Name" ✅
+}
+```
+
+**Batch processing với MANUAL flush:**
+
+```java
+@Transactional
+public void batchProcess(List<ProductDTO> dtos) {
+    // Dùng MANUAL flush để kiểm soát khi nào gửi SQL
+    em.setFlushMode(FlushModeType.COMMIT); // chỉ flush khi commit
+
+    int batchSize = 100;
+    for (int i = 0; i < dtos.size(); i++) {
+        Product p = new Product(dtos.get(i));
+        em.persist(p);
+
+        if ((i + 1) % batchSize == 0) {
+            em.flush();   // gửi batch SQL đến DB
+            em.clear();   // xóa L1 cache → giải phóng memory
+            // Nếu không clear(): L1 tích lũy 10000 entities → OutOfMemory
+        }
+    }
+    // Flush lần cuối cho phần dư
+}
+```
+
+---
+
+### 5. `spring.jpa.properties.hibernate.connection.handling_mode` — Connection Lifecycle
+
+#### Cơ chế
+
+Hibernate có 3 mode để quản lý vòng đời của DB connection trong một Session:
+
+```
+DELAYED_ACQUISITION_AND_RELEASE_AFTER_STATEMENT (default khi không có JTA):
+  Connection được lấy từ pool khi cần
+  Released SAU MỖI STATEMENT
+  Tốt cho JPA thông thường với connection pooling
+
+DELAYED_ACQUISITION_AND_RELEASE_AFTER_TRANSACTION (Spring default):
+  Connection được lấy khi transaction begin
+  Released khi transaction commit/rollback
+  Giữ connection suốt transaction → connection held lâu hơn nhưng ít overhead
+
+DELAYED_ACQUISITION_AND_HOLD (legacy OSIV behavior):
+  Connection được giữ đến khi Session đóng
+  Connection pool exhaustion risk cao nhất
+```
+
+**Config với Spring Boot:**
+
+```yaml
+spring:
+  jpa:
+    properties:
+      hibernate:
+        connection:
+          handling_mode: DELAYED_ACQUISITION_AND_RELEASE_AFTER_TRANSACTION
+          # Đây là default Spring Boot — đúng với @Transactional pattern
+```
+
+---
+
+### 6. `spring.datasource.hikari.*` — Connection Pool Tuning
+
+```yaml
+spring:
+  datasource:
+    hikari:
+      # Số connection tối đa trong pool
+      # Formula: (core_count * 2) + effective_spindle_count
+      # Với PostgreSQL trên 4-core, SSD: 4*2+1 = 9, làm tròn 10
+      maximum-pool-size: 10
+
+      # Số connection tối thiểu (idle)
+      # Với microservice: bằng maximum để tránh spin-up latency
+      minimum-idle: 10
+
+      # Thời gian chờ lấy connection từ pool
+      # Nếu pool exhausted: request block tối đa bao lâu?
+      # 30s mặc định quá lâu → set 3-5s để fail fast
+      connection-timeout: 3000  # ms
+
+      # Thời gian connection idle trước khi đóng
+      # Chỉ áp dụng khi minimum-idle < maximum-pool-size
+      idle-timeout: 600000  # 10 phút
+
+      # Thời gian tối đa một connection sống
+      # Giúp tránh "stale" connection khi DB restart hoặc firewall timeout
+      max-lifetime: 1800000  # 30 phút
+      # Luôn đặt nhỏ hơn wait_timeout của DB (PostgreSQL default: 8h)
+
+      # Connection validation
+      connection-test-query: SELECT 1  # cho MySQL
+      # PostgreSQL: không cần vì JDBC driver tự validate
+
+      # autoCommit: false để Spring quản lý transaction
+      auto-commit: false
+
+      # Pool name (xuất hiện trong metrics/log)
+      pool-name: PDMS-HikariPool
+```
+
+**Tại sao pool size nhỏ thường tốt hơn lớn:**
+
+```
+Quan niệm sai: pool size = 100 → throughput cao hơn
+Thực tế: DB server có giới hạn concurrent connections
+
+PostgreSQL:
+  max_connections = 100 (default)
+  Mỗi connection tốn ~5-10MB RAM
+  Context switching overhead với 100 active connections
+
+HikariCP recommendation:
+  pool_size = (cpu_cores * 2) + number_of_disks
+  
+Với PDMS (4 core, 1 disk, PostgreSQL):
+  pool_size = 4*2 + 1 = 9 ≈ 10 connections
+  
+Nếu 5 microservice cùng connect 1 DB:
+  Total connections = 5 * 10 = 50 → còn headroom cho DB tools
+```
+
+---
+
+### 7. `spring.jpa.properties.hibernate.jdbc.*` — JDBC-Level Config
+
+```yaml
+spring:
+  jpa:
+    properties:
+      hibernate:
+        jdbc:
+          # Batch size cho JDBC batching
+          # 0 = disabled (mặc định)
+          # 25-50 = good for PostgreSQL
+          batch_size: 50
+
+          # Batch versioned entities (với @Version)
+          # Cần thiết để batch UPDATE/DELETE cho entity có @Version
+          batch_versioned_data: true
+
+          # Số rows Hibernate fetch từ DB cursor mỗi lần
+          # 0 = driver default (thường = toàn bộ result set → OOM risk)
+          fetch_size: 100  # phù hợp cho hầu hết use case
+
+          # Timezone cho JDBC (quan trọng với LocalDateTime)
+          time_zone: UTC  # force UTC khi lưu LocalDateTime
+
+        # Group INSERT cùng type vào batch liên tiếp
+        order_inserts: true   # cần bật cùng batch_size
+        order_updates: true   # group UPDATE cùng type
+```
+
+**Minh họa tác dụng của order_inserts:**
+
+```
+Không có order_inserts:
+  Code: persist(A), persist(B), persist(C), persist(D)
+  SQL:  INSERT A, INSERT B, INSERT C, INSERT D
+  (nếu A,C là Product và B,D là Order → không batch được vì xen kẽ)
+
+Với order_inserts = true:
+  Code: persist(A), persist(B), persist(C), persist(D)
+  SQL:  INSERT A, INSERT C  ← batch Product
+        INSERT B, INSERT D  ← batch Order
+  (Hibernate reorder để group cùng type → batch hiệu quả)
+```
+
+---
+
+### 8. `spring.jpa.properties.hibernate.cache.*` — L2 Cache Config
+
+```yaml
+spring:
+  jpa:
+    properties:
+      hibernate:
+        cache:
+          # Bật L2 cache (mặc định = false)
+          use_second_level_cache: true
+
+          # Bật query cache (lưu result list)
+          use_query_cache: true
+
+          # Region factory (Caffeine JCache)
+          region:
+            factory_class: org.hibernate.cache.jcache.JCacheRegionFactory
+
+        javax:
+          cache:
+            provider: com.github.benmanes.caffeine.jcache.spi.CaffeineCachingProvider
+            missing_cache_strategy: create  # tự tạo cache region nếu chưa config
+```
+
+**Silent data loss với L2 cache config sai:**
+
+```java
+// Tình huống: update từ service A, đọc từ service B
+// Cả hai dùng chung L2 cache (Hazelcast, Redis...)
+
+// Service A - update
+@Transactional
+public void update(Long id, String newName) {
+    Product p = repo.findById(id).get();
+    p.setName(newName);
+    // Hibernate sau commit: invalidate L2 cache cho Product id=X ✓
+}
+
+// Service B - đọc ngay sau
+@Transactional(readOnly = true)
+public Product get(Long id) {
+    return repo.findById(id).get();
+    // L2 cache đã bị invalidate → SELECT từ DB → đúng ✓
+}
+
+// Nhưng nếu dùng Query Cache:
+@QueryHints(@QueryHint(name = "org.hibernate.cacheable", value = "true"))
+List<Product> findByCategory(String category); // cached query result
+
+// Khi Product được update:
+// → Hibernate invalidate entity cache cho Product ID đó ✓
+// → Nhưng Query Cache region "com.example.Product" bị INVALIDATE TOÀN BỘ
+// → Mọi cached query result cho Product bị xóa, dù query không liên quan
+// → Query cache chỉ hiệu quả khi data ít thay đổi (reference data)
+```
+
+**Khi nào KHÔNG dùng L2 cache:**
+
+```
+❌ Entity thường xuyên update (mỗi request)
+❌ Entity có quan hệ phức tạp (stale child entities)
+❌ Multi-node deployment mà không có distributed cache
+❌ Entity cần strong consistency (banking transactions)
+
+✅ Reference data ít thay đổi (country, currency, product category)
+✅ Read-heavy entity với moderate staleness tolerable
+✅ Entity được load nhiều lần trong cùng session
+```
+
+---
+
+### 9. `spring.jpa.properties.hibernate.generate_statistics` — Observability
+
+```yaml
+spring:
+  jpa:
+    properties:
+      hibernate:
+        generate_statistics: true  # bật statistics (overhead nhỏ)
+        
+logging:
+  level:
+    org.hibernate.stat: DEBUG  # log stats mỗi query
+```
+
+**Đọc statistics để phát hiện vấn đề:**
+
+```java
+@Autowired SessionFactory sessionFactory;
+
+// Sau mỗi operation quan trọng:
+Statistics stats = sessionFactory.getStatistics();
+log.info("=== Hibernate Statistics ===");
+log.info("Queries executed: {}", stats.getQueryExecutionCount());
+log.info("Query max time: {}ms", stats.getQueryExecutionMaxTime());
+log.info("Slow query: {}", stats.getQueryExecutionMaxTimeQueryString());
+log.info("L2 hit: {}", stats.getSecondLevelCacheHitCount());
+log.info("L2 miss: {}", stats.getSecondLevelCacheMissCount());
+log.info("Collections loaded: {}", stats.getCollectionLoadCount());
+log.info("Collections fetched: {}", stats.getCollectionFetchCount());
+// collections fetched >> loaded → N+1 problem!
+
+stats.clear(); // reset cho measurement tiếp theo
+```
+
+---
+
+### 10. `@Transactional` Config — Các Tham Số Hay Bị Hiểu Sai
+
+#### `readOnly = true`
+
+```java
+// Tác dụng khi readOnly=true:
+@Transactional(readOnly = true)
+public List<ProductDTO> getProducts() {
+    // 1. Hibernate bỏ qua dirty checking (không so sánh snapshot)
+    //    → tiết kiệm CPU với session load nhiều entity
+    // 2. Spring set hint "readOnly" cho connection
+    //    → PostgreSQL/MySQL có thể route sang replica (read replica)
+    // 3. Hibernate không tạo snapshot khi load entity
+    //    → tiết kiệm memory (không có snapshot array)
+    // 4. FlushMode tự động set = MANUAL
+    //    → không thể flush, bảo vệ khỏi vô tình modify entity
+}
+
+// ⚠️ Gotcha: @Transactional(readOnly=true) KHÔNG ngăn được modify
+// Hibernate không throw exception nếu bạn thay đổi entity trong readOnly tx
+// Nó chỉ không flush → thay đổi bị discard silently
+@Transactional(readOnly = true)
+public void dangerousRead(Long id) {
+    Product p = repo.findById(id).get();
+    p.setName("Modified");  // không exception!
+    // flush không xảy ra → thay đổi bị discard → không persist
+    // Đây là behavior đúng nhưng có thể gây confusion
+}
+```
+
+#### `propagation`
+
+```java
+// REQUIRED (mặc định): join existing transaction hoặc tạo mới
+@Transactional(propagation = Propagation.REQUIRED)
+public void service1() {
+    repo.save(entity1);
+    service2.doSomething(); // service2 join cùng transaction với service1
+    // Nếu service2 throw → rollback cả service1 và service2
+}
+
+// REQUIRES_NEW: luôn tạo transaction mới, suspend current
+@Transactional(propagation = Propagation.REQUIRES_NEW)
+public void auditLog(String action) {
+    // Chạy trong transaction riêng
+    // Nếu outer transaction rollback → log này vẫn commit
+    // Dùng cho audit logging, notification, outbox
+}
+
+// ⚠️ Propagation.NESTED với PostgreSQL:
+// NESTED = savepoint, cho phép partial rollback
+// PostgreSQL hỗ trợ nhưng Hibernate/Spring có thể không map đúng
+// Test kỹ trước khi dùng trong production
+
+// MANDATORY: phải có transaction từ trước, không tự tạo
+@Transactional(propagation = Propagation.MANDATORY)
+public void mustBeCalledInTransaction() {
+    // Nếu không có transaction → IllegalTransactionStateException
+    // Dùng để enforce "caller phải quản lý transaction"
+}
+```
+
+#### `isolation`
+
+```java
+// READ_COMMITTED (PostgreSQL default):
+@Transactional(isolation = Isolation.READ_COMMITTED)
+// Đọc chỉ thấy data đã commit
+// Non-repeatable read có thể xảy ra (cùng row, 2 lần đọc khác nhau)
+// Phù hợp cho hầu hết use case
+
+// REPEATABLE_READ (MySQL InnoDB default):
+@Transactional(isolation = Isolation.REPEATABLE_READ)
+// Cùng row, đọc nhiều lần vẫn thấy giá trị ban đầu trong cùng tx
+// Phantom reads vẫn có thể xảy ra (với range queries)
+
+// SERIALIZABLE (strictest):
+@Transactional(isolation = Isolation.SERIALIZABLE)
+// Transactions thực thi như thể tuần tự
+// Hiệu năng thấp nhất, lock nhiều nhất
+// Dùng cho financial critical operations
+
+// ⚠️ Setting isolation trong @Transactional:
+// Hibernate/Spring set isolation trên JDBC Connection
+// → PostgreSQL nhận SET TRANSACTION ISOLATION LEVEL ... trước BEGIN
+// → MySQL: SET SESSION TRANSACTION ISOLATION LEVEL ...
+// → Không phải DB nào cũng hỗ trợ thay đổi isolation per-transaction
+```
+
+#### `rollbackFor` — Default chỉ RuntimeException
+
+```java
+// ❌ Hay gặp: checked exception KHÔNG rollback mặc định
+@Transactional
+public void process() throws IOException {
+    repo.save(entity1);
+    riskyIO(); // throws IOException (checked)
+    repo.save(entity2);
+}
+// Nếu riskyIO() throw IOException:
+// → @Transactional KHÔNG rollback (vì IOException là checked exception!)
+// → entity1 đã được persist và sẽ commit
+// → entity2 không được persist
+// → dữ liệu không nhất quán!
+
+// ✅ Fix: khai báo rollbackFor
+@Transactional(rollbackFor = Exception.class) // rollback cho tất cả Exception
+public void process() throws IOException {
+    repo.save(entity1);
+    riskyIO();
+    repo.save(entity2);
+}
+
+// Hoặc wrap trong RuntimeException:
+@Transactional
+public void process() {
+    try {
+        repo.save(entity1);
+        riskyIO();
+        repo.save(entity2);
+    } catch (IOException e) {
+        throw new RuntimeException("IO failed", e); // sẽ trigger rollback
+    }
+}
+```
+
+---
+
+### 11. `spring.jpa.properties.hibernate.default_schema` — Multi-Tenant Schema
+
+```yaml
+spring:
+  jpa:
+    properties:
+      hibernate:
+        default_schema: pdms  # tất cả table nằm trong schema này
+        # Thay vì: @Table(schema = "pdms") trên từng entity
+```
+
+**Với multi-tenant (schema-per-tenant):**
+
+```java
+// Dùng AbstractMultiTenantConnectionProvider
+// Không set default_schema mà dynamic per request
+public class TenantConnectionProvider extends AbstractMultiTenantConnectionProvider {
+    @Override
+    protected ConnectionProvider getAnyConnectionProvider() {
+        return connectionProviders.get("default");
+    }
+
+    @Override
+    protected ConnectionProvider selectConnectionProvider(Object tenantIdentifier) {
+        return connectionProviders.get(tenantIdentifier);
+    }
+}
+
+// ⚠️ Gotcha với multi-tenant và L2 cache:
+// L2 cache key không include tenant ID mặc định
+// → Tenant A có thể thấy data của Tenant B từ cache
+// → Phải implement TenantAwareCache hoặc disable L2 cache với multi-tenant
+```
+
+---
+
+### 12. Config Reference — Production Checklist
+
+```yaml
+# application.yml — PDMS production config template
+spring:
+  jpa:
+    # Tắt OSIV (quan trọng nhất)
+    open-in-view: false
+
+    # Schema management: Flyway quản lý, không để Hibernate
+    hibernate:
+      ddl-auto: none  # hoặc validate
+
+    show-sql: false  # tắt trong production (dùng Datasource Proxy thay)
+
+    properties:
+      hibernate:
+        # JDBC
+        jdbc:
+          batch_size: 50
+          batch_versioned_data: true
+          fetch_size: 100
+          time_zone: UTC
+
+        # Ordering cho batch
+        order_inserts: true
+        order_updates: true
+
+        # Statistics (nhẹ, nên bật)
+        generate_statistics: true
+
+        # Format SQL trong log (chỉ staging)
+        format_sql: false
+
+        # Dialect (auto-detect từ Spring Boot thường OK)
+        # dialect: org.hibernate.dialect.PostgreSQLDialect
+
+        # L2 Cache (nếu cần)
+        cache:
+          use_second_level_cache: false  # tắt nếu không cần
+          use_query_cache: false
+
+  datasource:
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 10
+      connection-timeout: 3000
+      max-lifetime: 1800000
+      auto-commit: false
+      pool-name: PDMS-HikariPool
+
+      # Connection validation
+      keepalive-time: 30000   # ping mỗi 30s để tránh stale connection
+      validation-timeout: 1000
+
+# Logging
+logging:
+  level:
+    org.hibernate.SQL: DEBUG          # chỉ staging/dev
+    org.hibernate.orm.jdbc.bind: TRACE # log bind params (dev only)
+    org.hibernate.stat: INFO           # log statistics
+    com.zaxxer.hikari: INFO
+```
+
+**Common pitfalls và cách detect:**
+
+```
+Vấn đề                  | Symptom                        | Config cần check
+──────────────────────────────────────────────────────────────────────────────
+Connection pool exhaust  | Timeout waiting for connection  | maximum-pool-size tăng
+                         |                                 | open-in-view=false
+N+1 query               | Nhiều SELECT nhỏ trong log      | generate_statistics=true
+                         |                                 | collections fetched >> loaded
+Slow batch insert        | 1000 INSERT riêng lẻ           | batch_size, order_inserts
+                         |                                 | đổi IDENTITY → SEQUENCE
+Stale data từ L2 cache  | Data cũ sau update             | Kiểm tra cache invalidation
+                         |                                 | hoặc tắt L2 cache
+Timezone mismatch        | Datetime lệch múi giờ          | jdbc.time_zone=UTC
+                         |                                 | Dùng Instant thay LocalDateTime
+Schema drift             | Column mismatch khi startup     | ddl-auto=validate
+                         |                                 | Thêm Flyway migration
+```
+
+---
+
+*Tags: #hibernate #jpa #spring-boot #configuration #open-in-view #auto-commit #hikari #ddl-auto #transaction #performance*
+
+
+---
+
+## 🔁 @Transactional — Class-level, Method-level và readOnly Deep Dive
+
+---
+
+### @Transactional ở class-level hoạt động như thế nào
+
+Khi đặt `@Transactional` trên class, nó trở thành **default** cho **mọi public method** trong class đó. Cơ chế là kế thừa annotation — mỗi method nhìn lên class để tìm config nếu bản thân không có annotation.
+
+```java
+@Service
+@Transactional  // ← default: propagation=REQUIRED, readOnly=false, rollbackFor=RuntimeException
+public class UserService {
+
+    public User findById(Long id) { ... }          // ← kế thừa: readOnly=false
+    public void save(User user) { ... }             // ← kế thừa: readOnly=false
+    public List<User> findAllActive() { ... }       // ← kế thừa: readOnly=false
+}
+```
+
+**Thứ tự ưu tiên — method > class:**
+
+```java
+@Service
+@Transactional  // class default: readOnly=false
+public class UserService {
+
+    public User findById(Long id) { ... }
+    // → áp dụng class config: readOnly=false
+
+    @Transactional(readOnly = true)   // ← method-level override
+    public List<User> findAllActive() { ... }
+    // → áp dụng method config: readOnly=true
+    // class config bị bỏ qua hoàn toàn cho method này
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void auditLog(String action) { ... }
+    // → readOnly=false (từ class), propagation=REQUIRES_NEW (từ method)
+    // Chỉ những attribute được khai báo ở method mới override
+    // attribute không khai báo vẫn kế thừa từ class
+}
+```
+
+**Spring tạo proxy như thế nào:**
+
+```
+@Transactional trên class → Spring tạo CGLIB proxy (subclass của UserService)
+
+Caller gọi userService.findById(1L):
+  ↓
+  CGLIB proxy (UserService$$SpringCGLIB)
+    ↓ kiểm tra: có @Transactional trên method không?
+      → Không → kiểm tra class → Có @Transactional
+    ↓ đọc config: propagation=REQUIRED, readOnly=false
+    ↓ BEGIN TRANSACTION (hoặc join existing)
+    ↓ gọi real method trên target object
+    ↓ method thực thi
+    ↓ COMMIT / ROLLBACK
+    ↓ return result
+```
+
+**Cơ chế proxy — tại sao private method không được áp dụng:**
+
+Spring AOP proxy hoạt động theo cơ chế **subclass override**. Proxy chỉ có thể override các method mà subclass được phép override — tức là `public` và `protected`. Private method không thể bị override → proxy không thể wrap → `@Transactional` bị ignore hoàn toàn.
+
+```java
+@Service
+@Transactional
+public class UserService {
+
+    public void doSomething() {
+        helper(); // gọi internal private method
+    }
+
+    private void helper() {
+        // @Transactional KHÔNG áp dụng ở đây
+        // kể cả khi class có @Transactional
+        // vì helper() là private → proxy không intercept
+    }
+}
+```
+
+**Self-invocation trap — lỗi cực kỳ phổ biến:**
+
+```java
+@Service
+@Transactional          // class: readOnly=false
+public class UserService {
+
+    @Transactional(readOnly = true)
+    public List<User> findAll() {
+        return repo.findAll();
+    }
+
+    public void processAll() {
+        List<User> users = this.findAll();
+        // ❌ this.findAll() → gọi trực tiếp trên target object
+        // proxy không được đi qua
+        // @Transactional(readOnly=true) bị bỏ qua
+        // áp dụng class-level: readOnly=false
+        // → snapshot được tạo, dirty check chạy khi flush
+    }
+}
+
+// ✅ Fix 1: inject self
+@Service
+@Transactional
+public class UserService {
+    @Autowired
+    private UserService self; // Spring inject proxy, không phải this
+
+    public void processAll() {
+        List<User> users = self.findAll(); // qua proxy → readOnly=true áp dụng
+    }
+
+    @Transactional(readOnly = true)
+    public List<User> findAll() { ... }
+}
+
+// ✅ Fix 2: tách sang service khác (clean hơn)
+@Service
+@Transactional(readOnly = true)
+public class UserQueryService {
+    public List<User> findAll() { ... }
+}
+
+@Service
+@Transactional
+public class UserCommandService {
+    @Autowired UserQueryService queryService;
+
+    public void processAll() {
+        List<User> users = queryService.findAll(); // qua proxy khác → ok
+    }
+}
+```
+
+---
+
+### Khi nào đặt @Transactional ở class-level, khi nào ở method-level
+
+**Pattern phổ biến — class-level làm default, method-level override:**
+
+```java
+// Pattern cho Service layer thông thường:
+@Service
+@Transactional  // default cho write methods: REQUIRED, readOnly=false
+public class DocumentService {
+
+    // ✅ Write methods: kế thừa class config, không cần annotate
+    public Document create(DocumentDTO dto) { ... }
+    public Document update(Long id, DocumentDTO dto) { ... }
+    public void delete(Long id) { ... }
+
+    // ✅ Read methods: override với readOnly=true
+    @Transactional(readOnly = true)
+    public Document findById(Long id) { ... }
+
+    @Transactional(readOnly = true)
+    public Page<Document> findAll(Pageable pageable) { ... }
+
+    // ✅ Special methods: override với custom propagation
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void auditEvent(String action) { ... }
+}
+```
+
+**Pattern cho read-heavy service — class-level readOnly=true:**
+
+```java
+// Khi service chủ yếu đọc, ít ghi:
+@Service
+@Transactional(readOnly = true)  // default: read-only
+public class ReportService {
+
+    // Tất cả query methods đều read-only: không cần annotate
+    public List<ReportDTO> getMonthlyReport(YearMonth month) { ... }
+    public DashboardDTO getDashboard(Long tenantId) { ... }
+
+    // Ngoại lệ: method cần ghi → override
+    @Transactional  // readOnly=false, REQUIRED
+    public void cacheReport(ReportDTO report) { ... }
+}
+```
+
+**Khi nào chỉ dùng method-level:**
+
+```java
+// Repository layer thường không cần @Transactional trên class
+// Spring Data JPA đã tự add @Transactional(readOnly=true) cho findAll, findById...
+// và @Transactional cho save, delete...
+
+// Custom service với mixed behavior:
+@Service  // KHÔNG có class-level @Transactional
+public class MixedService {
+
+    // Rõ ràng từng method → dễ đọc, không ngầm kế thừa
+    @Transactional(readOnly = true)
+    public Data read() { ... }
+
+    @Transactional
+    public void write() { ... }
+
+    // Method không có @Transactional → chạy không có transaction
+    // (nếu muốn explicit về "không cần tx")
+    public void nonTransactionalHelper() { ... }
+}
+```
+
+**Quyết định dựa theo tỉ lệ read/write:**
+
+```
+Service chủ yếu write (>50% methods là write):
+  → @Transactional ở class, @Transactional(readOnly=true) ở read methods
+
+Service chủ yếu read (>50% methods là read):
+  → @Transactional(readOnly=true) ở class, @Transactional ở write methods
+
+Service mixed hoặc domain phức tạp:
+  → Tách thành CommandService + QueryService (CQRS pattern)
+  → CommandService: @Transactional class-level
+  → QueryService: @Transactional(readOnly=true) class-level
+```
+
+---
+
+### Tại sao @Transactional(readOnly=true) tối ưu hiệu năng
+
+`readOnly=true` không phải chỉ là một "hint" vô nghĩa. Nó kích hoạt **5 tối ưu cụ thể** ở các tầng khác nhau.
+
+---
+
+#### Tối ưu 1 — Không tạo Snapshot (tiết kiệm memory)
+
+Khi một entity trở thành MANAGED trong session, Hibernate bình thường tạo một snapshot — bản sao `Object[]` của toàn bộ state entity tại thời điểm load — để phục vụ dirty checking sau này.
+
+```
+readOnly=false (normal):
+  em.find(User.class, 1L)
+    → SELECT * FROM users WHERE id=1
+    → Tạo User instance (managed)
+    → Tạo Object[] snapshot = { 1L, "Bach", "bach@vp.com", 28 }   ← THÊM
+    → Lưu cả hai vào PersistenceContext
+
+  Memory per entity: ~instance + ~snapshot ≈ 2x
+
+readOnly=true:
+  em.find(User.class, 1L)
+    → SELECT * FROM users WHERE id=1
+    → Tạo User instance (managed)
+    → KHÔNG tạo snapshot   ← BỎ QUA
+    → Chỉ lưu instance vào PersistenceContext
+
+  Memory per entity: ~instance ≈ 1x
+```
+
+Với 10,000 entity trong một query, đây là khoản tiết kiệm đáng kể:
+
+```
+10,000 User entity × 10 fields:
+  readOnly=false: 10,000 instances + 10,000 snapshots ≈ 40MB
+  readOnly=true:  10,000 instances only               ≈ 20MB  (-50%)
+```
+
+---
+
+#### Tối ưu 2 — Bỏ qua Dirty Checking (tiết kiệm CPU)
+
+Dirty checking là bước tốn nhất trong flush cycle. Hibernate phải duyệt qua **mọi entity managed** trong session, so sánh state hiện tại với snapshot từng field một.
+
+```
+readOnly=false: FlushMode = AUTO
+  Flush xảy ra:
+    - Trước mỗi JPQL query
+    - Khi transaction commit
+  Mỗi lần flush:
+    FOR EACH entity trong Identity Map:
+      currentState = reflection.getValues(entity)    ← overhead
+      isDirty = !Arrays.equals(currentState, snapshot) ← CPU
+      IF isDirty: add to Action Queue
+  
+  Với 10,000 entities: 10,000 comparisons mỗi lần flush
+  Với 5 JPQL queries trong 1 transaction: 50,000 comparisons
+
+readOnly=true: FlushMode = MANUAL
+  flush() KHÔNG BAO GIỜ được gọi (trừ khi gọi tường minh)
+  → 0 dirty check iterations
+  → 0 reflection overhead
+  → Action Queue không được xả
+  → Mọi thay đổi bị discard khi session đóng (không gây exception)
+```
+
+**Lưu ý quan trọng — readOnly không ngăn được thay đổi entity:**
+
+```java
+@Transactional(readOnly = true)
+public void silentBug(Long id) {
+    User user = repo.findById(id).get();
+    user.setName("Hacked"); // không exception!
+    // FlushMode=MANUAL → không flush → không UPDATE
+    // Session đóng → thay đổi bị discard
+    // Không có warning, không có error
+    // → Nếu developer nhầm tưởng đây là write method → bug
+}
+
+// Để bảo vệ: dùng projection thay vì entity cho read-only queries
+@Transactional(readOnly = true)
+public List<UserDTO> findAll() {
+    return repo.findAll().stream()
+        .map(UserDTO::from) // immutable DTO → không thể modify entity
+        .toList();
+}
+```
+
+---
+
+#### Tối ưu 3 — Database-level READ ONLY hint (tiết kiệm I/O)
+
+Khi `readOnly=true`, Spring gọi `connection.setReadOnly(true)` trước khi bắt đầu transaction. Điều này map xuống SQL:
+
+```sql
+-- PostgreSQL:
+SET TRANSACTION READ ONLY
+
+-- MySQL:
+SET SESSION TRANSACTION READ ONLY
+
+-- Oracle:
+SET TRANSACTION READ ONLY
+```
+
+**Tác dụng phía database:**
+
+```
+PostgreSQL READ ONLY transaction:
+  1. Không sinh WAL (Write-Ahead Log) entry cho transaction này
+     → WAL là I/O overhead để đảm bảo durability
+     → READ ONLY không cần WAL vì không có gì để recover
+     → Giảm disk I/O, giảm WAL buffer contention
+
+  2. Visibility scan được optimize
+     → Không cần check "có transaction nào đang write không?"
+     → Snapshot isolation simpler
+
+  3. Lock acquisition khác nhau
+     → Không acquire write lock
+     → Ít contention với concurrent write transactions
+```
+
+---
+
+#### Tối ưu 4 — Read Replica Routing (scale reads horizontally)
+
+Khi kết hợp với `LazyConnectionDataSourceProxy` và một `DataSource` router, `readOnly=true` cho phép route queries đến read replica thay vì primary.
+
+```java
+// Config để enable read replica routing:
+@Bean
+public DataSource dataSource() {
+    Map<Object, Object> dataSources = new HashMap<>();
+    dataSources.put("primary", primaryDataSource());
+    dataSources.put("replica", replicaDataSource());
+
+    AbstractRoutingDataSource router = new AbstractRoutingDataSource() {
+        @Override
+        protected Object determineCurrentLookupKey() {
+            // Kiểm tra transaction readOnly flag
+            boolean readOnly = TransactionSynchronizationManager.isCurrentTransactionReadOnly();
+            return readOnly ? "replica" : "primary";
+        }
+    };
+    router.setTargetDataSources(dataSources);
+    router.setDefaultTargetDataSource(primaryDataSource());
+    return new LazyConnectionDataSourceProxy(router);
+    // LazyConnectionDataSourceProxy trì hoãn connection acquisition
+    // đến khi cần → routing quyết định được thực hiện sau khi
+    // @Transactional(readOnly) flag đã được set
+}
+```
+
+```
+Với routing setup:
+
+@Transactional(readOnly=false):
+  router.determineCurrentLookupKey() → "primary"
+  → SQL gửi đến PRIMARY DB
+
+@Transactional(readOnly=true):
+  router.determineCurrentLookupKey() → "replica"
+  → SQL gửi đến READ REPLICA
+  → Primary chỉ nhận writes → ít tải hơn
+  → Replica scale horizontally → thêm replica khi cần
+```
+
+---
+
+#### Tối ưu 5 — L2 Cache behavior (giảm cache invalidation noise)
+
+```
+readOnly=false transaction:
+  - Có thể đọc VÀ ghi L2 cache
+  - Khi entity được update → Hibernate invalidate L2 cache region
+  - Với nhiều write transaction → L2 cache bị invalidate liên tục
+  - Hit ratio của L2 cache giảm
+
+readOnly=true transaction:
+  - CHỈ đọc L2 cache, không ghi
+  - Không trigger invalidation
+  - L2 cache region ổn định hơn
+  - Hit ratio cao hơn cho read-heavy workload
+```
+
+---
+
+#### Đo lường thực tế — khi nào readOnly=true quan trọng nhất
+
+```
+Tác dụng cao với:
+  ✓ Query load nhiều entity (10K+ rows trong 1 transaction)
+  ✓ Service chạy nhiều JPQL queries trong 1 transaction (nhiều flush trigger)
+  ✓ Có setup read replica → routing traffic
+  ✓ Batch report / analytics queries
+
+Tác dụng thấp với:
+  ○ Query 1 entity theo ID (snapshot overhead nhỏ)
+  ○ Transaction rất ngắn (dirty check nhanh)
+  ○ Không có read replica
+  ○ Dùng native SQL thuần (không qua Hibernate Session)
+```
+
+**Cách đo tác dụng bằng Hibernate Statistics:**
+
+```java
+@Transactional(readOnly = true)
+public List<UserDTO> findAllReadOnly() {
+    long before = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+    Statistics stats = sessionFactory.getStatistics();
+    stats.clear();
+
+    List<User> users = repo.findAll(); // 10,000 rows
+    List<UserDTO> dtos = users.stream().map(UserDTO::from).toList();
+
+    long after = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+    log.info("Memory delta: {}MB", (after - before) / 1024 / 1024);
+    log.info("Flush count: {}", stats.getFlushCount()); // phải = 0
+    return dtos;
+}
+
+// So sánh với readOnly=false:
+// Memory delta readOnly=true: ~20MB
+// Memory delta readOnly=false: ~40MB  (+100%)
+// Flush count readOnly=true: 0
+// Flush count readOnly=false: 1 (khi commit)
+```
+
+---
+
+### Tổng hợp — Quyết định nhanh
+
+```
+Câu hỏi                                  readOnly     Lý do
+───────────────────────────────────────────────────────────────────────────
+Method chỉ SELECT, không thay đổi gì?   true         Cả 5 tối ưu
+Method có INSERT/UPDATE/DELETE?          false        Cần flush để commit
+Không chắc method sẽ write không?       false        Mặc định an toàn
+Method gọi external service + write?    false         
+Report/Analytics/Export query lớn?      true         Memory + CPU critical
+Spring Data findById/findAll?           đã tự set    SimpleJpaRepository set rồi
+```
+
+**Spring Data JPA tự set readOnly cho bạn:**
+
+```java
+// SimpleJpaRepository (source Spring Data):
+@Transactional(readOnly = true)   // ← tự set readOnly
+public Optional<T> findById(ID id) { ... }
+
+@Transactional(readOnly = true)
+public List<T> findAll() { ... }
+
+@Transactional                    // ← write methods không readOnly
+public <S extends T> S save(S entity) { ... }
+
+@Transactional
+public void deleteById(ID id) { ... }
+
+// Hệ quả: khi bạn tạo custom method trong repo:
+public interface UserRepo extends JpaRepository<User, Long> {
+    // Method tự tạo KHÔNG có @Transactional mặc định
+    // → kế thừa từ caller (service layer)
+    // → Luôn annotate @Transactional(readOnly=true) ở service khi gọi read-only method
+    List<User> findByStatus(String status);
+}
+```
+
+---
+
+*Tags: #hibernate #jpa #transactional #readonly #spring-aop #proxy #performance #dirty-checking #snapshot*
