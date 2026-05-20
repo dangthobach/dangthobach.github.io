@@ -4801,3 +4801,167 @@ public interface UserRepo extends JpaRepository<User, Long> {
 ---
 
 *Tags: #hibernate #jpa #transactional #readonly #spring-aop #proxy #performance #dirty-checking #snapshot*
+
+---
+
+## 🏆 Master Level — Các Kỹ Thuật Chuyên Sâu Khác (Advanced & Hibernate 6+)
+
+> Để đạt đến trình độ Expert/Master, bạn cần làm chủ được các edge-cases, thiết kế cấu trúc kế thừa, cũng như cập nhật những thay đổi mang tính cách mạng trong Hibernate 6+.
+
+---
+
+### 1. `MultipleBagFetchException` & Vấn Đề Cartesian Product
+
+**Vấn đề:** Khi bạn cố gắng fetch nhiều hơn 1 tập hợp `List` (Bag) trong cùng một câu query.
+
+```java
+// ❌ Cố gắng JOIN FETCH 2 collections
+@Query("SELECT o FROM Order o JOIN FETCH o.items JOIN FETCH o.discounts WHERE o.id = :id")
+Optional<Order> findFullOrder(Long id);
+// 💥 org.hibernate.loader.MultipleBagFetchException: cannot simultaneously fetch multiple bags
+```
+
+**Tại sao lỗi?**
+Nếu 1 Order có 10 items và 5 discounts, Hibernate sẽ tạo ra câu SQL JOIN tạo ra **Cartesian Product**: 1 x 10 x 5 = 50 rows. Điều này tốn băng thông mạng và cực kỳ khó để Hibernate phân tích lại thành Object Graph. Do đó Hibernate **chặn** hành vi này.
+
+**Cách Fix Chuẩn Master:**
+
+**Cách 1: Chuyển `List` thành `Set` (Chỉ dùng nếu collection nhỏ)**
+Nếu bạn dùng `Set`, Hibernate cho phép Multiple JOIN FETCH, nhưng dưới DB vẫn bị Cartesian Product. Không khuyên dùng cho Data lớn.
+```java
+@OneToMany(fetch = FetchType.LAZY)
+private Set<OrderItem> items; // Không dùng List
+```
+
+**Cách 2: Chia thành nhiều query (Khuyến nghị 100%)**
+Lợi dụng sức mạnh của L1 Cache (Identity Map). Bạn gọi n câu query cho n collection.
+```java
+// Query 1: Lấy Order + Items
+@Query("SELECT DISTINCT o FROM Order o JOIN FETCH o.items WHERE o.id IN :ids")
+List<Order> findOrdersWithItems(@Param("ids") List<Long> ids);
+
+// Query 2: Lấy Order + Discounts (Order đã có trong L1 Cache, sẽ tự động gộp data)
+@Query("SELECT DISTINCT o FROM Order o JOIN FETCH o.discounts WHERE o.id IN :ids")
+List<Order> findOrdersWithDiscounts(@Param("ids") List<Long> ids);
+```
+Sử dụng trong Service:
+```java
+@Transactional(readOnly = true)
+public List<Order> getFullOrders(List<Long> ids) {
+    List<Order> orders = repo.findOrdersWithItems(ids); // Q1
+    repo.findOrdersWithDiscounts(ids); // Q2: L1 cache tự hydrate
+    return orders; // Lúc này Order đã có đủ cả items và discounts
+}
+```
+
+---
+
+### 2. Hiệu Năng Inheritance Mapping (Chiến Lược Kế Thừa)
+
+Thiết kế DB cho OOP Inheritance quyết định hoàn toàn hiệu năng query.
+
+| Strategy | Cách mapping DB | Đánh giá Hiệu năng | Master Advise |
+|---|---|---|---|
+| `SINGLE_TABLE` (Default) | Tất cả subclass chung 1 bảng, phân biệt bằng `DTYPE`. | **Nhanh nhất**. Chỉ tốn 1 query không cần JOIN. | **Khuyên dùng**. Trade-off: các column của subclass phải nullable. Cần thêm Check Constraint ở DB. |
+| `JOINED` | Mỗi subclass 1 bảng, liên kết với Parent bằng FK. | **Chậm**. Khi query đa hình (`repo.findAll()`), Hibernate phải thực hiện `LEFT OUTER JOIN` tất cả các bảng con. | Chỉ dùng khi quy định DB khắt khe, không cho phép nullable column. |
+| `TABLE_PER_CLASS` | Mỗi subclass 1 bảng riêng rẽ hoàn toàn. | **Cực chậm**. Khi query bằng Parent ID, Hibernate phải dùng `UNION` tất cả các bảng. | **Tuyệt đối tránh** trong hệ thống lớn. |
+
+---
+
+### 3. Vấn Đề Contract `equals()` và `hashCode()`
+
+Sử dụng ID Database (IDENTITY) để viết `equals/hashCode` là nguyên nhân hàng đầu gây mất mát phần tử trong `Set`.
+
+```java
+// ❌ Anti-pattern: Dùng Generated ID
+@Override
+public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof User)) return false;
+    User user = (User) o;
+    return id != null && id.equals(user.getId());
+}
+// Bug: 
+// Set<User> users = new HashSet<>();
+// User u = new User(); users.add(u); 
+// em.persist(u); // ID thay đổi từ null -> 1 
+// users.contains(u) == FALSE! (Vì HashCode bị đổi / equals fail).
+```
+
+**Master Pattern: Dùng Business Key**
+Sử dụng một trường UUID hoặc Business Key bất biến để so sánh.
+```java
+@Entity
+public class User {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, unique = true, updatable = false)
+    private UUID uuid = UUID.randomUUID(); // Sinh ngay khi khởi tạo Object
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false; // Cẩn thận proxy
+        User that = (User) o;
+        return this.uuid.equals(that.getUuid());
+    }
+
+    @Override
+    public int hashCode() {
+        return uuid.hashCode();
+    }
+}
+```
+
+---
+
+### 4. Advanced Locking: SKIP LOCKED & NOWAIT
+
+Với các hệ thống Queue, Task Allocation (VD: chọn 1 task đang rảnh để xử lý), nếu dùng `PESSIMISTIC_WRITE` thông thường, các Thread sẽ bị block lẫn nhau (Deadlock hoặc Timeout).
+
+**Giải pháp của Master:** Dùng cơ chế riêng của DB thông qua Hibernate:
+```java
+public interface TaskRepo extends JpaRepository<Task, Long> {
+    
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @QueryHints({
+        // Hibernate 5 & 6 chuẩn:
+        @QueryHint(name = "jakarta.persistence.lock.timeout", value = "-2") 
+        // value = -2 nghĩa là SKIP LOCKED (PostgreSQL, Oracle, MySQL 8+)
+    })
+    @Query("SELECT t FROM Task t WHERE t.status = 'PENDING'")
+    List<Task> findTasksToProcess(Pageable page);
+}
+```
+**`SKIP LOCKED`:** Bỏ qua các row đang bị thread khác lock và lấy các row tiếp theo -> Đảm bảo concurrency cực cao không bị blocking.
+**`NOWAIT` (timeout = 0):** Quăng Exception ngay lập tức nếu row đang bị lock.
+
+---
+
+### 5. Những Cú Hích Sức Mạnh Trong Hibernate 6+
+
+Nếu đang dùng Spring Boot 3+ (tương đương Hibernate 6+), bạn đang sở hữu những công cụ mạnh mẽ:
+
+1. **Semantic Query Model (SQM):** Hibernate 6 viết lại toàn bộ core parse JPQL. Nó thông minh hơn, support Window Functions trực tiếp trong HQL (`OVER()`, `PARTITION BY`, `ROW_NUMBER()`).
+2. **`@FetchProfile` linh hoạt hơn:** Có thể bật tắt lúc runtime linh hoạt mà không cần phải viết thêm JPQL mới.
+3. **Array/JSON Mapping Native:** Không cần thư viện ngoài (như Hibernate-Types của Vlad Mihalcea). Bạn có thể map trực tiếp JSONB của Postgres.
+   ```java
+   @JdbcTypeCode(SqlTypes.JSON)
+   private Map<String, String> attributes;
+   ```
+4. **JDBC Batching Tự Động:** Hibernate 6 tự động tối ưu batching và caching PreparedStatement tốt hơn rất nhiều.
+
+---
+
+### 6. Bóng Ma "Hibernate Envers" (Audit Logging)
+
+Nếu hệ thống dùng Envers để tracking lịch sử dữ liệu (lưu bảng `_AUD`), bạn phải biết những đánh đổi:
+1. **Gấp đôi thời gian Flush:** Mỗi lệnh Insert/Update/Delete đều sinh thêm ít nhất 1 lệnh Insert vào bảng `_AUD` và 1 lệnh vào `REVINFO`.
+2. **Memory Overhead:** Action Queue phải chứa gấp đôi số lượng action.
+3. **Master Tip:**
+   * Hãy thiết lập chỉ track các bảng/cột thực sự cần thiết (`@Audited(withModifiedFlag = true)`).
+   * Đảm bảo bảng `_AUD` có partition theo tháng nếu volume data lớn, vì bảng này phình to theo cấp số nhân và không bao giờ bị update/delete.
+
+---
+*End of Master Advanced Guide.*
