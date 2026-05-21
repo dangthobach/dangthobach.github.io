@@ -4821,20 +4821,26 @@ Optional<Order> findFullOrder(Long id);
 // 💥 org.hibernate.loader.MultipleBagFetchException: cannot simultaneously fetch multiple bags
 ```
 
-**Tại sao lỗi?**
-Nếu 1 Order có 10 items và 5 discounts, Hibernate sẽ tạo ra câu SQL JOIN tạo ra **Cartesian Product**: 1 x 10 x 5 = 50 rows. Điều này tốn băng thông mạng và cực kỳ khó để Hibernate phân tích lại thành Object Graph. Do đó Hibernate **chặn** hành vi này.
+**Tại sao lỗi? (Hiệu ứng Cartesian Product)**
+Hibernate ném ra lỗi này không phải vì nó "kém", mà để bảo vệ database và memory của bạn khỏi **Cartesian Product** (Tích Đề-các).
+
+Giả sử 1 `Order` có 10 `items` và 5 `discounts`:
+- Nếu JOIN thông thường dưới SQL, kết quả trả về sẽ là: 1 (order) × 10 (items) × 5 (discounts) = **50 rows**.
+- Toàn bộ dữ liệu của Order bị lặp lại 50 lần. Dữ liệu của items lặp lại 5 lần.
+- Nếu collection lớn hơn (VD: 100 items × 50 discounts = 5,000 rows), database bandwidth sẽ bị bóp nghẹt chỉ để trả về lượng data trùng lặp khổng lồ, và Hibernate sẽ tốn cực kỳ nhiều CPU + Memory để phân tích lại (hydrate) 5,000 rows đó về Object graph ban đầu.
+
+![[assets/cartesian_product_bags.png]]
+
+**Warning HHH90003004 ẩn lấp:**
+Đôi khi, nếu bạn fetch 1 `List` và 1 `Set`, Hibernate *cho phép* chạy, nhưng sẽ in ra warning:
+`WARN: HHH90003004: firstResult/maxResults specified with collection fetch; applying in memory!`
+-> Điều này có nghĩa là mọi phân trang (Pagination) sẽ bị Hibernate kéo **TOÀN BỘ** data về RAM rồi mới cắt trang. Cực kỳ nguy hiểm gây OOM (Out Of Memory).
 
 **Cách Fix Chuẩn Master:**
 
-**Cách 1: Chuyển `List` thành `Set` (Chỉ dùng nếu collection nhỏ)**
-Nếu bạn dùng `Set`, Hibernate cho phép Multiple JOIN FETCH, nhưng dưới DB vẫn bị Cartesian Product. Không khuyên dùng cho Data lớn.
-```java
-@OneToMany(fetch = FetchType.LAZY)
-private Set<OrderItem> items; // Không dùng List
-```
+**Cách 1: Chia thành nhiều query (Khuyến nghị 100%)**
+Lợi dụng sức mạnh của L1 Cache (Identity Map). Bạn gọi N câu query cho N collection.
 
-**Cách 2: Chia thành nhiều query (Khuyến nghị 100%)**
-Lợi dụng sức mạnh của L1 Cache (Identity Map). Bạn gọi n câu query cho n collection.
 ```java
 // Query 1: Lấy Order + Items
 @Query("SELECT DISTINCT o FROM Order o JOIN FETCH o.items WHERE o.id IN :ids")
@@ -4844,6 +4850,7 @@ List<Order> findOrdersWithItems(@Param("ids") List<Long> ids);
 @Query("SELECT DISTINCT o FROM Order o JOIN FETCH o.discounts WHERE o.id IN :ids")
 List<Order> findOrdersWithDiscounts(@Param("ids") List<Long> ids);
 ```
+
 Sử dụng trong Service:
 ```java
 @Transactional(readOnly = true)
@@ -4854,114 +4861,1576 @@ public List<Order> getFullOrders(List<Long> ids) {
 }
 ```
 
+**Cách 2: Fallback với `@BatchSize` (Dành cho lazy loading)**
+Nếu bạn không thể viết lại toàn bộ query, hãy dùng `@BatchSize`. Hibernate vẫn sẽ thực hiện N+1, nhưng thay vì fetch từng cái một, nó gom lại fetch theo batch.
+
+```java
+@Entity
+public class Order {
+    @OneToMany(mappedBy = "order")
+    @BatchSize(size = 50) // Khi gọi order.getItems(), Hibernate sẽ kéo luôn items cho 50 orders
+    private List<OrderItem> items;
+}
+```
+
 ---
 
 ### 2. Hiệu Năng Inheritance Mapping (Chiến Lược Kế Thừa)
 
-Thiết kế DB cho OOP Inheritance quyết định hoàn toàn hiệu năng query.
+Thiết kế DB cho OOP Inheritance quyết định hoàn toàn hiệu năng query và khả năng mở rộng. Hibernate hỗ trợ 3 chiến lược chính.
 
-| Strategy | Cách mapping DB | Đánh giá Hiệu năng | Master Advise |
-|---|---|---|---|
-| `SINGLE_TABLE` (Default) | Tất cả subclass chung 1 bảng, phân biệt bằng `DTYPE`. | **Nhanh nhất**. Chỉ tốn 1 query không cần JOIN. | **Khuyên dùng**. Trade-off: các column của subclass phải nullable. Cần thêm Check Constraint ở DB. |
-| `JOINED` | Mỗi subclass 1 bảng, liên kết với Parent bằng FK. | **Chậm**. Khi query đa hình (`repo.findAll()`), Hibernate phải thực hiện `LEFT OUTER JOIN` tất cả các bảng con. | Chỉ dùng khi quy định DB khắt khe, không cho phép nullable column. |
-| `TABLE_PER_CLASS` | Mỗi subclass 1 bảng riêng rẽ hoàn toàn. | **Cực chậm**. Khi query bằng Parent ID, Hibernate phải dùng `UNION` tất cả các bảng. | **Tuyệt đối tránh** trong hệ thống lớn. |
+![[assets/inheritance_strategy_sql.png]]
+
+#### A. SINGLE_TABLE (Mặc định & Nhanh nhất)
+Tất cả class trong cây kế thừa được lưu chung vào **một bảng duy nhất**. Phân biệt bằng một cột đặc biệt (Discriminator).
+
+```java
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "vehicle_type", discriminatorType = DiscriminatorType.STRING)
+public abstract class Vehicle {
+    @Id private Long id;
+    private String brand;
+}
+
+@Entity
+@DiscriminatorValue("CAR") // Giá trị lưu xuống DB
+public class Car extends Vehicle {
+    private Integer numberOfDoors;
+}
+```
+
+- **Hiệu năng:** Cực nhanh vì không bao giờ cần JOIN.
+- **Polymorphic Query:** `repo.findAll()` dịch thành `SELECT * FROM vehicle`. Nếu gọi `carRepo.findAll()`, dịch thành `SELECT * FROM vehicle WHERE vehicle_type = 'CAR'`.
+- **Trade-off:** Các cột riêng của lớp con (VD: `numberOfDoors`) **BẮT BUỘC** phải nullable ở dưới DB. Nếu dùng Postgres, bạn có thể tạo CHECK constraint phức tạp để đảm bảo data integrity thay vì `NOT NULL`.
+
+#### B. JOINED (Chuẩn hóa DB nhưng chậm)
+Mỗi class (kể cả class cha) có một bảng riêng. Bảng con liên kết với bảng cha bằng Foreign Key (đóng vai trò là Primary Key luôn).
+
+- **Hiệu năng:** Rất kém khi có **Polymorphic Query** (truy vấn đa hình).
+- **Vấn đề JOIN Chain:** Nếu bạn query entity cha `SELECT v FROM Vehicle v`, Hibernate buộc phải thực hiện `LEFT OUTER JOIN` với **TẤT CẢ** các bảng con để biết record đó thuộc class nào.
+- *Chỉ dùng khi DBA bắt buộc mọi bảng phải tuân thủ chuẩn hóa cao (3NF) và không cho phép NULL.*
+
+#### C. TABLE_PER_CLASS (Tuyệt đối tránh)
+Mỗi class cụ thể có bảng riêng, copy nguyên cả các cột của lớp cha xuống bảng con.
+
+- **Hiệu năng:** Ác mộng. Khi query bằng ID cha, Hibernate không biết record nằm ở bảng nào, nó phải dùng `UNION ALL` gom tất cả bảng lại. 
+- **Đừng bao giờ dùng trong production.**
 
 ---
 
-### 3. Vấn Đề Contract `equals()` và `hashCode()`
+### 3. Sát Thủ Thầm Lặng: @SecondaryTable
 
-Sử dụng ID Database (IDENTITY) để viết `equals/hashCode` là nguyên nhân hàng đầu gây mất mát phần tử trong `Set`.
+Khi bảng quá to, bạn muốn tách dọc (Vertical Partitioning) bằng `@SecondaryTable`.
 
 ```java
-// ❌ Anti-pattern: Dùng Generated ID
-@Override
-public boolean equals(Object o) {
-    if (this == o) return true;
-    if (!(o instanceof User)) return false;
-    User user = (User) o;
-    return id != null && id.equals(user.getId());
+@Entity
+@Table(name = "employees")
+@SecondaryTable(name = "employee_details", pkJoinColumns = @PrimaryKeyJoinColumn(name = "emp_id"))
+public class Employee {
+    @Id private Long id;
+    private String name; // Bảng employees
+
+    @Column(table = "employee_details")
+    private String bio; // Bảng employee_details
 }
-// Bug: 
-// Set<User> users = new HashSet<>();
-// User u = new User(); users.add(u); 
-// em.persist(u); // ID thay đổi từ null -> 1 
-// users.contains(u) == FALSE! (Vì HashCode bị đổi / equals fail).
 ```
 
-**Master Pattern: Dùng Business Key**
-Sử dụng một trường UUID hoặc Business Key bất biến để so sánh.
+![[assets/secondary_table_join.png]]
+
+**Tại sao đây là sát thủ hiệu năng?**
+Mặc dù bạn dùng 2 bảng, nhưng ở tầng Entity, nó vẫn là 1 Object `Employee`.
+Khi bạn gọi `em.find(Employee.class, id)`, hoặc select đơn giản `SELECT e FROM Employee e`, Hibernate **LUÔN LUÔN** sinh ra câu lệnh `LEFT JOIN` giữa 2 bảng. 
+
+Ngay cả khi bạn chỉ lấy field `name`, Hibernate vẫn bắt buộc phải JOIN để dựng đủ Object `Employee` (vì field ở bảng phụ không thể Lazy Load ở mức field dễ dàng nếu không dùng bytecode enhancement).
+
+**Khắc phục:** 
+Hãy tạo 2 Entity riêng biệt (VD: `Employee` và `EmployeeDetail`) liên kết `@OneToOne(fetch = FetchType.LAZY)`. Như vậy, detail thực sự được lazy load khi cần.
+
+---
+
+### 4. EntityGraph vs FetchProfile
+
+Đây là hai công cụ cao cấp để giải quyết vấn đề N+1 bằng cách định nghĩa **Dynamic Fetching Plan** (kế hoạch lấy data động).
+
+![[assets/entitygraph_vs_fetchprofile.png]]
+
+#### @EntityGraph (JPA Standard)
+Phổ biến nhất, tích hợp sâu vào Spring Data JPA. Nó ghi đè `FetchType.LAZY` thành `EAGER` ngay tại truy vấn đó.
+
+```java
+// Trong Spring Data Repo:
+@EntityGraph(attributePaths = {"items", "items.product"})
+Optional<Order> findById(Long id);
+```
+- **Ưu điểm:** Dễ dùng, gắn trực tiếp vào query method.
+- **Nhược điểm:** Phải khai báo tĩnh. Nếu bạn có 5 use-case khác nhau, bạn phải viết 5 method `findBy...` khác nhau trong Repository (gây rác code).
+
+#### @FetchProfile (Hibernate Specific)
+Ít người biết nhưng cực kỳ mạnh mẽ cho các ứng dụng phức tạp. Định nghĩa ở class, bật tắt ở Session (Runtime).
+
+```java
+@Entity
+@FetchProfile(name = "order-with-items", fetchOverrides = {
+    @FetchProfile.FetchOverride(entity = Order.class, association = "items", mode = FetchMode.JOIN)
+})
+public class Order { ... }
+```
+
+```java
+// Trong Service, không cần thêm phương thức Repository mới:
+@Transactional
+public Order processOrder(Long id, boolean loadItems) {
+    if (loadItems) {
+        // Bật profile cho toàn bộ Session này
+        session.enableFetchProfile("order-with-items"); 
+    }
+    
+    // Gọi findById bình thường, Hibernate tự động JOIN FETCH nếu profile đang bật
+    return orderRepo.findById(id).orElseThrow(); 
+}
+```
+- **Sức mạnh:** Tách biệt hoàn toàn việc định nghĩa query và chiến lược fetching. Một query có thể chạy với nhiều fetching plan khác nhau tùy ngữ cảnh runtime.
+
+---
+
+### 5. Vấn Đề Contract `equals()` và `hashCode()` + IDENTITY
+
+Sử dụng ID Database (đặc biệt là chiến lược `IDENTITY`) để viết `equals/hashCode` là nguyên nhân hàng đầu gây mất mát phần tử trong `Set` và làm corrupt Hibernate Session.
+
+**Vòng đời lỗi với IDENTITY ID:**
+1. Tạo object mới: `User u = new User();` -> `u.id = null`.
+2. Đưa vào Set: `Set<User> set = new HashSet<>(); set.add(u);`. HashCode của u được tính lúc này (dựa trên id = null).
+3. Persist object: `em.persist(u);`. Vì chiến lược IDENTITY, Hibernate gọi INSERT xuống DB ngay lập tức để lấy ID, gán `u.id = 1`.
+4. Tìm lại trong Set: `set.contains(u)`. Set sẽ lấy HashCode hiện tại (dựa trên id = 1) đi tìm. HashCode đã thay đổi!
+-> **Kết quả: Set bị corrupt, trả về FALSE dù object vẫn nằm trong đó.**
+
+**Master Pattern: Dùng Business Key (UUID)**
+Luôn luôn sử dụng một trường UUID bất biến, được sinh ngay khi khởi tạo Object để so sánh.
+
 ```java
 @Entity
 public class User {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id; // Không dùng trong equals/hashCode
 
     @Column(nullable = false, unique = true, updatable = false)
-    private UUID uuid = UUID.randomUUID(); // Sinh ngay khi khởi tạo Object
+    private UUID uuid = UUID.randomUUID(); // Sinh ngay khi khởi tạo Object, không đổi
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof User)) return false; // Cẩn thận proxy
+        if (!(o instanceof User)) return false; // Cẩn thận proxy (dùng instanceof thay vì getClass)
         User that = (User) o;
         return this.uuid.equals(that.getUuid());
     }
 
     @Override
     public int hashCode() {
-        return uuid.hashCode();
+        return uuid.hashCode(); // hashCode cố định ngay từ đầu
     }
 }
 ```
 
 ---
 
-### 4. Advanced Locking: SKIP LOCKED & NOWAIT
+### 6. Bóng Ma "Hibernate Envers" (Audit Logging)
 
-Với các hệ thống Queue, Task Allocation (VD: chọn 1 task đang rảnh để xử lý), nếu dùng `PESSIMISTIC_WRITE` thông thường, các Thread sẽ bị block lẫn nhau (Deadlock hoặc Timeout).
+Khi bạn đánh dấu `@Audited` để dùng Envers tracking lịch sử dữ liệu (lưu bảng `_AUD`), bạn đang kích hoạt một EventListener ngầm của Hibernate (Envers `RevisionListener`).
 
-**Giải pháp của Master:** Dùng cơ chế riêng của DB thông qua Hibernate:
+Bạn phải biết những đánh đổi khổng lồ về hiệu năng:
+1. **Gấp ba thời gian Flush:** Mỗi lệnh Insert/Update/Delete đều sinh thêm:
+   - 1 INSERT vào bảng đích.
+   - 1 INSERT vào bảng `REVINFO` (chứa transaction/revision info).
+   - 1 INSERT vào bảng `ENTITY_AUD` (chứa toàn bộ state tại revision đó).
+2. **Memory & Action Queue Overhead:** Action Queue phải chứa số lượng lệnh gấp 3 lần. Ram tiêu thụ tăng vọt trong transaction.
+
+**Master Tip khi dùng Envers:**
+- **Chỉ track field cần thiết:** Đừng dùng `@Audited` ở Class level cho các bảng lớn. Hãy đánh ở từng field thực sự cần tracking, hoặc loại trừ bằng `@NotAudited`. Sử dụng `@Audited(withModifiedFlag = true)` để chỉ lưu cờ thay đổi.
+- **Indexing Bảng _AUD:** Bảng `_AUD` phình to theo cấp số nhân và không bao giờ bị Update/Delete. Hãy yêu cầu DBA phân vùng bảng (Table Partitioning) theo tháng. Hãy đảm bảo đánh Index trên `(id, REV)` cho bảng audit, nếu không việc query lịch sử sẽ cực kỳ chậm.
+
+---
+
+### 7. Advanced Locking: SKIP LOCKED & NOWAIT
+
+Với các hệ thống Queue, Task Allocation (chọn task đang rảnh để xử lý), nếu dùng `PESSIMISTIC_WRITE` (dịch thành `SELECT ... FOR UPDATE`), các Thread sẽ bị block lẫn nhau chờ lấy lock (Deadlock hoặc Timeout).
+
+**Giải pháp của Master:** Dùng tính năng khóa nâng cao của Database (Postgres, MySQL 8+, Oracle) thông qua Hibernate:
+
 ```java
 public interface TaskRepo extends JpaRepository<Task, Long> {
     
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @QueryHints({
-        // Hibernate 5 & 6 chuẩn:
+        // Tương đương "SELECT ... FOR UPDATE SKIP LOCKED"
         @QueryHint(name = "jakarta.persistence.lock.timeout", value = "-2") 
-        // value = -2 nghĩa là SKIP LOCKED (PostgreSQL, Oracle, MySQL 8+)
     })
     @Query("SELECT t FROM Task t WHERE t.status = 'PENDING'")
     List<Task> findTasksToProcess(Pageable page);
 }
 ```
-**`SKIP LOCKED`:** Bỏ qua các row đang bị thread khác lock và lấy các row tiếp theo -> Đảm bảo concurrency cực cao không bị blocking.
-**`NOWAIT` (timeout = 0):** Quăng Exception ngay lập tức nếu row đang bị lock.
+- **`SKIP LOCKED` (value = -2):** Bỏ qua các row đang bị thread khác lock và ngay lập tức lấy các row tiếp theo. Đảm bảo concurrency cực cao không bị blocking.
+- **`NOWAIT` (value = 0):** Quăng Exception ngay lập tức nếu row mục tiêu đang bị lock, thay vì đứng chờ.
 
 ---
 
-### 5. Những Cú Hích Sức Mạnh Trong Hibernate 6+
+### 8. Những Cú Hích Sức Mạnh Trong Hibernate 6+ (Spring Boot 3)
 
-Nếu đang dùng Spring Boot 3+ (tương đương Hibernate 6+), bạn đang sở hữu những công cụ mạnh mẽ:
+Hibernate 6 là một bản viết lại khổng lồ. Nếu bạn đang dùng Spring Boot 3+, hãy tận dụng:
 
-1. **Semantic Query Model (SQM):** Hibernate 6 viết lại toàn bộ core parse JPQL. Nó thông minh hơn, support Window Functions trực tiếp trong HQL (`OVER()`, `PARTITION BY`, `ROW_NUMBER()`).
-2. **`@FetchProfile` linh hoạt hơn:** Có thể bật tắt lúc runtime linh hoạt mà không cần phải viết thêm JPQL mới.
-3. **Array/JSON Mapping Native:** Không cần thư viện ngoài (như Hibernate-Types của Vlad Mihalcea). Bạn có thể map trực tiếp JSONB của Postgres.
+1. **Semantic Query Model (SQM):** 
+   - HQL/JPQL parser cũ (Antlr) đã bị thay thế hoàn toàn bởi SQM. SQM thông minh hơn và hiểu được ý định SQL. 
+   - Giờ đây JPQL hỗ trợ trực tiếp **Window Functions** (`OVER()`, `PARTITION BY`, `ROW_NUMBER()`) và CTEs (Common Table Expressions) mà không cần native query!
+   - **Validation chặt chẽ hơn:** Nhiều câu JPQL "dỏm" chạy được ở HB5 sẽ báo lỗi ở HB6 vì SQM validate strict hơn rất nhiều.
+2. **Implicit Join Changes:** Ở HB6, khi bạn truy cập một Asociation `ToOne` trong JPQL select clause (VD: `SELECT a.author FROM Article a`), nó không còn ngầm định Fetch luôn data author nếu không thực sự cần, giúp tối ưu số lượng query.
+3. **Pagination với FETCH / OFFSET:** HB6 thông minh hơn trong việc dịch Pagination sang chuẩn SQL 2008 (`OFFSET x ROWS FETCH NEXT y ROWS ONLY`) thay vì dùng limit offset legacy tùy dialect.
+4. **Array/JSON Mapping Native:** Không cần thư viện ngoài (như `hibernate-types` của Vlad Mihalcea). Bạn map trực tiếp JSONB của Postgres.
    ```java
    @JdbcTypeCode(SqlTypes.JSON)
-   private Map<String, String> attributes;
+   private Map<String, Object> attributes;
    ```
-4. **JDBC Batching Tự Động:** Hibernate 6 tự động tối ưu batching và caching PreparedStatement tốt hơn rất nhiều.
-
----
-
-### 6. Bóng Ma "Hibernate Envers" (Audit Logging)
-
-Nếu hệ thống dùng Envers để tracking lịch sử dữ liệu (lưu bảng `_AUD`), bạn phải biết những đánh đổi:
-1. **Gấp đôi thời gian Flush:** Mỗi lệnh Insert/Update/Delete đều sinh thêm ít nhất 1 lệnh Insert vào bảng `_AUD` và 1 lệnh vào `REVINFO`.
-2. **Memory Overhead:** Action Queue phải chứa gấp đôi số lượng action.
-3. **Master Tip:**
-   * Hãy thiết lập chỉ track các bảng/cột thực sự cần thiết (`@Audited(withModifiedFlag = true)`).
-   * Đảm bảo bảng `_AUD` có partition theo tháng nếu volume data lớn, vì bảng này phình to theo cấp số nhân và không bao giờ bị update/delete.
+5. **JDBC Batching Tự Động:** Hibernate 6 tự động tối ưu batching và caching PreparedStatement tốt hơn rất nhiều.
 
 ---
 *End of Master Advanced Guide.*
+
+---
+
+## 🌊 Cascade — Cơ Chế Thật Sự, Không Phải "Copy Annotation"
+
+> **Cascade không phải là việc sao chép annotation xuống entity con.** Đây là một **event propagation system** — khi bạn thực hiện thao tác trên entity cha, Hibernate phát ra một *event*, và cascade là cơ chế lan truyền event đó xuống các entity liên quan theo object graph.
+
+---
+
+### Hibernate Event System — Nền Tảng Của Cascade
+
+Trước tiên cần hiểu Hibernate hoạt động theo **event-driven architecture** ở tầng nội tại. Mọi thao tác bạn gọi (`persist`, `merge`, `remove`...) đều được chuyển thành **Event Object** và xử lý bởi **EventListener**.
+
+```
+em.persist(order)
+        │
+        ▼
+┌─────────────────────────────────────────────────────┐
+│              Hibernate Event Bus                     │
+│                                                     │
+│  PersistEvent { entity: order, cascade: true }      │
+│        │                                            │
+│        ▼                                            │
+│  DefaultPersistEventListener                        │
+│    .onPersist(event)                                │
+│        │                                            │
+│        ├─ 1. Kiểm tra entity state (TRANSIENT?)     │
+│        ├─ 2. Thêm InsertAction vào Action Queue     │
+│        ├─ 3. Gán ID nếu dùng SEQUENCE              │
+│        └─ 4. cascade(PERSIST, order, visited)       │  ← ĐÂY LÀ CASCADE
+│                   │                                 │
+│                   ▼                                 │
+│           Duyệt qua từng association               │
+│           của Order có cascade=PERSIST:             │
+│             → items: List<OrderItem>               │
+│                 → persist(item1)  ← đệ quy         │
+│                 → persist(item2)  ← đệ quy         │
+└─────────────────────────────────────────────────────┘
+```
+
+![[assets/cascade_event_listener_internal.png]]
+
+**Cascade là một bước trong EventListener, không phải annotation magic.**
+
+```java
+// Hibernate source code (simplified):
+class DefaultPersistEventListener {
+    public void onPersist(PersistEvent event) {
+        Object entity = event.getObject();
+        EntityEntry entityEntry = event.getSession().getEntry(entity);
+
+        // 1. Xử lý entity này
+        if (isTransient(entity)) {
+            scheduleInsert(entity, event.getSession());
+        }
+
+        // 2. Cascade xuống associations
+        cascadeOnPersist(event.getSession(), entity, event.getContext());
+    }
+
+    private void cascadeOnPersist(Session session, Object entity, Set visited) {
+        // Duyệt qua tất cả association của entity
+        ClassMetadata metadata = session.getSessionFactory()
+                                        .getClassMetadata(entity.getClass());
+
+        for (Type associationType : metadata.getPropertyTypes()) {
+            if (associationType.isAssociationType()) {
+                CascadeStyle cascadeStyle = getCascadeStyle(associationType);
+
+                // Chỉ cascade nếu CascadeStyle cho phép PERSIST
+                if (cascadeStyle.doCascade(CascadingActions.PERSIST)) {
+                    Object child = metadata.getPropertyValue(entity, propertyName);
+                    if (child != null && !visited.contains(child)) {
+                        visited.add(child);  // cycle detection!
+                        onPersist(new PersistEvent(child, session));  // đệ quy
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+---
+
+### Các CascadeType — Ý Nghĩa Thực Sự
+
+![[assets/cascade_mechanism_diagram.png]]
+
+```
+CascadeType.PERSIST  ←→  PersistEvent
+CascadeType.MERGE    ←→  MergeEvent
+CascadeType.REMOVE   ←→  DeleteEvent
+CascadeType.REFRESH  ←→  RefreshEvent
+CascadeType.DETACH   ←→  EvictEvent (Hibernate)
+CascadeType.ALL      ←→  Tất cả events trên
+```
+
+**Bảng ý nghĩa từng CascadeType:**
+
+| CascadeType | Khi cha thực hiện | Hành động trên con | Dùng khi nào |
+|---|---|---|---|
+| `PERSIST` | `em.persist(parent)` | `em.persist(child)` | Child luôn sống cùng cha, tạo cùng nhau |
+| `MERGE` | `em.merge(parent)` | `em.merge(child)` | Cần merge cả graph từ detached state |
+| `REMOVE` | `em.remove(parent)` | `em.remove(child)` | Child không tồn tại độc lập (composition) |
+| `REFRESH` | `em.refresh(parent)` | `em.refresh(child)` | Reload từ DB cả graph khi cần |
+| `DETACH` | `em.detach(parent)` | `em.detach(child)` | Detach cả graph khỏi session |
+| `ALL` | Mọi thao tác | Mọi cascade | Quan hệ cha-con chặt chẽ (hiếm dùng đúng) |
+
+---
+
+### Ví Dụ Minh Họa Từng CascadeType
+
+#### CascadeType.PERSIST — Tạo Cùng Nhau
+
+```java
+@Entity
+public class Order {
+    @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private Long id;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
+    private List<OrderItem> items = new ArrayList<>();
+}
+
+@Entity
+public class OrderItem {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id")
+    private Order order;
+    private String productName;
+    private int quantity;
+}
+```
+
+```java
+// ✅ Cascade PERSIST: chỉ persist cha, con tự được persist
+@Transactional
+public Order createOrder(OrderRequest req) {
+    Order order = new Order();
+
+    OrderItem item1 = new OrderItem("iPhone 15", 2);
+    item1.setOrder(order);  // bidirectional link
+    order.getItems().add(item1);
+
+    OrderItem item2 = new OrderItem("AirPods Pro", 1);
+    item2.setOrder(order);
+    order.getItems().add(item2);
+
+    em.persist(order);
+    // Hibernate tự cascade PERSIST xuống item1, item2
+    // SQL được sinh:
+    // INSERT INTO orders (...)
+    // INSERT INTO order_items (...) -- item1
+    // INSERT INTO order_items (...) -- item2
+    // Không cần em.persist(item1), em.persist(item2)!
+
+    return order;
+}
+
+// ❌ Nếu KHÔNG có cascade PERSIST:
+em.persist(order);
+// SQL: INSERT INTO orders (...)
+// item1, item2 vẫn TRANSIENT → TransientPropertyValueException khi flush!
+// "object references an unsaved transient instance"
+```
+
+#### CascadeType.MERGE — Merge Cả Graph Từ Detached State
+
+```java
+@Entity
+public class Order {
+    @OneToMany(mappedBy = "order",
+               cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private List<OrderItem> items = new ArrayList<>();
+}
+```
+
+```java
+// Tình huống: nhận object graph từ REST API (tất cả đều DETACHED)
+@Transactional
+public Order updateOrder(Order detachedOrder) {
+    // detachedOrder.items cũng là DETACHED
+
+    // Không có CASCADE MERGE:
+    Order managed = em.merge(detachedOrder);
+    // → chỉ merge Order entity
+    // → items vẫn DETACHED, thay đổi trong items KHÔNG được lưu
+    // → silent data loss!
+
+    // Có CASCADE MERGE:
+    Order managed = em.merge(detachedOrder);
+    // → Hibernate merge Order
+    // → cascade MERGE xuống từng item trong collection
+    // → mỗi item cũng được merge (SELECT + copy state)
+    // → thay đổi trong items được lưu ✅
+
+    return managed;
+}
+```
+
+**Cơ chế cascade MERGE bên trong:**
+
+```
+em.merge(detachedOrder)
+        │
+        ▼
+MergeEvent { entity: detachedOrder }
+        │
+        ▼
+DefaultMergeEventListener.onMerge()
+    1. Tìm managed Order trong L1 hoặc SELECT từ DB
+    2. Copy state từ detachedOrder vào managed Order
+    3. cascade(MERGE) xuống items:
+        ├── item1 (DETACHED)
+        │     → onMerge(item1)
+        │     → SELECT order_items WHERE id=?
+        │     → copy state item1 → managed_item1
+        ├── item2 (DETACHED)
+        │     → onMerge(item2)
+        │     → SELECT order_items WHERE id=?
+        │     → copy state item2 → managed_item2
+        └── Tất cả items giờ MANAGED
+```
+
+> ⚠️ **Tại sao cascade MERGE cần cẩn thận:** Nếu graph có N items, cascade MERGE = N SELECT queries để tìm managed instance. Với graph lớn → N+1 problem trong chính cascade!
+
+#### CascadeType.REMOVE — Quan Hệ Composition
+
+```java
+@Entity
+public class Post {
+    @OneToMany(mappedBy = "post",
+               cascade = CascadeType.REMOVE,
+               orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
+}
+```
+
+```java
+// Xóa Post → tự động xóa tất cả Comments
+@Transactional
+public void deletePost(Long postId) {
+    Post post = repo.findById(postId).orElseThrow();
+    em.remove(post);
+    // Hibernate cascade REMOVE:
+    // → em.remove(comment1)
+    // → em.remove(comment2)
+    // → em.remove(comment3)
+    // SQL khi flush:
+    // DELETE FROM comments WHERE id=1
+    // DELETE FROM comments WHERE id=2
+    // DELETE FROM comments WHERE id=3
+    // DELETE FROM posts WHERE id=?
+}
+```
+
+> ⚠️ **Vấn đề nghiêm trọng với cascade REMOVE:** Hibernate phải **load TẤT CẢ children vào L1 cache trước** rồi mới xóa từng cái. Với 100,000 comments → 100,000 entities trong RAM!
+
+```java
+// ❌ Anti-pattern: cascade REMOVE trên collection lớn
+@OneToMany(cascade = CascadeType.REMOVE)  // nguy hiểm
+private List<AuditLog> logs;  // có thể có hàng triệu records
+
+// ✅ Đúng: bulk DELETE trực tiếp
+@Transactional
+public void deletePost(Long postId) {
+    // Xóa children bằng bulk DELETE (không load vào memory)
+    commentRepo.deleteByPostId(postId);   // @Modifying @Query
+    auditLogRepo.deleteByPostId(postId);  // @Modifying @Query
+    postRepo.deleteById(postId);
+}
+```
+
+---
+
+### CascadeStyle vs CascadeType — Khác Nhau Quan Trọng
+
+Trong nội tại Hibernate, có sự phân biệt giữa:
+- **`CascadeType`** (JPA): enum mà developer dùng trong annotation
+- **`CascadeStyle`** (Hibernate internal): class xác định action nào được cascade
+
+```
+CascadeType (JPA)           CascadeStyle (Hibernate)
+──────────────────────────────────────────────────
+PERSIST              ←→    CascadeStyles.CREATE + PERSIST
+MERGE                ←→    CascadeStyles.MERGE
+REMOVE               ←→    CascadeStyles.DELETE
+REFRESH              ←→    CascadeStyles.REFRESH
+DETACH               ←→    CascadeStyles.EVICT
+ALL                  ←→    CascadeStyles.ALL_DELETE_ORPHAN
+                            (bao gồm thêm REPLICATE, SAVE_UPDATE)
+```
+
+**Hibernate-specific cascades không có trong JPA:**
+
+```java
+// Hibernate native (không phải JPA):
+@Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+// → cascade cho save() và update() (Hibernate-specific methods)
+// Khác CascadeType.PERSIST (JPA) ở chỗ xử lý DETACHED entity
+
+@Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+// → tương đương orphanRemoval=true trong JPA
+// Xóa child khi bị remove khỏi collection của cha
+// Deprecated trong Hibernate 6, dùng orphanRemoval=true thay
+```
+
+---
+
+### Sự Khác Biệt Giữa JPA Cascade Và DB CASCADE
+
+Đây là điểm nhầm lẫn **cực kỳ phổ biến**:
+
+```
+JPA/Hibernate Cascade:
+┌────────────────────────────────────────────────────────────┐
+│  Xảy ra ở APPLICATION LAYER                               │
+│  Hibernate load child entities vào L1 cache               │
+│  Thực hiện action (INSERT/UPDATE/DELETE) từng cái         │
+│  Có thể kiểm soát bằng code                               │
+│  Bị ảnh hưởng bởi @Version (optimistic locking)          │
+└────────────────────────────────────────────────────────────┘
+
+Database CASCADE (ON DELETE CASCADE trong DDL):
+┌────────────────────────────────────────────────────────────┐
+│  Xảy ra ở DATABASE LAYER                                  │
+│  DB engine tự xử lý, Hibernate không biết                 │
+│  Nhanh hơn (không cần load vào Java memory)               │
+│  Hibernate L1 cache KHÔNG được cập nhật!                  │
+│  → Stale cache sau DB cascade!                             │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Vấn đề khi dùng DB CASCADE ON DELETE với Hibernate:**
+
+```java
+// DB schema:
+// CREATE TABLE order_items (
+//   order_id BIGINT REFERENCES orders(id) ON DELETE CASCADE
+// );
+
+@Transactional
+public void deleteOrder(Long orderId) {
+    Order order = em.find(Order.class, orderId);
+
+    // Giả sử order.items đã được load vào L1 cache (managed)
+    // item1 và item2 đang trong L1 cache
+
+    em.remove(order);  // Hibernate sinh: DELETE FROM orders WHERE id=?
+    em.flush();
+
+    // DB thực thi:
+    // DELETE FROM orders WHERE id=?
+    //   → DB CASCADE: DELETE FROM order_items WHERE order_id=?
+    //   → DB tự xóa item1, item2 trong DB
+    //   → NHƯNG item1, item2 VẪN CÒN trong L1 cache!
+    //   → item1.state = MANAGED (nhưng row đã không còn trong DB)
+
+    // Nếu sau đó truy cập item1:
+    item1.getQuantity();  // Không exception ngay
+    em.refresh(item1);    // → EntityNotFoundException!
+}
+```
+
+**Rule:** Nếu dùng DB CASCADE, phải `em.clear()` sau khi xóa để xóa stale entities khỏi L1 cache.
+
+---
+
+### Cycle Detection — Cascade Không Bị Vòng Lặp Vô Tận
+
+Hibernate dùng một `Set<Object> visited` để tránh cascade vô hạn trong object graph có circular reference:
+
+```java
+// Entity có circular reference:
+@Entity
+public class Employee {
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    private Department department;
+}
+
+@Entity
+public class Department {
+    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "department")
+    private List<Employee> employees = new ArrayList<>();
+}
+
+// Graph:
+// dept → [emp1, emp2]
+// emp1 → dept (back-reference)
+// emp2 → dept (back-reference)
+
+@Transactional
+public void setup() {
+    Department dept = new Department("Engineering");
+    Employee emp1 = new Employee("Bach");
+    emp1.setDepartment(dept);
+    dept.getEmployees().add(emp1);
+
+    em.persist(dept);
+    // Hibernate cascade flow:
+    // 1. persist(dept)     → visited = {dept}
+    // 2. cascade PERSIST trên dept.employees:
+    //    → persist(emp1)   → visited = {dept, emp1}
+    // 3. cascade PERSIST trên emp1.department:
+    //    → dept đã trong visited! → SKIP (cycle detected)
+    // → Không vô hạn đệ quy ✅
+}
+```
+
+---
+
+### orphanRemoval — Cascade REMOVE Tự Động Khi Remove Khỏi Collection
+
+`orphanRemoval = true` là một dạng cascade đặc biệt: khi entity con bị **remove khỏi collection** (không phải em.remove()), Hibernate tự động xóa nó.
+
+```java
+@Entity
+public class Order {
+    @OneToMany(mappedBy = "order",
+               cascade = CascadeType.ALL,
+               orphanRemoval = true)   // ← quan trọng
+    private List<OrderItem> items = new ArrayList<>();
+}
+```
+
+```java
+@Transactional
+public void removeItem(Long orderId, Long itemId) {
+    Order order = repo.findById(orderId).orElseThrow();
+
+    // Cách 1: Remove từ collection → orphanRemoval tự xóa
+    order.getItems().removeIf(item -> item.getId().equals(itemId));
+    // Khi flush: DELETE FROM order_items WHERE id=?
+    // Không cần em.remove(item) ✅
+
+    // Cách 2: Không có orphanRemoval → item bị remove khỏi collection
+    //         nhưng row vẫn còn trong DB với order_id=null (hoặc constraint violation)
+}
+```
+
+**Sự khác biệt giữa cascade REMOVE và orphanRemoval:**
+
+```
+cascade=CascadeType.REMOVE:
+  → Cascade khi gọi em.remove(parent)
+  → Xóa children theo parent
+
+orphanRemoval=true:
+  → Cascade khi child bị remove khỏi collection
+  → Xóa child "mồ côi" (không còn parent nào)
+  → Cũng cascade khi em.remove(parent)
+
+CascadeType.ALL + orphanRemoval=true:
+  → Combination đầy đủ cho composition relationship
+  → Child hoàn toàn được quản lý bởi parent lifecycle
+```
+
+---
+
+### Khi Nào Dùng Cascade Nào — Decision Tree
+
+```
+Câu hỏi: Có nên cascade xuống association này?
+                │
+                ▼
+    Child có thể tồn tại độc lập không?
+                │
+    ┌───────────┴────────────┐
+    │ Không                  │ Có
+    ▼                        ▼
+Composition              Aggregation
+(Part-of)                (Has-a)
+    │                        │
+    ▼                        ▼
+cascade=ALL              cascade=PERSIST, MERGE
+orphanRemoval=true       KHÔNG cascade REMOVE
+    │                        │
+Example:                 Example:
+Order → OrderItem        Post → Tag
+Document → Section       Order → Product
+Invoice → LineItem       User → Role
+```
+
+**Checklist cascade đúng:**
+
+```
+□ @OneToMany (composition): cascade=ALL, orphanRemoval=true
+□ @OneToMany (aggregation): cascade={PERSIST, MERGE}
+□ @ManyToMany: cascade={PERSIST, MERGE}, KHÔNG có REMOVE
+□ @ManyToOne: thường KHÔNG cascade (cha không quản lý cha)
+□ @OneToOne (composition): cascade=ALL, orphanRemoval=true
+□ Bulk delete collection lớn: KHÔNG dùng cascade REMOVE
+```
+
+---
+
+### Ví Dụ Thực Tế — Document Management System
+
+```java
+@Entity
+public class Document {
+    @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private Long id;
+    private String title;
+
+    // Sections là composition → Document "own" Sections
+    @OneToMany(mappedBy = "document",
+               cascade = CascadeType.ALL,    // persist, merge, remove, refresh, detach
+               orphanRemoval = true)          // xóa section khi remove khỏi list
+    @OrderBy("position ASC")
+    private List<Section> sections = new ArrayList<>();
+
+    // Tags là aggregation → Tag tồn tại độc lập
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "document_tag",
+               joinColumns = @JoinColumn(name = "document_id"),
+               inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    private Set<Tag> tags = new HashSet<>();
+
+    // Helper methods
+    public void addSection(Section section) {
+        sections.add(section);
+        section.setDocument(this);
+    }
+
+    public void removeSection(Section section) {
+        sections.remove(section);
+        section.setDocument(null);  // orphanRemoval sẽ xóa section
+    }
+}
+
+// Usage:
+@Transactional
+public Document createDocumentWithContent(DocumentRequest req) {
+    Document doc = new Document(req.getTitle());
+
+    // Thêm sections - sẽ được cascade PERSIST
+    req.getSections().forEach(sectionReq -> {
+        Section section = new Section(sectionReq.getContent(), sectionReq.getPosition());
+        doc.addSection(section);  // không cần sectionRepo.save()!
+    });
+
+    // Thêm tags - tag có thể đã tồn tại hoặc mới
+    req.getTagIds().forEach(tagId -> {
+        Tag tag = tagRepo.findById(tagId).orElseThrow();
+        doc.getTags().add(tag);  // không cần cascade REMOVE (tag tồn tại độc lập)
+    });
+
+    return docRepo.save(doc);
+    // SQL:
+    // INSERT INTO documents (title) VALUES (?)
+    // INSERT INTO sections (content, position, document_id) VALUES (?) -- per section
+    // INSERT INTO document_tag (document_id, tag_id) VALUES (?) -- per tag association
+}
+
+@Transactional
+public void deleteDocument(Long docId) {
+    Document doc = docRepo.findById(docId).orElseThrow();
+    // doc chứa nhiều sections nhưng KHÔNG nên load vào memory
+
+    // ✅ Đúng với cascade=ALL + orphanRemoval
+    // Nhưng nếu có nhiều sections → tốt hơn là bulk delete
+    sectionRepo.deleteByDocumentId(docId);  // bulk DELETE (không load entities)
+    doc.getSections().clear();              // clear in-memory để tránh confusion
+    docRepo.delete(doc);
+    // SQL:
+    // DELETE FROM sections WHERE document_id=?  (bulk)
+    // DELETE FROM document_tag WHERE document_id=? (join table)
+    // DELETE FROM documents WHERE id=?
+}
+```
+
+---
+
+### Anti-patterns Cascade Cần Tránh
+
+```java
+// ❌ Anti-pattern 1: cascade=ALL trên @ManyToMany
+@ManyToMany(cascade = CascadeType.ALL)
+private Set<Role> roles;
+// Nếu xóa user → cascade REMOVE xóa luôn Role → tất cả user mất Role!
+
+// ❌ Anti-pattern 2: cascade REMOVE trên collection lớn
+@OneToMany(cascade = CascadeType.ALL)
+private List<AuditLog> auditLogs;  // hàng triệu records
+// Xóa user → Hibernate load hàng triệu AuditLog vào RAM → OOM
+
+// ❌ Anti-pattern 3: cascade trên cả hai chiều bidirectional
+@OneToMany(cascade = CascadeType.ALL, mappedBy = "order")
+private List<OrderItem> items;
+// Không vấn đề nếu chỉ owning side
+
+@ManyToOne(cascade = CascadeType.ALL)  // ← SAI! cascade từ child lên cha
+@JoinColumn(name = "order_id")
+private Order order;
+// persist(item) sẽ cascade PERSIST lên order → persist order nếu chưa exist
+// Nhưng remove(item) cascade REMOVE lên order → XÓA CẢ ORDER!
+
+// ✅ Đúng: cascade chỉ ở phía "owning parent"
+@ManyToOne(fetch = FetchType.LAZY)  // không cascade từ child lên cha
+@JoinColumn(name = "order_id")
+private Order order;
+```
+
+---
+
+*Tags: #hibernate #jpa #cascade #event-system #orphan-removal #persistence-context*
+
+---
+
+## 🔬 flush() + clear() Trong Transaction Phức Tạp — Bản Chất Luồng
+
+> `flush()` và `clear()` là hai operations hoàn toàn khác nhau về mục đích. Hiểu sai thứ tự hoặc cách kết hợp chúng là nguyên nhân của rất nhiều bug trong batch processing và luồng phức tạp.
+
+---
+
+### flush() — Đồng Bộ, Không Kết Thúc Transaction
+
+**`flush()` KHÔNG commit transaction.** Đây là điểm quan trọng nhất cần ghi nhớ.
+
+```
+flush() làm gì:
+┌──────────────────────────────────────────────────────────────────┐
+│ 1. Chạy Dirty Checking trên toàn bộ Identity Map                │
+│    → So sánh snapshot vs currentState của mỗi entity            │
+│    → Tìm entity "dirty" (có thay đổi)                          │
+│                                                                  │
+│ 2. Xây dựng danh sách SQL theo thứ tự đúng:                    │
+│    INSERT (parent trước child)                                   │
+│    UPDATE (dirty entities)                                       │
+│    DELETE (child trước parent)                                   │
+│                                                                  │
+│ 3. Gửi SQL đến DB qua JDBC                                      │
+│    → SQL được thực thi trong transaction hiện tại               │
+│    → DB thấy thay đổi, nhưng CHƯA COMMIT                       │
+│    → Các transaction khác KHÔNG thấy (isolation)                │
+│                                                                  │
+│ 4. Cập nhật snapshots trong PersistenceContext                  │
+│    → snapshot = currentState sau flush                          │
+│    → Entity vẫn MANAGED, vẫn trong L1 cache                    │
+│                                                                  │
+│ 5. KHÔNG giải phóng L1 cache                                    │
+│ 6. KHÔNG kết thúc transaction                                   │
+│ 7. KHÔNG trả connection về pool                                 │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+**Minh họa flush() không commit:**
+
+```java
+@Transactional
+public void demonstrateFlushVsCommit() {
+    User user = userRepo.findById(1L).orElseThrow();
+    user.setName("Alice");
+
+    // Thời điểm này: DB vẫn có "Bach", L1 cache có "Alice" (dirty)
+
+    em.flush();
+    // Sau flush: DB có "Alice" NHƯNG trong transaction chưa commit
+    // Các connection khác (isolation=READ COMMITTED) vẫn thấy "Bach"
+    // Nếu rollback transaction bây giờ: DB quay về "Bach"
+
+    // Transaction vẫn còn mở...
+    // Em có thể tiếp tục đọc, ghi thêm
+
+    user.setEmail("alice@example.com");
+    // L1 cache: email="alice@example.com", snapshot: email cũ (sau flush)
+
+    // Khi transaction commit: flush() tự động chạy lại
+    // → UPDATE users SET email='alice@example.com' WHERE id=1
+    // → COMMIT → DB có "Alice", "alice@example.com"
+}
+```
+
+![[assets/flush_clear_transaction_flow.png]]
+
+---
+
+### clear() — Xóa L1 Cache, Detach Toàn Bộ
+
+**`clear()` KHÔNG gửi SQL.** Nó chỉ reset trạng thái của PersistenceContext.
+
+```
+clear() làm gì:
+┌──────────────────────────────────────────────────────────────────┐
+│ 1. Xóa toàn bộ Identity Map (L1 cache)                         │
+│    → Tất cả entity instances bị remove khỏi HashMap            │
+│    → GC có thể thu hồi chúng nếu không còn reference           │
+│                                                                  │
+│ 2. Xóa toàn bộ Snapshot map                                     │
+│    → Không còn dirty checking được thực hiện trên entities cũ  │
+│                                                                  │
+│ 3. Xóa Action Queue (pending SQL)                               │
+│    → Nếu có INSERT/UPDATE/DELETE chưa flush → BỊ MẤT!         │
+│    → ⚠️ NGUY HIỂM nếu gọi clear() trước flush()               │
+│                                                                  │
+│ 4. Tất cả entities trở thành DETACHED                          │
+│    → entity vẫn tồn tại trong heap (nếu còn reference)         │
+│    → nhưng không còn được Hibernate track                       │
+│    → lazy load sẽ throw LazyInitializationException            │
+│                                                                  │
+│ 5. KHÔNG ảnh hưởng đến transaction (vẫn còn mở)               │
+│ 6. KHÔNG gửi SQL nào đến DB                                    │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+**Minh họa clear() và hệ quả:**
+
+```java
+@Transactional
+public void demonstrateClear() {
+    User user = userRepo.findById(1L).orElseThrow();
+    user.setName("Alice");  // user là MANAGED, dirty
+
+    em.clear();
+    // ⚠️ Action Queue bị xóa (không flush trước)
+    // user trở thành DETACHED
+    // Thay đổi name="Alice" KHÔNG bao giờ được gửi đến DB!
+
+    // Nếu commit transaction: không có gì để commit
+    // DB vẫn có "Bach"
+}
+
+@Transactional
+public void correctPattern() {
+    User user = userRepo.findById(1L).orElseThrow();
+    user.setName("Alice");
+
+    em.flush();  // Gửi UPDATE đến DB (trong transaction)
+    em.clear();  // Xóa L1 cache (giải phóng memory)
+    // Bây giờ user là DETACHED
+    // Thay đổi đã được gửi đến DB ✅
+
+    // Transaction vẫn mở
+    // Có thể load thêm entity mới vào L1 cache (sạch)
+}
+```
+
+---
+
+### Orphan Detection Sau clear() — Điều Ít Người Biết
+
+Khi bạn gọi `clear()`, Hibernate không chỉ xóa Identity Map — nó còn phải xử lý **orphan detection** cho các collection đang được track.
+
+```java
+@Entity
+public class Order {
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderItem> items = new ArrayList<>();
+}
+
+@Transactional
+public void orphanAfterClear() {
+    Order order = orderRepo.findById(1L).orElseThrow();
+    // items được load: [item1, item2, item3]
+
+    order.getItems().remove(item2);  // item2 đánh dấu là orphan
+
+    // Nếu gọi em.flush() trước clear():
+    em.flush();
+    // → DELETE FROM order_items WHERE id=item2.id
+    // → orphan được xóa đúng cách ✅
+
+    em.clear();
+    // Sau clear: order và items đều DETACHED
+    // Orphan tracking bị reset
+
+    // Nếu gọi clear() TRƯỚC flush():
+    // em.clear();
+    // em.flush();  // không có gì để flush (action queue đã bị clear)
+    // item2 vẫn còn trong DB! (orphan không được xóa)
+}
+```
+
+---
+
+### Full Transaction Flow Trong Batch Processing Phức Tạp
+
+Đây là scenario thực tế nhất: xử lý 10,000 records trong một transaction với memory control.
+
+```java
+@Transactional
+public BatchResult processBatch(List<Long> userIds) {
+    // Bước 1: Config
+    int BATCH_SIZE = 100;
+    int processed = 0;
+    int failed = 0;
+
+    // Tại điểm bắt đầu:
+    // L1 Cache: trống
+    // Transaction: OPEN (BEGIN đã được gọi bởi @Transactional)
+    // Memory: baseline
+
+    for (int i = 0; i < userIds.size(); i++) {
+        try {
+            // ==========================================================
+            // Phase A: Load entity (L1 cache tăng)
+            // ==========================================================
+            User user = em.find(User.class, userIds.get(i));
+            // L1: { User#id → user, snapshot }
+            // Memory: +2x entity size
+
+            // ==========================================================
+            // Phase B: Xử lý business logic
+            // ==========================================================
+            user.setProcessedAt(Instant.now());  // dirty!
+            user.setStatus("PROCESSED");          // dirty!
+            // L1: { User#id → user (DIRTY), snapshot (old) }
+
+            // Load entity liên quan (L1 cache tăng thêm)
+            Profile profile = em.find(Profile.class, user.getProfileId());
+            profile.setLastSync(Instant.now());  // dirty!
+            // L1: { User, Profile (cả hai dirty) }
+
+            // Create new entity
+            AuditLog log = new AuditLog(user, "PROCESSED");
+            em.persist(log);  // Action Queue: [INSERT AuditLog]
+            // L1: { User, Profile, AuditLog (MANAGED) }
+
+            processed++;
+
+        } catch (Exception e) {
+            failed++;
+            // Không clear/rollback toàn bộ ở đây
+            // Ghi nhận lỗi, tiếp tục xử lý record tiếp theo
+        }
+
+        // ==========================================================
+        // Phase C: flush() + clear() định kỳ (CRITICAL!)
+        // ==========================================================
+        if ((i + 1) % BATCH_SIZE == 0) {
+            // B1: flush() trước tiên — gửi tất cả pending SQL
+            em.flush();
+            // SQL được gửi:
+            //   UPDATE users SET status='PROCESSED', processed_at=? WHERE id IN (...)
+            //   UPDATE profiles SET last_sync=? WHERE id IN (...)
+            //   INSERT INTO audit_logs (...) VALUES (...) x100
+            // Tất cả trong transaction hiện tại (chưa commit)
+            // DB thấy thay đổi nếu query trong cùng transaction
+
+            // B2: clear() sau flush — giải phóng L1 cache
+            em.clear();
+            // L1 Cache: trống lại
+            // Tất cả entity trở thành DETACHED
+            // Snapshots bị xóa
+            // Memory giải phóng (GC eligible)
+
+            // Sau flush() + clear():
+            // Memory: trở về baseline
+            // Transaction: vẫn OPEN
+            // DB: đã nhận SQL nhưng chưa COMMIT
+        }
+    }
+
+    // Flush lần cuối cho phần dư (nếu size % BATCH_SIZE != 0)
+    em.flush();
+
+    // @Transactional tự commit khi method kết thúc
+    // COMMIT được gửi đến DB
+    // Tất cả thay đổi được commit atomically
+
+    return new BatchResult(processed, failed);
+}
+```
+
+**Memory timeline với flush() + clear():**
+
+```
+Memory (MB)
+   │
+50 │                    ┌──┐                    ┌──┐
+   │                    │  │                    │  │
+40 │               ┌──┐ │  │               ┌──┐ │  │
+   │               │  │ │  │               │  │ │  │
+30 │          ┌──┐ │  │ │  │          ┌──┐ │  │ │  │
+   │     ┌──┐ │  │ │  │ │  │     ┌──┐ │  │ │  │ │  │
+20 │ ┌──┐│  │ │  │ │  │ │  │ ┌──┐│  │ │  │ │  │ │  │
+   │ │  ││  │ │  │ │  │ │  │ │  ││  │ │  │ │  │ │  │
+10 │─┘  └┘  └┘  └┘  └─┘  └─┘  └┘  └┘  └┘  └─┘  └──
+   │
+   └──────────────────────────────────────────────────► Time
+    batch1  flush  batch2  flush  ...  batch100  COMMIT
+           clear          clear               
+
+Sawtooth pattern: memory tăng dần mỗi batch, drop về baseline sau flush+clear
+```
+
+---
+
+### flush() Tự Động — FlushMode.AUTO Trong Action
+
+Một điều quan trọng: Hibernate không chỉ flush khi bạn gọi `em.flush()` hay khi transaction commit. Với `FlushMode.AUTO` (default), Hibernate flush **trước khi thực thi JPQL/HQL query** nếu query có thể bị ảnh hưởng bởi pending changes.
+
+```java
+@Transactional
+public void autoFlushDemonstration() {
+    // Step 1: Load và modify
+    Product product = repo.findById(1L).orElseThrow();
+    product.setPrice(new BigDecimal("999.99"));  // dirty!
+    // Action Queue: [UPDATE products SET price=999.99 WHERE id=1]
+    // Chưa flush!
+
+    // Step 2: JPQL query trên cùng bảng
+    // FlushMode.AUTO: Hibernate phát hiện query liên quan đến Product entity
+    // → Tự động flush TRƯỚC khi chạy query
+    List<Product> expensiveProducts = em.createQuery(
+        "FROM Product p WHERE p.price > :threshold", Product.class)
+        .setParameter("threshold", new BigDecimal("500"))
+        .getResultList();
+    // Hibernate tự flush:
+    //   → UPDATE products SET price=999.99 WHERE id=1
+    //   → SELECT * FROM products WHERE price > 500
+    // product (id=1) xuất hiện trong kết quả ✅
+
+    // Step 3: Native query KHÔNG trigger auto flush!
+    List<Object[]> nativeResults = em.createNativeQuery(
+        "SELECT * FROM products WHERE price > 500")
+        .getResultList();
+    // Hibernate KHÔNG flush (không biết bảng nào liên quan đến native SQL)
+    // Nếu flush chưa xảy ra → product (id=1) KHÔNG xuất hiện!
+    // (Đây là một source of bugs phổ biến)
+
+    // Fix: flush tường minh trước native query
+    em.flush();
+    List<Object[]> correctResults = em.createNativeQuery(
+        "SELECT * FROM products WHERE price > 500")
+        .getResultList();
+    // Bây giờ product (id=1) xuất hiện ✅
+}
+```
+
+**Bảng tóm tắt khi nào flush xảy ra:**
+
+| Trigger | FlushMode.AUTO | FlushMode.COMMIT | FlushMode.MANUAL |
+|---|---|---|---|
+| `em.flush()` gọi tường minh | ✅ | ✅ | ✅ |
+| Transaction commit | ✅ | ✅ | ✅ |
+| Trước JPQL/HQL query (cùng bảng) | ✅ | ❌ | ❌ |
+| Trước Native SQL query | ❌ | ❌ | ❌ |
+| `em.clear()` | ❌ (không flush!) | ❌ | ❌ |
+
+---
+
+### flush() + clear() Trong Luồng Phức Tạp Thực Tế
+
+#### Scenario 1: Batch Insert 10,000 Records
+
+```java
+@Transactional
+public void bulkInsert(List<ImportRow> rows) {
+    int BATCH = 50;
+
+    for (int i = 0; i < rows.size(); i++) {
+        ImportRow row = rows.get(i);
+
+        // Tạo entity mới (TRANSIENT)
+        Product product = new Product();
+        product.setName(row.getName());
+        product.setPrice(row.getPrice());
+        em.persist(product);
+        // Action Queue: [INSERT product]
+        // L1: product MANAGED
+
+        if ((i + 1) % BATCH == 0) {
+            em.flush();
+            // SQL: INSERT INTO products (...) VALUES (?) x50 -- batch!
+            // Yêu cầu: batch_size=50 trong config + SEQUENCE strategy (không IDENTITY)
+
+            em.clear();
+            // L1: trống, 50 products trở thành DETACHED
+            // GC có thể thu hồi 50 product instances
+        }
+    }
+
+    // Flush phần dư
+    if (rows.size() % BATCH != 0) {
+        em.flush();
+    }
+    // Transaction commit sẽ tự flush lại (nhưng action queue trống nên no-op)
+}
+```
+
+#### Scenario 2: Read-Modify-Write Batch Với Dependencies
+
+```java
+@Transactional
+public void processOrdersWithItems(List<Long> orderIds) {
+    int BATCH = 25;
+
+    for (int i = 0; i < orderIds.size(); i++) {
+        Long orderId = orderIds.get(i);
+
+        // Load order (L1: +1 Order)
+        Order order = em.find(Order.class, orderId);
+        if (order == null) continue;
+
+        // Load items (L1: +N OrderItems)
+        // Nếu FetchType.LAZY: N+1 problem!
+        // Better: load với JOIN FETCH
+        List<OrderItem> items = order.getItems();  // lazy load
+
+        // Process
+        BigDecimal total = items.stream()
+            .map(item -> item.getPrice().multiply(BigDecimal.valueOf(item.getQty())))
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        order.setTotalAmount(total);  // dirty!
+        order.setCalculatedAt(Instant.now());  // dirty!
+
+        // L1 đang có: order (dirty) + N items (managed)
+
+        if ((i + 1) % BATCH == 0) {
+            em.flush();
+            // SQL:
+            // UPDATE orders SET total_amount=?, calculated_at=? WHERE id=? x25
+            // (items không dirty nên không UPDATE)
+
+            em.clear();
+            // L1: trống
+            // ⚠️ order và items trở thành DETACHED
+            // Không được dùng 'order' hay 'items' sau đây trong vòng lặp!
+        }
+    }
+    em.flush();  // flush phần dư
+}
+```
+
+> ⚠️ **Bug phổ biến:** Sau `em.clear()`, tiếp tục truy cập entity đã detach:
+> ```java
+> em.clear();
+> order.getItems().size();  // LazyInitializationException!
+> // items là lazy, session bị clear → không thể load
+> ```
+
+#### Scenario 3: Batch Processing Với Error Recovery
+
+```java
+@Transactional
+public BatchResult processBatchWithRecovery(List<Long> entityIds) {
+    int BATCH = 100;
+    List<Long> failedIds = new ArrayList<>();
+    int successCount = 0;
+
+    for (int i = 0; i < entityIds.size(); i++) {
+        try {
+            Entity entity = em.find(Entity.class, entityIds.get(i));
+            processEntity(entity);  // có thể throw BusinessException
+            successCount++;
+
+        } catch (BusinessException e) {
+            // ⚠️ CRITICAL: Nếu exception xảy ra trong Hibernate operation,
+            // session có thể bị "rolled back only" state
+            // Phải check và handle đúng cách
+
+            failedIds.add(entityIds.get(i));
+            // Không rethrow → tiếp tục xử lý
+
+            // ⚠️ Nếu exception là từ Hibernate (JDBCException, ConstraintViolation...):
+            // Session có thể corrupted → phải clear để reset
+        }
+
+        if ((i + 1) % BATCH == 0) {
+            try {
+                em.flush();
+                em.clear();
+            } catch (Exception flushException) {
+                // Flush failed: có thể do constraint violation từ batch này
+                // Rollback toàn bộ batch là không tránh khỏi ở đây
+                log.error("Batch flush failed at index {}", i, flushException);
+                em.clear();  // Clear để reset session state
+                // Có thể cần rollback và xử lý lại từng item trong batch này riêng lẻ
+                throw flushException;
+            }
+        }
+    }
+
+    em.flush();  // flush cuối
+    return new BatchResult(successCount, failedIds);
+}
+```
+
+> ⚠️ **Hibernate session sau exception:** Nếu một Hibernate operation throw `HibernateException` (không phải `BusinessException` của bạn), session thường bị mark là "rollback-only". Sau đó mọi thao tác trên session sẽ throw `TransactionSystemException`. Phải `em.clear()` và thường phải rollback transaction đó.
+
+---
+
+### Khi Nào Cần em.flush() Tường Minh
+
+Ngoài batch processing, có một số trường hợp khác cần `flush()` tường minh:
+
+#### Trường Hợp 1: Đọc Lại Dữ Liệu Vừa Ghi Trong Cùng Transaction
+
+```java
+@Transactional
+public void readAfterWrite() {
+    User user = new User("Bach");
+    em.persist(user);
+    // user.id = null (nếu IDENTITY), có value (nếu SEQUENCE)
+
+    // ⚠️ Chưa flush → DB chưa có user
+
+    // Nếu cần query lại:
+    em.flush();  // INSERT INTO users (...)
+    // Bây giờ DB có user, có thể query
+
+    User found = em.createQuery(
+        "FROM User WHERE name = 'Bach'", User.class)
+        .getSingleResult();
+    // Tìm thấy ✅ (nếu không flush: FlushMode.AUTO tự flush vì JPQL query)
+}
+```
+
+#### Trường Hợp 2: Trước Native Query
+
+```java
+@Transactional
+public void beforeNativeQuery() {
+    product.setPrice(new BigDecimal("999"));  // dirty
+
+    // FlushMode.AUTO không flush cho native query!
+    em.flush();  // tường minh
+
+    // Native query giờ thấy giá mới
+    BigDecimal avg = (BigDecimal) em.createNativeQuery(
+        "SELECT AVG(price) FROM products")
+        .getSingleResult();
+}
+```
+
+#### Trường Hợp 3: Bắt ConstraintViolationException Sớm
+
+```java
+@Transactional
+public UserCreationResult createUser(String email) {
+    try {
+        User user = new User(email);
+        em.persist(user);
+
+        em.flush();  // flush tường minh → exception nếu email duplicate
+        // Nếu không flush ở đây: exception xảy ra khi commit
+        // Lúc đó khó xử lý hơn (transaction đã trong commit phase)
+
+        return UserCreationResult.success(user);
+
+    } catch (ConstraintViolationException e) {
+        // Email đã tồn tại
+        return UserCreationResult.duplicate();
+        // Transaction có thể rollback-only sau ConstraintViolationException
+        // Cần xử lý đúng cách (REQUIRES_NEW propagation để tránh rollback whole tx)
+    }
+}
+```
+
+#### Trường Hợp 4: Optimistic Lock Version Check Sớm
+
+```java
+@Transactional
+public void updateWithVersionCheck(Long id, int expectedVersion, String newValue) {
+    Entity entity = em.find(Entity.class, id);
+    if (!entity.getVersion().equals(expectedVersion)) {
+        throw new StaleVersionException("Version mismatch");
+    }
+
+    entity.setValue(newValue);
+
+    em.flush();  // Kiểm tra version ngay
+    // SQL: UPDATE ... SET value=?, version=version+1 WHERE id=? AND version=expectedVersion
+    // Nếu version đã thay đổi → 0 rows affected → OptimisticLockException
+    // Bắt được sớm, không đợi đến commit
+}
+```
+
+---
+
+### clear() Trong Các Trường Hợp Đặc Biệt
+
+#### clear() Sau Đọc Lớn (Read-Only Optimization)
+
+```java
+@Transactional(readOnly = true)
+public List<ReportDTO> generateReport(ReportFilter filter) {
+    // Load nhiều entity để generate report
+    List<Order> orders = orderRepo.findByFilter(filter);  // 5000 records
+    // L1: 5000 Orders MANAGED
+
+    List<ReportDTO> report = orders.stream()
+        .map(this::buildReportLine)  // tính toán từ entity
+        .collect(Collectors.toList());
+
+    // ✅ Optional: clear sau khi đã extract data
+    em.clear();
+    // 5000 Order instances trở thành DETACHED (GC eligible)
+    // Useful nếu method tiếp tục làm gì đó khác
+
+    return report;
+}
+```
+
+#### clear() Giữa Các Phase Của Complex Operation
+
+```java
+@Transactional
+public void complexMigration() {
+    // Phase 1: Load và transform old data
+    List<OldEntity> oldEntities = em.createQuery(
+        "FROM OldEntity WHERE migrated = false", OldEntity.class)
+        .getResultList();
+    // L1: N OldEntity MANAGED
+
+    List<NewEntity> newEntities = oldEntities.stream()
+        .map(this::transform)  // tạo NewEntity từ OldEntity
+        .collect(Collectors.toList());
+
+    // Persist new entities
+    newEntities.forEach(em::persist);
+    // L1: N OldEntity + N NewEntity
+
+    // Mark old entities as migrated
+    oldEntities.forEach(e -> e.setMigrated(true));
+
+    em.flush();
+    // SQL:
+    //   UPDATE old_entities SET migrated=true WHERE id IN (...)
+    //   INSERT INTO new_entities (...) x N
+
+    em.clear();
+    // Giải phóng tất cả entities khỏi L1 cache
+    // Phase 1 hoàn thành
+
+    // Phase 2: Validate migration
+    long newCount = em.createQuery("SELECT COUNT(e) FROM NewEntity e", Long.class)
+        .getSingleResult();
+    // Query sạch, không có stale entities trong L1
+
+    if (newCount != oldEntities.size()) {
+        throw new MigrationException("Count mismatch: " + newCount + " vs " + oldEntities.size());
+        // Transaction rollback → tất cả thay đổi bị hoàn tác
+    }
+}
+```
+
+---
+
+### Anti-Patterns flush() + clear()
+
+```java
+// ❌ Anti-pattern 1: clear() trước flush() → data loss
+em.clear();  // Action Queue bị xóa, pending changes mất
+em.flush();  // Không có gì để flush
+
+// ❌ Anti-pattern 2: clear() trong readOnly=true transaction
+@Transactional(readOnly = true)
+public List<DTO> readData() {
+    List<Entity> entities = repo.findAll();
+    List<DTO> result = entities.stream().map(mapper::toDTO).toList();
+
+    em.clear();  // Ổn (entities đã được map sang DTO)
+
+    // Nhưng: nếu mapper.toDTO() truy cập lazy property TRONG stream:
+    // entities.stream().map(e -> {
+    //     e.getLazyCollection().size();  // lazy load OK (session vẫn mở)
+    //     return new DTO(e);
+    // });
+    // Sau em.clear(): lazy load sẽ fail nếu truy cập DETACHED entity
+    return result;
+}
+
+// ❌ Anti-pattern 3: flush() không cần thiết trong mọi loop iteration
+for (Entity e : entities) {
+    e.setProcessed(true);
+    em.flush();  // flush mỗi lần → không batch được, chậm kinh khủng!
+}
+// ✅ Đúng: flush theo batch
+for (int i = 0; i < entities.size(); i++) {
+    entities.get(i).setProcessed(true);
+    if ((i + 1) % 100 == 0) em.flush();
+}
+
+// ❌ Anti-pattern 4: Dùng entity sau clear()
+em.flush();
+em.clear();
+user.getName();  // OK, field đã được load (scalar fields accessible)
+order.getItems().size();  // ❌ LazyInitializationException nếu items chưa load!
+
+// ❌ Anti-pattern 5: flush() trong @Transactional(readOnly=true)
+@Transactional(readOnly = true)
+public void readOnlyBug() {
+    User user = repo.findById(1L).get();
+    user.setName("Alice");  // không exception, nhưng không flush
+    em.flush();  // FlushMode=MANUAL trong readOnly → không flush thật
+    // Thay đổi bị discard silently
+}
+```
+
+---
+
+### flush() + clear() Tóm Tắt Mental Model
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                    flush() vs clear()                                │
+│                                                                     │
+│  flush():                    clear():                               │
+│  ┌────────────────────┐      ┌────────────────────────────┐        │
+│  │ Gửi SQL → DB       │      │ Xóa L1 cache               │        │
+│  │ Trong transaction  │      │ Detach tất cả entity        │        │
+│  │ KHÔNG giải phóng   │      │ Xóa Action Queue            │        │
+│  │ L1 cache           │      │ KHÔNG gửi SQL               │        │
+│  │ KHÔNG detach       │      │ KHÔNG commit                │        │
+│  │ Cập nhật snapshot  │      │ KHÔNG trả connection        │        │
+│  └────────────────────┘      └────────────────────────────┘        │
+│                                                                     │
+│  Thứ tự đúng trong batch:                                          │
+│  em.flush()  →  em.clear()   (KHÔNG ngược lại!)                   │
+│                                                                     │
+│  Sau flush(): entity vẫn MANAGED, snapshot updated                 │
+│  Sau clear(): entity DETACHED, lazy load sẽ fail                   │
+│                                                                     │
+│  Transaction lifecycle:                                             │
+│  BEGIN → [process] → flush() → clear() → [process] → flush()       │
+│        → clear() → ... → COMMIT/ROLLBACK                           │
+│                                                                     │
+│  Memory pattern: ▲flush=không đổi  clear=drop xuống baseline       │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+**Quick Reference — Khi Nào Gọi Gì:**
+
+```
+Cần gửi SQL ngay để query thấy được      → em.flush()
+Cần giải phóng memory trong batch        → em.flush() rồi em.clear()
+Trước native query                       → em.flush()
+Sau xử lý mỗi batch chunk               → em.flush() + em.clear()
+Cần "reset" entity về DB state          → em.flush() + em.refresh(entity)
+Muốn discard thay đổi chưa flush        → em.clear() (cẩn thận!)
+Xóa 1 entity khỏi L1 (không discard)   → em.detach(entity) sau flush()
+```
+
+---
+
+*Tags: #hibernate #jpa #flush #clear #persistence-context #batch-processing #transaction #memory-management*
