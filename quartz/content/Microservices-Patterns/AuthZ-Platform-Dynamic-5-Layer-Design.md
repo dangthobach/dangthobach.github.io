@@ -922,6 +922,30 @@ ALTER TABLE user_account    REPLICA IDENTITY FULL;  -- thêm cho G2 attribute sy
 
 ---
 
+## Trade-offs & Thực thi thực tế (Implementation Considerations)
+
+Thiết kế này đã giải quyết xong bài toán Hierarchy ở mức kiến trúc Enterprise. Tuy nhiên, có một vài điểm bạn cần lưu ý khi triển khai thực tế:
+
+### 1. Consistency Window (Độ trễ nhất quán)
+Khi dùng bảng Materialized (`relation_reachability`) để tối ưu hiệu năng ReBAC, sẽ có một khoảng trễ nhỏ (vài giây) giữa lúc cập nhật quan hệ (ví dụ: gán quyền ủy quyền mới) và lúc quyền mới có hiệu lực do quá trình recompute async qua CDC/Kafka.
+*   **Giải pháp:**
+    *   **Live Fallback:** ReBacEngine luôn có cơ chế live traversal với giới hạn độ sâu (depth limit) làm fallback khi materialized data chưa sẵn sàng hoặc bị miss.
+    *   **Priority Queue:** Ưu tiên các tác vụ recompute nhỏ (small fan-out) xử lý inline, chỉ đưa các "Big Node" (như group toàn công ty) vào hàng đợi async.
+
+### 2. Memory Usage (Sử dụng bộ nhớ)
+Với các đồ thị (graph) cực lớn và phức tạp, bảng Materialized có thể phình to rất nhanh (Explosion) do lưu trữ mọi cặp đường đi có thể.
+*   **Giải pháp:**
+    *   **Selective Materialization:** Chỉ materialize những quan hệ được truy vấn thường xuyên hoặc có độ sâu lớn. Các quan hệ phẳng (1-hop) có thể truy vấn trực tiếp từ `relation_tuple`.
+    *   **TTL & Cleanup:** Thiết lập chính sách dọn dẹp các đường đi của các quan hệ đã hết hạn (`expires_at`) hoặc các user đã deactivate.
+
+### 3. Cross-domain Join & Data Bloat
+AuthZ thường cần các thuộc tính (attribute) nằm ở các service khác (ví dụ: `shift_status` ở Shift Service, `credit_limit` ở Core Banking). Việc replicate toàn bộ dữ liệu này về IAM DB sẽ gây ra tình trạng "Data Bloat" (phình to dữ liệu) và coupling cao.
+*   **Giải pháp:**
+    *   **JIT (Just-In-Time) Fetching:** Sử dụng cơ chế fetch thuộc tính tại thời điểm evaluate với cache ngắn hạn (30s-60s) và Circuit Breaker để bảo vệ hệ thống.
+    *   **Pre-materialization qua Event:** Đối với các dữ liệu ít thay đổi (như Level, Department), sử dụng Event-driven để đồng bộ vào `relation_tuple` thay vì fetch runtime.
+
+---
+
 ## Mapping vào PDMS Architecture
 
 ```
