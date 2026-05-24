@@ -10,25 +10,49 @@
     <link>https://dangthobach.github.io/knowledge/Database-Patterns/Hibernate-Performance-Deep-Dive</link>
     <guid>https://dangthobach.github.io/knowledge/Database-Patterns/Hibernate-Performance-Deep-Dive</guid>
     <description><![CDATA[ Hibernate Performance Deep Dive — Từ Cơ Bản Đến Nâng Cao Audience: Senior engineer, quen RDBMS, muốn hiểu tại sao Hibernate hoạt động thế — không chỉ cách dùng. ]]></description>
-    <pubDate>Thu, 21 May 2026 17:51:10 GMT</pubDate>
+    <pubDate>Sun, 24 May 2026 13:54:46 GMT</pubDate>
+  </item><item>
+    <title>API-Design-REST-GraphQL-Webhook</title>
+    <link>https://dangthobach.github.io/knowledge/Microservices-Patterns/API-Design-REST-GraphQL-Webhook</link>
+    <guid>https://dangthobach.github.io/knowledge/Microservices-Patterns/API-Design-REST-GraphQL-Webhook</guid>
+    <description><![CDATA[ REST API vs GraphQL vs Webhook vs gRPC — Lựa Chọn Khoa Học Tags: api-design rest graphql webhook grpc architecture microservices Related: 02-Communication · PDMS-Workflow-Optimal-Communication · Transactional-Outbox Status: 🟢 Complete TL;DR — Decision Matrix Tiêu chíREST APIGraphQLWebhookgRPCLuồng ... ]]></description>
+    <pubDate>Sun, 24 May 2026 13:54:46 GMT</pubDate>
   </item><item>
     <title>AuthZ-Platform-Dynamic-5-Layer-Design</title>
     <link>https://dangthobach.github.io/knowledge/Microservices-Patterns/AuthZ-Platform-Dynamic-5-Layer-Design</link>
     <guid>https://dangthobach.github.io/knowledge/Microservices-Patterns/AuthZ-Platform-Dynamic-5-Layer-Design</guid>
     <description><![CDATA[ AuthZ Platform — Dynamic 5-Layer Design Context: Thiết kế nền tảng phân quyền động cho enterprise system, áp dụng cho PDMS (Physical Document Management System) tại VPBank và mọi bài toán doanh nghiệp quy mô lớn. ]]></description>
-    <pubDate>Tue, 19 May 2026 06:47:23 GMT</pubDate>
+    <pubDate>Sun, 24 May 2026 13:54:46 GMT</pubDate>
+  </item><item>
+    <title>A Crash Course on Cell-based Architecture</title>
+    <link>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Crash-Course-on-Cell-based-Architecture</link>
+    <guid>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Crash-Course-on-Cell-based-Architecture</guid>
+    <description><![CDATA[ No one wants to sail in a ship that can sink because of a single hull breach. ]]></description>
+    <pubDate>Sun, 24 May 2026 13:54:46 GMT</pubDate>
+  </item><item>
+    <title>Mastering OOP Fundamentals with SOLID Principles</title>
+    <link>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Mastering-OOP-Fundamentals-with-SOLID-Principles</link>
+    <guid>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Mastering-OOP-Fundamentals-with-SOLID-Principles</guid>
+    <description><![CDATA[ Imagine trying to build a complex machine, but instead of using pre-made, reusable parts, we have to carve each component. ]]></description>
+    <pubDate>Sun, 24 May 2026 13:54:46 GMT</pubDate>
+  </item><item>
+    <title>Oauth2</title>
+    <link>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Oauth2</link>
+    <guid>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Oauth2</guid>
+    <description><![CDATA[ Imagine you have a special box called a JWT. Inside this box, there are three parts: a header, a payload, and a signature. ]]></description>
+    <pubDate>Sun, 24 May 2026 13:54:46 GMT</pubDate>
+  </item><item>
+    <title>Understanding Database Types</title>
+    <link>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Understanding-Database-Types</link>
+    <guid>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Understanding-Database-Types</guid>
+    <description><![CDATA[ The success of a software application often hinges on the choice of the right databases. ]]></description>
+    <pubDate>Sun, 24 May 2026 13:54:46 GMT</pubDate>
   </item><item>
     <title>Kafka-Troubleshooting-and-Tips</title>
     <link>https://dangthobach.github.io/knowledge/Microservices-Patterns/Kafka-Troubleshooting-and-Tips</link>
     <guid>https://dangthobach.github.io/knowledge/Microservices-Patterns/Kafka-Troubleshooting-and-Tips</guid>
     <description><![CDATA[ 🔥 Kafka — Troubleshooting, Errors &amp; Tips Mục tiêu: Catalog đầy đủ các lỗi, sự cố thường gặp khi triển khai Kafka production, kèm nguyên nhân gốc rễ, cách chẩn đoán nhanh và fix. ]]></description>
     <pubDate>Sun, 17 May 2026 15:42:10 GMT</pubDate>
-  </item><item>
-    <title>API-Design-REST-GraphQL-Webhook</title>
-    <link>https://dangthobach.github.io/knowledge/Microservices-Patterns/API-Design-REST-GraphQL-Webhook</link>
-    <guid>https://dangthobach.github.io/knowledge/Microservices-Patterns/API-Design-REST-GraphQL-Webhook</guid>
-    <description><![CDATA[ REST API vs GraphQL vs Webhook vs gRPC — Lựa Chọn Khoa Học Tags: api-design rest graphql webhook grpc architecture microservices Related: 02-Communication · PDMS-Workflow-Optimal-Communication · Transactional-Outbox Status: 🟢 Complete TL;DR — Decision Matrix Tiêu chíREST APIGraphQLWebhookgRPCLuồng ... ]]></description>
-    <pubDate>Sun, 17 May 2026 03:17:38 GMT</pubDate>
   </item><item>
     <title>Cross-Service-Join-AuthZ-Fine-Grained-Filter</title>
     <link>https://dangthobach.github.io/knowledge/Microservices-Patterns/Cross-Service-Join-AuthZ-Fine-Grained-Filter</link>
@@ -41,30 +65,6 @@
     <guid>https://dangthobach.github.io/knowledge/Microservices-Patterns/gRPC-Deep-Dive</guid>
     <description><![CDATA[ 🚀 gRPC Deep Dive: Cơ chế, Triển khai &amp; Chiến lược sử dụng Lưu ý: Bài viết này tập trung vào gRPC (Google Remote Procedure Call) — framework RPC hiện đại và phổ biến nhất hiện nay cho các hệ thống phân tán. ]]></description>
     <pubDate>Sat, 16 May 2026 18:01:57 GMT</pubDate>
-  </item><item>
-    <title>02-Components-The-Building-Blocks</title>
-    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/02-Components-The-Building-Blocks</link>
-    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/02-Components-The-Building-Blocks</guid>
-    <description><![CDATA[ 02. Component: Viên gạch xây nhà 🧱 Bài học nền tảng — Mọi thứ trong Angular đều là Component. ]]></description>
-    <pubDate>Sat, 16 May 2026 17:39:23 GMT</pubDate>
-  </item><item>
-    <title>03-Data-Binding-and-Event-Handling</title>
-    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/03-Data-Binding-and-Event-Handling</link>
-    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/03-Data-Binding-and-Event-Handling</guid>
-    <description><![CDATA[ 03. ]]></description>
-    <pubDate>Sat, 16 May 2026 17:39:23 GMT</pubDate>
-  </item><item>
-    <title>07-RxJS-and-Observables-Foundation</title>
-    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/07-RxJS-and-Observables-Foundation</link>
-    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/07-RxJS-and-Observables-Foundation</guid>
-    <description><![CDATA[ 07. ]]></description>
-    <pubDate>Sat, 16 May 2026 17:39:23 GMT</pubDate>
-  </item><item>
-    <title>09-Reactive-Forms-Mastery</title>
-    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/09-Reactive-Forms-Mastery</link>
-    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/09-Reactive-Forms-Mastery</guid>
-    <description><![CDATA[ 09. ]]></description>
-    <pubDate>Sat, 16 May 2026 17:39:23 GMT</pubDate>
   </item>
     </channel>
   </rss>
