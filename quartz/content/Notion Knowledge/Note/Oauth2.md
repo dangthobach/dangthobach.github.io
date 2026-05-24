@@ -7,7 +7,7 @@ tags:
 ---
 Imagine you have a special box called a JWT. Inside this box, there are three parts: a header, a payload, and a signature.
 
-![[Untitled.webp]]
+![](Untitled.webp)
 
 The header is like the label on the outside of the box. It tells us what type of box it is and how it's secured. It's usually written in a format called JSON, which is just a way to organize information using curly braces { } and colons :
 

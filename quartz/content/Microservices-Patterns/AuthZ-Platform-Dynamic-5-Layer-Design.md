@@ -2322,3 +2322,796 @@ SELECT EXISTS (
 | **Gap 7 — Log explosion** | 100M req/ngày → TB/ngày | Sampling (100% DENY, 1% ALLOW) + monthly partitioning + cold storage S3/ClickHouse | ✅ |
 | **EC-7 — Cross-tenant** | Master data dùng chung, tenant isolation quá cứng | Parent-Child tenant hierarchy + `resource_visibility` + TenantAwareAuthzEngine | ✅ |
 | **EC-8 — Circular delegation** | Temporal cycle không bị detect bởi static trigger | Temporal cycle detection trigger + time-windowed traversal + temporal reachability table | ✅ |
+
+---
+
+## H4 — Org Unit Hierarchy: Thiết kế Triệt để
+
+> **Gap gốc rễ:** `permission.scope` với 3 giá trị hardcode (`own`, `branch`, `all`) không thể express cấu trúc tổ chức thực tế của doanh nghiệp. "Giám đốc Vùng Bắc thấy toàn bộ document của tất cả chi nhánh trong Vùng Bắc" — không có cách nào model bằng schema cũ mà không viết escape hatch SQL.
+
+---
+
+### Phân tích Edge Cases trước khi thiết kế
+
+| Edge Case | Mô tả | Phải xử lý |
+|-----------|-------|------------|
+| EC-OU-1 | User thuộc nhiều org unit (matrix org) | ✅ |
+| EC-OU-2 | Org unit bị di chuyển trong cây → path thay đổi | ✅ |
+| EC-OU-3 | `ORG_SUBTREE` tại root → thấy toàn bộ, không loop | ✅ |
+| EC-OU-4 | Resource không có `org_unit_id` — fallback behavior | ✅ |
+| EC-OU-5 | User chuyển org unit đột ngột → cache invalidation | ✅ |
+| EC-OU-6 | Cross-org delegation (ủy quyền cho người ở branch khác) | ✅ |
+| EC-OU-7 | Org unit bị deactivate → user trong đó mất quyền | ✅ |
+| EC-OU-8 | User có cả `OWN` + `ORG_SUBTREE` cùng resource type → union | ✅ |
+| EC-OU-9 | Org unit cycle (A parent của B, B parent của A) | ✅ |
+| EC-OU-10 | Permission scope thay đổi mid-flight (trong 1 session dài) | ✅ |
+
+---
+
+### Schema — Org Unit Hierarchy
+
+```sql
+-- Cài extension ltree nếu chưa có
+CREATE EXTENSION IF NOT EXISTS ltree;
+
+-- Org unit tree — đại diện cho cấu trúc tổ chức thực tế
+CREATE TABLE org_unit (
+    id          UUID     PRIMARY KEY DEFAULT gen_random_uuid(),
+    tenant_id   UUID     NOT NULL REFERENCES tenant(id),
+    code        VARCHAR(100) NOT NULL,
+    name        VARCHAR(200) NOT NULL,
+    unit_type   VARCHAR(50)  NOT NULL
+                CHECK (unit_type IN (
+                    'ROOT',         -- gốc của toàn tenant
+                    'REGION',       -- vùng/khu vực
+                    'BRANCH',       -- chi nhánh
+                    'DEPARTMENT',   -- phòng/ban
+                    'TEAM',         -- tổ/nhóm
+                    'VIRTUAL'       -- nhóm ảo (project team, task force)
+                )),
+    parent_id   UUID     REFERENCES org_unit(id),
+    path        LTREE    NOT NULL,   -- 'root.region_north.branch_hn01.dept_credit'
+    depth       INT      GENERATED ALWAYS AS (nlevel(path)) STORED,
+    is_active   BOOLEAN  NOT NULL DEFAULT true,
+    metadata    JSONB    DEFAULT '{}',   -- thông tin bổ sung per unit_type
+    created_at  TIMESTAMPTZ DEFAULT now(),
+    updated_at  TIMESTAMPTZ DEFAULT now(),
+    UNIQUE(tenant_id, code),
+    UNIQUE(tenant_id, path)
+);
+
+-- Index quan trọng nhất — GiST cho ltree operations (<@, @>, ~, ?)
+CREATE INDEX idx_org_unit_path_gist ON org_unit USING GIST(path);
+-- BTree cho lookup chính xác
+CREATE INDEX idx_org_unit_path_btree ON org_unit(tenant_id, path);
+CREATE INDEX idx_org_unit_parent ON org_unit(parent_id) WHERE parent_id IS NOT NULL;
+CREATE INDEX idx_org_unit_active ON org_unit(tenant_id, unit_type) WHERE is_active = true;
+```
+
+**Tại sao dùng LTREE thay vì self-reference + WITH RECURSIVE:**
+- `WITH RECURSIVE` cho subtree query là O(n) scan với mỗi request. LTREE index cho phép subtree query O(log n).
+- LTREE `path <@ 'root.north'` tìm toàn bộ con cháu trong 1 index scan — không recursive.
+- Di chuyển org unit chỉ cần UPDATE path — `WITH RECURSIVE` không có khái niệm path, phải recompute toàn bộ.
+- Path có thể dùng để debug và audit trực tiếp mà không cần JOIN.
+
+---
+
+### EC-OU-9 — Cycle Prevention tại write time
+
+```sql
+-- Trigger: ngăn cycle khi set parent_id
+-- (path LTREE tự ngăn cycle vì path phải unique và acyclic)
+CREATE OR REPLACE FUNCTION enforce_org_unit_no_cycle()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Không cho set parent_id = chính nó
+    IF NEW.parent_id = NEW.id THEN
+        RAISE EXCEPTION 'org_unit cannot be its own parent: id=%', NEW.id;
+    END IF;
+
+    -- Không cho set parent_id là descendant của chính nó
+    IF NEW.parent_id IS NOT NULL THEN
+        IF EXISTS (
+            SELECT 1 FROM org_unit
+            WHERE id        = NEW.parent_id
+              AND tenant_id = NEW.tenant_id
+              AND path <@ (SELECT path FROM org_unit WHERE id = NEW.id)
+        ) THEN
+            RAISE EXCEPTION
+                'Cycle detected: org_unit % cannot have descendant % as parent',
+                NEW.id, NEW.parent_id;
+        END IF;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_org_unit_no_cycle
+    BEFORE INSERT OR UPDATE OF parent_id ON org_unit
+    FOR EACH ROW EXECUTE FUNCTION enforce_org_unit_no_cycle();
+```
+
+---
+
+### EC-OU-2 — Org Unit Move: Cascade Path Update
+
+Khi một org unit bị di chuyển (VD: `branch_dn01` chuyển từ `region_central` sang `region_south`), toàn bộ descendants phải update path:
+
+```sql
+CREATE OR REPLACE FUNCTION cascade_org_unit_path_update()
+RETURNS TRIGGER AS $$
+DECLARE
+    old_path LTREE := OLD.path;
+    new_path LTREE := NEW.path;
+BEGIN
+    -- Chỉ cascade khi path thực sự thay đổi
+    IF old_path = new_path THEN RETURN NEW; END IF;
+
+    -- Update tất cả descendant: thay prefix old_path bằng new_path
+    UPDATE org_unit
+    SET path       = new_path || subpath(path, nlevel(old_path)),
+        updated_at = now()
+    WHERE tenant_id = NEW.tenant_id
+      AND path <@ old_path          -- là descendant của old path
+      AND id    != NEW.id;          -- không update chính nó (đã update)
+
+    -- Invalidate cache cho toàn bộ subtree bị ảnh hưởng
+    -- (async via NOTIFY → application picks up)
+    PERFORM pg_notify(
+        'org_unit_path_changed',
+        json_build_object(
+            'tenant_id', NEW.tenant_id,
+            'old_path',  old_path::text,
+            'new_path',  new_path::text
+        )::text
+    );
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_cascade_org_path
+    AFTER UPDATE OF path, parent_id ON org_unit
+    FOR EACH ROW EXECUTE FUNCTION cascade_org_unit_path_update();
+```
+
+Application listen `NOTIFY` và invalidate cache:
+
+```java
+@Component
+public class OrgUnitPathChangeListener {
+
+    @EventListener
+    public void onOrgUnitPathChanged(OrgUnitPathChangedEvent event) {
+        // Invalidate tất cả cached AuthZ context có org_unit trong subtree bị move
+        String pattern = "authz:orgunit:" + event.getTenantId() + ":" + event.getOldPath() + "*";
+        Set<String> keys = redisTemplate.opsForSet().members(
+            "authz:idx:orgpath:" + event.getTenantId() + ":" + event.getOldPath());
+        if (keys != null && !keys.isEmpty()) {
+            redisTemplate.delete(keys);
+        }
+        log.info("Invalidated AuthZ cache for org unit path change: {} → {}",
+            event.getOldPath(), event.getNewPath());
+    }
+}
+```
+
+---
+
+### EC-OU-7 — Deactivated Org Unit: Access Revocation
+
+```sql
+-- Trigger: khi org unit bị deactivate → deactivate toàn bộ subtree
+CREATE OR REPLACE FUNCTION cascade_org_unit_deactivate()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF OLD.is_active = true AND NEW.is_active = false THEN
+        -- Deactivate toàn bộ descendant
+        UPDATE org_unit
+        SET is_active  = false,
+            updated_at = now()
+        WHERE tenant_id = NEW.tenant_id
+          AND path <@ NEW.path
+          AND id != NEW.id;
+
+        -- Thông báo để application invalidate cache và revoke active sessions
+        PERFORM pg_notify(
+            'org_unit_deactivated',
+            json_build_object(
+                'tenant_id', NEW.tenant_id,
+                'path',      NEW.path::text,
+                'unit_id',   NEW.id
+            )::text
+        );
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_cascade_deactivate
+    AFTER UPDATE OF is_active ON org_unit
+    FOR EACH ROW EXECUTE FUNCTION cascade_org_unit_deactivate();
+```
+
+---
+
+### EC-OU-1 — User thuộc nhiều Org Unit (Matrix Org)
+
+```sql
+-- User-to-OrgUnit mapping: nhiều-nhiều, có thể có primary unit
+CREATE TABLE user_org_unit (
+    user_id        UUID     NOT NULL REFERENCES user_account(id),
+    org_unit_id    UUID     NOT NULL REFERENCES org_unit(id),
+    is_primary     BOOLEAN  NOT NULL DEFAULT false,  -- đơn vị chính của user
+    role_in_unit   VARCHAR(100),                     -- vai trò trong đơn vị này (VD: 'LEAD', 'MEMBER')
+    assigned_at    TIMESTAMPTZ DEFAULT now(),
+    expires_at     TIMESTAMPTZ DEFAULT NULL,          -- temporary assignment
+    PRIMARY KEY(user_id, org_unit_id)
+);
+
+-- Constraint: mỗi user chỉ có tối đa 1 primary unit
+CREATE UNIQUE INDEX idx_user_primary_unit
+    ON user_org_unit(user_id) WHERE is_primary = true;
+
+CREATE INDEX idx_user_org_unit_active
+    ON user_org_unit(org_unit_id, user_id)
+    WHERE expires_at IS NULL OR expires_at > NOW();
+```
+
+---
+
+### Permission Scope — Thay thế `scope VARCHAR` hardcode
+
+```sql
+-- Xóa column scope cũ, thay bằng scope_type có semantic rõ ràng
+ALTER TABLE permission DROP COLUMN IF EXISTS scope;
+
+ALTER TABLE permission ADD COLUMN scope_type VARCHAR(30) NOT NULL DEFAULT 'OWN'
+    CHECK (scope_type IN (
+        'OWN',          -- chỉ resource do chính user tạo (owner_id = user_id)
+        'ORG_UNIT',     -- chỉ resource thuộc đúng org unit hiện tại của user
+        'ORG_SUBTREE',  -- resource thuộc org unit của user VÀ toàn bộ cây con bên dưới
+        'ORG_ANCESTORS',-- resource thuộc org unit của user VÀ tất cả tổ tiên (ít dùng)
+        'ALL'           -- toàn bộ tenant (không giới hạn org)
+    ));
+
+-- scope_unit_types: giới hạn scope chỉ áp dụng cho một số unit_type nhất định
+-- VD: BRANCH_MANAGER chỉ thấy ORG_SUBTREE nhưng chỉ xuống đến DEPARTMENT, không xuống TEAM
+ALTER TABLE permission ADD COLUMN scope_max_depth INT DEFAULT NULL;
+-- NULL = không giới hạn depth trong subtree
+-- 1 = chỉ org unit hiện tại + 1 cấp con trực tiếp
+-- 2 = 2 cấp con, v.v.
+```
+
+**Ví dụ permissions với scope_type mới:**
+
+```sql
+-- Nhân viên: chỉ thấy document của mình
+INSERT INTO permission (tenant_id, code, resource_type, action, scope_type)
+VALUES (:tid, 'doc:read:own', 'document', 'read', 'OWN');
+
+-- Trưởng phòng: thấy document của toàn phòng (ORG_UNIT chính xác)
+INSERT INTO permission (tenant_id, code, resource_type, action, scope_type)
+VALUES (:tid, 'doc:read:dept', 'document', 'read', 'ORG_UNIT');
+
+-- Giám đốc chi nhánh: thấy document của toàn bộ chi nhánh + phòng con
+INSERT INTO permission (tenant_id, code, resource_type, action, scope_type, scope_max_depth)
+VALUES (:tid, 'doc:read:branch', 'document', 'read', 'ORG_SUBTREE', NULL);
+
+-- Giám đốc vùng: thấy document của toàn vùng (bao gồm mọi chi nhánh trong vùng)
+INSERT INTO permission (tenant_id, code, resource_type, action, scope_type)
+VALUES (:tid, 'doc:read:region', 'document', 'read', 'ORG_SUBTREE');
+
+-- Admin toàn quốc
+INSERT INTO permission (tenant_id, code, resource_type, action, scope_type)
+VALUES (:tid, 'doc:read:all', 'document', 'read', 'ALL');
+```
+
+---
+
+### Resource — thêm org_unit_id
+
+```sql
+-- Các bảng resource trong domain service cần có org_unit_id
+-- (thêm vào bảng document trong domain, không phải trong IAM)
+ALTER TABLE document ADD COLUMN org_unit_id UUID REFERENCES org_unit(id);
+CREATE INDEX idx_document_org_unit ON document(org_unit_id);
+```
+
+`org_unit_id = NULL` trên resource là hợp lệ — resource global/unscoped. Xem EC-OU-4 để biết fallback behavior.
+
+---
+
+### Org Unit Scope Resolver — Engine Core
+
+```java
+@Service
+public class OrgUnitScopeResolver {
+
+    /**
+     * Resolve scope thành SQL predicate cho WHERE clause.
+     * Đây là trái tim của Org Unit Hierarchy — một method, toàn bộ logic scope.
+     *
+     * @return FilterResult chứa SQL predicate + params
+     */
+    public FilterResult resolve(Permission permission, AuthzContext ctx, String resourceTable) {
+        List<UserOrgUnit> userUnits = userOrgUnitRepo.findActiveByUser(
+            ctx.getUserId(), ctx.getTenantId());
+
+        // EC-OU-7: tất cả org unit của user phải active
+        List<UserOrgUnit> activeUnits = userUnits.stream()
+            .filter(u -> orgUnitRepo.isActive(u.getOrgUnitId()))
+            .toList();
+
+        return switch (permission.getScopeType()) {
+            case OWN          -> resolveOwn(ctx, resourceTable);
+            case ORG_UNIT     -> resolveOrgUnit(activeUnits, permission, resourceTable);
+            case ORG_SUBTREE  -> resolveOrgSubtree(activeUnits, permission, resourceTable);
+            case ORG_ANCESTORS-> resolveOrgAncestors(activeUnits, resourceTable);
+            case ALL          -> FilterResult.noFilter();  // không thêm WHERE nào
+        };
+    }
+
+    // OWN: chỉ resource do chính user tạo
+    private FilterResult resolveOwn(AuthzContext ctx, String table) {
+        return new FilterResult(
+            table + ".created_by = :ownUserId",
+            Map.of("ownUserId", ctx.getUserId())
+        );
+    }
+
+    // ORG_UNIT: resource thuộc đúng org unit của user (không bao gồm con)
+    private FilterResult resolveOrgUnit(List<UserOrgUnit> units, Permission perm, String table) {
+        if (units.isEmpty()) return FilterResult.denyAll();
+
+        // EC-OU-4: nếu resource không có org_unit_id → không match ORG_UNIT scope
+        List<UUID> unitIds = units.stream()
+            .map(UserOrgUnit::getOrgUnitId).toList();
+        return new FilterResult(
+            table + ".org_unit_id = ANY(:unitIds)",
+            Map.of("unitIds", unitIds.toArray(UUID[]::new))
+        );
+    }
+
+    // ORG_SUBTREE: resource thuộc org unit của user VÀ toàn bộ cây con
+    private FilterResult resolveOrgSubtree(List<UserOrgUnit> units, Permission perm, String table) {
+        if (units.isEmpty()) return FilterResult.denyAll();
+
+        // Lấy paths của tất cả org unit user thuộc về
+        List<String> paths = units.stream()
+            .map(u -> orgUnitRepo.getPath(u.getOrgUnitId()))
+            .toList();
+
+        // EC-OU-3: nếu user ở ROOT → path là 'root' → <@ 'root' = toàn bộ
+        // Không cần special case — LTREE tự xử lý
+
+        // scope_max_depth: giới hạn độ sâu tối đa trong subtree
+        String depthFilter = "";
+        Map<String, Object> params = new HashMap<>();
+
+        if (perm.getScopeMaxDepth() != null) {
+            // Chỉ include node có depth <= user_depth + scope_max_depth
+            // VD: user ở depth 3, scope_max_depth=2 → chỉ include depth <= 5
+            int maxAbsoluteDepth = paths.stream()
+                .mapToInt(p -> p.split("\\.").length)
+                .max().orElse(0) + perm.getScopeMaxDepth();
+            depthFilter = " AND nlevel(" + table + "_ou.path) <= :maxDepth";
+            params.put("maxDepth", maxAbsoluteDepth);
+        }
+
+        // EC-OU-1: User có nhiều org unit → OR tất cả subtree
+        // Dùng subquery để tránh JOIN phức tạp
+        String pathCondition = buildLtreeSubtreeCondition(paths, table, depthFilter);
+        params.put("orgPaths", paths.toArray(String[]::new));
+
+        return new FilterResult(pathCondition, params);
+    }
+
+    private String buildLtreeSubtreeCondition(List<String> paths, String table, String depthFilter) {
+        // SQL: resource.org_unit_id IN (
+        //   SELECT id FROM org_unit
+        //   WHERE (path <@ 'root.north' OR path <@ 'root.south')  -- EC-OU-1: nhiều org unit
+        //   AND is_active = true
+        //   {depthFilter}
+        // ) OR resource.org_unit_id IS NULL  -- EC-OU-4: resource global
+        StringBuilder sb = new StringBuilder();
+        sb.append("(").append(table).append(".org_unit_id IN (")
+          .append("SELECT id FROM org_unit WHERE (");
+
+        for (int i = 0; i < paths.size(); i++) {
+            if (i > 0) sb.append(" OR ");
+            sb.append("path <@ :orgPaths[").append(i + 1).append("]");
+        }
+        sb.append(") AND is_active = true").append(depthFilter)
+          .append(") OR ").append(table).append(".org_unit_id IS NULL)");
+        // EC-OU-4: resource không có org_unit_id → visible với ORG_SUBTREE
+
+        return sb.toString();
+    }
+
+    // ORG_ANCESTORS: resource thuộc cấp trên của user (ít dùng, VD: báo cáo lên trên)
+    private FilterResult resolveOrgAncestors(List<UserOrgUnit> units, String table) {
+        if (units.isEmpty()) return FilterResult.denyAll();
+
+        List<String> paths = units.stream()
+            .map(u -> orgUnitRepo.getPath(u.getOrgUnitId()))
+            .toList();
+
+        // @> là "is ancestor of or equal" — ngược với <@
+        String pathCondition = buildLtreeAncestorCondition(paths, table);
+        return new FilterResult(pathCondition, Map.of("orgPaths", paths.toArray(String[]::new)));
+    }
+
+    private String buildLtreeAncestorCondition(List<String> paths, String table) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(table).append(".org_unit_id IN (")
+          .append("SELECT id FROM org_unit WHERE (");
+        for (int i = 0; i < paths.size(); i++) {
+            if (i > 0) sb.append(" OR ");
+            // @> : org_unit.path là ancestor của user path
+            sb.append("path @> :orgPaths[").append(i + 1).append("]");
+        }
+        sb.append(") AND is_active = true)");
+        return sb.toString();
+    }
+}
+```
+
+---
+
+### EC-OU-4 — Resource không có org_unit_id: Fallback Policy
+
+```sql
+-- Config per resource_type: hành vi khi resource không có org_unit_id
+ALTER TABLE resource_type ADD COLUMN unscoped_resource_policy VARCHAR(20)
+    NOT NULL DEFAULT 'VISIBLE_TO_ALL'
+    CHECK (unscoped_resource_policy IN (
+        'VISIBLE_TO_ALL',  -- resource global: mọi user trong tenant đều thấy
+        'VISIBLE_TO_NONE', -- resource private: không ai thấy nếu chưa assign org unit
+        'OWNER_ONLY'       -- chỉ owner thấy nếu không có org unit
+    ));
+```
+
+```java
+private String buildLtreeSubtreeCondition(List<String> paths, String table,
+                                           String depthFilter, ResourceType rt) {
+    String unscopedClause = switch (rt.getUnscopedResourcePolicy()) {
+        case VISIBLE_TO_ALL  -> " OR " + table + ".org_unit_id IS NULL";
+        case VISIBLE_TO_NONE -> "";  // không thêm OR NULL → bị loại
+        case OWNER_ONLY      -> " OR (" + table + ".org_unit_id IS NULL AND "
+                                + table + ".created_by = :ownUserId)";
+    };
+    // ... rest of builder
+}
+```
+
+---
+
+### EC-OU-8 — Union Scope: User có nhiều Permission khác nhau
+
+Khi user có cả `ROLE_STAFF` (scope: `OWN`) và `ROLE_LEAD` (scope: `ORG_UNIT`), engine phải union cả hai:
+
+```java
+@Service
+public class PermissionScopeAggregator {
+
+    /**
+     * Aggregate nhiều permission scope thành 1 SQL predicate duy nhất.
+     * Các scope được OR với nhau — user thấy union của tất cả scope có quyền.
+     */
+    public FilterResult aggregate(List<Permission> permissions, AuthzContext ctx,
+                                   String resourceTable, ResourceType rt) {
+        if (permissions.isEmpty()) return FilterResult.denyAll();
+
+        // Kiểm tra nếu có ANY 'ALL' scope → không cần filter gì thêm
+        boolean hasAllScope = permissions.stream()
+            .anyMatch(p -> p.getScopeType() == ScopeType.ALL);
+        if (hasAllScope) return FilterResult.noFilter();
+
+        // Resolve từng scope, OR tất cả lại
+        List<FilterResult> resolved = permissions.stream()
+            .map(p -> orgUnitScopeResolver.resolve(p, ctx, resourceTable))
+            .filter(f -> !f.isDenyAll())
+            .toList();
+
+        if (resolved.isEmpty()) return FilterResult.denyAll();
+
+        // Combine: (scope1_predicate) OR (scope2_predicate) OR ...
+        String combined = resolved.stream()
+            .map(f -> "(" + f.getSql() + ")")
+            .collect(Collectors.joining(" OR "));
+
+        Map<String, Object> allParams = new HashMap<>();
+        resolved.forEach(f -> allParams.putAll(f.getParams()));
+
+        return new FilterResult("(" + combined + ")", allParams);
+    }
+}
+```
+
+---
+
+### EC-OU-5 — Cache Invalidation khi User Chuyển Org Unit
+
+```java
+// Khi user_org_unit thay đổi → Debezium CDC → invalidate cache
+@KafkaListener(topics = "pdms.public.user_org_unit")
+public void onUserOrgUnitChange(UserOrgUnitCdcEvent event) {
+    UUID userId = event.getUserId();
+
+    // Invalidate AuthZ context cache của user này (mang attributes_version)
+    userAccountRepo.incrementAttributesVersion(userId);  // bump version → stale cache miss
+
+    // Invalidate org unit scope cache
+    String indexKey = "authz:idx:user-scope:" + userId;
+    Set<String> scopeKeys = redisTemplate.opsForSet().members(indexKey);
+    if (scopeKeys != null && !scopeKeys.isEmpty()) {
+        List<String> toDelete = new ArrayList<>(scopeKeys);
+        toDelete.add(indexKey);
+        redisTemplate.delete(toDelete);
+    }
+
+    log.info("Invalidated org unit scope cache for user {}", userId);
+}
+
+// Khi org unit path thay đổi (move) → invalidate tất cả user trong subtree bị ảnh hưởng
+@EventListener
+public void onOrgUnitMoved(OrgUnitPathChangedEvent event) {
+    // Lấy tất cả user trong subtree bị move
+    List<UUID> affectedUsers = userOrgUnitRepo.findUsersByOrgSubtreePath(
+        event.getTenantId(), event.getOldPath());
+
+    affectedUsers.forEach(userId -> {
+        userAccountRepo.incrementAttributesVersion(userId);
+        redisTemplate.delete("authz:idx:user-scope:" + userId);
+    });
+
+    log.info("Invalidated scope cache for {} users affected by org unit move {} → {}",
+        affectedUsers.size(), event.getOldPath(), event.getNewPath());
+}
+```
+
+---
+
+### EC-OU-6 — Cross-Org Delegation kết hợp Org Unit Scope
+
+Khi user A (HN01) ủy quyền cho user B (HCM01) — B có thể thấy document trong scope của A không?
+
+Nguyên tắc: delegation **KHÔNG tự động extend org scope**. B chỉ nhận được permission action, không nhận org scope của A. Nếu muốn B thấy document của HN01, phải explicit:
+
+```sql
+-- Delegation với scoped org unit
+CREATE TABLE scoped_delegation (
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    tenant_id       UUID NOT NULL REFERENCES tenant(id),
+    delegator_id    UUID NOT NULL REFERENCES user_account(id),  -- A
+    delegatee_id    UUID NOT NULL REFERENCES user_account(id),  -- B
+    permission_id   UUID NOT NULL REFERENCES permission(id),
+    -- Scope org unit của delegation: A chỉ ủy quyền trong phạm vi nào
+    scope_org_unit_id UUID REFERENCES org_unit(id),  -- NULL = toàn bộ scope của A
+    scope_type_override VARCHAR(30),    -- NULL = dùng scope_type của permission
+    valid_from      TIMESTAMPTZ NOT NULL DEFAULT now(),
+    valid_until     TIMESTAMPTZ,
+    created_by      UUID NOT NULL
+);
+
+CREATE INDEX idx_scoped_delegation_delegatee ON scoped_delegation(delegatee_id, valid_from, valid_until);
+```
+
+Engine resolve scope của B khi B dùng delegated permission:
+
+```java
+public FilterResult resolveDelegatedScope(SccopedDelegation delegation,
+                                           AuthzContext ctx, String table, ResourceType rt) {
+    if (delegation.getScopeOrgUnitId() != null) {
+        // Delegation bị giới hạn trong org unit cụ thể của A
+        OrgUnit scopeUnit = orgUnitRepo.findById(delegation.getScopeOrgUnitId());
+        String scopeType = delegation.getScopeTypeOverride() != null
+            ? delegation.getScopeTypeOverride()
+            : delegation.getPermission().getScopeType().name();
+
+        // Resolve scope nhưng dùng org unit của delegation, không phải của B
+        return resolveWithExplicitOrgUnit(scopeUnit, scopeType, table, rt);
+    }
+    // Không có scope_org_unit_id → dùng scope của A tại thời điểm ủy quyền
+    // (snapshot scope, không dynamic theo org A)
+    return orgUnitScopeResolver.resolve(delegation.getPermission(), ctx, table);
+}
+```
+
+---
+
+### AST Node Type mới: `org_scope`
+
+Để cho phép policy engine evaluate org scope trong condition_expr, thêm node type `org_scope`:
+
+```json
+{
+  "operator": "AND",
+  "conditions": [
+    {
+      "left":  { "type": "org_scope", "scope_type": "ORG_SUBTREE", "max_depth": null },
+      "op":    "contains_resource",
+      "right": { "type": "resource_field", "key": "orgUnitId" }
+    },
+    {
+      "left":  { "type": "resource_field", "key": "status" },
+      "op":    "in",
+      "right": { "type": "literal", "value": ["ACTIVE", "PENDING_REVIEW"] }
+    }
+  ]
+}
+```
+
+Node `org_scope` với operator `contains_resource` trigger `OrgUnitScopeResolver.resolve()` tại evaluation time — kết quả được inject vào SQL predicate như các node khác.
+
+```java
+// Trong SqlFilterTranslator
+private FilterResult translateOrgScopeNode(JsonNode node, AuthzContext ctx,
+                                            ResourceType rt, String table) {
+    String scopeType = node.get("left").get("scope_type").asText("ORG_UNIT");
+    Integer maxDepth = node.get("left").has("max_depth")
+        && !node.get("left").get("max_depth").isNull()
+        ? node.get("left").get("max_depth").asInt() : null;
+
+    // Tạo permission tạm để resolve scope
+    Permission tempPerm = Permission.builder()
+        .scopeType(ScopeType.valueOf(scopeType))
+        .scopeMaxDepth(maxDepth)
+        .build();
+
+    return orgUnitScopeResolver.resolve(tempPerm, ctx, table);
+}
+```
+
+---
+
+### Query Examples — Verify Correctness
+
+```sql
+-- 1. Lấy tất cả document mà Giám đốc vùng Bắc (path: root.north) được thấy
+--    Permission scope_type: ORG_SUBTREE
+SELECT d.*
+FROM document d
+WHERE d.org_unit_id IN (
+    SELECT id FROM org_unit
+    WHERE path <@ 'root.north'   -- tất cả chi nhánh, phòng trong vùng Bắc
+      AND is_active = true
+)
+OR d.org_unit_id IS NULL;         -- EC-OU-4: document global
+
+-- 2. Lấy document với scope_max_depth=1 (Branch Manager chỉ thấy phòng trực tiếp)
+--    User path: root.north.hn01 (depth=3), max_depth=1 → chỉ đến depth=4
+SELECT d.*
+FROM document d
+WHERE d.org_unit_id IN (
+    SELECT id FROM org_unit
+    WHERE path <@ 'root.north.hn01'
+      AND nlevel(path) <= 4        -- depth 3 (branch) + 1
+      AND is_active = true
+);
+
+-- 3. EC-OU-1: User vừa ở HN01 vừa ở project team (2 org unit)
+SELECT d.*
+FROM document d
+WHERE d.org_unit_id IN (
+    SELECT id FROM org_unit
+    WHERE (path <@ 'root.north.hn01' OR path <@ 'root.virtual.project_x')
+      AND is_active = true
+)
+OR d.org_unit_id IS NULL;
+
+-- 4. EC-OU-8: User có scope OWN + ORG_UNIT → union
+SELECT d.*
+FROM document d
+WHERE (
+    d.created_by = :userId                         -- OWN scope
+    OR d.org_unit_id = :userPrimaryOrgUnitId       -- ORG_UNIT scope
+);
+
+-- 5. Verify LTREE performance: check path operation plans
+EXPLAIN ANALYZE
+SELECT id FROM org_unit WHERE path <@ 'root.north';
+-- Kỳ vọng: "Index Scan using idx_org_unit_path_gist" — không Seq Scan
+```
+
+---
+
+### Cập nhật P1 — Batched Query với Org Unit
+
+Query P1 trong Performance section được cập nhật để join thêm org unit context:
+
+```sql
+SELECT
+    p.id              AS permission_id,
+    p.action,
+    p.scope_type,
+    p.scope_max_depth,
+    rf.filter_expr    AS row_filter_expr,
+    ff.allowed_fields,
+    ff.masked_fields,
+    pol.effect        AS policy_effect,
+    pol.priority      AS policy_priority,
+    -- Org unit context của user — phục vụ scope resolver
+    array_agg(DISTINCT ou.path::text)  AS user_org_paths,
+    array_agg(DISTINCT uou.org_unit_id) AS user_org_unit_ids,
+    bool_or(uou.is_primary)            AS has_primary_unit
+FROM user_role ur
+JOIN LATERAL (
+    WITH RECURSIVE role_tree AS (
+        SELECT id, parent_role_id FROM role WHERE id = ur.role_id
+        UNION ALL
+        SELECT r2.id, r2.parent_role_id FROM role r2
+        JOIN role_tree rt ON r2.id = rt.parent_role_id
+    ) SELECT id FROM role_tree
+) r_hier ON true
+JOIN role r ON r.id = r_hier.id
+JOIN role_permission rp ON rp.role_id = r.id
+JOIN permission p ON p.id = rp.permission_id AND p.resource_type = :resourceType
+LEFT JOIN row_filter  rf ON rf.permission_id = p.id AND rf.resource_type = :resourceType AND rf.is_active
+LEFT JOIN field_filter ff ON ff.permission_id = p.id AND ff.resource_type = :resourceType
+LEFT JOIN policy_rule pr ON pr.resource_type = :resourceType AND pr.action = p.action
+JOIN policy pol ON pol.id = pr.policy_id AND pol.is_active
+-- Org unit join
+LEFT JOIN user_org_unit uou ON uou.user_id = ur.user_id
+    AND (uou.expires_at IS NULL OR uou.expires_at > NOW())
+LEFT JOIN org_unit ou ON ou.id = uou.org_unit_id AND ou.is_active = true
+WHERE ur.user_id   = :userId
+  AND ur.tenant_id = :tenantId
+  AND (ur.expires_at IS NULL OR ur.expires_at > NOW())
+GROUP BY p.id, p.action, p.scope_type, p.scope_max_depth,
+         rf.filter_expr, ff.allowed_fields, ff.masked_fields,
+         pol.effect, pol.priority
+ORDER BY pol.priority DESC;
+```
+
+---
+
+### RLS Safety Net — Org Unit aware
+
+```sql
+-- RLS policy mới: kết hợp branch isolation + org unit path
+-- set_config('app.user_org_paths', 'root.north.hn01,root.virtual.proj_x', false)
+
+CREATE POLICY doc_org_unit_isolation ON document
+    AS PERMISSIVE FOR SELECT TO pdms_app_role
+    USING (
+        -- EC-OU-4: resource global luôn visible
+        org_unit_id IS NULL
+        OR
+        -- Org subtree check qua session variable
+        org_unit_id IN (
+            SELECT id FROM org_unit
+            WHERE path <@ ANY(
+                string_to_array(
+                    current_setting('app.user_org_paths', true), ','
+                )::ltree[]
+            )
+            AND is_active = true
+        )
+        OR
+        -- Admin bypass
+        current_setting('app.bypass_rls', true) = 'true'
+    );
+```
+
+---
+
+### Gap Resolution Matrix — Org Unit Hierarchy
+
+| Edge Case | Vấn đề | Giải pháp | Status |
+|-----------|---------|-----------|--------|
+| EC-OU-1 — Matrix org | User nhiều org unit | `user_org_unit` many-many + OR paths trong LTREE | ✅ |
+| EC-OU-2 — Org unit move | Path thay đổi → stale data | Trigger cascade path update + NOTIFY → cache invalidation | ✅ |
+| EC-OU-3 — Root scope | ORG_SUBTREE tại root = all | LTREE `<@` tự xử lý, không cần special case | ✅ |
+| EC-OU-4 — Unscoped resource | org_unit_id IS NULL | `unscoped_resource_policy` per resource_type + OR IS NULL | ✅ |
+| EC-OU-5 — User transfer | Org unit thay đổi → stale cache | CDC `user_org_unit` → bump `attributes_version` → cache miss | ✅ |
+| EC-OU-6 — Cross-org delegation | Scope không tự extend | `scoped_delegation` với explicit `scope_org_unit_id` | ✅ |
+| EC-OU-7 — Deactivate | Org unit tắt → user mất quyền | Trigger cascade deactivate + NOTIFY revoke | ✅ |
+| EC-OU-8 — Union scope | OWN + ORG_UNIT → union | `PermissionScopeAggregator` OR tất cả scope | ✅ |
+| EC-OU-9 — Cycle | A parent B, B parent A | Trigger `enforce_org_unit_no_cycle` + LTREE acyclic by design | ✅ |
+| EC-OU-10 — Mid-flight change | Permission change trong session | `attributes_version` bump → cache miss ngay request tiếp theo | ✅ |
+| H3 — Multi-level tenant | 1-level parent limitation | `tenant.path LTREE` + `@>` ancestor query | ✅ |
+| H5 — Resource type inherit | Flat resource_type, không inherit | `resource_type.parent_type_id` + RECURSIVE schema merge | ✅ |
+| H6 — Nested groups | No group_type semantic | `group_type` enum trong `relation_tuple` context | ✅ |
+
