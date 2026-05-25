@@ -4,7 +4,7 @@ Created time: 2025-08-30T22:40
 ---
 The success of a software application often hinges on the choice of the right databases. As developers, we're faced with a vast array of database options. It is crucial for us to understand the differences between these options and how to select the ones that best align with our project's requirements. A complex application usually uses several different databases, each catering to a specific aspect of the application’s needs.
 
-![](image.png)
+![[image.png]]
 
 In this comprehensive three-part series, we’ll explore the art of database selection. We’ll arm ourselves with the knowledge necessary to make informed decisions when faced with the challenge of choosing databases for various components of our application. We will dive into the process of database selection, examining the various types of databases, discussing factors that influence database performance and cost, and guiding ourselves toward the best choices for our application while balancing essential tradeoffs.
 

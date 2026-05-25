@@ -91,8 +91,8 @@ async function sync() {
     });
 
     // 4. Xử lý Markdown Links sau khi copy
-    console.log('🔄 Đang chuyển đổi Obsidian Image Links...');
-    processMarkdownFiles(CONTENT_PATH);
+    // console.log('🔄 Đang chuyển đổi Obsidian Image Links...');
+    // processMarkdownFiles(CONTENT_PATH);
 
     // 5. Đảm bảo có file index.md
     const indexDest = path.join(CONTENT_PATH, 'index.md');
