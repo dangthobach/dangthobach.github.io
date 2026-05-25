@@ -6,65 +6,65 @@
       <description>Last 10 notes on Dang Tho Bach&#039;s Knowledge Base</description>
       <generator>Quartz -- quartz.jzhao.xyz</generator>
       <item>
+    <title>21-Error-Handling-Global-Patterns</title>
+    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/21-Error-Handling-Global-Patterns</link>
+    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/21-Error-Handling-Global-Patterns</guid>
+    <description><![CDATA[ 21. ]]></description>
+    <pubDate>Mon, 25 May 2026 13:56:44 GMT</pubDate>
+  </item><item>
+    <title>22-Routing-Layout-SearchState</title>
+    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/22-Routing-Layout-SearchState</link>
+    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/22-Routing-Layout-SearchState</guid>
+    <description><![CDATA[ Angular Routing — Layout Cố Định &amp; Search State Preservation tags: angular routing layout search-state frontend 1. ]]></description>
+    <pubDate>Mon, 25 May 2026 13:56:44 GMT</pubDate>
+  </item><item>
+    <title>23-Multiple-Router-Outlets-Named-Auxiliary</title>
+    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/23-Multiple-Router-Outlets-Named-Auxiliary</link>
+    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/23-Multiple-Router-Outlets-Named-Auxiliary</guid>
+    <description><![CDATA[ Multiple Router Outlets trong SPA — Named &amp; Auxiliary Routes tags: angular react solidjs routing named-outlet auxiliary-route 1. ]]></description>
+    <pubDate>Mon, 25 May 2026 13:56:44 GMT</pubDate>
+  </item><item>
+    <title>24-Two-Way-Binding-Internals</title>
+    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/24-Two-Way-Binding-Internals</link>
+    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/24-Two-Way-Binding-Internals</guid>
+    <description><![CDATA[ Angular Two-Way Data Binding — Cơ chế bên dưới tags: angular data-binding zone-js change-detection signals internals 1. ]]></description>
+    <pubDate>Mon, 25 May 2026 13:56:44 GMT</pubDate>
+  </item><item>
+    <title>00-Hub-Database-Persistence</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/00-Hub-Database-Persistence</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/00-Hub-Database-Persistence</guid>
+    <description><![CDATA[ Database Persistence in Java — Bức Tranh Tổng Quan Mục tiêu: Trả lời câu hỏi “Dùng cái gì?” trước khi đi vào từng thứ. ]]></description>
+    <pubDate>Mon, 25 May 2026 13:56:44 GMT</pubDate>
+  </item><item>
     <title>Hibernate-Performance-Deep-Dive</title>
     <link>https://dangthobach.github.io/knowledge/Database-Patterns/Hibernate-Performance-Deep-Dive</link>
     <guid>https://dangthobach.github.io/knowledge/Database-Patterns/Hibernate-Performance-Deep-Dive</guid>
     <description><![CDATA[ Hibernate Performance Deep Dive — Từ Cơ Bản Đến Nâng Cao Audience: Senior engineer, quen RDBMS, muốn hiểu tại sao Hibernate hoạt động thế — không chỉ cách dùng. ]]></description>
-    <pubDate>Mon, 25 May 2026 13:11:54 GMT</pubDate>
+    <pubDate>Mon, 25 May 2026 13:56:44 GMT</pubDate>
   </item><item>
-    <title>API-Design-REST-GraphQL-Webhook</title>
-    <link>https://dangthobach.github.io/knowledge/Microservices-Patterns/API-Design-REST-GraphQL-Webhook</link>
-    <guid>https://dangthobach.github.io/knowledge/Microservices-Patterns/API-Design-REST-GraphQL-Webhook</guid>
-    <description><![CDATA[ REST API vs GraphQL vs Webhook vs gRPC — Lựa Chọn Khoa Học Tags: api-design rest graphql webhook grpc architecture microservices Related: 02-Communication · PDMS-Workflow-Optimal-Communication · Transactional-Outbox Status: 🟢 Complete TL;DR — Decision Matrix Tiêu chíREST APIGraphQLWebhookgRPCLuồng ... ]]></description>
-    <pubDate>Mon, 25 May 2026 13:11:54 GMT</pubDate>
+    <title>00-PostgreSQL-Hub</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/00-PostgreSQL-Hub</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/00-PostgreSQL-Hub</guid>
+    <description><![CDATA[ 🐘 PostgreSQL — Hub Entry point duy nhất cho mọi thứ liên quan PostgreSQL trong vault này. ]]></description>
+    <pubDate>Mon, 25 May 2026 13:56:44 GMT</pubDate>
   </item><item>
-    <title>A Crash Course on Cell-based Architecture</title>
-    <link>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Crash-Course-on-Cell-based-Architecture</link>
-    <guid>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Crash-Course-on-Cell-based-Architecture</guid>
-    <description><![CDATA[ No one wants to sail in a ship that can sink because of a single hull breach. ]]></description>
-    <pubDate>Mon, 25 May 2026 13:11:54 GMT</pubDate>
+    <title>01-ACID-Internals</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/01-ACID-Internals</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/01-ACID-Internals</guid>
+    <description><![CDATA[ 01 — ACID Internals: Bản Chất Thật Sự của PostgreSQL Audience: Senior engineers đã biết định nghĩa ACID, muốn hiểu cơ chế thật sự bên dưới. ]]></description>
+    <pubDate>Mon, 25 May 2026 13:56:44 GMT</pubDate>
   </item><item>
-    <title>Mastering OOP Fundamentals with SOLID Principles</title>
-    <link>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Mastering-OOP-Fundamentals-with-SOLID-Principles</link>
-    <guid>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Mastering-OOP-Fundamentals-with-SOLID-Principles</guid>
-    <description><![CDATA[ Imagine trying to build a complex machine, but instead of using pre-made, reusable parts, we have to carve each component. ]]></description>
-    <pubDate>Mon, 25 May 2026 13:11:54 GMT</pubDate>
+    <title>02-MVCC-Concurrency</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/02-MVCC-Concurrency</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/02-MVCC-Concurrency</guid>
+    <description><![CDATA[ 02 — MVCC &amp; Concurrency Engine: Bên Trong PostgreSQL Audience: Senior engineers muốn hiểu tại sao PostgreSQL scale tốt cho concurrent workloads. ]]></description>
+    <pubDate>Mon, 25 May 2026 13:56:44 GMT</pubDate>
   </item><item>
-    <title>Oauth2</title>
-    <link>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Oauth2</link>
-    <guid>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Oauth2</guid>
-    <description><![CDATA[ Imagine you have a special box called a JWT. Inside this box, there are three parts: a header, a payload, and a signature. ]]></description>
-    <pubDate>Mon, 25 May 2026 13:11:54 GMT</pubDate>
-  </item><item>
-    <title>Understanding Database Types</title>
-    <link>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Understanding-Database-Types</link>
-    <guid>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Understanding-Database-Types</guid>
-    <description><![CDATA[ The success of a software application often hinges on the choice of the right databases. ]]></description>
-    <pubDate>Mon, 25 May 2026 13:11:54 GMT</pubDate>
-  </item><item>
-    <title>AuthZ-Platform-Dynamic-5-Layer-Design</title>
-    <link>https://dangthobach.github.io/knowledge/Microservices-Patterns/AuthZ-Platform-Dynamic-5-Layer-Design</link>
-    <guid>https://dangthobach.github.io/knowledge/Microservices-Patterns/AuthZ-Platform-Dynamic-5-Layer-Design</guid>
-    <description><![CDATA[ AuthZ Platform — Dynamic 5-Layer Design Context: Thiết kế nền tảng phân quyền động cho enterprise system, áp dụng cho PDMS (Physical Document Management System) tại VPBank và mọi bài toán doanh nghiệp quy mô lớn. ]]></description>
-    <pubDate>Sun, 24 May 2026 14:23:58 GMT</pubDate>
-  </item><item>
-    <title>Kafka-Troubleshooting-and-Tips</title>
-    <link>https://dangthobach.github.io/knowledge/Microservices-Patterns/Kafka-Troubleshooting-and-Tips</link>
-    <guid>https://dangthobach.github.io/knowledge/Microservices-Patterns/Kafka-Troubleshooting-and-Tips</guid>
-    <description><![CDATA[ 🔥 Kafka — Troubleshooting, Errors &amp; Tips Mục tiêu: Catalog đầy đủ các lỗi, sự cố thường gặp khi triển khai Kafka production, kèm nguyên nhân gốc rễ, cách chẩn đoán nhanh và fix. ]]></description>
-    <pubDate>Sun, 17 May 2026 15:42:10 GMT</pubDate>
-  </item><item>
-    <title>Cross-Service-Join-AuthZ-Fine-Grained-Filter</title>
-    <link>https://dangthobach.github.io/knowledge/Microservices-Patterns/Cross-Service-Join-AuthZ-Fine-Grained-Filter</link>
-    <guid>https://dangthobach.github.io/knowledge/Microservices-Patterns/Cross-Service-Join-AuthZ-Fine-Grained-Filter</guid>
-    <description><![CDATA[ 🔐 Cross-Service Join — AuthZ &amp; Fine-Grained Data Filtering tại Scale TL;DR: Khi AuthZ service giữ bảng phân quyền mà nhiều services cần để filter data (row-level security), không được cross-service JOIN trực tiếp. ]]></description>
-    <pubDate>Sat, 16 May 2026 18:01:57 GMT</pubDate>
-  </item><item>
-    <title>gRPC-Deep-Dive</title>
-    <link>https://dangthobach.github.io/knowledge/Microservices-Patterns/gRPC-Deep-Dive</link>
-    <guid>https://dangthobach.github.io/knowledge/Microservices-Patterns/gRPC-Deep-Dive</guid>
-    <description><![CDATA[ 🚀 gRPC Deep Dive: Cơ chế, Triển khai &amp; Chiến lược sử dụng Lưu ý: Bài viết này tập trung vào gRPC (Google Remote Procedure Call) — framework RPC hiện đại và phổ biến nhất hiện nay cho các hệ thống phân tán. ]]></description>
-    <pubDate>Sat, 16 May 2026 18:01:57 GMT</pubDate>
+    <title>03-Concurrency-Patterns</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/03-Concurrency-Patterns</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/03-Concurrency-Patterns</guid>
+    <description><![CDATA[ 03 — Concurrency Patterns: Edge Cases &amp; Bài Toán Thực Tế Audience: Senior engineers cần giải quyết concurrency bugs trong production. ]]></description>
+    <pubDate>Mon, 25 May 2026 13:56:44 GMT</pubDate>
   </item>
     </channel>
   </rss>
