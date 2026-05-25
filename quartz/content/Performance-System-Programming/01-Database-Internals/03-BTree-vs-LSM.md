@@ -393,7 +393,7 @@ Huge performance win for read path of LSM systems
 ## 🔗 Liên kết
 
 - [[postgresql-index-internals]] — PostgreSQL B-Tree index mechanics
-- [[Performance-System-Programming/01-Database-Internals/04-SSTable-Format]] — SSTable format deep dive
-- [[Performance-System-Programming/01-Database-Internals/05-Memtable-SkipList]] — MemTable implementation
-- [[Performance-System-Programming/01-Database-Internals/01-Bitcask-Architecture]] — Simple LSM-like engine
-- [[concepts/postgresql-performance-deep-dive]] — PostgreSQL performance in practice
+- [[04-SSTable-Format]] — SSTable format deep dive
+- [[05-Memtable-SkipList]] — MemTable implementation
+- [[01-Bitcask-Architecture]] — Simple LSM-like engine
+- [[postgresql-performance-deep-dive]] — PostgreSQL performance in practice

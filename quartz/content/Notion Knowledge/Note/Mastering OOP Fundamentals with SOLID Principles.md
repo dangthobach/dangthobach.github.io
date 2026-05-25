@@ -29,7 +29,7 @@ However, just knowing these principles is not enough. While OOP provides structu
 
 In this article, we will take a deep dive into the core fundamentals of OOP followed by an introduction to the SOLID principles.
 
-![[/image 4.png|image 4.png]]
+![[image 4.png|image 4.png]]
 
 ## Core Fundamentals of OOP
 

@@ -999,6 +999,6 @@ let hybrid = tonic_web::enable(grpc);  // tonic-web cho browser gRPC
 ---
 
 ## 🔗 Links
-- [[Rust-Zero-To-Hero/Bai-25-ActixWeb|Bài 25: ActixWeb]] — prerequisite
-- [[Rust-Zero-To-Hero/Bai-26-SQLx-Advanced|Bài 26: SQLx Advanced]] → tiếp theo
-- [[Rust-Zero-To-Hero/Bai-9-Async-Tokio|Bài 9: Tokio]] — Streaming patterns
+- [[Bai-25-ActixWeb|Bài 25: ActixWeb]] — prerequisite
+- [[Bai-26-SQLx-Advanced|Bài 26: SQLx Advanced]] → tiếp theo
+- [[Bai-9-Async-Tokio|Bài 9: Tokio]] — Streaming patterns

@@ -476,9 +476,9 @@ export function ContractListPage() {
 
 ## Related
 
-- [[Angular-Latest-Series/22-Routing-Layout-SearchState]]
-- [[React-Latest-Series/23-Routing-Layout-SearchState]]
-- [[SolidJS-Series/SolidJS-13-Routing-Layout-SearchState]]
-- [[Angular-Latest-Series/10-Routing-and-Navigation]]
-- [[React-Latest-Series/07-React-Router-v6]]
-- [[SolidJS-Series/SolidJS-09-Routing]]
+- [[22-Routing-Layout-SearchState]]
+- [[23-Routing-Layout-SearchState]]
+- [[SolidJS-13-Routing-Layout-SearchState]]
+- [[10-Routing-and-Navigation]]
+- [[07-React-Router-v6]]
+- [[SolidJS-09-Routing]]

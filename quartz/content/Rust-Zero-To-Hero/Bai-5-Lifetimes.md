@@ -177,8 +177,8 @@ async fn create_user(
 ---
 
 ## 🔗 Links
-- [[Rust-Zero-To-Hero/Bai-1-Ownership-Mindset|Bài 1: Ownership]] — prerequisite
-- [[Rust-Zero-To-Hero/Bai-6-Generics-Traits-Advanced|Bài 6: Generics nâng cao]] — dùng lifetime + generics cùng nhau
+- [[Bai-1-Ownership-Mindset|Bài 1: Ownership]] — prerequisite
+- [[Bai-6-Generics-Traits-Advanced|Bài 6: Generics nâng cao]] — dùng lifetime + generics cùng nhau
 - [[MOC-Memory-Model]] — big picture
 
 ---

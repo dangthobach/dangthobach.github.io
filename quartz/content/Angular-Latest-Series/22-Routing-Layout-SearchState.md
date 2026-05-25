@@ -348,7 +348,7 @@ export const appConfig: ApplicationConfig = {
 
 ## Related
 
-- [[React-Latest-Series/23-Routing-Layout-SearchState]]
-- [[SolidJS-Series/SolidJS-13-Routing-Layout-SearchState]]
+- [[23-Routing-Layout-SearchState]]
+- [[SolidJS-13-Routing-Layout-SearchState]]
 - [[10-Routing-and-Navigation]]
 - [[18-Route-Guards-and-Resolvers]]

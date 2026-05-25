@@ -172,7 +172,7 @@ Phase 3:          Giữ Spring Boot cho ETL batch — Spring Batch ecosystem kh�
 ## 🔗 Liên quan
 - [[Spring-to-Quarkus-Cheatsheet]] — annotation mapping chi tiết
 - [[Spring-to-Micronaut-Cheatsheet]] — annotation mapping Micronaut
-- [[concepts/compile-time-vs-runtime-di|Compile-time vs Runtime DI]] — tại sao startup khác nhau
-- [[concepts/native-image-aot-jit|Native Image, AOT vs JIT]] — khi nào native có giá trị
-- [[_moc/MOC-PDMS|MOC-PDMS]] — PDMS context
-- [[_moc/MOC-JVM-Frameworks|MOC-JVM-Frameworks]] — master map
+- [[compile-time-vs-runtime-di|Compile-time vs Runtime DI]] — tại sao startup khác nhau
+- [[native-image-aot-jit|Native Image, AOT vs JIT]] — khi nào native có giá trị
+- [[MOC-PDMS|MOC-PDMS]] — PDMS context
+- [[MOC-JVM-Frameworks|MOC-JVM-Frameworks]] — master map

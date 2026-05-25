@@ -616,8 +616,8 @@ Executors.newVirtualThreadPerTaskExecutor()
 ## 🔗 Liên quan trong Vault
 
 - [[00 RxJava Overview]] — RxJava deep dive
-- [[01-Quarkus/P3-Reactive/01 Mutiny - Uni và Multi]] — Mutiny details
-- [[03-Vertx/01 Vert.x Overview]] — Vert.x + Mutiny context
+- [[01 Mutiny - Uni và Multi]] — Mutiny details
+- [[01 Vert.x Overview]] — Vert.x + Mutiny context
 - [[Framework-Decision-Matrix]] — Framework-level decision
 - [[MOC-Concurrency]] — Threading model tổng quan
 

@@ -208,9 +208,9 @@ Tất cả những cái này đều là Trait — hiểu Generics + Trait Object
 ---
 
 ## 🔗 Links
-- [[Rust-Zero-To-Hero/Bai-5-Lifetimes|Bài 5: Lifetimes]] — thường dùng cùng generics
-- [[Rust-Zero-To-Hero/Bai-7-Closures-Iterators|Bài 7: Closures & Iterators]] — dùng trait bounds liên tục
-- [[Rust-Zero-To-Hero/Bai-3-Struct-Enum-Trait|Bài 3: Traits cơ bản]]
+- [[Bai-5-Lifetimes|Bài 5: Lifetimes]] — thường dùng cùng generics
+- [[Bai-7-Closures-Iterators|Bài 7: Closures & Iterators]] — dùng trait bounds liên tục
+- [[Bai-3-Struct-Enum-Trait|Bài 3: Traits cơ bản]]
 
 ---
 *Bài tập:*

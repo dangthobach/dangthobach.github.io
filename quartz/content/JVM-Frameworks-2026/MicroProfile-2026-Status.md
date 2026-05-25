@@ -315,4 +315,4 @@ Quarkus diverge từ MicroProfile:
 ---
 
 *Track: JVM-Frameworks-2026 | Related: [[Framework-Landscape-2026]], [[Helidon-2026]]*
-*Xem Jakarta EE 12 series: [[05-Jakarta-EE-12/00-Overview]]*
+*Xem Jakarta EE 12 series: [[00-Overview]]*

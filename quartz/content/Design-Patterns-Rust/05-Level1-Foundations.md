@@ -499,7 +499,7 @@ let config = AppConfig {
 ---
 
 ## 🔗 Links
-- [[Design-Patterns-Rust/04-Rust-Idiomatic-Overview|Overview — All Levels]]
-- [[Design-Patterns-Rust/06-Level2-Idiomatic|Level 2 · Idiomatic →]]
+- [[04-Rust-Idiomatic-Overview|Overview — All Levels]]
+- [[06-Level2-Idiomatic|Level 2 · Idiomatic →]]
 
 *Tags: #rust #patterns #level1 #foundations #raii #newtype*

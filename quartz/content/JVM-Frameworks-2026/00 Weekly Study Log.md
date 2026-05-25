@@ -34,36 +34,36 @@ status: active
 - [[MicroProfile-2026-Status]] — Spec status, what's deprecated, what's strong
 
 ### Jakarta EE 12 Full Series (17 files)
-- [[05-Jakarta-EE-12/00-Overview]] — Curriculum map, 5 phases
-- [[05-Jakarta-EE-12/Spring-to-Jakarta-EE-Cheatsheet]] — Quick reference
-- [[05-Jakarta-EE-12/CDI-vs-Spring-IoC-Thread-Deep-Dive]] — Deep dive với diagram
+- [[00-Overview]] — Curriculum map, 5 phases
+- [[Spring-to-Jakarta-EE-Cheatsheet]] — Quick reference
+- [[CDI-vs-Spring-IoC-Thread-Deep-Dive]] — Deep dive với diagram
 
 **Phase 1 — Core Profile:**
-- [[05-Jakarta-EE-12/Phase-1-Core-Profile/01-CDI-Contexts-DI]]
-- [[05-Jakarta-EE-12/Phase-1-Core-Profile/02-Jakarta-REST]]
-- [[05-Jakarta-EE-12/Phase-1-Core-Profile/03-JSON-P-JSON-B]]
-- [[05-Jakarta-EE-12/Phase-1-Core-Profile/04-Bean-Validation]]
+- [[01-CDI-Contexts-DI]]
+- [[02-Jakarta-REST]]
+- [[03-JSON-P-JSON-B]]
+- [[04-Bean-Validation]]
 
 **Phase 2 — Persistence & Data:**
-- [[05-Jakarta-EE-12/Phase-2-Persistence-Data/05-JPA-Deep-Dive]]
-- [[05-Jakarta-EE-12/Phase-2-Persistence-Data/06-Transactions]]
-- [[05-Jakarta-EE-12/Phase-2-Persistence-Data/07-Jakarta-Data]]
-- [[05-Jakarta-EE-12/Phase-2-Persistence-Data/08-Jakarta-Query]]
-- [[05-Jakarta-EE-12/Phase-2-Persistence-Data/09-Jakarta-NoSQL]]
+- [[05-JPA-Deep-Dive]]
+- [[06-Transactions]]
+- [[07-Jakarta-Data]]
+- [[08-Jakarta-Query]]
+- [[09-Jakarta-NoSQL]]
 
 **Phase 3 — Security & Concurrency:**
-- [[05-Jakarta-EE-12/Phase-3-Security-Concurrency/10-Jakarta-Security]]
-- [[05-Jakarta-EE-12/Phase-3-Security-Concurrency/11-Jakarta-Concurrency]]
+- [[10-Jakarta-Security]]
+- [[11-Jakarta-Concurrency]]
 
 **Phase 4 — Platform:**
-- [[05-Jakarta-EE-12/Phase-4-Platform/12-Jakarta-Messaging]]
-- [[05-Jakarta-EE-12/Phase-4-Platform/13-Jakarta-Faces]]
-- [[05-Jakarta-EE-12/Phase-4-Platform/14-Legacy-EJB]]
+- [[12-Jakarta-Messaging]]
+- [[13-Jakarta-Faces]]
+- [[14-Legacy-EJB]]
 
 **Phase 5 — Architecture:**
-- [[05-Jakarta-EE-12/Phase-5-Architecture/15-Profile-Design]]
-- [[05-Jakarta-EE-12/Phase-5-Architecture/16-Vendor-Neutral-Design]]
-- [[05-Jakarta-EE-12/Phase-5-Architecture/17-Spring-to-Jakarta-Migration]]
+- [[15-Profile-Design]]
+- [[16-Vendor-Neutral-Design]]
+- [[17-Spring-to-Jakarta-Migration]]
 
 ---
 
@@ -124,9 +124,9 @@ SORT week ASC
 **Focus:** Quarkus P1 — Foundation (CDI, JAX-RS)
 
 **Đã hoàn thành:**
-- [ ] [[01-Quarkus/P1-Foundation/01 CDI vs Spring IoC]]
-- [ ] [[01-Quarkus/P1-Foundation/02 JAX-RS vs Spring MVC]]
-- [ ] [[01-Quarkus/P1-Foundation/03 Config & Dev Mode]]
+- [ ] [[01 CDI vs Spring IoC]]
+- [ ] [[02 JAX-RS vs Spring MVC]]
+- [ ] [[03 Config & Dev Mode]]
 - [ ] Mini project: Tái implement 1 PDMS endpoint
 
 **Thời gian học:** ___ giờ / 5 giờ target
@@ -157,8 +157,8 @@ SORT week ASC
 **Focus:** Quarkus P2 — Panache Active Record
 
 **Đã hoàn thành:**
-- [ ] [[01-Quarkus/P2-Data/01 Panache Active Record]]
-- [ ] [[01-Quarkus/P2-Data/02 Panache Repository Pattern]]
+- [ ] [[01 Panache Active Record]]
+- [ ] [[02 Panache Repository Pattern]]
 - [ ] Mini project: PDMS HopDong entity với Panache
 
 **Thời gian học:** ___ giờ / 5 giờ target
@@ -170,7 +170,7 @@ SORT week ASC
 **Focus:** Quarkus P2 — Transactions, REST Client
 
 **Đã hoàn thành:**
-- [ ] [[01-Quarkus/P2-Data/03 Quarkus Transactions]]
+- [ ] [[03 Quarkus Transactions]]
 - [ ] MicroProfile REST Client
 - [ ] Unit testing với mock repos
 
@@ -183,7 +183,7 @@ SORT week ASC
 **Focus:** Quarkus P3 — Mutiny Reactive
 
 **Đã hoàn thành:**
-- [ ] [[01-Quarkus/P3-Reactive/01 Mutiny - Uni và Multi]]
+- [ ] [[01 Mutiny - Uni và Multi]]
 - [ ] Convert 2 blocking endpoints sang Uni<T>
 - [ ] So sánh Mutiny vs Reactor hands-on
 
@@ -196,7 +196,7 @@ SORT week ASC
 **Focus:** Quarkus P3 — RESTEasy Reactive & SmallRye Kafka
 
 **Đã hoàn thành:**
-- [ ] [[01-Quarkus/P3-Reactive/03 SmallRye Kafka]]
+- [ ] [[03 SmallRye Kafka]]
 - [ ] Kafka consumer/producer với @Incoming/@Outgoing
 - [ ] Transactional Outbox pattern demo
 
@@ -209,8 +209,8 @@ SORT week ASC
 **Focus:** Quarkus P4 — Native & Kubernetes
 
 **Đã hoàn thành:**
-- [ ] [[01-Quarkus/P4-Native/01 GraalVM Native Image]]
-- [ ] [[01-Quarkus/P4-Native/02 Kubernetes & Health Checks]]
+- [ ] [[01 GraalVM Native Image]]
+- [ ] [[02 Kubernetes & Health Checks]]
 - [ ] Build native binary, measure startup vs JVM
 - [ ] K8s manifest generation
 
@@ -223,8 +223,8 @@ SORT week ASC
 **Focus:** Micronaut P1 — Core DI & HTTP
 
 **Đã hoàn thành:**
-- [ ] [[02-Micronaut/P1-Core/01 Compile-time DI vs Runtime DI]]
-- [ ] [[02-Micronaut/P1-Core/02 Controller và HTTP Layer]]
+- [ ] [[01 Compile-time DI vs Runtime DI]]
+- [ ] [[02 Controller và HTTP Layer]]
 - [ ] So sánh @MicronautTest speed vs @SpringBootTest
 
 **Thời gian học:** ___ giờ / 10 giờ target
@@ -236,8 +236,8 @@ SORT week ASC
 **Focus:** Micronaut P2 — Data & HTTP Client
 
 **Đã hoàn thành:**
-- [ ] [[02-Micronaut/P2-Data/01 Micronaut Data JPA]]
-- [ ] [[02-Micronaut/P2-Data/02 Declarative HTTP Client]]
+- [ ] [[01 Micronaut Data JPA]]
+- [ ] [[02 Declarative HTTP Client]]
 
 **Thời gian học:** ___ giờ / 10 giờ target
 
@@ -248,8 +248,8 @@ SORT week ASC
 **Focus:** Micronaut P3 — Kafka & AOP
 
 **Đã hoàn thành:**
-- [ ] [[02-Micronaut/P2-Data/01 Micronaut Data JPA]]
-- [ ] [[02-Micronaut/P3-Reactive/02 Compile-time AOP]]
+- [ ] [[01 Micronaut Data JPA]]
+- [ ] [[02 Compile-time AOP]]
 
 **Thời gian học:** ___ giờ / 10 giờ target
 
@@ -278,4 +278,4 @@ Jakarta EE là spec ecosystem, không phải framework alternative. Spring Boot 
 - [[Framework-Decision-Matrix]] — so sánh framework
 - [[ADR-001-Why-Quarkus-Over-Micronaut]] — decision record
 - [[Spring-to-Quarkus-Cheatsheet]] — annotation mapping
-- [[_moc/MOC-Java]] — Spring Boot foundation
+- [[MOC-Java]] — Spring Boot foundation

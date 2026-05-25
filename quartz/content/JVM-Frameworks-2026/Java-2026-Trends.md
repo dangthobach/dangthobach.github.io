@@ -155,7 +155,7 @@ switch (value) {
 - **Jakarta NoSQL 1.1** — NoSQL standard API ⭐
 - Core Profile, Web Profile, Full Platform
 
-→ Chi tiết đầy đủ: [[05-Jakarta-EE-12/00-Overview]]
+→ Chi tiết đầy đủ: [[00-Overview]]
 
 ---
 
@@ -173,4 +173,4 @@ switch (value) {
 
 ---
 
-*Track: JVM-Frameworks-2026 | Related: [[Framework-Landscape-2026]], [[05-Jakarta-EE-12/00-Overview]]*
+*Track: JVM-Frameworks-2026 | Related: [[Framework-Landscape-2026]], [[00-Overview]]*

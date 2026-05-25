@@ -628,7 +628,7 @@ fn main() -> Result<(), BuildError> {
 ---
 
 ## 🔗 Links
-- [[Design-Patterns-Rust/05-Level1-Foundations|← Level 1 · Foundations]]
-- [[Design-Patterns-Rust/07-Level3-Architecture|Level 3 · Architecture →]]
+- [[05-Level1-Foundations|← Level 1 · Foundations]]
+- [[07-Level3-Architecture|Level 3 · Architecture →]]
 
 *Tags: #rust #patterns #level2 #idiomatic #cow #interior-mutability*

@@ -153,9 +153,9 @@ Phase 3 (2027):
 
 ## 🔗 Liên kết
 
-- [[JVM-Frameworks-2026/Framework-Decision-Matrix]] — Ma trận so sánh đầy đủ
-- [[JVM-Frameworks-2026/Spring-to-Quarkus-Cheatsheet]] — Migration reference
-- [[JVM-Frameworks-2026/01-Quarkus/00 Quarkus Overview]] — Deep dive Quarkus
-- [[JVM-Frameworks-2026/02-Micronaut/]] — Tài liệu Micronaut để compare
-- [[_moc/MOC-PDMS]] — PDMS context
+- [[Framework-Decision-Matrix]] — Ma trận so sánh đầy đủ
+- [[Spring-to-Quarkus-Cheatsheet]] — Migration reference
+- [[00 Quarkus Overview]] — Deep dive Quarkus
+- [[]] — Tài liệu Micronaut để compare
+- [[MOC-PDMS]] — PDMS context
 - [[ADR-002-Project-Loom-vs-Reactive-for-PDMS]] *(cần viết)* — Decision tiếp theo

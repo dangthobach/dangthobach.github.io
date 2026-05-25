@@ -103,7 +103,7 @@ Hành khách (Virtual Threads) rất đông. Chỉ có vài chiếc xe bus (Carr
 ---
 
 ## 📖 Nguồn tham khảo & Đọc thêm
-- [[_moc/MOC-Concurrency|MOC Concurrency]]
+- [[MOC-Concurrency|MOC Concurrency]]
 - [JEP 444: Virtual Threads](https://openjdk.org/jeps/444)
 - [Project Loom: Understand the internals](https://inside.java/tag/loom/)
 

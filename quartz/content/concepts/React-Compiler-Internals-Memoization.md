@@ -331,8 +331,8 @@ DevTools: React DevTools v5+ hiển thị "Compiler" badge trên các component 
 
 ## Related
 
-- [[concepts/SolidJS-vs-React-Reactivity-Model]]
-- [[React-Latest-Series/11-Performance-Optimization]]
-- [[React-Latest-Series/12-Concurrent-Features]]
-- [[Angular-Latest-Series/24-Two-Way-Binding-Internals]]
-- [[Angular-Latest-Series/08-Signals-The-Modern-Reactivity]]
+- [[SolidJS-vs-React-Reactivity-Model]]
+- [[11-Performance-Optimization]]
+- [[12-Concurrent-Features]]
+- [[24-Two-Way-Binding-Internals]]
+- [[08-Signals-The-Modern-Reactivity]]

@@ -5,7 +5,7 @@
 
 ---
 
-> Xem nội dung đầy đủ tại: [[concepts/postgresql-index-internals]]
+> Xem nội dung đầy đủ tại: [[postgresql-index-internals]]
 
 ## Nội dung chính
 

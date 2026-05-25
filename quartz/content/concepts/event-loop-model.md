@@ -208,11 +208,11 @@ public Report getReport() {
 ---
 
 ## 🔗 Liên quan
-- [[JVM-Frameworks-2026/03-Vertx/P1-Core/01 Event Loop và Verticles|Vert.x: Event Loop và Verticles]] — implementation cụ thể
-- [[JVM-Frameworks-2026/03-Vertx/P2-HTTP/01 Router và Route Handlers|Vert.x: Router & Handlers]] — viết handler đúng cách
+- [[01 Event Loop và Verticles|Vert.x: Event Loop và Verticles]] — implementation cụ thể
+- [[01 Router và Route Handlers|Vert.x: Router & Handlers]] — viết handler đúng cách
 - [[reactive-programming-fundamentals]] — paradigm bên trên event loop
 - [[backpressure-explained]] — khi event loop bị overwhelm
-- [[_moc/MOC-Concurrency|MOC-Concurrency]] — so sánh với threading model
+- [[MOC-Concurrency|MOC-Concurrency]] — so sánh với threading model
 
 ## 📖 Nguồn
 - https://vertx.io/docs/vertx-core/java/#_the_golden_rule — Vert.x golden rule

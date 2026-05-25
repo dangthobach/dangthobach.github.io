@@ -810,7 +810,7 @@ TIP 5 — PDMS Role Hierarchy
 ---
 
 ## 🔗 Links
-- [[Rust-Zero-To-Hero/Bai-40-Global-State|Bài 40: Global State]] ← trước đó
-- [[Rust-Zero-To-Hero/Bai-13-Serde-Reqwest-JWT|Bài 13: JWT basics]]
-- [[Rust-Zero-To-Hero/Bai-32-Security|Bài 32: Security]] — crypto context
-- [[Rust-Zero-To-Hero/Bai-42-JS-Interop|Bài 42: JS Interop]] → tiếp theo
+- [[Bai-40-Global-State|Bài 40: Global State]] ← trước đó
+- [[Bai-13-Serde-Reqwest-JWT|Bài 13: JWT basics]]
+- [[Bai-32-Security|Bài 32: Security]] — crypto context
+- [[Bai-42-JS-Interop|Bài 42: JS Interop]] → tiếp theo

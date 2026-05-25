@@ -9,11 +9,11 @@ Map of Content cho toàn bộ Rust knowledge. Đây là entry point — không p
 ---
 
 ## 📖 Learning Series
-- [[Rust-Zero-To-Hero/Lộ-trình-Tổng-quan|Lộ trình tổng quan]] — Giai đoạn 1→5
-- [[Rust-Zero-To-Hero/Bai-1-Ownership-Mindset|Bài 1: Ownership Mindset]]
-- [[Rust-Zero-To-Hero/Bai-2-Borrowing-Multi-threading|Bài 2: Borrowing & Multi-threading]]
-- [[Rust-Zero-To-Hero/Bai-3-Struct-Enum-Trait|Bài 3: Struct, Enum & Trait]]
-- [[Rust-Zero-To-Hero/Bai-4-Error-Handling-Collections|Bài 4: Error Handling & Collections]]
+- [[Lộ-trình-Tổng-quan|Lộ trình tổng quan]] — Giai đoạn 1→5
+- [[Bai-1-Ownership-Mindset|Bài 1: Ownership Mindset]]
+- [[Bai-2-Borrowing-Multi-threading|Bài 2: Borrowing & Multi-threading]]
+- [[Bai-3-Struct-Enum-Trait|Bài 3: Struct, Enum & Trait]]
+- [[Bai-4-Error-Handling-Collections|Bài 4: Error Handling & Collections]]
 
 ---
 

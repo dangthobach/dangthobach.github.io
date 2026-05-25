@@ -137,10 +137,10 @@ Tuần 11: Bài 21, 22
 
 ## Related Series trong Vault
 
-- [[Rust-Zero-To-Hero/|Rust Zero-to-Hero]] — Systems programming
-- [[JVM-Frameworks-2026/|JVM Frameworks 2026]] — Quarkus, Micronaut, Vert.x
-- [[Microservices-Patterns/|Microservices Patterns]] — Architecture deep dive
-- [[concepts/|Concepts]] — Foundational CS concepts
+- [[|Rust Zero-to-Hero]] — Systems programming
+- [[|JVM Frameworks 2026]] — Quarkus, Micronaut, Vert.x
+- [[|Microservices Patterns]] — Architecture deep dive
+- [[|Concepts]] — Foundational CS concepts
 
 ---
 *Tags: #go #zero-to-hero #curriculum #roadmap*

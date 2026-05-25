@@ -601,8 +601,8 @@ TTL Strategy:
 
 - [[01-ACID-Internals]] — PostgreSQL transaction semantics
 - [[03-Concurrency-Patterns]] — Concurrent access patterns
-- [[Microservices-Patterns/Debezium-CDC-Deep-Dive]] — CDC cho cache invalidation
-- [[Microservices-Patterns/Cross-Service-Join-AuthZ-Fine-Grained-Filter]] — CDC + Caffeine cache pattern
+- [[Debezium-CDC-Deep-Dive]] — CDC cho cache invalidation
+- [[Cross-Service-Join-AuthZ-Fine-Grained-Filter]] — CDC + Caffeine cache pattern
 
 ---
 

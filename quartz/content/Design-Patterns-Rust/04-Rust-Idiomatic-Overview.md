@@ -165,10 +165,10 @@ Level 5:
 
 ## 🔗 Series Articles
 
-- [[Design-Patterns-Rust/05-Level1-Foundations|Level 1 · Foundations]]
-- [[Design-Patterns-Rust/06-Level2-Idiomatic|Level 2 · Idiomatic]]
-- [[Design-Patterns-Rust/07-Level3-Architecture|Level 3 · Architecture]]
-- [[Design-Patterns-Rust/08-Level4-TypeSystem|Level 4 · Type System Mastery]]
+- [[05-Level1-Foundations|Level 1 · Foundations]]
+- [[06-Level2-Idiomatic|Level 2 · Idiomatic]]
+- [[07-Level3-Architecture|Level 3 · Architecture]]
+- [[08-Level4-TypeSystem|Level 4 · Type System Mastery]]
 
 ---
 

@@ -8,25 +8,25 @@ const IGNORE_LIST = ['.obsidian', '.git', '.trash', '.DS_Store'];
 // ---------------------
 
 /**
- * Chuyển đổi Obsidian Image Links ![[image.png|alias]] thành Standard Markdown ![](image.png)
+ * Chuyển đổi Obsidian Links ![[path/to/image.png|alias]] và [[path/to/note|alias]]
+ * thành dạng tối giản ![[image.png|alias]] và [[note|alias]] để Quartz resolve tốt hơn.
  * @param {string} content Nội dung markdown
  * @returns {string} Nội dung đã được chuyển đổi
  */
-function convertObsidianImageLinks(content) {
-  // Regex khớp với ![[path/to/image.png|alias]]
-  // Group 1: Đường dẫn ảnh
-  // Group 2: Alias (tuỳ chọn)
-  return content.replace(/!\[\[([^\]|#]+)(?:\|[^\]]+)?\]\]/g, (match, filePath) => {
+function simplifyObsidianLinks(content) {
+  // Regex khớp với ![[...]] (ảnh) hoặc [[...]] (note)
+  // Group 1: ! (nếu là ảnh)
+  // Group 2: Đường dẫn
+  // Group 3: Alias/Metadata (nếu có)
+  return content.replace(/(!?\[\[)([^\]|#]+)([^\]]*?\]\])/g, (match, prefix, filePath, suffix) => {
     let cleanPath = filePath.trim();
     
-    // Nếu có leading slash (/) thì bỏ đi để Quartz dễ resolve theo shortest path
-    if (cleanPath.startsWith('/')) {
-      cleanPath = cleanPath.substring(1);
+    // Nếu là đường dẫn có thư mục (chứa /), lấy tên file cuối cùng
+    if (cleanPath.includes('/')) {
+      cleanPath = cleanPath.split('/').pop();
     }
     
-    // Trả về định dạng Markdown tiêu chuẩn
-    // Quartz CrawlLinks plugin sẽ tự resolve shortest path nếu được cấu hình
-    return `![](${cleanPath})`;
+    return `${prefix}${cleanPath}${suffix}`;
   });
 }
 
@@ -41,16 +41,17 @@ function processMarkdownFiles(dir) {
     const stat = fs.statSync(fullPath);
 
     if (stat.isDirectory()) {
-      // Bỏ qua các thư mục đặc biệt nếu cần, nhưng ở đây ta quét hết content
+      // Bỏ qua các thư mục đặc biệt nếu cần
+      if (IGNORE_LIST.includes(file)) continue;
       processMarkdownFiles(fullPath);
     } else if (file.endsWith('.md')) {
       try {
         const content = fs.readFileSync(fullPath, 'utf8');
-        const newContent = convertObsidianImageLinks(content);
+        const newContent = simplifyObsidianLinks(content);
         
         if (content !== newContent) {
           fs.writeFileSync(fullPath, newContent, 'utf8');
-          console.log(`✨ Đã xử lý ảnh trong: ${path.relative(CONTENT_PATH, fullPath)}`);
+          console.log(`✨ Đã tối ưu link trong: ${path.relative(CONTENT_PATH, fullPath)}`);
         }
       } catch (err) {
         console.error(`❌ Lỗi khi xử lý file ${fullPath}:`, err.message);
@@ -91,8 +92,8 @@ async function sync() {
     });
 
     // 4. Xử lý Markdown Links sau khi copy
-    // console.log('🔄 Đang chuyển đổi Obsidian Image Links...');
-    // processMarkdownFiles(CONTENT_PATH);
+    console.log('🔄 Đang tối ưu hóa Obsidian Links cho Quartz...');
+    processMarkdownFiles(CONTENT_PATH);
 
     // 5. Đảm bảo có file index.md
     const indexDest = path.join(CONTENT_PATH, 'index.md');

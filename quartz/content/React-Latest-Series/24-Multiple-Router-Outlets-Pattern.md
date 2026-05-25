@@ -5,7 +5,7 @@ tags: #react #react-router #routing #parallel-routes #named-outlet
 ---
 
 > Bài này cover phần React của chủ đề Multiple Router Outlets.
-> Bài đầy đủ so sánh cả 3 framework: [[Angular-Latest-Series/23-Multiple-Router-Outlets-Named-Auxiliary]]
+> Bài đầy đủ so sánh cả 3 framework: [[23-Multiple-Router-Outlets-Named-Auxiliary]]
 
 ---
 
@@ -17,7 +17,7 @@ React Router v6 **không có** Named Outlet native như Angular. Thay vào đó 
 - **Pattern B**: Search Params — outlet state lên URL, shareable
 - **Pattern C**: Next.js Parallel Routes (`@folder`) — native support trong App Router
 
-Chi tiết code từng pattern: [[Angular-Latest-Series/23-Multiple-Router-Outlets-Named-Auxiliary#3. React Router — Parallel Routes Pattern]]
+Chi tiết code từng pattern: [[23-Multiple-Router-Outlets-Named-Auxiliary#3. React Router — Parallel Routes Pattern]]
 
 ---
 
@@ -33,7 +33,7 @@ Chi tiết code từng pattern: [[Angular-Latest-Series/23-Multiple-Router-Outle
 
 ## Related
 
-- [[Angular-Latest-Series/23-Multiple-Router-Outlets-Named-Auxiliary]]
-- [[SolidJS-Series/SolidJS-14-Multiple-Outlets-Pattern]]
+- [[23-Multiple-Router-Outlets-Named-Auxiliary]]
+- [[SolidJS-14-Multiple-Outlets-Pattern]]
 - [[07-React-Router-v6]]
 - [[17-Zustand-State-Management]]

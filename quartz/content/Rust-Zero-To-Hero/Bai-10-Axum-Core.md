@@ -328,10 +328,10 @@ exception/  → errors.rs
 ---
 
 ## 🔗 Links
-- [[Rust-Zero-To-Hero/Bai-9-Async-Tokio|Bài 9: Tokio]] — runtime
-- [[Rust-Zero-To-Hero/Bai-11-Axum-Middleware-Error|Bài 11: Middleware & Production Patterns]]
-- [[Rust-Zero-To-Hero/Bai-12-SQLx-Database|Bài 12: SQLx Database]]
-- [[Rust-Zero-To-Hero/Bai-8-Smart-Pointers-Error-Design|Bài 8: AppError pattern]]
+- [[Bai-9-Async-Tokio|Bài 9: Tokio]] — runtime
+- [[Bai-11-Axum-Middleware-Error|Bài 11: Middleware & Production Patterns]]
+- [[Bai-12-SQLx-Database|Bài 12: SQLx Database]]
+- [[Bai-8-Smart-Pointers-Error-Design|Bài 8: AppError pattern]]
 
 ---
 *Bài tập:*

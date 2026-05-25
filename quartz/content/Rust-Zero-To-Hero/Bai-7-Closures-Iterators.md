@@ -266,8 +266,8 @@ let by_role: HashMap<String, Vec<User>> = users
 ---
 
 ## 🔗 Links
-- [[Rust-Zero-To-Hero/Bai-6-Generics-Traits-Advanced|Bài 6: Generics]] — Fn traits là generic bounds
-- [[Rust-Zero-To-Hero/Bai-8-Smart-Pointers-Error-Design|Bài 8: Smart Pointers & Error Design]]
+- [[Bai-6-Generics-Traits-Advanced|Bài 6: Generics]] — Fn traits là generic bounds
+- [[Bai-8-Smart-Pointers-Error-Design|Bài 8: Smart Pointers & Error Design]]
 
 ---
 *Bài tập:*

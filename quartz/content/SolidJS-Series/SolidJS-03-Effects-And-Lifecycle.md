@@ -451,13 +451,13 @@ createEffect(() => {
 
 ## 🔗 Liên kết
 
-← [[SolidJS-Series/SolidJS-02-Signals-Deep-Dive|02 · Signals Deep Dive]]
-→ [[SolidJS-Series/SolidJS-04-JSX-Component-Model|04 · JSX & Component Model]]
+← [[SolidJS-02-Signals-Deep-Dive|02 · Signals Deep Dive]]
+→ [[SolidJS-04-JSX-Component-Model|04 · JSX & Component Model]]
 
 **Xem thêm:**
-- [[SolidJS-Series/SolidJS-08-Async-Resources|08 · Async & Resources]] — createResource thay thế fetch-in-effect
-- [[SolidJS-Series/SolidJS-07-Context-DI|07 · Context]] — chia sẻ effect logic qua context
+- [[SolidJS-08-Async-Resources|08 · Async & Resources]] — createResource thay thế fetch-in-effect
+- [[SolidJS-07-Context-DI|07 · Context]] — chia sẻ effect logic qua context
 
 ---
 
-*Series: [[SolidJS-Series/SolidJS-MOC|SolidJS Master Index]]*
+*Series: [[SolidJS-MOC|SolidJS Master Index]]*

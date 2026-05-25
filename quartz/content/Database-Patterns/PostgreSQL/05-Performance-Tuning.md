@@ -5,7 +5,7 @@
 
 ---
 
-> Xem nội dung đầy đủ tại: [[concepts/postgresql-performance-deep-dive]]
+> Xem nội dung đầy đủ tại: [[postgresql-performance-deep-dive]]
 
 ## Nội dung chính
 

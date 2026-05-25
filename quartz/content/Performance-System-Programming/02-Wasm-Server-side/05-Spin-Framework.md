@@ -96,5 +96,5 @@ Spin cung cấp các SDK để giao tiếp với hạ tầng mà không cần c�
 
 ---
 ## 🔗 Liên kết
-- [[Performance-System-Programming/02-Wasm-Server-side/01-Wasm-Fundamentals|01. Wasm Fundamentals]]
-- [[Performance-System-Programming/02-Wasm-Server-side/06-Component-Model|06. The Component Model]]
+- [[01-Wasm-Fundamentals|01. Wasm Fundamentals]]
+- [[06-Component-Model|06. The Component Model]]

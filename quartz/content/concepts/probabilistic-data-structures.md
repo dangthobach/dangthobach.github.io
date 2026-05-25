@@ -5,7 +5,7 @@ tags: [data-structures, algorithms, performance, bloom-filter, hyperloglog, cach
 created: 2026-05-02
 difficulty: advanced
 estimated-read: 20 min
-links: [[caching-strategies-comprehensive]], [[Performance-System-Programming/01-Database-Internals/03-BTree-vs-LSM]], [[memory-hierarchy-cpu-cache]]
+links: [[caching-strategies-comprehensive]], [[03-BTree-vs-LSM]], [[memory-hierarchy-cpu-cache]]
 
 ---
 
@@ -455,7 +455,7 @@ public long getApproxUniqueViewers(String tenantId, LocalDate date) {
 
 ## 🔗 Related Links
 
-- [[Performance-System-Programming/01-Database-Internals/03-BTree-vs-LSM]] — LSM-Tree dùng Bloom Filter
+- [[03-BTree-vs-LSM]] — LSM-Tree dùng Bloom Filter
 - [[caching-strategies-comprehensive]] — Bloom Filter như pre-cache filter
 - [[memory-hierarchy-cpu-cache]] — Space efficiency liên quan đến cache efficiency
 - [[connection-pooling-pgbouncer]] — Count-Min Sketch cho rate limiting

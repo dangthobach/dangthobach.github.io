@@ -512,13 +512,13 @@ const [user, setUser] = createSignal({ name: '', role: '' });
 
 ## 🔗 Liên kết
 
-← [[SolidJS-Series/SolidJS-03-Effects-And-Lifecycle|03 · Effects & Lifecycle]]
-→ [[SolidJS-Series/SolidJS-05-Control-Flow-Primitives|05 · Control Flow Primitives]]
+← [[SolidJS-03-Effects-And-Lifecycle|03 · Effects & Lifecycle]]
+→ [[SolidJS-05-Control-Flow-Primitives|05 · Control Flow Primitives]]
 
 **Xem thêm:**
-- [[SolidJS-Series/SolidJS-10-Complex-UI-Patterns|10 · Complex UI Patterns]] — component patterns enterprise
-- [[SolidJS-Series/SolidJS-06-Stores-Nested-State|06 · Stores]] — props với nested data
+- [[SolidJS-10-Complex-UI-Patterns|10 · Complex UI Patterns]] — component patterns enterprise
+- [[SolidJS-06-Stores-Nested-State|06 · Stores]] — props với nested data
 
 ---
 
-*Series: [[SolidJS-Series/SolidJS-MOC|SolidJS Master Index]]*
+*Series: [[SolidJS-MOC|SolidJS Master Index]]*

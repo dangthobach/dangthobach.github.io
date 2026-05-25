@@ -412,8 +412,8 @@ cargo udeps --workspace
 ---
 
 ## 🔗 Links
-- [[Rust-Zero-To-Hero/Bai-15-Config-Tracing-Testing|Bài 15: Testing]]
-- [[Rust-Zero-To-Hero/Bai-16-Deployment|Bài 16: Docker deployment]]
+- [[Bai-15-Config-Tracing-Testing|Bài 15: Testing]]
+- [[Bai-16-Deployment|Bài 16: Docker deployment]]
 - [[MOC-PDMS]] — Applied: PDMS workspace structure
 - [[MOC-System-Design]] — Clean Architecture mapping
 

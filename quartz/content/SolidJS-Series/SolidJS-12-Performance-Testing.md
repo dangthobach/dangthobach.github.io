@@ -730,13 +730,13 @@ const [uiStore, setUiStore] = createStore({...});
 
 ## 🔗 Liên kết
 
-← [[SolidJS-Series/SolidJS-11-SolidStart-SSR|11 · SolidStart & SSR]]
+← [[SolidJS-11-SolidStart-SSR|11 · SolidStart & SSR]]
 
 **Ôn lại:**
-- [[SolidJS-Series/SolidJS-01-Reactivity-Internals|01 · Reactivity]] — nền tảng của mọi optimization
-- [[SolidJS-Series/SolidJS-06-Stores-Nested-State|06 · Stores]] — reconcile() và performance
-- [[SolidJS-Series/SolidJS-MOC|🗺️ Master Index]] — toàn bộ series
+- [[SolidJS-01-Reactivity-Internals|01 · Reactivity]] — nền tảng của mọi optimization
+- [[SolidJS-06-Stores-Nested-State|06 · Stores]] — reconcile() và performance
+- [[SolidJS-MOC|🗺️ Master Index]] — toàn bộ series
 
 ---
 
-*Series: [[SolidJS-Series/SolidJS-MOC|SolidJS Master Index]] · Phase 3 hoàn thành ✅*
+*Series: [[SolidJS-MOC|SolidJS Master Index]] · Phase 3 hoàn thành ✅*

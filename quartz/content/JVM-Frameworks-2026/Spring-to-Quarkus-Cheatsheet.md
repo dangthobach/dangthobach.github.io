@@ -441,6 +441,6 @@ quarkus.flyway.locations=db/migration
 ## 🔗 Liên quan
 - [[Framework-Decision-Matrix]] — khi nào dùng Quarkus
 - [[Spring-to-Micronaut-Cheatsheet]] — mapping sang Micronaut
-- [[01-Quarkus/P1-Foundation/01 CDI vs Spring IoC|CDI vs Spring IoC]] — DI deep dive
-- [[01-Quarkus/P1-Foundation/02 JAX-RS vs Spring MVC|JAX-RS vs Spring MVC]] — HTTP deep dive
-- [[01-Quarkus/P2-Data/01 Panache Active Record|Panache]] — Data deep dive
+- [[01 CDI vs Spring IoC|CDI vs Spring IoC]] — DI deep dive
+- [[02 JAX-RS vs Spring MVC|JAX-RS vs Spring MVC]] — HTTP deep dive
+- [[01 Panache Active Record|Panache]] — Data deep dive

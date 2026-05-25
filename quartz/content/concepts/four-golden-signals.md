@@ -344,8 +344,8 @@ Row 3: Per-Endpoint Breakdown
 
 ## 🔗 Liên kết trong vault
 
-- [[_moc/MOC-Observability]] — MOC chính
-- [[Microservices-Patterns/Metrics-and-Alerting]] — Implementation patterns
-- [[concepts/micrometer-deep-dive]] *(cần viết)* — Java implementation chi tiết
-- [[concepts/slo-sli-sla-explained]] *(cần viết)* — SLO từ 4 signals
-- [[concepts/alert-fatigue-and-toil]] *(cần viết)* — Alerting strategy
+- [[MOC-Observability]] — MOC chính
+- [[Metrics-and-Alerting]] — Implementation patterns
+- [[micrometer-deep-dive]] *(cần viết)* — Java implementation chi tiết
+- [[slo-sli-sla-explained]] *(cần viết)* — SLO từ 4 signals
+- [[alert-fatigue-and-toil]] *(cần viết)* — Alerting strategy

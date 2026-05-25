@@ -2,8 +2,8 @@
 title: "GC · LLVM · Native Code · Runtime Overhead — Bản Chất CPU & Memory"
 tags: [systems, rust, go, java, gc, llvm, runtime, memory, cpu, performance]
 related:
-  - "[[concepts/rust-java-go-comparison]]"
-  - "[[Rust-Zero-To-Hero/ownership-borrowing]]"
+  - "[[rust-java-go-comparison]]"
+  - "[[ownership-borrowing]]"
 created: 2026-05-02
 status: permanent
 ---
@@ -526,4 +526,4 @@ Kết luận cho PDMS stack hiện tại (Java 21 + ZGC + Loom):
 - [Java ZGC](https://wiki.openjdk.org/display/zgc/Main)
 - [Rustonomicon — Memory layout](https://doc.rust-lang.org/nomicon/repr-rust.html)
 - [Write barriers in Go](https://go.googlesource.com/proposal/+/refs/heads/master/design/17503-eliminate-rescan.md)
-- `[[concepts/rust-java-go-comparison]]`
+- `[[rust-java-go-comparison]]`

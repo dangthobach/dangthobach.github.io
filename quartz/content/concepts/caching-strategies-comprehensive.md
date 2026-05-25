@@ -503,7 +503,7 @@ Rule: "If being wrong has financial/legal consequences → no application cache"
 ## 🔗 Liên kết
 
 - [[consistency-models-spectrum]] — Cache consistency models (eventual vs strong)
-- [[Microservices-Patterns/Cross-Service-Join-AuthZ-Fine-Grained-Filter]] — PDMS Caffeine+Redis hybrid pattern
-- [[Database-Patterns/Hibernate-Performance-Deep-Dive]] — Hibernate L2 Cache (Ehcache/Redis)
-- [[Go-Zero-To-Hero/Bai-20-Redis-Caching]] — Redis patterns in Go
-- [[Rust-Zero-To-Hero/Bai-31-Redis-Caching]] — Redis patterns in Rust
+- [[Cross-Service-Join-AuthZ-Fine-Grained-Filter]] — PDMS Caffeine+Redis hybrid pattern
+- [[Hibernate-Performance-Deep-Dive]] — Hibernate L2 Cache (Ehcache/Redis)
+- [[Bai-20-Redis-Caching]] — Redis patterns in Go
+- [[Bai-31-Redis-Caching]] — Redis patterns in Rust

@@ -937,6 +937,6 @@ mod tests {
 ---
 
 ## 🔗 Links
-- [[Rust-Zero-To-Hero/Bai-26-SQLx-Advanced|Bài 26: SQLx Advanced]] — prerequisite, compare
-- [[Rust-Zero-To-Hero/Bai-29-Leptos|Bài 29: Leptos]] → tiếp theo
-- [[Rust-Zero-To-Hero/Bai-12-SQLx-Database|Bài 12: SQLx Basics]]
+- [[Bai-26-SQLx-Advanced|Bài 26: SQLx Advanced]] — prerequisite, compare
+- [[Bai-29-Leptos|Bài 29: Leptos]] → tiếp theo
+- [[Bai-12-SQLx-Database|Bài 12: SQLx Basics]]

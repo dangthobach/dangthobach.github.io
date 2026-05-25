@@ -1,7 +1,7 @@
 ---
 tags: [microservices, grpc, protocol-buffers, http2, go, java, rust, performance]
-up: "[[Microservices-Patterns/01-Data-Consistency]]"
-related: "[[Microservices-Patterns/Cross-Service-Join-AuthZ-Fine-Grained-Filter]], [[Microservices-Patterns/Transactional-Outbox]]"
+up: "[[01-Data-Consistency]]"
+related: "[[Cross-Service-Join-AuthZ-Fine-Grained-Filter]], [[Transactional-Outbox]]"
 ---
 
 # 🚀 gRPC Deep Dive: Cơ chế, Triển khai & Chiến lược sử dụng
@@ -204,6 +204,6 @@ graph TD
 
 ---
 ## 🔗 Liên kết
-- [[concepts/HTTP2-Internals]]
-- [[Microservices-Patterns/Decomposition]]
-- [[concepts/Serialization-Protobuf-vs-JSON]]
+- [[HTTP2-Internals]]
+- [[Decomposition]]
+- [[Serialization-Protobuf-vs-JSON]]

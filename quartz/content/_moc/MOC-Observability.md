@@ -26,17 +26,17 @@ Observability
 ## 📊 Metrics
 
 ### Lý thuyết nền tảng
-- 📝 `[[concepts/four-golden-signals]]` *(cần viết)*
+- 📝 `[[four-golden-signals]]` *(cần viết)*
   → Latency, Traffic, Errors, Saturation. Bộ tứ của Google SRE Book — đây là **ngôn ngữ chung** khi nói về system health.
-- 📝 `[[concepts/red-method-use-method]]` *(cần viết)*
+- 📝 `[[red-method-use-method]]` *(cần viết)*
   → RED (Rate, Errors, Duration) cho services. USE (Utilization, Saturation, Errors) cho resources. Khi nào dùng cái nào.
 
 ### Công cụ & Thực thi
-- 📝 `[[concepts/micrometer-deep-dive]]` *(cần viết)*
+- 📝 `[[micrometer-deep-dive]]` *(cần viết)*
   → Micrometer là "SLF4J của metrics". Counter, Gauge, Timer, DistributionSummary. Tích hợp với Spring Boot Actuator và Quarkus SmallRye Metrics.
-- 📝 `[[concepts/prometheus-architecture]]` *(cần viết)*
+- 📝 `[[prometheus-architecture]]` *(cần viết)*
   → Pull model vs Push model. PromQL cơ bản. Recording rules vs Alerting rules. Retention và remote storage.
-- 📝 `[[concepts/grafana-dashboard-design]]` *(cần viết)*
+- 📝 `[[grafana-dashboard-design]]` *(cần viết)*
   → Nguyên tắc thiết kế dashboard: USE/RED layout. Tránh "vanity metrics". Alert fatigue và cách giảm thiểu.
 
 ---
@@ -44,15 +44,15 @@ Observability
 ## 📋 Logging
 
 ### Lý thuyết nền tảng
-- 📝 `[[concepts/structured-logging]]` *(cần viết)*
+- 📝 `[[structured-logging]]` *(cần viết)*
   → Tại sao `log.info("user {} logged in", userId)` tệ hơn JSON structured log. Correlation ID, Trace ID trong log. Log levels và khi nào dùng WARN vs ERROR.
-- 📝 `[[concepts/log-aggregation-patterns]]` *(cần viết)*
+- 📝 `[[log-aggregation-patterns]]` *(cần viết)*
   → Sidecar pattern (Fluentd/Logstash), DaemonSet log collector. Push vs Pull. Tại sao không log thẳng vào DB production.
 
 ### Công cụ & Stack
-- 📝 `[[concepts/elk-stack-vs-loki]]` *(cần viết)*
+- 📝 `[[elk-stack-vs-loki]]` *(cần viết)*
   → ELK (Elasticsearch + Logstash + Kibana) vs Grafana Loki + Promtail. Chi phí storage, query performance, trade-off cho team nhỏ vs enterprise.
-- 📝 `[[concepts/log-based-alerting]]` *(cần viết)*
+- 📝 `[[log-based-alerting]]` *(cần viết)*
   → Khi nào alert từ logs (vs metrics). Error rate từ log count. PagerDuty/Alertmanager integration.
 
 ---
@@ -60,15 +60,15 @@ Observability
 ## 🔍 Distributed Tracing
 
 ### Lý thuyết nền tảng
-- 📝 `[[concepts/distributed-tracing-fundamentals]]` *(cần viết)*
+- 📝 `[[distributed-tracing-fundamentals]]` *(cần viết)*
   → Span, Trace, Context Propagation. W3C TraceContext vs B3 header. Sampling: head-based vs tail-based. Tại sao 100% sampling không scalable.
-- 📝 `[[concepts/opentelemetry-architecture]]` *(cần viết)*
+- 📝 `[[opentelemetry-architecture]]` *(cần viết)*
   → OTel = API + SDK + Collector. Vendor-neutral instrumentation. Auto-instrumentation vs Manual instrumentation. OTLP protocol.
 
 ### Công cụ & Thực thi
-- 📝 `[[concepts/jaeger-vs-zipkin-vs-tempo]]` *(cần viết)*
+- 📝 `[[jaeger-vs-zipkin-vs-tempo]]` *(cần viết)*
   → So sánh backends. Grafana Tempo + Loki + Prometheus = full observability stack với chi phí thấp nhất. Jaeger cho enterprise.
-- 📝 `[[concepts/opentelemetry-java-setup]]` *(cần viết)*
+- 📝 `[[opentelemetry-java-setup]]` *(cần viết)*
   → Java agent auto-instrumentation. Manual span creation. Context propagation qua Kafka headers. Quarkus OpenTelemetry extension vs Spring Boot OTel starter.
 
 ---
@@ -76,13 +76,13 @@ Observability
 ## 🚨 Alerting & SLO/SLI
 
 ### Lý thuyết nền tảng
-- 📝 `[[concepts/slo-sli-sla-explained]]` *(cần viết)*
+- 📝 `[[slo-sli-sla-explained]]` *(cần viết)*
   → SLI (đo lường) → SLO (mục tiêu) → SLA (cam kết với khách hàng). Error Budget. Burn rate alerts. Tại sao "99.9% uptime" là con số dễ gây hiểu nhầm.
-- 📝 `[[concepts/alert-fatigue-and-toil]]` *(cần viết)*
+- 📝 `[[alert-fatigue-and-toil]]` *(cần viết)*
   → Nguyên nhân alert fatigue. Symptom-based vs cause-based alerting. Runbook automation. On-call rotation best practices.
 
 ### Thực thi
-- 📝 `[[concepts/prometheus-alertmanager-setup]]` *(cần viết)*
+- 📝 `[[prometheus-alertmanager-setup]]` *(cần viết)*
   → AlertManager routing, inhibition, silencing. PagerDuty/Slack integration. Dead Man's Snitch pattern.
 
 ---
@@ -90,15 +90,15 @@ Observability
 ## 🏗️ Observability trong Microservices
 
 ### Context Propagation
-- 📝 `[[concepts/trace-context-across-kafka]]` *(cần viết)*
+- 📝 `[[trace-context-across-kafka]]` *(cần viết)*
   → Làm thế nào trace ID "sống sót" qua Kafka message. W3C TraceContext header trong Kafka ProducerRecord. OTel Kafka instrumentation.
-- 📝 `[[concepts/correlation-id-pattern]]` *(cần viết)*
+- 📝 `[[correlation-id-pattern]]` *(cần viết)*
   → Correlation ID vs Trace ID — sự khác biệt. Inject ở API Gateway, propagate qua mọi service. Logging với MDC (Mapped Diagnostic Context).
 
 ### Framework-specific
-- 📝 `[[JVM-Frameworks-2026/quarkus-observability-stack]]` *(cần viết)*
+- 📝 `[[quarkus-observability-stack]]` *(cần viết)*
   → Quarkus: SmallRye Health, Micrometer, OpenTelemetry extension. Native Image với OTel agent — các caveats.
-- 📝 `[[concepts/spring-boot-actuator-deep-dive]]` *(cần viết)*
+- 📝 `[[spring-boot-actuator-deep-dive]]` *(cần viết)*
   → Actuator endpoints bảo mật, custom HealthIndicator, InfoContributor. Actuator vs OTel — khi nào dùng cái nào.
 
 ---
@@ -119,11 +119,11 @@ Observability
 
 ## 🔗 Liên kết trong vault
 
-- [[_moc/MOC-Distributed-Systems]] — Context propagation, microservice communication
-- [[_moc/MOC-JVM-Frameworks]] — Framework-specific instrumentation (Quarkus, Spring)
-- [[_moc/MOC-Scalability]] — Performance monitoring liên quan đến scalability decisions
-- [[_moc/MOC-PDMS]] — Applied context: PDMS observability roadmap
-- [[_moc/MOC-Database]] — DB-level metrics: slow query, connection pool, replication lag
+- [[MOC-Distributed-Systems]] — Context propagation, microservice communication
+- [[MOC-JVM-Frameworks]] — Framework-specific instrumentation (Quarkus, Spring)
+- [[MOC-Scalability]] — Performance monitoring liên quan đến scalability decisions
+- [[MOC-PDMS]] — Applied context: PDMS observability roadmap
+- [[MOC-Database]] — DB-level metrics: slow query, connection pool, replication lag
 
 ---
 

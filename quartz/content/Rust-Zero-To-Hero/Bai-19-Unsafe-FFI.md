@@ -339,9 +339,9 @@ cargo miri test
 ---
 
 ## 🔗 Links
-- [[Rust-Zero-To-Hero/Bai-8-Smart-Pointers-Error-Design|Bài 8: Arc/Mutex — safe wrappers của unsafe]]
-- [[Rust-Zero-To-Hero/Bai-18-Type-System-Advanced|Bài 18: Unsafe traits (Send/Sync)]]
-- [[Rust-Zero-To-Hero/Bai-20-Macro-System|Bài 20: Macro System]] → tiếp theo
+- [[Bai-8-Smart-Pointers-Error-Design|Bài 8: Arc/Mutex — safe wrappers của unsafe]]
+- [[Bai-18-Type-System-Advanced|Bài 18: Unsafe traits (Send/Sync)]]
+- [[Bai-20-Macro-System|Bài 20: Macro System]] → tiếp theo
 
 ---
 *Bài tập:*

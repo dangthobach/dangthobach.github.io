@@ -295,7 +295,7 @@ async fn test_create_user(pool: PgPool) {
 ---
 
 ## 🔗 Links
-- [[Rust-Zero-To-Hero/Bai-10-Axum-Core|Bài 10: State integration]]
-- [[Rust-Zero-To-Hero/Bai-8-Smart-Pointers-Error-Design|Bài 8: AppError từ sqlx::Error]]
+- [[Bai-10-Axum-Core|Bài 10: State integration]]
+- [[Bai-8-Smart-Pointers-Error-Design|Bài 8: AppError từ sqlx::Error]]
 - [[MOC-Database]]
 - [[MOC-PDMS]] — applied cho PDMS queries

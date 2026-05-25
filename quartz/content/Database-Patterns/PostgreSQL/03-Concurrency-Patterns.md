@@ -787,7 +787,7 @@ Long operation coordination       │ Advisory lock (session-level)
 - [[01-ACID-Internals]] — Isolation levels chi tiết
 - [[02-MVCC-Concurrency]] — Tại sao MVCC không ngăn được lost update mặc định
 - [[05-Performance-Tuning]] — Lock monitoring, long-running transaction detection
-- [[Microservices-Patterns/Transactional-Outbox]] — Pattern tận dụng ACID + queue
+- [[Transactional-Outbox]] — Pattern tận dụng ACID + queue
 
 ---
 

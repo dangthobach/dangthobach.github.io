@@ -972,7 +972,7 @@ my-pdms/
 ---
 
 ## 🔗 Links
-- [[Rust-Zero-To-Hero/Bai-37-Dioxus-Advanced|Bài 37: Dioxus Advanced]] ← prerequisite
-- [[Rust-Zero-To-Hero/Bai-36-Dioxus-Core|Bài 36: Dioxus Core]] ← foundation
-- [[Rust-Zero-To-Hero/Bai-29-Leptos|Bài 29: Leptos]] — web-only alternative
-- [[Rust-Zero-To-Hero/Plan-Framework-Mastery|Framework Mastery Plan]]
+- [[Bai-37-Dioxus-Advanced|Bài 37: Dioxus Advanced]] ← prerequisite
+- [[Bai-36-Dioxus-Core|Bài 36: Dioxus Core]] ← foundation
+- [[Bai-29-Leptos|Bài 29: Leptos]] — web-only alternative
+- [[Plan-Framework-Mastery|Framework Mastery Plan]]

@@ -950,13 +950,13 @@ const debouncedSearch = createDebouncedSignal(rawSearch, 300);
 
 ## 🔗 Liên kết
 
-← [[SolidJS-Series/SolidJS-09-Routing|09 · Routing]]
-→ [[SolidJS-Series/SolidJS-11-SolidStart-SSR|11 · SolidStart & SSR]]
+← [[SolidJS-09-Routing|09 · Routing]]
+→ [[SolidJS-11-SolidStart-SSR|11 · SolidStart & SSR]]
 
 **Xem thêm:**
-- [[SolidJS-Series/SolidJS-06-Stores-Nested-State|06 · Stores]] — form state với createStore
-- [[SolidJS-Series/SolidJS-07-Context-DI|07 · Context]] — wizard state qua Context
+- [[SolidJS-06-Stores-Nested-State|06 · Stores]] — form state với createStore
+- [[SolidJS-07-Context-DI|07 · Context]] — wizard state qua Context
 
 ---
 
-*Series: [[SolidJS-Series/SolidJS-MOC|SolidJS Master Index]]*
+*Series: [[SolidJS-MOC|SolidJS Master Index]]*

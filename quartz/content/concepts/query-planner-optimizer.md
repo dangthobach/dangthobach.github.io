@@ -395,4 +395,4 @@ WHERE w.branch_id = 'HN-01'
 - [[postgresql-index-internals]] — Loại index và khi nào dùng
 - [[connection-pooling-pgbouncer]] — Pool sizing ảnh hưởng query throughput
 - [[postgresql-performance-deep-dive]] — VACUUM, autovacuum, monitoring
-- [[Performance-System-Programming/01-Database-Internals/03-BTree-vs-LSM]] — Storage engine comparison
+- [[03-BTree-vs-LSM]] — Storage engine comparison

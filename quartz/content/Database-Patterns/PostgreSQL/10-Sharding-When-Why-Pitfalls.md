@@ -2,7 +2,7 @@
 
 > **Audience:** Senior engineers đang scale database lên hàng chục/trăm triệu records hoặc evaluating sharding.  
 > **Scope:** Sharding decision framework, các chiến lược, pain points thực tế, và alternatives.  
-> **Liên kết:** [[05-Performance-Tuning]] | [[00-PostgreSQL-Hub]] | [[_moc/MOC-Database]]
+> **Liên kết:** [[05-Performance-Tuning]] | [[00-PostgreSQL-Hub]] | [[MOC-Database]]
 
 ---
 
@@ -351,7 +351,7 @@ Gradual migration:
 Option A: Saga Pattern (choreography/orchestration)
   → Split transaction thành local transactions + compensating transactions
   → Eventual consistency, không phải strong consistency
-  → Xem: [[Microservices-Patterns/Saga-Pattern]]
+  → Xem: [[Saga-Pattern]]
 
 Option B: 2-Phase Commit (2PC)
   → Strong consistency nhưng blocking
@@ -475,7 +475,7 @@ Thay vì shard, hãy thử theo thứ tự:
    → OLTP: PostgreSQL (normalized, low latency)
    → OLAP: ClickHouse / BigQuery / Redshift (columnar, analytics)
    → CDC (Debezium) sync từ PG → analytics DB
-   → Xem: [[Microservices-Patterns/Debezium-CDC-Deep-Dive]]
+   → Xem: [[Debezium-CDC-Deep-Dive]]
 
 6. Citus (PostgreSQL extension)
    → Sharding native trong PostgreSQL ecosystem
@@ -518,9 +518,9 @@ Recommended approach nếu cần scale:
 ## Related Notes
 
 - [[05-Performance-Tuning]] — Partitioning chi tiết trong PostgreSQL
-- [[_moc/MOC-Database]] — Database scaling tổng quan (replication, sharding)
-- [[Microservices-Patterns/Debezium-CDC-Deep-Dive]] — CDC cho analytics shard
-- [[Microservices-Patterns/Saga-Pattern]] — Distributed transactions across shards
+- [[MOC-Database]] — Database scaling tổng quan (replication, sharding)
+- [[Debezium-CDC-Deep-Dive]] — CDC cho analytics shard
+- [[Saga-Pattern]] — Distributed transactions across shards
 
 ---
 

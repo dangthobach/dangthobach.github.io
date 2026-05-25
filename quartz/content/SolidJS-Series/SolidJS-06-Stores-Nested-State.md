@@ -307,7 +307,7 @@ export { creditCases, setCreditCases };
 
 ```typescript
 // Dùng khi cần isolate state theo feature, không muốn global
-// → Xem [[SolidJS-Series/SolidJS-07-Context-DI|07 · Context]] để kết hợp Store + Context
+// → Xem [[SolidJS-07-Context-DI|07 · Context]] để kết hợp Store + Context
 ```
 
 ---
@@ -469,13 +469,13 @@ setStore('items', reconcile(serverData, { key: 'id' }));
 
 ## 🔗 Liên kết
 
-← [[SolidJS-Series/SolidJS-05-Control-Flow-Primitives|05 · Control Flow Primitives]]
-→ [[SolidJS-Series/SolidJS-07-Context-DI|07 · Context & DI]]
+← [[SolidJS-05-Control-Flow-Primitives|05 · Control Flow Primitives]]
+→ [[SolidJS-07-Context-DI|07 · Context & DI]]
 
 **Xem thêm:**
-- [[SolidJS-Series/SolidJS-07-Context-DI|07 · Context]] — kết hợp Store + Context thành service layer
-- [[SolidJS-Series/SolidJS-10-Complex-UI-Patterns|10 · Complex UI]] — form state management với Store
+- [[SolidJS-07-Context-DI|07 · Context]] — kết hợp Store + Context thành service layer
+- [[SolidJS-10-Complex-UI-Patterns|10 · Complex UI]] — form state management với Store
 
 ---
 
-*Series: [[SolidJS-Series/SolidJS-MOC|SolidJS Master Index]]*
+*Series: [[SolidJS-MOC|SolidJS Master Index]]*

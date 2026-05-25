@@ -481,11 +481,11 @@ Bài toán của bạn là gì?
 
 ## 🔗 Liên kết trong vault
 
-- [[_moc/MOC-Concurrency]] — Threading model overview, Java vs Rust mapping
-- [[_moc/MOC-JVM-Frameworks]] — Quarkus/Micronaut reactive support
-- [[concepts/reactive-programming-fundamentals]] — Reactive deep dive (Mono/Flux/Uni/Multi)
-- [[JVM-Frameworks-2026/ADR-001-Why-Quarkus-Over-Micronaut]] — Framework decision, reactive context
-- [[JVM-Frameworks-2026/ADR-002-Project-Loom-vs-Reactive-for-PDMS]] *(cần viết)* — Formal decision record
-- [[Rust-Zero-To-Hero/Bai-9-Async-Tokio]] — Tokio: Rust's answer to the same problem
-- [[Rust-Zero-To-Hero/Bai-21-Async-Internals-Pin]] — Async state machine internals (compare với JVM VT continuation)
-- [[Microservices-Patterns/04-Observability]] — Monitor VT vs Reactive performance trong production
+- [[MOC-Concurrency]] — Threading model overview, Java vs Rust mapping
+- [[MOC-JVM-Frameworks]] — Quarkus/Micronaut reactive support
+- [[reactive-programming-fundamentals]] — Reactive deep dive (Mono/Flux/Uni/Multi)
+- [[ADR-001-Why-Quarkus-Over-Micronaut]] — Framework decision, reactive context
+- [[ADR-002-Project-Loom-vs-Reactive-for-PDMS]] *(cần viết)* — Formal decision record
+- [[Bai-9-Async-Tokio]] — Tokio: Rust's answer to the same problem
+- [[Bai-21-Async-Internals-Pin]] — Async state machine internals (compare với JVM VT continuation)
+- [[04-Observability]] — Monitor VT vs Reactive performance trong production

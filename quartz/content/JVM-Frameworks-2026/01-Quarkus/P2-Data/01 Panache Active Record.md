@@ -236,7 +236,7 @@ public class UserService {
 ## 🔗 Liên quan
 - [[02 Panache Repository Pattern]] — repository variant
 - [[03 Quarkus Transactions]] — @Transactional behavior
-- [[P1-Foundation/01 CDI vs Spring IoC]] — DI layer
+- [[01 CDI vs Spring IoC]] — DI layer
 
 ## 📖 Nguồn
 - https://quarkus.io/guides/hibernate-orm-panache

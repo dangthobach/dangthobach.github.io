@@ -233,5 +233,5 @@ Legend: ✅ Có bài riêng trong vault | ⚠️ Chỉ có Notion link / thiếu
 - [[MOC-Database]] — Data layer
 - [[MOC-Auth-Security]] — Security domain
 - [[MOC-Observability]] — SLO/SLA
-- [[Microservices-Patterns/00-Hub-Microservices-Patterns]] — Applied patterns
-- [[Database-Patterns/00-Hub-Database-Persistence]] — Applied DB knowledge
+- [[00-Hub-Microservices-Patterns]] — Applied patterns
+- [[00-Hub-Database-Persistence]] — Applied DB knowledge

@@ -1,6 +1,6 @@
 # Bài 9b: Tokio Advanced — Những Gì Bài 9 Chưa Đủ
 
-> Prerequisites: [[Rust-Zero-To-Hero/Bai-9-Async-Tokio|Bài 9]] — nắm Future model, spawn, channels, select!
+> Prerequisites: [[Bai-9-Async-Tokio|Bài 9]] — nắm Future model, spawn, channels, select!
 
 ---
 
@@ -842,9 +842,9 @@ Console hiển thị:
 ---
 
 ## 🔗 Links
-- [[Rust-Zero-To-Hero/Bai-9-Async-Tokio|Bài 9: Async/Await & Tokio — Phần cơ bản]]
-- [[Rust-Zero-To-Hero/Bai-10-Axum-Core|Bài 10: Axum]] — áp dụng tất cả vào web framework
-- [[_moc/MOC-Rust|MOC Rust]]
+- [[Bai-9-Async-Tokio|Bài 9: Async/Await & Tokio — Phần cơ bản]]
+- [[Bai-10-Axum-Core|Bài 10: Axum]] — áp dụng tất cả vào web framework
+- [[MOC-Rust|MOC Rust]]
 
 ---
 *Bài tập nâng cao:*

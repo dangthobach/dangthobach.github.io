@@ -338,5 +338,5 @@ Current PDMS: ConfigMap-based (Kubernetes etcd) → đã có consensus!
 - [[distributed-clocks-ordering]] — Ordering events mà không cần consensus
 - [[consistency-models-spectrum]] — Linearizability requires consensus
 - [[cap-pacelc-deep-dive]] — Consensus nodes là CA trong CAP taxonomy
-- [[Microservices-Patterns/Kafka-Partition-and-Offset-Internals]] — Kafka ISR
+- [[Kafka-Partition-and-Offset-Internals]] — Kafka ISR
 - [[MOC-Distributed-Systems]] — Distributed systems overview

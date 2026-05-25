@@ -358,6 +358,6 @@ kafka:
 ## 🔗 Liên quan
 - [[Framework-Decision-Matrix]] — khi nào dùng Micronaut
 - [[Spring-to-Quarkus-Cheatsheet]] — mapping sang Quarkus
-- [[02-Micronaut/P1-Core/01 Compile-time DI vs Runtime DI|Micronaut: Compile-time DI]] — deep dive
-- [[02-Micronaut/P2-Data/02 Declarative HTTP Client|Declarative HTTP Client]] — @Client deep dive
-- [[concepts/compile-time-vs-runtime-di|Compile-time vs Runtime DI]] — concept note
+- [[01 Compile-time DI vs Runtime DI|Micronaut: Compile-time DI]] — deep dive
+- [[02 Declarative HTTP Client|Declarative HTTP Client]] — @Client deep dive
+- [[compile-time-vs-runtime-di|Compile-time vs Runtime DI]] — concept note

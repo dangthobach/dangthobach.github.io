@@ -1016,6 +1016,6 @@ let app = Router::new()
 ---
 
 ## 🔗 Links
-- [[Rust-Zero-To-Hero/Bai-31-Redis-Caching|Bài 31: Redis → Rate limit counter storage]]
-- [[Rust-Zero-To-Hero/Bai-13-Serde-Reqwest-JWT|Bài 13: JWT]]
-- [[Rust-Zero-To-Hero/Bai-33-Background-Jobs|Bài 33: Background Jobs]] → tiếp theo
+- [[Bai-31-Redis-Caching|Bài 31: Redis → Rate limit counter storage]]
+- [[Bai-13-Serde-Reqwest-JWT|Bài 13: JWT]]
+- [[Bai-33-Background-Jobs|Bài 33: Background Jobs]] → tiếp theo

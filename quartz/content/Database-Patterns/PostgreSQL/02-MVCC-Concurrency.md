@@ -431,7 +431,7 @@ ORDER BY age(relfrozenxid) DESC;
 - [[01-ACID-Internals]] — WAL và Isolation levels
 - [[03-Concurrency-Patterns]] — Áp dụng MVCC: FOR UPDATE, SKIP LOCKED, edge cases
 - [[05-Performance-Tuning]] — Vacuum configuration chi tiết
-- [[_moc/MOC-Database-Internals]] — Storage engine level (LSM, B-Tree)
+- [[MOC-Database-Internals]] — Storage engine level (LSM, B-Tree)
 
 ---
 

@@ -492,8 +492,8 @@ public void nightly() {
 
 ## 🔗 Liên kết
 
-- [[Microservices-Patterns/PDMS-IAM-Multi-Domain-Design]] — PDMS multi-tenant IAM design
-- [[Microservices-Patterns/PDMS-AuthZ-Fine-Grained-Design]] — Fine-grained authorization
-- [[Microservices-Patterns/PDMS-AuthZ-Sync-Strategy-Comparison]] — AuthZ strategies
-- [[concepts/zero-trust-architecture]] — Zero Trust with mTLS + JWT
+- [[PDMS-IAM-Multi-Domain-Design]] — PDMS multi-tenant IAM design
+- [[PDMS-AuthZ-Fine-Grained-Design]] — Fine-grained authorization
+- [[PDMS-AuthZ-Sync-Strategy-Comparison]] — AuthZ strategies
+- [[zero-trust-architecture]] — Zero Trust with mTLS + JWT
 - [[MOC-Auth-Security]] — Security overview

@@ -330,8 +330,8 @@ async fn bad_nested() {
 ---
 
 ## 🔗 Links
-- [[Rust-Zero-To-Hero/Bai-8-Smart-Pointers-Error-Design|Bài 8: Smart Pointers]] — `Arc` trong async context
-- [[Rust-Zero-To-Hero/Bai-10-Axum-Core|Bài 10: Axum Core]] — build trên tokio
+- [[Bai-8-Smart-Pointers-Error-Design|Bài 8: Smart Pointers]] — `Arc` trong async context
+- [[Bai-10-Axum-Core|Bài 10: Axum Core]] — build trên tokio
 - [[MOC-Concurrency]]
 
 ---
@@ -340,4 +340,4 @@ async fn bad_nested() {
 2. Implement simple rate limiter dùng `tokio::sync::Semaphore` — chỉ cho phép 10 concurrent requests.
 3. Viết producer-consumer pipeline: producer gửi 100 items qua `mpsc` channel, consumer xử lý với `timeout` per item, track failed items.
 
-> 📖 **Tiếp theo:** [[Rust-Zero-To-Hero/Bai-9b-Tokio-Advanced|Bài 9b: Tokio Advanced]] — Mutex, Semaphore, Streams, Cancellation, Actor pattern, Graceful Shutdown
+> 📖 **Tiếp theo:** [[Bai-9b-Tokio-Advanced|Bài 9b: Tokio Advanced]] — Mutex, Semaphore, Streams, Cancellation, Actor pattern, Graceful Shutdown

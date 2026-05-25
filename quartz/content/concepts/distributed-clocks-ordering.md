@@ -338,6 +338,6 @@ Recommendation: Mỗi aggregate có version counter
 
 - [[consensus-raft-paxos]] — Consensus cần ordering guarantees
 - [[consistency-models-spectrum]] — Linearizability requires global ordering
-- [[Microservices-Patterns/Event-Sourcing]] — Events cần ordering
-- [[Microservices-Patterns/Kafka-Partition-and-Offset-Internals]] — Kafka offset as clock
+- [[Event-Sourcing]] — Events cần ordering
+- [[Kafka-Partition-and-Offset-Internals]] — Kafka offset as clock
 - [[MOC-Distributed-Systems]] — Distributed systems overview

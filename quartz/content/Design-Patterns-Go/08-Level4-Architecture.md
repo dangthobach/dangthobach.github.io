@@ -638,23 +638,23 @@ func fetchWithRetry(ctx context.Context, url string) ([]byte, error) {
 
 ```
 GoF Patterns:
-  [[Design-Patterns-Go/01-Creational]]   5 patterns
-  [[Design-Patterns-Go/02-Structural]]   7 patterns
-  [[Design-Patterns-Go/03-Behavioral]]   11 patterns
+  [[01-Creational]]   5 patterns
+  [[02-Structural]]   7 patterns
+  [[03-Behavioral]]   11 patterns
 
 Idiomatic Patterns:
-  [[Design-Patterns-Go/05-Level1-Foundations]]  Functional Options · Errors · Tests
-  [[Design-Patterns-Go/06-Level2-Level3]]        Embedding · Context · Worker Pool · Pipeline
-  [[Design-Patterns-Go/08-Level4-Architecture]]  Circuit Breaker · Rate Limit · Shutdown
+  [[05-Level1-Foundations]]  Functional Options · Errors · Tests
+  [[06-Level2-Level3]]        Embedding · Context · Worker Pool · Pipeline
+  [[08-Level4-Architecture]]  Circuit Breaker · Rate Limit · Shutdown
 ```
 
 ---
 
 ## 🔗 Links
-- [[Design-Patterns-Go/06-Level2-Level3|← Level 2 & 3]]
-- [[Design-Patterns-Go/00-Overview|Series Overview]]
-- [[Go-Zero-To-Hero/Bai-3-Goroutines-Channels|Bài 3: Goroutines & Channels]]
-- [[Go-Zero-To-Hero/Bai-7-Context-Cancellation|Bài 7: Context & Cancellation]]
-- [[Go-Zero-To-Hero/Bai-22-Microservices-Patterns|Bài 22: Microservices Patterns]]
+- [[06-Level2-Level3|← Level 2 & 3]]
+- [[00-Overview|Series Overview]]
+- [[Bai-3-Goroutines-Channels|Bài 3: Goroutines & Channels]]
+- [[Bai-7-Context-Cancellation|Bài 7: Context & Cancellation]]
+- [[Bai-22-Microservices-Patterns|Bài 22: Microservices Patterns]]
 
 *Tags: #go #patterns #level4 #circuit-breaker #rate-limiter #graceful-shutdown*

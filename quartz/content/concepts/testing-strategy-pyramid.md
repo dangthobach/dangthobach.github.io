@@ -576,4 +576,4 @@ DO test your business logic:
 - [[clean-architecture-hexagonal]] — Hexagonal makes unit testing trivial (mock adapters)
 - [[ddd-tactical]] — Domain objects = most valuable unit to test
 - [[adr-framework]] — Document test strategy decisions in ADRs
-- [[Microservices-Patterns/Consumer-Driven-Contracts]] — Pact contract testing
+- [[Consumer-Driven-Contracts]] — Pact contract testing

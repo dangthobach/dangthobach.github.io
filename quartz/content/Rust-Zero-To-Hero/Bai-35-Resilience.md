@@ -984,7 +984,7 @@ Không có reflection overhead, không có proxy generation
 ---
 
 ## 🔗 Links
-- [[Rust-Zero-To-Hero/Bai-11-Axum-Middleware-Error|Bài 11: Tower Middleware foundation]]
-- [[Rust-Zero-To-Hero/Bai-34-OpenTelemetry|Bài 34: OpenTelemetry → track resilience metrics]]
-- [[Rust-Zero-To-Hero/Bai-31-Redis-Caching|Bài 31: Redis → rate limiting + fallback cache]]
-- [[Rust-Zero-To-Hero/Plan-Framework-Mastery|Plan: Framework Mastery → roadmap overview]]
+- [[Bai-11-Axum-Middleware-Error|Bài 11: Tower Middleware foundation]]
+- [[Bai-34-OpenTelemetry|Bài 34: OpenTelemetry → track resilience metrics]]
+- [[Bai-31-Redis-Caching|Bài 31: Redis → rate limiting + fallback cache]]
+- [[Plan-Framework-Mastery|Plan: Framework Mastery → roadmap overview]]

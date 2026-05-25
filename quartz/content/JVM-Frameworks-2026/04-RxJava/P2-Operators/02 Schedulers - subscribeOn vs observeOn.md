@@ -185,7 +185,7 @@ Computation:                             ──[TRANSFORM]──[CONSUME]──�
 
 ## 🔗 Liên quan
 - [[01 Core Operators]]
-- [[../P3-Advanced/01 Backpressure Strategy]]
+- [[01 Backpressure Strategy]]
 
 ## 📖 Nguồn
 - https://reactivex.io/documentation/scheduler.html

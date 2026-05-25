@@ -76,4 +76,4 @@ Vì dữ liệu cũ không bị xóa mà chỉ bị ghi đè bởi bản ghi m�
 ---
 
 ## 🔗 Tiếp theo
-- [[Performance-System-Programming/01-Database-Internals/02-Append-Only-Log-Rust|02. Triển khai Append-only Log với Rust]]
+- [[02-Append-Only-Log-Rust|02. Triển khai Append-only Log với Rust]]

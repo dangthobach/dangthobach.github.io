@@ -576,7 +576,7 @@ pub mod api {
 ---
 
 ## 🔗 Links
-- [[Design-Patterns-Rust/06-Level2-Idiomatic|← Level 2 · Idiomatic]]
-- [[Design-Patterns-Rust/08-Level4-TypeSystem|Level 4 · Type System Mastery →]]
+- [[06-Level2-Idiomatic|← Level 2 · Idiomatic]]
+- [[08-Level4-TypeSystem|Level 4 · Type System Mastery →]]
 
 *Tags: #rust #patterns #level3 #architecture #arena #type-erasure #blanket-impl*

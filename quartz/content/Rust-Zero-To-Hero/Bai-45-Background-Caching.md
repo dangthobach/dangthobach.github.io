@@ -1216,8 +1216,8 @@ TIP 5 — Cache warming
 ---
 
 ## 🔗 Links
-- [[Rust-Zero-To-Hero/Bai-44-Styling-Pipeline|Bài 44: Styling Pipeline]] ← trước đó
-- [[Rust-Zero-To-Hero/Bai-24-Axum-Advanced|Bài 24: Axum Advanced]] — middleware
-- [[Rust-Zero-To-Hero/Bai-25-PostgreSQL-Axum|Bài 25: PostgreSQL + Axum]] — SKIP LOCKED, transactions
-- [[Rust-Zero-To-Hero/Bai-39-Security-Production|Bài 39: Security]] — Redis connection pool
-- [[Microservices-Patterns/CDC-Transactional-Outbox|CDC Transactional Outbox]] — outbox pattern reference
+- [[Bai-44-Styling-Pipeline|Bài 44: Styling Pipeline]] ← trước đó
+- [[Bai-24-Axum-Advanced|Bài 24: Axum Advanced]] — middleware
+- [[Bai-25-PostgreSQL-Axum|Bài 25: PostgreSQL + Axum]] — SKIP LOCKED, transactions
+- [[Bai-39-Security-Production|Bài 39: Security]] — Redis connection pool
+- [[CDC-Transactional-Outbox|CDC Transactional Outbox]] — outbox pattern reference

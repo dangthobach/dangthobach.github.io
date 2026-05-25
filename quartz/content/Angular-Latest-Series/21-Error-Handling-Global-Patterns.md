@@ -324,4 +324,4 @@ export class ValidationMessageComponent {
 
 **Chúc mừng!** Bạn đã hoàn thành phần nâng cao của Angular Series! 🎉
 
-**Tiếp theo:** [[00-Roadmap|Quay lại Roadmap]] để xem tổng quan, hoặc bắt đầu [[../React-Latest-Series/00-Roadmap|React Series]]!
+**Tiếp theo:** [[00-Roadmap|Quay lại Roadmap]] để xem tổng quan, hoặc bắt đầu [[00-Roadmap|React Series]]!

@@ -52,9 +52,9 @@ graph TD
 
 | Phase | Nội dung | Tuần |
 |-------|---------|------|
-| [[P1-Types/01 Observable vs Flowable\|P1]] | 5 types, creation, subscribe | 21–22 |
-| [[P2-Operators/01 Core Operators\|P2]] | map/flatMap/filter, Schedulers, error | 22–23 |
-| [[P3-Advanced/01 Backpressure Strategy\|P3]] | Backpressure, Testing, Integration | 23–24 |
+| [[01 Observable vs Flowable\|P1]] | 5 types, creation, subscribe | 21–22 |
+| [[01 Core Operators\|P2]] | map/flatMap/filter, Schedulers, error | 22–23 |
+| [[01 Backpressure Strategy\|P3]] | Backpressure, Testing, Integration | 23–24 |
 
 ---
 
@@ -71,7 +71,7 @@ graph TD
 
 ## 🔗 Liên quan
 - [[MOC-JVM-Frameworks]]
-- [[01-Quarkus/P3-Reactive/01 Mutiny - Uni và Multi]] — Mutiny comparison
+- [[01 Mutiny - Uni và Multi]] — Mutiny comparison
 - [[MOC-Concurrency]] — threading model
 
 ## 📖 Nguồn

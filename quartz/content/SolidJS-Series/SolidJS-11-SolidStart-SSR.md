@@ -649,13 +649,13 @@ export const approveLoan = action(async (loanId: string) => {
 
 ## 🔗 Liên kết
 
-← [[SolidJS-Series/SolidJS-10-Complex-UI-Patterns|10 · Complex UI Patterns]]
-→ [[SolidJS-Series/SolidJS-12-Performance-Testing|12 · Performance & Testing]]
+← [[SolidJS-10-Complex-UI-Patterns|10 · Complex UI Patterns]]
+→ [[SolidJS-12-Performance-Testing|12 · Performance & Testing]]
 
 **Xem thêm:**
-- [[SolidJS-Series/SolidJS-08-Async-Resources|08 · Async & Resources]] — createAsync là core primitive
-- [[SolidJS-Series/SolidJS-09-Routing|09 · Routing]] — route config, preload patterns
+- [[SolidJS-08-Async-Resources|08 · Async & Resources]] — createAsync là core primitive
+- [[SolidJS-09-Routing|09 · Routing]] — route config, preload patterns
 
 ---
 
-*Series: [[SolidJS-Series/SolidJS-MOC|SolidJS Master Index]]*
+*Series: [[SolidJS-MOC|SolidJS Master Index]]*

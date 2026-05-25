@@ -575,13 +575,13 @@ function usePermission(perm: string) {
 
 ## 🔗 Liên kết
 
-← [[SolidJS-Series/SolidJS-06-Stores-Nested-State|06 · Stores & Nested State]]
-→ [[SolidJS-Series/SolidJS-08-Async-Resources|08 · Async & Resources]]
+← [[SolidJS-06-Stores-Nested-State|06 · Stores & Nested State]]
+→ [[SolidJS-08-Async-Resources|08 · Async & Resources]]
 
 **Xem thêm:**
-- [[SolidJS-Series/SolidJS-06-Stores-Nested-State|06 · Stores]] — Store bên trong Context
-- [[SolidJS-Series/SolidJS-10-Complex-UI-Patterns|10 · Complex UI]] — Context cho form wizard
+- [[SolidJS-06-Stores-Nested-State|06 · Stores]] — Store bên trong Context
+- [[SolidJS-10-Complex-UI-Patterns|10 · Complex UI]] — Context cho form wizard
 
 ---
 
-*Series: [[SolidJS-Series/SolidJS-MOC|SolidJS Master Index]]*
+*Series: [[SolidJS-MOC|SolidJS Master Index]]*

@@ -337,8 +337,8 @@ const fromSearch = location.state?.fromSearch;
 
 ## Related
 
-- [[Angular-Latest-Series/22-Routing-Layout-SearchState]]
-- [[SolidJS-Series/SolidJS-13-Routing-Layout-SearchState]]
+- [[22-Routing-Layout-SearchState]]
+- [[SolidJS-13-Routing-Layout-SearchState]]
 - [[07-React-Router-v6]]
 - [[17-Zustand-State-Management]]
 - [[18-TanStack-Query-Server-State]]

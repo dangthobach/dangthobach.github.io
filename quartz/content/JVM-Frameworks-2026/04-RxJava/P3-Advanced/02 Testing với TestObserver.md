@@ -217,7 +217,7 @@ void blockingList_collectResults() {
 
 ## 🔗 Liên quan
 - [[01 Backpressure Strategy]]
-- [[../P2-Operators/01 Core Operators]]
+- [[01 Core Operators]]
 
 ## 📖 Nguồn
 - https://github.com/ReactiveX/RxJava/wiki/Testing

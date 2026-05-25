@@ -85,5 +85,5 @@ Khi Memtable đạt đến ngưỡng kích thước (ví dụ 64MB):
 ---
 
 ## 🔗 Liên kết
-- [[Performance-System-Programming/01-Database-Internals/04-SSTable-Format|04. Định dạng SSTable]]
-- [[Performance-System-Programming/01-Database-Internals/08-WAL-Recovery|08. WAL & Crash Recovery]]
+- [[04-SSTable-Format|04. Định dạng SSTable]]
+- [[08-WAL-Recovery|08. WAL & Crash Recovery]]

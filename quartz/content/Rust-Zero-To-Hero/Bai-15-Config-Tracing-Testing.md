@@ -517,9 +517,9 @@ Rust Integration Test:
 ---
 
 ## 🔗 Links
-- [[Rust-Zero-To-Hero/Bai-11-Axum-Middleware-Error|Bài 11: Middleware cho request ID]]
-- [[Rust-Zero-To-Hero/Bai-12-SQLx-Database|Bài 12: sqlx::test]]
-- [[Rust-Zero-To-Hero/Bai-16-Deployment|Bài 16: Deployment]]
+- [[Bai-11-Axum-Middleware-Error|Bài 11: Middleware cho request ID]]
+- [[Bai-12-SQLx-Database|Bài 12: sqlx::test]]
+- [[Bai-16-Deployment|Bài 16: Deployment]]
 
 ---
 *Bài tập:*

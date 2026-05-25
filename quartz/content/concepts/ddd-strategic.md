@@ -397,7 +397,7 @@ Value: Event Storming surfaces hidden requirements
 
 - [[ddd-tactical]] — Aggregate, Entity, Value Object bên trong Bounded Context
 - [[clean-architecture-hexagonal]] — Hexagonal architecture within a Bounded Context
-- [[Microservices-Patterns/05-Decomposition]] — DDD Bounded Context → microservice decomposition
-- [[Microservices-Patterns/Event-Sourcing]] — Events crossing BC boundaries
-- [[Microservices-Patterns/PDMS-Architecture-Overview]] — PDMS context mapping
+- [[05-Decomposition]] — DDD Bounded Context → microservice decomposition
+- [[Event-Sourcing]] — Events crossing BC boundaries
+- [[PDMS-Architecture-Overview]] — PDMS context mapping
 - [[MOC-System-Design]] — Architecture overview

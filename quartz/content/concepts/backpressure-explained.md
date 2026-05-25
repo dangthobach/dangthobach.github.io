@@ -217,9 +217,9 @@ public Uni<Void> processBatch(List<DocumentEvent> events) {
 ---
 
 ## 🔗 Liên quan
-- [[JVM-Frameworks-2026/04-RxJava/P1-Types/01 Observable vs Flowable|Observable vs Flowable]] — khi nào cần backpressure
-- [[JVM-Frameworks-2026/04-RxJava/P3-Advanced/01 Backpressure Strategy|RxJava: Backpressure Strategies]] — code chi tiết
-- [[JVM-Frameworks-2026/01-Quarkus/P3-Reactive/03 SmallRye Kafka|SmallRye Kafka]] — backpressure với Kafka
+- [[01 Observable vs Flowable|Observable vs Flowable]] — khi nào cần backpressure
+- [[01 Backpressure Strategy|RxJava: Backpressure Strategies]] — code chi tiết
+- [[03 SmallRye Kafka|SmallRye Kafka]] — backpressure với Kafka
 - [[reactive-programming-fundamentals]] — nền tảng reactive
 - [[event-loop-model]] — tại sao backpressure quan trọng với event loop
 

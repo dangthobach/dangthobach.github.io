@@ -861,7 +861,7 @@ func main() {
 ---
 
 ## 🔗 Links
-- [[Design-Patterns-Go/01-Creational|← 01 · Creational]]
-- [[Design-Patterns-Go/03-Behavioral|03 · Behavioral →]]
+- [[01-Creational|← 01 · Creational]]
+- [[03-Behavioral|03 · Behavioral →]]
 
 *Tags: #go #design-patterns #structural #adapter #decorator #proxy*

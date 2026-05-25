@@ -104,5 +104,5 @@ graph LR
 
 ---
 ## 🔗 Liên kết
-- [[Performance-System-Programming/01-Database-Internals/01-Bitcask-Architecture|Kiến trúc Bitcask]]
-- [[_moc/MOC-Rust|Lập trình Rust]]
+- [[01-Bitcask-Architecture|Kiến trúc Bitcask]]
+- [[MOC-Rust|Lập trình Rust]]

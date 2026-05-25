@@ -4,7 +4,7 @@ tags: #solidjs #react #reactivity #performance #virtual-dom
 
 ---
 
-> Bài so sánh chi tiết: [[concepts/SolidJS-vs-React-Reactivity-Model]]
+> Bài so sánh chi tiết: [[SolidJS-vs-React-Reactivity-Model]]
 
 ---
 
@@ -30,6 +30,6 @@ React re-run toàn bộ component function → build new vDOM → diff → commi
 
 ## Related
 
-- [[concepts/SolidJS-vs-React-Reactivity-Model]]
-- [[SolidJS-Series/SolidJS-01-Reactivity-Internals]]
-- [[SolidJS-Series/SolidJS-02-Signals-Deep-Dive]]
+- [[SolidJS-vs-React-Reactivity-Model]]
+- [[SolidJS-01-Reactivity-Internals]]
+- [[SolidJS-02-Signals-Deep-Dive]]

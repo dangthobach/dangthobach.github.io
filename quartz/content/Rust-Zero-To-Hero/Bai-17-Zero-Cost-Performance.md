@@ -306,8 +306,8 @@ for _ in 0..1000 { v.push(...); } // 1 allocation
 ---
 
 ## 🔗 Links
-- [[Rust-Zero-To-Hero/Bai-7-Closures-Iterators|Bài 7: Iterator internals]]
-- [[Rust-Zero-To-Hero/Bai-18-Type-System-Advanced|Bài 18: Type System nâng cao → tiếp theo]]
+- [[Bai-7-Closures-Iterators|Bài 7: Iterator internals]]
+- [[Bai-18-Type-System-Advanced|Bài 18: Type System nâng cao → tiếp theo]]
 - [[MOC-Memory-Model]]
 
 ---

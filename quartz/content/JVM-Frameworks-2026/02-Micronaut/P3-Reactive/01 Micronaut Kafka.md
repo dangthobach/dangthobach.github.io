@@ -177,7 +177,7 @@ public class DocumentEventListener {
 
 ## 🔗 Liên quan
 - [[02 Compile-time AOP]]
-- [[../../01-Quarkus/P3-Reactive/03 SmallRye Kafka]]
+- [[03 SmallRye Kafka]]
 - [[MOC-Distributed-Systems]]
 
 ## 📖 Nguồn

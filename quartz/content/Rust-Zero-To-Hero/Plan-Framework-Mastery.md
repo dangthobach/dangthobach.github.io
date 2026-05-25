@@ -1218,10 +1218,10 @@ Mini PDMS viết bằng Rust từ đầu đến cuối
 ---
 
 ## 🔗 Links
-- [[Rust-Zero-To-Hero/Bai-9-Async-Tokio|Bài 9: Tokio]] ✅
-- [[Rust-Zero-To-Hero/Bai-10-Axum-Core|Bài 10: Axum Core]] ✅
-- [[Rust-Zero-To-Hero/Bai-11-Axum-Middleware-Error|Bài 11: Axum Middleware]] ✅
-- [[Rust-Zero-To-Hero/Bai-12-SQLx-Database|Bài 12: SQLx Basics]] ✅
+- [[Bai-9-Async-Tokio|Bài 9: Tokio]] ✅
+- [[Bai-10-Axum-Core|Bài 10: Axum Core]] ✅
+- [[Bai-11-Axum-Middleware-Error|Bài 11: Axum Middleware]] ✅
+- [[Bai-12-SQLx-Database|Bài 12: SQLx Basics]] ✅
 - Bài 24: Axum Advanced ← next
 - Bài 25: ActixWeb ← next
 - Bài 26: SQLx Advanced ← next
