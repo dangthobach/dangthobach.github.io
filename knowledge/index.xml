@@ -6,47 +6,47 @@
       <description>Last 10 notes on Dang Tho Bach&#039;s Knowledge Base</description>
       <generator>Quartz -- quartz.jzhao.xyz</generator>
       <item>
-    <title>AuthZ-Platform-Dynamic-5-Layer-Design</title>
-    <link>https://dangthobach.github.io/knowledge/Microservices-Patterns/AuthZ-Platform-Dynamic-5-Layer-Design</link>
-    <guid>https://dangthobach.github.io/knowledge/Microservices-Patterns/AuthZ-Platform-Dynamic-5-Layer-Design</guid>
-    <description><![CDATA[ AuthZ Platform — Dynamic 5-Layer Design Context: Thiết kế nền tảng phân quyền động cho enterprise system, áp dụng cho PDMS (Physical Document Management System) tại VPBank và mọi bài toán doanh nghiệp quy mô lớn. ]]></description>
-    <pubDate>Sun, 24 May 2026 14:23:58 GMT</pubDate>
-  </item><item>
     <title>Hibernate-Performance-Deep-Dive</title>
     <link>https://dangthobach.github.io/knowledge/Database-Patterns/Hibernate-Performance-Deep-Dive</link>
     <guid>https://dangthobach.github.io/knowledge/Database-Patterns/Hibernate-Performance-Deep-Dive</guid>
     <description><![CDATA[ Hibernate Performance Deep Dive — Từ Cơ Bản Đến Nâng Cao Audience: Senior engineer, quen RDBMS, muốn hiểu tại sao Hibernate hoạt động thế — không chỉ cách dùng. ]]></description>
-    <pubDate>Sun, 24 May 2026 13:54:46 GMT</pubDate>
+    <pubDate>Mon, 25 May 2026 13:11:54 GMT</pubDate>
   </item><item>
     <title>API-Design-REST-GraphQL-Webhook</title>
     <link>https://dangthobach.github.io/knowledge/Microservices-Patterns/API-Design-REST-GraphQL-Webhook</link>
     <guid>https://dangthobach.github.io/knowledge/Microservices-Patterns/API-Design-REST-GraphQL-Webhook</guid>
     <description><![CDATA[ REST API vs GraphQL vs Webhook vs gRPC — Lựa Chọn Khoa Học Tags: api-design rest graphql webhook grpc architecture microservices Related: 02-Communication · PDMS-Workflow-Optimal-Communication · Transactional-Outbox Status: 🟢 Complete TL;DR — Decision Matrix Tiêu chíREST APIGraphQLWebhookgRPCLuồng ... ]]></description>
-    <pubDate>Sun, 24 May 2026 13:54:46 GMT</pubDate>
+    <pubDate>Mon, 25 May 2026 13:11:54 GMT</pubDate>
   </item><item>
     <title>A Crash Course on Cell-based Architecture</title>
     <link>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Crash-Course-on-Cell-based-Architecture</link>
     <guid>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Crash-Course-on-Cell-based-Architecture</guid>
     <description><![CDATA[ No one wants to sail in a ship that can sink because of a single hull breach. ]]></description>
-    <pubDate>Sun, 24 May 2026 13:54:46 GMT</pubDate>
+    <pubDate>Mon, 25 May 2026 13:11:54 GMT</pubDate>
   </item><item>
     <title>Mastering OOP Fundamentals with SOLID Principles</title>
     <link>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Mastering-OOP-Fundamentals-with-SOLID-Principles</link>
     <guid>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Mastering-OOP-Fundamentals-with-SOLID-Principles</guid>
     <description><![CDATA[ Imagine trying to build a complex machine, but instead of using pre-made, reusable parts, we have to carve each component. ]]></description>
-    <pubDate>Sun, 24 May 2026 13:54:46 GMT</pubDate>
+    <pubDate>Mon, 25 May 2026 13:11:54 GMT</pubDate>
   </item><item>
     <title>Oauth2</title>
     <link>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Oauth2</link>
     <guid>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Oauth2</guid>
     <description><![CDATA[ Imagine you have a special box called a JWT. Inside this box, there are three parts: a header, a payload, and a signature. ]]></description>
-    <pubDate>Sun, 24 May 2026 13:54:46 GMT</pubDate>
+    <pubDate>Mon, 25 May 2026 13:11:54 GMT</pubDate>
   </item><item>
     <title>Understanding Database Types</title>
     <link>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Understanding-Database-Types</link>
     <guid>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Understanding-Database-Types</guid>
     <description><![CDATA[ The success of a software application often hinges on the choice of the right databases. ]]></description>
-    <pubDate>Sun, 24 May 2026 13:54:46 GMT</pubDate>
+    <pubDate>Mon, 25 May 2026 13:11:54 GMT</pubDate>
+  </item><item>
+    <title>AuthZ-Platform-Dynamic-5-Layer-Design</title>
+    <link>https://dangthobach.github.io/knowledge/Microservices-Patterns/AuthZ-Platform-Dynamic-5-Layer-Design</link>
+    <guid>https://dangthobach.github.io/knowledge/Microservices-Patterns/AuthZ-Platform-Dynamic-5-Layer-Design</guid>
+    <description><![CDATA[ AuthZ Platform — Dynamic 5-Layer Design Context: Thiết kế nền tảng phân quyền động cho enterprise system, áp dụng cho PDMS (Physical Document Management System) tại VPBank và mọi bài toán doanh nghiệp quy mô lớn. ]]></description>
+    <pubDate>Sun, 24 May 2026 14:23:58 GMT</pubDate>
   </item><item>
     <title>Kafka-Troubleshooting-and-Tips</title>
     <link>https://dangthobach.github.io/knowledge/Microservices-Patterns/Kafka-Troubleshooting-and-Tips</link>
