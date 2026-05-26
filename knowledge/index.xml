@@ -6,6 +6,12 @@
       <description>Last 10 notes on Dang Tho Bach&#039;s Knowledge Base</description>
       <generator>Quartz -- quartz.jzhao.xyz</generator>
       <item>
+    <title>Hibernate-Performance-Deep-Dive</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/Hibernate-Performance-Deep-Dive</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/Hibernate-Performance-Deep-Dive</guid>
+    <description><![CDATA[ Hibernate Performance Deep Dive — Từ Cơ Bản Đến Nâng Cao Audience: Senior engineer, quen RDBMS, muốn hiểu tại sao Hibernate hoạt động thế — không chỉ cách dùng. ]]></description>
+    <pubDate>Tue, 26 May 2026 00:59:06 GMT</pubDate>
+  </item><item>
     <title>21-Error-Handling-Global-Patterns</title>
     <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/21-Error-Handling-Global-Patterns</link>
     <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/21-Error-Handling-Global-Patterns</guid>
@@ -34,12 +40,6 @@
     <link>https://dangthobach.github.io/knowledge/Database-Patterns/00-Hub-Database-Persistence</link>
     <guid>https://dangthobach.github.io/knowledge/Database-Patterns/00-Hub-Database-Persistence</guid>
     <description><![CDATA[ Database Persistence in Java — Bức Tranh Tổng Quan Mục tiêu: Trả lời câu hỏi “Dùng cái gì?” trước khi đi vào từng thứ. ]]></description>
-    <pubDate>Mon, 25 May 2026 13:56:44 GMT</pubDate>
-  </item><item>
-    <title>Hibernate-Performance-Deep-Dive</title>
-    <link>https://dangthobach.github.io/knowledge/Database-Patterns/Hibernate-Performance-Deep-Dive</link>
-    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/Hibernate-Performance-Deep-Dive</guid>
-    <description><![CDATA[ Hibernate Performance Deep Dive — Từ Cơ Bản Đến Nâng Cao Audience: Senior engineer, quen RDBMS, muốn hiểu tại sao Hibernate hoạt động thế — không chỉ cách dùng. ]]></description>
     <pubDate>Mon, 25 May 2026 13:56:44 GMT</pubDate>
   </item><item>
     <title>00-PostgreSQL-Hub</title>
