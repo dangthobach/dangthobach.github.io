@@ -8,14 +8,14 @@ export const experiences = [
     company: 'VPBank',
     companyFull: 'Vietnam Prosperity Joint-Stock Commercial Bank (Top 5 Private Bank in Vietnam)',
     badge: 'Current',
-    role: 'Tech Lead / Senior Java Engineer',
+    role: 'Senior Java Engineer',
     project: 'PDMS — Physical Document Management System',
     period: 'Apr 2025 – Present',
     duration: '14 months',
     type: 'current',
     location: 'Hanoi, Vietnam',
     description:
-      "Led architecture design and development of VPBank's enterprise Physical Document Management System — a bank-wide platform managing the full lifecycle of 7M+ physical banking documents across 50+ warehouse locations, serving 500+ internal users daily. Delivered 580+ release candidates in 14 months, transitioning from greenfield to production stability (now CR-only phase).",
+      "Led architecture design and development of VPBank's enterprise Physical Document Management System — a bank-wide platform managing the full lifecycle of 7M+ physical banking documents across 50+ warehouse locations, serving more than 1000 internal users daily. Delivered 20+ release candidates in 14 months, transitioning from greenfield to production stability (now CR-only phase).",
     highlights: [
       '239+ REST API endpoints across 53 components, organized into 7 functional domains (accounting records, credit documents, distributed documents, warehouse operations, reporting, admin, RBAC)',
       'Migrated 7M+ legacy credit case records via multi-phase PostgreSQL stored procedures — 5,000–10,000 records/batch with FOR UPDATE SKIP LOCKED to prevent deadlocks under concurrent load',

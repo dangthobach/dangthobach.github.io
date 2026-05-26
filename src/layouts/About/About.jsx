@@ -5,7 +5,7 @@ import { useScrollReveal } from '../../hooks/useScrollReveal';
 const STATS = [
   { label: 'Years of Experience', value: 7, suffix: '+', icon: '📅' },
   { label: 'REST APIs Delivered', value: 239, suffix: '+', icon: '🔌' },
-  { label: 'Release Candidates', value: 580, suffix: '+', icon: '🚀' },
+  { label: 'Release Candidates', value: 20, suffix: '+', icon: '🚀' },
   { label: 'Records Migrated', value: 7, suffix: 'M+', icon: '🗄️' },
 ];
 
@@ -50,7 +50,7 @@ const About = () => {
           {/* Bio */}
           <div className={`about__bio reveal ${isVisible ? 'visible' : ''} delay-1`}>
             <p>
-              I'm a <strong>Senior Java Engineer and Technical Leader</strong> with 7+ years of
+              I'm a <strong>Senior Java Engineer</strong> with 7+ years of
               hands-on experience designing and shipping enterprise-grade backend systems in the
               Vietnamese fintech and banking sector.
             </p>

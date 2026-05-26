@@ -7,16 +7,16 @@ export const projects = [
     title: 'PDMS Service',
     subtitle: 'Physical Document Management System',
     company: 'VPBank (Top 5 Private Bank in Vietnam)',
-    role: 'Tech Lead / Senior Java Engineer',
+    role: 'Senior Java Engineer',
     period: 'Apr 2025 – Present',
     featured: true,
     status: 'Production',
     description:
-      'Enterprise bank-wide platform managing the full lifecycle of 7M+ physical banking documents across 50+ warehouse locations, serving 500+ internal users daily. Greenfield to production in 14 months with a lean team — now in CR-only maintenance phase.',
+      'Enterprise bank-wide platform managing the full lifecycle of 7M+ physical banking documents across 50+ warehouse locations, serving more than 1000 internal users daily. Greenfield to production in 14 months with a lean team — now in CR-only maintenance phase.',
     metrics: [
       { label: 'REST API Endpoints', value: '239+' },
       { label: 'Documents Managed', value: '7M+' },
-      { label: 'Release Candidates', value: '580+' },
+      { label: 'Release Candidates', value: '20+' },
       { label: 'Dev Cycle Reduction', value: '~40%' },
     ],
     highlights: [
@@ -26,7 +26,7 @@ export const projects = [
       'Built SXSSFStreamingWriter framework on Apache POI for memory-efficient Excel exports of 100K+ rows with constant heap usage.',
       'Distributed scheduler coordination using ShedLock over JDBC to prevent duplicate execution across horizontally scaled nodes.',
       'Keycloak OAuth2/OIDC integration with custom GatewayHeaderAuthenticationFilter and full service-layer RBAC enforcement.',
-      'Proactive security posture: resolved 15+ critical/high vulnerabilities and pinned dependency versions across 580 release candidates.',
+      'Proactive security posture: resolved 15+ critical/high vulnerabilities and pinned dependency versions across 20 release candidates.',
     ],
     tech: [
       'Java 21',
@@ -162,7 +162,7 @@ export const projects = [
     title: 'MBBank Cards Gateway & Batch',
     subtitle: 'Way4Batch & Card Issuing Gateway',
     company: 'Military Bank / Alphaway',
-    role: 'Software Engineer / Tech Lead',
+    role: 'Software Engineer',
     period: 'Jan 2022 – Aug 2022',
     featured: false,
     status: 'Production',

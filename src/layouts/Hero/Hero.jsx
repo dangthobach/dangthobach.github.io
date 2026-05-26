@@ -5,7 +5,6 @@ import profilePic from '../../assets/profile-pic.jpg';
 import cvPdf from '../../assets/DangThoBach_EN.pdf';
 
 const ROLES = [
-  'Technical Leader',
   'Senior Java Engineer',
   'Backend Architect',
   'AI-Augmented Builder',
@@ -54,7 +53,7 @@ const Hero = () => {
           </div>
 
           <p className="hero__bio">
-            Senior Java Engineer &amp; Tech Lead with 7+ years building enterprise backend systems
+            Senior Java Engineer with 7+ years building enterprise backend systems
             in Vietnamese fintech. Specializing in large-scale data processing, event-driven
             architectures, and AI-augmented engineering that ships 40% faster.
           </p>
@@ -107,15 +106,15 @@ const Hero = () => {
         <div className="hero__image-wrapper">
           <div className="hero__image-ring" aria-hidden="true" />
           <div className="hero__image-ring hero__image-ring--2" aria-hidden="true" />
-          <img src={profilePic} alt="Dang Tho Bach — Technical Leader" className="hero__image" />
+          <img src={profilePic} alt="Dang Tho Bach — Senior Java Engineer" className="hero__image" />
 
           <div className="hero__badge hero__badge--top">
             <span className="hero__badge-dot" aria-hidden="true" />
-            Open to senior / lead roles
+            Open to senior roles
           </div>
           <div className="hero__badge hero__badge--bottom">
             <span>🏦</span>
-            VPBank — Tech Lead
+            VPBank — Senior Java Engineer
           </div>
         </div>
       </div>
