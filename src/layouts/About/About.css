@@ -99,6 +99,43 @@
   line-height: 1.35;
 }
 
+/* ── Education & Languages ── */
+.about__meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.about__meta-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+}
+
+.about__meta-icon {
+  font-size: 1.35rem;
+  line-height: 1;
+  margin-top: 0.15rem;
+}
+
+.about__meta-title {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.25rem;
+}
+
+.about__meta-desc {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
 /* ── Responsive ── */
 @media (max-width: 1000px) {
   .about__body { grid-template-columns: 1fr; gap: 3rem; }
@@ -106,4 +143,5 @@
 @media (max-width: 600px) {
   .about { padding: var(--section-pad-y) 5%; }
   .about__stats { grid-template-columns: 1fr 1fr; }
+  .about__meta-grid { grid-template-columns: 1fr; gap: 1.25rem; }
 }

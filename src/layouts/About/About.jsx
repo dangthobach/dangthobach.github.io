@@ -84,6 +84,23 @@ const About = () => {
                 </span>
               ))}
             </div>
+
+            <div className="about__meta-grid">
+              <div className="about__meta-item">
+                <span className="about__meta-icon" aria-hidden="true">🎓</span>
+                <div>
+                  <h4 className="about__meta-title">Education</h4>
+                  <p className="about__meta-desc">Software Technology · Hanoi University Of Industry</p>
+                </div>
+              </div>
+              <div className="about__meta-item">
+                <span className="about__meta-icon" aria-hidden="true">🗣️</span>
+                <div>
+                  <h4 className="about__meta-title">Languages</h4>
+                  <p className="about__meta-desc">English (University Level) · Vietnamese (Native)</p>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Stats grid */}
