@@ -2,24 +2,15 @@ import './Skills.css';
 import { useScrollReveal } from '../../hooks/useScrollReveal';
 import { skillCategories } from '../../data/skills';
 
-const SkillBar = ({ name, level, devicon }) => (
-  <div className="skills__skill">
-    <div className="skills__skill-header">
-      {devicon && (
-        <i
-          className={`devicon-${devicon}-plain colored skills__devicon`}
-          aria-hidden="true"
-        />
-      )}
-      <span className="skills__skill-name">{name}</span>
-      <span className="skills__skill-pct">{level}%</span>
-    </div>
-    <div className="skills__bar-track" role="progressbar" aria-valuenow={level} aria-valuemin="0" aria-valuemax="100" aria-label={`${name} proficiency: ${level}%`}>
-      <div
-        className="skills__bar-fill"
-        style={{ '--skill-level': `${level}%` }}
+const SkillTag = ({ name, devicon }) => (
+  <div className="skills__tag">
+    {devicon && (
+      <i
+        className={`devicon-${devicon}-plain colored skills__devicon`}
+        aria-hidden="true"
       />
-    </div>
+    )}
+    <span className="skills__tag-name">{name}</span>
   </div>
 );
 
@@ -42,9 +33,9 @@ const SkillCategory = ({ category, index }) => {
         </h3>
       </div>
 
-      <div className="skills__list">
+      <div className="skills__list" aria-label={`Skills in ${category.category}`}>
         {category.skills.map((skill) => (
-          <SkillBar key={skill.name} {...skill} isParentVisible={isVisible} />
+          <SkillTag key={skill.name} {...skill} />
         ))}
       </div>
     </div>
