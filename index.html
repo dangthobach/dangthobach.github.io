@@ -2,11 +2,30 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☕</text></svg>" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React</title>
-    <script type="module" crossorigin src="/assets/index-BXc1aypp.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-CrLzHcpH.css">
+    <script>
+      (function() {
+        const theme = localStorage.getItem('portfolio-theme') || 'light';
+        if (theme === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      })();
+    </script>
+    <title>Dang Tho Bach — Technical Leader & Senior Java Engineer</title>
+    <meta name="description" content="Portfolio of Dang Tho Bach — Technical Leader and Senior Java Engineer specializing in enterprise backend systems, fintech, and AI-augmented software development at VPBank." />
+    <meta name="keywords" content="Java Engineer, Tech Lead, Spring Boot, Backend, Fintech, VPBank, Portfolio, Senior Engineer, Microservices" />
+    <meta property="og:title" content="Dang Tho Bach — Technical Leader & Senior Java Engineer" />
+    <meta property="og:description" content="Portfolio showcasing enterprise backend engineering and technical leadership in Vietnamese fintech. 7M+ docs managed, 239+ APIs built." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="author" content="Dang Tho Bach" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" />
+    <script type="module" crossorigin src="/assets/index-BF7v_6No.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-CfXoRQX_.css">
   </head>
   <body>
     <div id="root"></div>
