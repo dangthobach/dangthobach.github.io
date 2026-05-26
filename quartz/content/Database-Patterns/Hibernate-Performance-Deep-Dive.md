@@ -6434,3 +6434,1038 @@ Xóa 1 entity khỏi L1 (không discard)   → em.detach(entity) sau flush()
 ---
 
 *Tags: #hibernate #jpa #flush #clear #persistence-context #batch-processing #transaction #memory-management*
+
+
+---
+
+## 🔴 Mutable Collection — Yêu Cầu Bắt Buộc Của Hibernate
+
+> **Gap được phát hiện qua production bug:** `UnsupportedOperationException` tại `ImmutableCollections$AbstractImmutableCollection.clear()` trong Hibernate `replaceElements()` — phổ biến từ Java 16+ khi `stream().toList()` được dùng rộng rãi.
+
+### 1. Tại Sao Hibernate Cần Mutable Collection
+
+Khi bạn gọi `em.merge(detachedEntity)`, Hibernate thực hiện **copy state** từ detached entity sang managed entity — không phải replace reference.
+
+```
+DETACHED ENTITY                    MANAGED ENTITY
+(bạn tạo ra)                       (Hibernate quản lý trong Session)
+┌─────────────────────┐            ┌─────────────────────┐
+│ id: 123             │            │ id: 123             │
+│ children:           │  merge()   │ children:           │
+│  ImmutableList ❌   │ ─────────► │  PersistentBag ✅   │
+│  [A, B, C]          │            │  [A, B]             │
+└─────────────────────┘            └─────────────────────┘
+```
+
+Hibernate **không thể** làm phép gán đơn giản:
+```java
+// ❌ Hibernate KHÔNG làm thế này — sẽ mất toàn bộ tracking
+managed.children = detached.children;
+```
+
+Thay vào đó, bên trong `CollectionType.replaceElements()`:
+```java
+// ✅ Hibernate làm thế này — target phải là mutable
+Collection target = managedEntity.getChildren();
+target.clear();   // ← CRASH nếu target là ImmutableList
+target.addAll(sourceElements);
+```
+
+### 2. PersistentBag — Container Có State Của Hibernate
+
+Collection field trong JPA entity không phải `ArrayList` bình thường. Hibernate wrap nó thành:
+
+| Hibernate Type | Dùng khi | Backing |
+|---|---|---|
+| `PersistentBag` | `List` không có `@OrderColumn` | `ArrayList` |
+| `PersistentList` | `List` với `@OrderColumn` | `ArrayList` |
+| `PersistentSet` | `Set` | `HashSet` |
+| `PersistentMap` | `Map` | `HashMap` |
+
+Mỗi wrapper chứa:
+```
+PersistentBag
+├── data: [A, B, C]          ← dữ liệu thực
+├── snapshot: [A, B]         ← bản gốc để dirty check
+├── session: Session#1       ← liên kết session
+├── owner: Entity#123        ← entity sở hữu
+├── dirty: false             ← cần flush không?
+└── initialized: true        ← đã load từ DB chưa?
+```
+
+Nếu Hibernate replace reference, toàn bộ state tracking này mất → đây là lý do `replaceElements()` phải mutate target thay vì thay thế.
+
+### 3. Java 16+ Trap: `stream().toList()` → ImmutableList
+
+```
+Java 8–15                    Java 16+
+─────────────────────────    ──────────────────────────────────
+Collectors.toList()          stream().toList()
+     │                              │
+     ▼                              ▼
+ArrayList (mutable) ✅      ImmutableCollections$ListN ❌
+     │                              │
+     ▼                              ▼
+Hibernate clear() → OK      Hibernate clear() → 💥 CRASH
+```
+
+**Stacktrace nhận biết:**
+```
+java.lang.UnsupportedOperationException
+  at java.base/java.util.ImmutableCollections$AbstractImmutableCollection.clear(ImmutableCollections.java:...)
+  at org.hibernate.type.CollectionType.replaceElements(CollectionType.java:506)
+  at org.hibernate.type.CollectionType.replace(CollectionType.java:...)
+  at org.hibernate.type.TypeHelper.replace(TypeHelper.java:...)
+  at org.hibernate.event.internal.DefaultMergeEventListener.copyValues(...)
+```
+
+Khi thấy stacktrace này → **ngay lập tức kiểm tra mapper**, tìm chỗ assign collection cho entity field.
+
+### 4. Rule Bắt Buộc Cho JPA Association Collections
+
+```java
+// Field có annotation nào sau đây:
+@OneToMany
+@ManyToMany
+@ElementCollection
+
+// → Collection PHẢI là mutable
+```
+
+**Mapper pattern đúng:**
+```java
+// ✅ Cách 1 — Collectors.toCollection (rõ ràng nhất)
+entity.setChildren(
+    dtoList.stream()
+        .map(this::toEntity)
+        .collect(Collectors.toCollection(ArrayList::new))
+);
+
+// ✅ Cách 2 — new ArrayList wrapper
+entity.setChildren(
+    new ArrayList<>(dtoList.stream().map(this::toEntity).toList())
+);
+
+// ✅ Cách 3 — khởi tạo rồi addAll
+List<Child> children = new ArrayList<>();
+children.addAll(mappedList);
+entity.setChildren(children);
+```
+
+**Những cách SAI phổ biến:**
+```java
+// ❌ Java 16+ stream().toList() — ImmutableList
+entity.setChildren(
+    dtoList.stream().map(this::toEntity).toList()
+);
+
+// ❌ List.of() — ImmutableList
+entity.setChildren(List.of(child1, child2));
+
+// ❌ Collections.unmodifiableList() — UnmodifiableList
+entity.setChildren(Collections.unmodifiableList(mutableList));
+
+// ❌ Arrays.asList() — fixed-size (add/remove crash, set OK)
+entity.setChildren(Arrays.asList(child1, child2));
+```
+
+### 5. Checklist Khi Viết Mapper Cho Entity
+
+```
+□ Tất cả List/Set/Map field trong entity → dùng mutable collection
+□ Mapper dùng stream() → kiểm tra terminal operation
+  □ .toList()       → đổi thành Collectors.toCollection(ArrayList::new)
+  □ .toSet()        → đổi thành Collectors.toCollection(HashSet::new)
+□ MapStruct @Mapping → kiểm tra collectionMappingStrategy
+□ ModelMapper → kiểm tra TypeMap cho collection
+□ Không dùng List.of() / Set.of() / Map.of() cho entity fields
+```
+
+---
+
+## 🔴 Cascade Config vs DDL — Hai Layer Độc Lập
+
+> Đây là nguồn gây nhầm lẫn phổ biến: nhiều người nghĩ thay đổi JPA cascade sẽ tự động thay đổi database schema. **Hoàn toàn sai.**
+
+### 1. JPA Cascade vs Database Cascade — Bản Chất Khác Nhau
+
+| | JPA Cascade | DB CASCADE |
+|---|---|---|
+| **Layer** | Application (JVM) | Database (DDL) |
+| **Khai báo** | `cascade = CascadeType.XXX` | `ON DELETE CASCADE` trong FK constraint |
+| **Ai thực thi** | Hibernate trong Session | PostgreSQL/MySQL engine |
+| **Thay đổi schema** | ❌ Không | ✅ Có (ALTER TABLE) |
+| **Hoạt động khi** | Hibernate session mở | Bất kỳ DELETE nào, kể cả native query |
+
+```
+APPLICATION LAYER              DATABASE LAYER
+──────────────────────         ──────────────────────────────
+@OneToMany(                    FK constraint:
+  cascade = REMOVE             FOREIGN KEY (parent_id)
+)                                REFERENCES parent(id)
+                                 ON DELETE CASCADE  ← DB tự xử lý
+Hibernate phát SQL:
+DELETE FROM child WHERE ...
+DELETE FROM parent WHERE ...
+```
+
+### 2. `orphanRemoval` vs `ON DELETE CASCADE` vs `cascade = REMOVE`
+
+Ba thứ trông giống nhau nhưng hoạt động khác hoàn toàn:
+
+```
+SCENARIO: Parent bị xóa / child bị remove khỏi collection
+
+                    orphanRemoval=true   cascade=REMOVE   ON DELETE CASCADE
+                    ──────────────────   ──────────────   ─────────────────
+Xóa parent          ✅ xóa children      ✅ xóa children  ✅ xóa children
+Remove child        ✅ xóa child         ❌ không xóa     ❌ không xóa
+  khỏi collection   (orphan → DELETE)    (chỉ unlink)     (chỉ unlink)
+Native SQL DELETE   ❌ không biết        ❌ không biết    ✅ DB tự xử lý
+  parent
+Cần Hibernate       ✅ có               ✅ có            ❌ không cần
+  session?
+Sinh DDL?           ❌ không            ❌ không         ✅ có FK constraint
+```
+
+**Ví dụ minh họa `orphanRemoval`:**
+```java
+// Entity setup
+@OneToMany(mappedBy = "parent", cascade = ALL, orphanRemoval = true)
+private List<Child> children = new ArrayList<>();
+
+// Code
+Parent parent = repo.findById(1L).get();
+parent.getChildren().remove(0);  // ← remove khỏi collection
+repo.save(parent);
+// Hibernate tự phát: DELETE FROM child WHERE id = ?
+// orphanRemoval phát hiện child không còn owner → DELETE
+```
+
+```java
+// Nếu chỉ có cascade = REMOVE, không có orphanRemoval:
+parent.getChildren().remove(0);  // ← remove khỏi collection
+repo.save(parent);
+// KHÔNG phát DELETE — child vẫn còn trong DB với parent_id = 1
+// → Dữ liệu "mồ côi" tích tụ trong DB
+```
+
+### 3. DDL Thay Đổi Khi Nào Do Cascade?
+
+Cascade JPA **không bao giờ** tự sinh DDL change. Tuy nhiên, một số **annotation khác** đi kèm cascade lại ảnh hưởng DDL:
+
+```java
+// CASE 1: Thêm @JoinColumn → ảnh hưởng DDL
+// Trước (không có @JoinColumn)
+@OneToMany(cascade = ALL)
+private List<Child> children;
+// → Hibernate sinh join table: parent_children (parent_id, children_id)
+
+// Sau (có @JoinColumn)
+@OneToMany(cascade = ALL)
+@JoinColumn(name = "parent_id")
+private List<Child> children;
+// → Hibernate dùng FK column trong child table: child.parent_id
+// → DDL THAY ĐỔI: drop join table, add column
+
+// CASE 2: Thêm cascade = REMOVE → KHÔNG ảnh hưởng DDL
+@OneToMany(cascade = {PERSIST, MERGE})        // trước
+@OneToMany(cascade = {PERSIST, MERGE, REMOVE}) // sau
+// → Schema không đổi gì, chỉ behavior runtime thay đổi
+
+// CASE 3: orphanRemoval = true → KHÔNG ảnh hưởng DDL
+@OneToMany(cascade = ALL, orphanRemoval = true) // thêm orphanRemoval
+// → Schema không đổi, nhưng behavior xóa thay đổi đáng kể
+```
+
+**Kết luận — Rule nhớ nhanh:**
+
+```
+Thứ gây DDL change:        Thứ KHÔNG gây DDL change:
+──────────────────────     ─────────────────────────────
+@JoinColumn                cascade type thay đổi
+@JoinTable                 orphanRemoval thêm/bỏ
+@Column                    fetch = LAZY/EAGER
+@Index                     cascade ALL → cascade PERSIST
+Schema migration tool      optional = true/false
+(Liquibase/Flyway)
+```
+
+---
+
+## 🔴 Cascade Trên Quan Hệ 2 Chiều — Rule Rõ Ràng
+
+### 1. Owning Side vs Inverse Side
+
+Trong quan hệ 2 chiều, Hibernate phân biệt:
+
+```
+@ManyToOne / @OneToMany bidirectional:
+
+OWNING SIDE                         INVERSE SIDE
+(kiểm soát FK trong DB)             (chỉ là reference ngược)
+───────────────────────             ──────────────────────────
+@ManyToOne                          @OneToMany(mappedBy = "parent")
+private Parent parent;              private List<Child> children;
+
+Hibernate dùng side này             mappedBy = "parent" nghĩa là:
+để sinh SQL:                        "FK được quản lý bởi field
+  child.parent_id = ?                'parent' ở bên kia"
+```
+
+**Rule quan trọng:** Hibernate chỉ nhìn vào **owning side** để sinh FK SQL. Inverse side (`mappedBy`) chỉ là convenience reference.
+
+### 2. Cascade Trên Side Nào?
+
+```java
+// Ví dụ: Order → OrderItem (1 chiều composition)
+
+// ✅ ĐÚNG: Cascade ở OWNING side (parent quản lý children)
+@Entity
+public class Order {
+    @OneToMany(
+        mappedBy = "order",           // inverse side khai báo mappedBy
+        cascade = CascadeType.ALL,    // cascade ở đây — parent → children
+        orphanRemoval = true
+    )
+    private List<OrderItem> items = new ArrayList<>();
+}
+
+@Entity
+public class OrderItem {
+    @ManyToOne(fetch = LAZY)          // owning side — KHÔNG cascade
+    @JoinColumn(name = "order_id")
+    private Order order;
+}
+```
+
+```java
+// ❌ SAI: Cascade ở cả 2 sides → infinite cascade / unexpected behavior
+@Entity
+public class Order {
+    @OneToMany(mappedBy = "order", cascade = ALL)
+    private List<OrderItem> items;
+}
+
+@Entity
+public class OrderItem {
+    @ManyToOne(cascade = ALL)   // ← CASCADE TỪ CHILD LÊN PARENT!
+    private Order order;
+}
+
+// Khi xóa một OrderItem:
+// → cascade REMOVE propagate lên Order
+// → Order bị xóa → cascade xuống tất cả OrderItem còn lại
+// → 💥 Xóa toàn bộ order và tất cả items chỉ vì xóa 1 item
+```
+
+### 3. ManyToMany — Không Bao Giờ Dùng cascade REMOVE
+
+```java
+// ❌ NGUY HIỂM
+@ManyToMany(cascade = CascadeType.ALL)  // bao gồm REMOVE
+private Set<Tag> tags;
+
+// Khi remove 1 tag khỏi article:
+// → cascade REMOVE propagate → Tag entity bị DELETE khỏi DB
+// → Tất cả Article khác đang dùng Tag này bị mất liên kết
+// → DATA LOSS
+```
+
+```java
+// ✅ ĐÚNG cho ManyToMany
+@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+@JoinTable(
+    name = "article_tag",
+    joinColumns = @JoinColumn(name = "article_id"),
+    inverseJoinColumns = @JoinColumn(name = "tag_id")
+)
+private Set<Tag> tags = new HashSet<>();
+```
+
+**Rule cho ManyToMany:**
+```
+cascade PERSIST → ✅ OK (tạo tag mới cùng article)
+cascade MERGE   → ✅ OK (update tag khi merge article)
+cascade REMOVE  → ❌ KHÔNG BAO GIỜ (xóa shared entity)
+cascade ALL     → ❌ KHÔNG BAO GIỜ (bao gồm REMOVE)
+orphanRemoval   → ❌ KHÔNG HỢP LỆ (JPA không cho phép trên ManyToMany)
+```
+
+### 4. Decision Tree — Chọn Cascade Đúng
+
+```
+Relationship của bạn là gì?
+│
+├── COMPOSITION (child không tồn tại độc lập — OrderItem, Address)
+│   │
+│   ├── OneToMany (1 chiều)
+│   │   └── cascade = ALL, orphanRemoval = true
+│   │
+│   └── OneToMany (2 chiều)
+│       ├── Parent side: cascade = ALL, orphanRemoval = true
+│       └── Child side (@ManyToOne): KHÔNG cascade
+│
+├── AGGREGATION (child tồn tại độc lập — Article ↔ Tag)
+│   │
+│   ├── OneToMany
+│   │   └── cascade = {PERSIST, MERGE}
+│   │       orphanRemoval = false (hoặc bỏ)
+│   │
+│   └── ManyToMany
+│       └── cascade = {PERSIST, MERGE}
+│           KHÔNG cascade = REMOVE
+│           KHÔNG orphanRemoval
+│
+└── REFERENCE (chỉ tham chiếu — Employee → Department)
+    └── KHÔNG cascade gì cả
+        fetch = LAZY
+```
+
+### 5. Cascade + 2 Chiều — Đồng Bộ Cả 2 Sides
+
+Cascade không tự động đồng bộ inverse side trong memory. Phải làm thủ công:
+
+```java
+// ❌ SAI — chỉ set 1 side
+order.getItems().add(item);
+// item.getOrder() = null → inconsistent in-memory state
+// Hibernate có thể flush sai hoặc không flush
+
+// ✅ ĐÚNG — helper method trong entity
+@Entity
+public class Order {
+    @OneToMany(mappedBy = "order", cascade = ALL, orphanRemoval = true)
+    private List<OrderItem> items = new ArrayList<>();
+
+    // Luôn dùng helper method để đảm bảo 2 sides đồng bộ
+    public void addItem(OrderItem item) {
+        items.add(item);
+        item.setOrder(this);   // set owning side
+    }
+
+    public void removeItem(OrderItem item) {
+        items.remove(item);
+        item.setOrder(null);   // clear owning side
+    }
+}
+```
+
+### 6. Case Mất Dữ Liệu Do Cascade Sai — Tổng Hợp
+
+| Bug Pattern | Nguyên nhân | Hậu quả | Fix |
+|---|---|---|---|
+| cascade ALL trên ManyToMany | REMOVE propagate lên shared entity | Xóa entity đang được dùng bởi nhiều chỗ | Chỉ dùng PERSIST + MERGE |
+| cascade REMOVE trên child @ManyToOne | Xóa child → xóa parent → xóa hết siblings | Xóa hàng loạt không kiểm soát | Bỏ cascade trên ManyToOne |
+| orphanRemoval mà không set helper method | Child bị "mồ côi" trong memory → tự xóa | Xóa child không mong muốn | Luôn dùng addX()/removeX() helper |
+| Không có orphanRemoval khi cần | Child bị remove khỏi collection nhưng vẫn ở DB | "Orphan" data tích tụ | Thêm orphanRemoval = true |
+| Assign immutable collection cho entity field | Hibernate replaceElements() gọi clear() | UnsupportedOperationException | Dùng new ArrayList<>() |
+| cascade ALL + 2 chiều cả 2 sides | Xóa child → cascade lên parent → cascade xuống siblings | Xóa hàng loạt | Cascade chỉ ở 1 side (parent) |
+
+---
+
+> **Related notes:** [[Hibernate-Reactive-Deep-Dive]] · [[Spring-Data-R2DBC-Deep-Dive]] · [[00-Hub-Database-Persistence]]
+> **Tags:** #hibernate #jpa #cascade #collection #java16 #orm #data-loss #production-bug
+
+
+---
+
+## 🔴 Mutable Collection — Yêu Cầu Bắt Buộc Của Hibernate
+
+> **Gap được phát hiện qua production bug:** `UnsupportedOperationException` tại `ImmutableCollections$AbstractImmutableCollection.clear()` trong Hibernate `replaceElements()` — phổ biến từ Java 16+ khi `stream().toList()` được dùng rộng rãi.
+
+### 1. Tại Sao Hibernate Cần Mutable Collection
+
+Khi gọi `em.merge(detachedEntity)`, Hibernate thực hiện **copy state** từ detached entity sang managed entity — không phải replace reference.
+
+Hibernate **không thể** làm phép gán đơn giản:
+```java
+// ❌ Hibernate KHÔNG làm thế này — sẽ mất toàn bộ tracking
+managed.children = detached.children;
+```
+
+Thay vào đó, bên trong `CollectionType.replaceElements()`:
+```java
+// ✅ Hibernate làm thế này — target phải là mutable
+Collection target = managedEntity.getChildren();
+target.clear();   // ← CRASH nếu target là ImmutableList
+target.addAll(sourceElements);
+```
+
+### 2. PersistentBag — Container Có State Của Hibernate
+
+Collection field trong JPA entity không phải `ArrayList` bình thường. Hibernate wrap nó thành:
+
+| Hibernate Type | Dùng khi | Backing |
+|---|---|---|
+| `PersistentBag` | `List` không có `@OrderColumn` | `ArrayList` |
+| `PersistentList` | `List` với `@OrderColumn` | `ArrayList` |
+| `PersistentSet` | `Set` | `HashSet` |
+| `PersistentMap` | `Map` | `HashMap` |
+
+Mỗi wrapper chứa: data thực, snapshot để dirty check, liên kết session, owner entity, dirty flag, initialized flag. Nếu Hibernate replace reference thay vì mutate, toàn bộ state tracking này mất — đây là lý do `replaceElements()` phải mutate target.
+
+### 3. Java 16+ Trap: `stream().toList()` → ImmutableList
+
+```
+Java 8–15                    Java 16+
+─────────────────────────    ──────────────────────────────────
+Collectors.toList()          stream().toList()
+     │                              │
+     ▼                              ▼
+ArrayList (mutable) ✅      ImmutableCollections$ListN ❌
+     │                              │
+     ▼                              ▼
+Hibernate clear() → OK      Hibernate clear() → 💥 CRASH
+```
+
+**Stacktrace nhận biết:**
+```
+java.lang.UnsupportedOperationException
+  at java.base/java.util.ImmutableCollections$AbstractImmutableCollection.clear
+  at org.hibernate.type.CollectionType.replaceElements(CollectionType.java:506)
+  at org.hibernate.type.CollectionType.replace(CollectionType.java:...)
+  at org.hibernate.event.internal.DefaultMergeEventListener.copyValues(...)
+```
+
+Khi thấy stacktrace này → **ngay lập tức kiểm tra mapper**, tìm chỗ assign collection cho entity field.
+
+### 4. Rule Bắt Buộc Cho JPA Association Collections
+
+```java
+// ✅ ĐÚNG
+entity.setChildren(
+    dtoList.stream()
+        .map(this::toEntity)
+        .collect(Collectors.toCollection(ArrayList::new))
+);
+
+// ✅ ĐÚNG — new ArrayList wrapper
+entity.setChildren(new ArrayList<>(stream.toList()));
+
+// ❌ SAI — Java 16+ stream().toList() → ImmutableList
+entity.setChildren(dtoList.stream().map(this::toEntity).toList());
+
+// ❌ SAI — List.of() → ImmutableList
+entity.setChildren(List.of(child1, child2));
+
+// ❌ SAI — Arrays.asList() → fixed-size (add/remove crash)
+entity.setChildren(Arrays.asList(child1, child2));
+
+// ❌ SAI — Collections.unmodifiableList()
+entity.setChildren(Collections.unmodifiableList(mutableList));
+```
+
+**Checklist mapper:**
+```
+□ stream() terminal op → dùng Collectors.toCollection(ArrayList::new)
+□ MapStruct → kiểm tra collectionMappingStrategy
+□ Không dùng List.of() / Set.of() cho entity fields
+□ Entity field initializer: private List<X> items = new ArrayList<>();
+```
+
+---
+
+## 🔴 Cascade Config vs DDL — Hai Layer Độc Lập
+
+> Thay đổi JPA cascade **không bao giờ** tự động thay đổi database schema.
+
+### 1. JPA Cascade vs Database Cascade — Bản Chất Khác Nhau
+
+| | JPA Cascade | DB CASCADE |
+|---|---|---|
+| **Layer** | Application (JVM) | Database (DDL) |
+| **Khai báo** | `cascade = CascadeType.XXX` | `ON DELETE CASCADE` trong FK constraint |
+| **Ai thực thi** | Hibernate trong Session | PostgreSQL/MySQL engine |
+| **Thay đổi schema** | ❌ Không | ✅ Có (ALTER TABLE) |
+| **Hoạt động khi** | Hibernate session mở | Bất kỳ DELETE nào, kể cả native query |
+
+### 2. `orphanRemoval` vs `ON DELETE CASCADE` vs `cascade = REMOVE`
+
+| | `orphanRemoval = true` | `cascade = REMOVE` | `ON DELETE CASCADE` |
+|---|---|---|---|
+| Xóa parent | ✅ xóa children | ✅ xóa children | ✅ xóa children |
+| Remove child khỏi collection | ✅ DELETE child | ❌ chỉ unlink | ❌ chỉ unlink |
+| Native SQL DELETE parent | ❌ không biết | ❌ không biết | ✅ DB tự xử lý |
+| Cần Hibernate session? | ✅ có | ✅ có | ❌ không cần |
+| Sinh DDL? | ❌ không | ❌ không | ✅ FK constraint |
+
+**Ví dụ quan trọng — không có `orphanRemoval`:**
+```java
+// Chỉ có cascade = REMOVE, không có orphanRemoval:
+parent.getChildren().remove(0);  // remove khỏi collection
+repo.save(parent);
+// KHÔNG phát DELETE — child vẫn còn trong DB với parent_id = 1
+// → "Orphan" data tích tụ không kiểm soát
+```
+
+### 3. DDL Thay Đổi Khi Nào?
+
+```
+Thứ GÂY DDL change:              Thứ KHÔNG gây DDL change:
+──────────────────────────────   ─────────────────────────────────
+Thêm/bỏ @JoinColumn              cascade type thay đổi
+Thêm/bỏ @JoinTable               orphanRemoval thêm/bỏ
+Đổi @Column properties           fetch = LAZY/EAGER thay đổi
+Thêm @Index                      optional = true/false
+Schema migration (Liquibase)     cascade ALL → cascade PERSIST
+```
+
+**Case đặc biệt — @JoinColumn ảnh hưởng DDL:**
+```java
+// Không có @JoinColumn → Hibernate sinh join table
+@OneToMany(cascade = ALL)
+private List<Child> children;
+// DDL: CREATE TABLE parent_children (parent_id, children_id)
+
+// Có @JoinColumn → FK column trong child table
+@OneToMany(cascade = ALL)
+@JoinColumn(name = "parent_id")
+private List<Child> children;
+// DDL: ALTER TABLE child ADD COLUMN parent_id (join table bị drop)
+// → SCHEMA THAY ĐỔI LỚN dù cascade không đổi
+```
+
+---
+
+## 🔴 Cascade Trên Quan Hệ 2 Chiều — Rule Rõ Ràng
+
+### 1. Owning Side vs Inverse Side
+
+```
+@ManyToOne / @OneToMany bidirectional:
+
+OWNING SIDE                         INVERSE SIDE
+(kiểm soát FK trong DB)             (chỉ là reference ngược)
+───────────────────────             ──────────────────────────
+@ManyToOne                          @OneToMany(mappedBy = "parent")
+private Parent parent;              private List<Child> children;
+
+Hibernate dùng side này             mappedBy nghĩa là:
+để sinh SQL INSERT/UPDATE           "FK được quản lý bởi field
+  child.parent_id = ?                'parent' ở phía bên kia"
+```
+
+**Rule:** Hibernate chỉ nhìn **owning side** để sinh FK SQL. Inverse side (`mappedBy`) là convenience reference — thay đổi nó mà không set owning side → Hibernate không flush.
+
+### 2. Cascade Đặt Ở Side Nào?
+
+```java
+// ✅ ĐÚNG: Composition — cascade ở parent (inverse side của OneToMany)
+@Entity
+public class Order {
+    @OneToMany(
+        mappedBy = "order",
+        cascade = CascadeType.ALL,    // ← parent quản lý children lifecycle
+        orphanRemoval = true
+    )
+    private List<OrderItem> items = new ArrayList<>();
+
+    // Helper method — bắt buộc để đồng bộ 2 sides
+    public void addItem(OrderItem item) {
+        items.add(item);
+        item.setOrder(this);
+    }
+
+    public void removeItem(OrderItem item) {
+        items.remove(item);
+        item.setOrder(null);
+    }
+}
+
+@Entity
+public class OrderItem {
+    @ManyToOne(fetch = LAZY)   // owning side — KHÔNG cascade
+    @JoinColumn(name = "order_id")
+    private Order order;
+}
+```
+
+```java
+// ❌ NGUY HIỂM: cascade ở cả 2 sides
+@Entity
+public class OrderItem {
+    @ManyToOne(cascade = ALL)   // ← cascade từ child lên parent!
+    private Order order;
+}
+// Xóa 1 OrderItem → cascade REMOVE lên Order
+// → Order bị xóa → cascade xuống tất cả OrderItem còn lại
+// → 💥 Xóa toàn bộ order chỉ vì xóa 1 item
+```
+
+### 3. ManyToMany — Không Bao Giờ cascade REMOVE
+
+```java
+// ❌ NGUY HIỂM
+@ManyToMany(cascade = CascadeType.ALL)  // bao gồm REMOVE
+private Set<Tag> tags;
+// Xóa tag khỏi article → Tag entity bị DELETE khỏi DB
+// → Tất cả Article khác đang dùng Tag này mất liên kết → DATA LOSS
+
+// ✅ ĐÚNG
+@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+@JoinTable(
+    name = "article_tag",
+    joinColumns = @JoinColumn(name = "article_id"),
+    inverseJoinColumns = @JoinColumn(name = "tag_id")
+)
+private Set<Tag> tags = new HashSet<>();
+```
+
+**Rule ManyToMany:**
+```
+cascade PERSIST → ✅ OK
+cascade MERGE   → ✅ OK
+cascade REMOVE  → ❌ KHÔNG BAO GIỜ
+cascade ALL     → ❌ KHÔNG BAO GIỜ
+orphanRemoval   → ❌ JPA không cho phép trên ManyToMany
+```
+
+### 4. Decision Tree — Chọn Cascade Đúng
+
+```
+Relationship là gì?
+│
+├── COMPOSITION (child không tồn tại độc lập — OrderItem, Address)
+│   ├── OneToMany 2 chiều
+│   │   ├── Parent (@OneToMany mappedBy): cascade=ALL, orphanRemoval=true
+│   │   └── Child (@ManyToOne): KHÔNG cascade, fetch=LAZY
+│   └── OneToMany 1 chiều
+│       └── cascade=ALL, orphanRemoval=true, @JoinColumn
+│
+├── AGGREGATION (child tồn tại độc lập — Article ↔ Tag)
+│   ├── OneToMany: cascade={PERSIST, MERGE}, orphanRemoval=false
+│   └── ManyToMany: cascade={PERSIST, MERGE}, KHÔNG orphanRemoval
+│
+└── REFERENCE (Employee → Department)
+    └── KHÔNG cascade, fetch=LAZY
+```
+
+### 5. Tổng Hợp — Case Mất Dữ Liệu Do Cascade Sai
+
+| Bug Pattern | Nguyên nhân | Hậu quả | Fix |
+|---|---|---|---|
+| cascade ALL trên ManyToMany | REMOVE propagate lên shared entity | Xóa entity đang được share | Chỉ PERSIST + MERGE |
+| cascade REMOVE trên child @ManyToOne | Xóa child → xóa parent → xóa siblings | Xóa hàng loạt | Bỏ cascade trên ManyToOne |
+| orphanRemoval không có helper method | Child bị "mồ côi" trong memory → tự xóa | Xóa ngoài ý muốn | Dùng addX()/removeX() |
+| Thiếu orphanRemoval khi cần | Child remove khỏi collection nhưng vẫn ở DB | Orphan data tích tụ | Thêm orphanRemoval=true |
+| Assign immutable collection cho entity field | Hibernate replaceElements() gọi clear() | UnsupportedOperationException | Dùng new ArrayList<>() |
+| cascade ALL cả 2 sides quan hệ 2 chiều | Cascade vòng lặp / xóa hàng loạt | Data loss khó debug | Cascade chỉ ở parent side |
+
+---
+
+> **Related notes:** [[Hibernate-Reactive-Deep-Dive]] · [[Spring-Data-R2DBC-Deep-Dive]] · [[00-Hub-Database-Persistence]]
+> **Tags:** #hibernate #jpa #cascade #collection #java16 #orm #data-loss #production-bug
+
+
+---
+
+## 🔴 Mutable Collection — Yêu Cầu Bắt Buộc Của Hibernate
+
+> **Gap được phát hiện qua production bug:** `UnsupportedOperationException` tại `ImmutableCollections$AbstractImmutableCollection.clear()` trong Hibernate `replaceElements()` — phổ biến từ Java 16+ khi `stream().toList()` được dùng rộng rãi.
+
+### 1. Tại Sao Hibernate Cần Mutable Collection
+
+Khi gọi `em.merge(detachedEntity)`, Hibernate thực hiện **copy state** từ detached entity sang managed entity — không phải replace reference.
+
+Hibernate **không thể** làm phép gán đơn giản:
+```java
+// ❌ Hibernate KHÔNG làm thế này — sẽ mất toàn bộ tracking
+managed.children = detached.children;
+```
+
+Thay vào đó, bên trong `CollectionType.replaceElements()`:
+```java
+// ✅ Hibernate làm thế này — target phải là mutable
+Collection target = managedEntity.getChildren();
+target.clear();   // ← CRASH nếu target là ImmutableList
+target.addAll(sourceElements);
+```
+
+### 2. PersistentBag — Container Có State Của Hibernate
+
+Collection field trong JPA entity không phải `ArrayList` bình thường. Hibernate wrap nó thành:
+
+| Hibernate Type | Dùng khi | Backing |
+|---|---|---|
+| `PersistentBag` | `List` không có `@OrderColumn` | `ArrayList` |
+| `PersistentList` | `List` với `@OrderColumn` | `ArrayList` |
+| `PersistentSet` | `Set` | `HashSet` |
+| `PersistentMap` | `Map` | `HashMap` |
+
+Mỗi wrapper chứa: data thực, snapshot để dirty check, liên kết session, owner entity, dirty flag, initialized flag. Nếu Hibernate replace reference thay vì mutate, toàn bộ state tracking này mất — đây là lý do `replaceElements()` phải mutate target.
+
+### 3. Java 16+ Trap: `stream().toList()` → ImmutableList
+
+```
+Java 8–15                        Java 16+
+────────────────────────         ──────────────────────────────────
+Collectors.toList()              stream().toList()
+     │                                  │
+     ▼                                  ▼
+ArrayList (mutable) ✅          ImmutableCollections$ListN ❌
+     │                                  │
+     ▼                                  ▼
+Hibernate clear() → OK          Hibernate clear() → 💥 CRASH
+```
+
+**Stacktrace nhận biết:**
+```
+java.lang.UnsupportedOperationException
+  at java.base/java.util.ImmutableCollections$AbstractImmutableCollection.clear
+  at org.hibernate.type.CollectionType.replaceElements(CollectionType.java:506)
+  at org.hibernate.type.CollectionType.replace(CollectionType.java:...)
+  at org.hibernate.event.internal.DefaultMergeEventListener.copyValues(...)
+```
+
+Khi thấy stacktrace này → **ngay lập tức kiểm tra mapper**, tìm chỗ assign collection cho entity field.
+
+### 4. Rule Bắt Buộc Cho JPA Association Collections
+
+```java
+// ✅ ĐÚNG — Collectors.toCollection (rõ ràng nhất)
+entity.setChildren(
+    dtoList.stream()
+        .map(this::toEntity)
+        .collect(Collectors.toCollection(ArrayList::new))
+);
+
+// ✅ ĐÚNG — new ArrayList wrapper
+entity.setChildren(new ArrayList<>(stream.toList()));
+
+// ❌ SAI — Java 16+ stream().toList() → ImmutableList
+entity.setChildren(dtoList.stream().map(this::toEntity).toList());
+
+// ❌ SAI — List.of() → ImmutableList
+entity.setChildren(List.of(child1, child2));
+
+// ❌ SAI — Arrays.asList() → fixed-size (add/remove crash)
+entity.setChildren(Arrays.asList(child1, child2));
+
+// ❌ SAI — Collections.unmodifiableList()
+entity.setChildren(Collections.unmodifiableList(mutableList));
+```
+
+**Checklist mapper:**
+```
+□ stream() terminal op → dùng Collectors.toCollection(ArrayList::new)
+□ MapStruct → kiểm tra collectionMappingStrategy
+□ Không dùng List.of() / Set.of() cho entity fields
+□ Entity field initializer: private List<X> items = new ArrayList<>();
+```
+
+---
+
+## 🔴 Cascade Config vs DDL — Hai Layer Độc Lập
+
+> Thay đổi JPA cascade **không bao giờ** tự động thay đổi database schema. Đây là nguồn gây nhầm lẫn phổ biến.
+
+### 1. JPA Cascade vs Database Cascade — Bản Chất Khác Nhau
+
+| | JPA Cascade | DB CASCADE |
+|---|---|---|
+| **Layer** | Application (JVM) | Database (DDL) |
+| **Khai báo** | `cascade = CascadeType.XXX` | `ON DELETE CASCADE` trong FK constraint |
+| **Ai thực thi** | Hibernate trong Session | PostgreSQL/MySQL engine |
+| **Thay đổi schema** | ❌ Không | ✅ Có (ALTER TABLE) |
+| **Hoạt động khi** | Hibernate session mở | Bất kỳ DELETE nào, kể cả native query |
+
+### 2. `orphanRemoval` vs `ON DELETE CASCADE` vs `cascade = REMOVE`
+
+| | `orphanRemoval = true` | `cascade = REMOVE` | `ON DELETE CASCADE` |
+|---|---|---|---|
+| Xóa parent | ✅ xóa children | ✅ xóa children | ✅ xóa children |
+| Remove child khỏi collection | ✅ DELETE child | ❌ chỉ unlink FK | ❌ chỉ unlink FK |
+| Native SQL DELETE parent | ❌ không biết | ❌ không biết | ✅ DB tự xử lý |
+| Cần Hibernate session? | ✅ có | ✅ có | ❌ không cần |
+| Sinh DDL? | ❌ không | ❌ không | ✅ FK constraint |
+
+**Ví dụ quan trọng — thiếu `orphanRemoval` gây orphan data:**
+```java
+// Chỉ có cascade = REMOVE, không có orphanRemoval:
+parent.getChildren().remove(0);  // remove khỏi collection
+repo.save(parent);
+// KHÔNG phát DELETE — child vẫn còn trong DB với parent_id = 1
+// → "Orphan" data tích tụ không kiểm soát
+
+// Với orphanRemoval = true:
+parent.getChildren().remove(0);
+repo.save(parent);
+// Hibernate phát: DELETE FROM child WHERE id = ?  ← đúng
+```
+
+### 3. DDL Thay Đổi Khi Nào?
+
+```
+Thứ GÂY DDL change:              Thứ KHÔNG gây DDL change:
+──────────────────────────────   ────────────────────────────────────
+Thêm/bỏ @JoinColumn              cascade type thay đổi
+Thêm/bỏ @JoinTable               orphanRemoval thêm/bỏ
+Đổi @Column properties           fetch = LAZY/EAGER thay đổi
+Thêm @Index                      optional = true/false
+Schema migration (Liquibase)     cascade ALL → cascade PERSIST
+```
+
+**Case đặc biệt — `@JoinColumn` ảnh hưởng DDL đáng kể:**
+```java
+// Không có @JoinColumn → Hibernate sinh join table (thường không mong muốn)
+@OneToMany(cascade = ALL)
+private List<Child> children;
+// DDL: CREATE TABLE parent_children (parent_id BIGINT, children_id BIGINT)
+
+// Thêm @JoinColumn → FK column trong child table (đúng với composition)
+@OneToMany(cascade = ALL)
+@JoinColumn(name = "parent_id")
+private List<Child> children;
+// DDL: ALTER TABLE child ADD COLUMN parent_id BIGINT
+//      DROP TABLE parent_children  ← join table bị xóa
+// → SCHEMA THAY ĐỔI LỚN dù cascade config không đổi
+```
+
+**Kết luận — khi review PR thay đổi JPA annotation:**
+- Thay đổi `cascade` type → chỉ review behavior, không cần migration
+- Thêm/bỏ `@JoinColumn` hoặc `@JoinTable` → **bắt buộc có Liquibase migration**
+- Thêm `orphanRemoval` → review behavior, không cần migration nhưng có thể xóa data cũ nếu có orphan
+
+---
+
+## 🔴 Cascade Trên Quan Hệ 2 Chiều — Rule Rõ Ràng
+
+### 1. Owning Side vs Inverse Side
+
+```
+@ManyToOne / @OneToMany bidirectional:
+
+OWNING SIDE                         INVERSE SIDE
+(kiểm soát FK trong DB)             (chỉ là reference ngược)
+───────────────────────             ─────────────────────────────────
+@ManyToOne                          @OneToMany(mappedBy = "parent")
+private Parent parent;              private List<Child> children;
+
+Hibernate dùng side này             mappedBy nghĩa là:
+để sinh SQL INSERT/UPDATE           "FK được quản lý bởi field
+  child.parent_id = ?                'parent' ở phía bên kia"
+                                    → Hibernate KHÔNG nhìn side này
+                                      để sinh FK SQL
+```
+
+**Consequence quan trọng:**
+```java
+// ❌ Chỉ set inverse side → Hibernate KHÔNG flush FK
+order.getItems().add(item);  // inverse side
+// item.order_id = NULL trong DB sau khi flush
+
+// ✅ Phải set owning side
+item.setOrder(order);        // owning side → Hibernate mới sinh SQL
+order.getItems().add(item);  // inverse side → chỉ đồng bộ in-memory
+```
+
+### 2. Cascade Đặt Ở Side Nào?
+
+```java
+// ✅ ĐÚNG: Composition — cascade ở parent (@OneToMany side)
+@Entity
+public class Order {
+    @OneToMany(
+        mappedBy = "order",
+        cascade = CascadeType.ALL,    // ← parent quản lý children lifecycle
+        orphanRemoval = true
+    )
+    private List<OrderItem> items = new ArrayList<>();
+
+    // Helper method — bắt buộc để đồng bộ 2 sides
+    public void addItem(OrderItem item) {
+        items.add(item);        // sync inverse side
+        item.setOrder(this);   // sync owning side
+    }
+
+    public void removeItem(OrderItem item) {
+        items.remove(item);
+        item.setOrder(null);
+    }
+}
+
+@Entity
+public class OrderItem {
+    @ManyToOne(fetch = LAZY)   // owning side — KHÔNG cascade lên parent
+    @JoinColumn(name = "order_id")
+    private Order order;
+}
+```
+
+```java
+// ❌ NGUY HIỂM: cascade ở cả 2 sides
+@Entity
+public class OrderItem {
+    @ManyToOne(cascade = ALL)   // ← cascade từ child lên parent!
+    private Order order;
+}
+// Xóa 1 OrderItem → cascade REMOVE lên Order
+// → Order bị xóa → cascade xuống tất cả OrderItem còn lại
+// → 💥 Xóa toàn bộ order chỉ vì xóa 1 item
+```
+
+### 3. ManyToMany — Không Bao Giờ `cascade = REMOVE`
+
+```java
+// ❌ NGUY HIỂM — DATA LOSS
+@ManyToMany(cascade = CascadeType.ALL)  // bao gồm REMOVE
+private Set<Tag> tags;
+// Xóa tag khỏi article → Tag entity bị DELETE khỏi DB toàn bộ
+// → Tất cả Article khác đang dùng Tag này mất liên kết
+
+// ✅ ĐÚNG
+@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+@JoinTable(
+    name = "article_tag",
+    joinColumns = @JoinColumn(name = "article_id"),
+    inverseJoinColumns = @JoinColumn(name = "tag_id")
+)
+private Set<Tag> tags = new HashSet<>();
+```
+
+**Rule ManyToMany:**
+```
+cascade PERSIST → ✅ OK (tạo tag mới cùng article)
+cascade MERGE   → ✅ OK (update tag khi merge article)
+cascade REMOVE  → ❌ KHÔNG BAO GIỜ (xóa shared entity)
+cascade ALL     → ❌ KHÔNG BAO GIỜ (bao gồm REMOVE)
+orphanRemoval   → ❌ JPA spec không cho phép trên ManyToMany
+```
+
+### 4. Decision Tree — Chọn Cascade Đúng
+
+```
+Relationship là gì?
+│
+├── COMPOSITION (child không tồn tại độc lập — OrderItem, Address, Line)
+│   ├── OneToMany 2 chiều
+│   │   ├── Parent (@OneToMany mappedBy): cascade=ALL, orphanRemoval=true
+│   │   └── Child (@ManyToOne): KHÔNG cascade, fetch=LAZY
+│   └── OneToMany 1 chiều
+│       └── @OneToMany + @JoinColumn, cascade=ALL, orphanRemoval=true
+│
+├── AGGREGATION (child tồn tại độc lập — Article ↔ Tag, User ↔ Role)
+│   ├── OneToMany: cascade={PERSIST, MERGE}, orphanRemoval=false
+│   └── ManyToMany: cascade={PERSIST, MERGE}, KHÔNG orphanRemoval
+│
+└── REFERENCE (chỉ tham chiếu — Employee → Department)
+    └── KHÔNG cascade gì cả, fetch=LAZY
+```
+
+### 5. Tổng Hợp — Case Mất Dữ Liệu Do Cascade Sai
+
+| Bug Pattern | Nguyên nhân | Hậu quả | Fix |
+|---|---|---|---|
+| `cascade ALL` trên `@ManyToMany` | REMOVE propagate lên shared entity | Xóa entity đang được nhiều chỗ share | Chỉ dùng PERSIST + MERGE |
+| `cascade REMOVE` trên child `@ManyToOne` | Xóa child → cascade lên parent → cascade xuống siblings | Xóa hàng loạt không kiểm soát | Bỏ cascade trên `@ManyToOne` |
+| `orphanRemoval` không có helper method | Child bị "mồ côi" trong memory → Hibernate tự DELETE | Xóa ngoài ý muốn | Luôn dùng `addX()`/`removeX()` |
+| Thiếu `orphanRemoval` khi cần | Child bị remove khỏi collection nhưng vẫn tồn tại ở DB | Orphan data tích tụ | Thêm `orphanRemoval = true` |
+| Assign immutable collection cho entity field | Hibernate `replaceElements()` gọi `clear()` | `UnsupportedOperationException` | Dùng `new ArrayList<>()` |
+| `cascade ALL` cả 2 sides quan hệ 2 chiều | Cascade vòng / xóa hàng loạt | Data loss khó debug | Cascade chỉ ở parent side |
+| Chỉ set inverse side trong 2 chiều | Hibernate không sinh FK SQL | `child.parent_id = NULL` trong DB | Set owning side + dùng helper method |
+
+---
+
+> **Related notes:** [[Hibernate-Reactive-Deep-Dive]] · [[Spring-Data-R2DBC-Deep-Dive]] · [[00-Hub-Database-Persistence]]
+> **Tags:** #hibernate #jpa #cascade #collection #java16 #orm #data-loss #production-bug #bidirectional
