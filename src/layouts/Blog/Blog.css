@@ -1,27 +1,80 @@
-#blog {
-    padding: 100px 0;
-    min-height: 80vh;
-    display: flex;
+.blog {
+  padding: var(--section-pad-y) var(--section-pad-x);
+  background: var(--bg-secondary);
+  position: relative;
+}
+.blog::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent-cyan-glow), transparent);
+}
+
+.blog__inner { max-width: 960px; margin: 0 auto; }
+
+.blog__header { text-align: center; margin-bottom: 2.5rem; }
+
+/* ── Card ── */
+.blog__card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  padding: 2.5rem;
+  display: flex;
+  align-items: center;
+  gap: 2.25rem;
+  transition: all var(--transition-base);
+  flex-wrap: wrap;
+}
+.blog__card:hover {
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-glow);
+}
+
+.blog__icon {
+  font-size: 3.5rem;
+  flex-shrink: 0;
+  animation: leafBob 4s ease-in-out infinite;
+}
+@keyframes leafBob {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-6px) rotate(5deg); }
+}
+
+.blog__body { flex: 1; min-width: 0; }
+
+.blog__title {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+}
+
+.blog__desc {
+  font-size: 0.96rem;
+  color: var(--text-secondary);
+  line-height: 1.75;
+  margin-bottom: 1rem;
+}
+
+.blog__topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.blog__cta { flex-shrink: 0; }
+
+/* ── Responsive ── */
+@media (max-width: 760px) {
+  .blog { padding: var(--section-pad-y) 5%; }
+  .blog__card {
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-.blog-container {
-    margin-top: 40px;
-    width: 100%;
-    max-width: 800px;
-    padding: 0 20px;
-}
-
-.blog-container p {
-    font-size: 1.1rem;
-    color: #555;
-    line-height: 1.6;
-}
-
-@media screen and (max-width: 600px) {
-    #blog {
-        padding: 50px 0;
-    }
+    text-align: center;
+  }
+  .blog__topics { justify-content: center; }
+  .blog__cta { width: 100%; justify-content: center; }
 }
