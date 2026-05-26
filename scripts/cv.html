@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dang Tho Bach — Senior Java Engineer Resume</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap');
+
+    :root {
+      --primary-color: #0f172a;
+      --accent-color: #0284c7;
+      --text-primary: #1e293b;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      --border-color: #cbd5e1;
+      --highlight-bg: #f8fafc;
+    }
+
+    @page {
+      size: A4;
+      margin: 15mm 15mm 15mm 15mm;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--text-primary);
+      line-height: 1.45;
+      margin: 0;
+      padding: 0;
+      font-size: 9.5pt;
+      background: white;
+    }
+
+    /* Print optimization */
+    @media print {
+      body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    }
+
+    .resume {
+      max-width: 100%;
+    }
+
+    /* ── Header ── */
+    .header {
+      border-bottom: 2px solid var(--primary-color);
+      padding-bottom: 12px;
+      margin-bottom: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .header-left {
+      flex: 1;
+    }
+
+    .name {
+      font-size: 22pt;
+      font-weight: 800;
+      color: var(--primary-color);
+      margin: 0;
+      text-transform: uppercase;
+      letter-spacing: -0.025em;
+    }
+
+    .title {
+      font-size: 13pt;
+      font-weight: 600;
+      color: var(--accent-color);
+      margin: 4px 0 0 0;
+      letter-spacing: -0.01em;
+    }
+
+    .header-right {
+      text-align: right;
+      font-size: 9pt;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    .contact-item {
+      margin-bottom: 2px;
+    }
+
+    .contact-item strong {
+      color: var(--primary-color);
+    }
+
+    /* ── Section Styles ── */
+    .section {
+      margin-bottom: 18px;
+    }
+    
+    .section-title {
+      font-size: 11pt;
+      font-weight: 700;
+      color: var(--primary-color);
+      border-bottom: 1.5px solid var(--primary-color);
+      padding-bottom: 3px;
+      margin-top: 0;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── Summary List ── */
+    .summary-list {
+      padding-left: 18px;
+      margin: 0;
+    }
+
+    .summary-list li {
+      margin-bottom: 5px;
+      color: var(--text-secondary);
+    }
+
+    /* ── Education ── */
+    .edu-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+
+    .edu-left {
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+
+    .edu-right {
+      color: var(--text-muted);
+      font-size: 8.5pt;
+      font-family: 'Fira Code', monospace;
+    }
+
+    .edu-details {
+      color: var(--text-secondary);
+      font-size: 9pt;
+      margin-top: 1px;
+    }
+
+    /* ── Experience Timeline ── */
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .timeline-item {
+      display: flex;
+      justify-content: space-between;
+      font-size: 9.5pt;
+    }
+
+    .timeline-company {
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+
+    .timeline-role {
+      font-style: italic;
+      color: var(--text-secondary);
+    }
+
+    .timeline-date {
+      color: var(--text-muted);
+      font-size: 8.5pt;
+      font-family: 'Fira Code', monospace;
+    }
+
+    /* ── Projects Section ── */
+    .project-card {
+      margin-bottom: 16px;
+      page-break-inside: avoid;
+    }
+
+    .project-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      border-bottom: 1px dashed var(--border-color);
+      padding-bottom: 2px;
+      margin-bottom: 5px;
+    }
+
+    .project-title {
+      font-size: 10.5pt;
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+
+    .project-meta {
+      font-size: 8.5pt;
+      color: var(--text-muted);
+      font-family: 'Fira Code', monospace;
+    }
+
+    .project-subtitle {
+      font-weight: 600;
+      color: var(--text-secondary);
+      font-size: 9pt;
+      margin-bottom: 3px;
+    }
+
+    .project-tech {
+      font-family: 'Fira Code', monospace;
+      font-size: 8pt;
+      color: var(--accent-color);
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+
+    .project-desc {
+      color: var(--text-primary);
+      margin: 0 0 6px 0;
+      font-size: 9pt;
+    }
+
+    .project-section-title {
+      font-weight: 700;
+      color: var(--primary-color);
+      font-size: 8.5pt;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      margin-top: 6px;
+      margin-bottom: 3px;
+    }
+
+    .project-list {
+      padding-left: 16px;
+      margin: 0 0 8px 0;
+    }
+
+    .project-list li {
+      margin-bottom: 4px;
+      color: var(--text-secondary);
+      font-size: 8.5pt;
+    }
+
+    .project-sub-list {
+      padding-left: 14px;
+      margin: 2px 0;
+    }
+
+    .project-sub-list li {
+      margin-bottom: 2px;
+      color: var(--text-secondary);
+      list-style-type: circle;
+    }
+
+    /* Page break helpers */
+    .page-break {
+      page-break-before: always;
+    }
+  </style>
+</head>
+<body>
+  <div class="resume">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <h1 class="name">Dang Tho Bach</h1>
+        <div class="title">Senior Java Engineer</div>
+      </div>
+      <div class="header-right">
+        <div class="contact-item"><strong>Phone:</strong> 0968898538</div>
+        <div class="contact-item"><strong>Email:</strong> dangthobach@gmail.com</div>
+        <div class="contact-item"><strong>DOB:</strong> Nov 20, 1997</div>
+        <div class="contact-item"><strong>LinkedIn:</strong> linkedin.com/in/bach201197</div>
+        <div class="contact-item"><strong>GitHub:</strong> github.com/dangthobach</div>
+      </div>
+    </header>
+
+    <!-- Summary -->
+    <section class="section">
+      <h2 class="section-title">Professional Summary</h2>
+      <ul class="summary-list">
+        <li>Back-end developer with almost 7 years of professional experience in Java and Spring Boot.</li>
+        <li>Strong technical background with deep understanding of software development across Web (BE & FE) and Server technologies.</li>
+        <li>Extensive experience in the Spring Ecosystem: Spring Boot, Spring Cloud, Spring Data JPA, Hibernate, Spring Security, Spring Batch, etc.</li>
+        <li>Strong knowledge of relational database design, especially PostgreSQL and Oracle (PL/SQL optimization).</li>
+        <li>Hands-on experience in CI/CD pipelines (GitLab, Jenkins) and containerization (Docker, Kubernetes).</li>
+        <li>Adept at troubleshooting complex systems, collaborating with cross-functional teams, and delivering robust backend solutions.</li>
+        <li>Experienced in integrating security tools and vulnerability remediation (SonarQube, Coverity SAST, Blackduck SCA).</li>
+      </ul>
+    </section>
+
+    <!-- Education -->
+    <section class="section">
+      <h2 class="section-title">Education</h2>
+      <div class="edu-item">
+        <div class="edu-left">Hanoi University Of Industry</div>
+        <div class="edu-right">Sep 2015 – June 2019</div>
+      </div>
+      <div class="edu-details">Specialization: Software Technology | GPA: 3.37 / 4.00</div>
+    </section>
+
+    <!-- Experience Overview -->
+    <section class="section">
+      <h2 class="section-title">Professional Experience</h2>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div><span class="timeline-company">VPBank (Vietnam Prosperity Joint-Stock Commercial Bank)</span> — <span class="timeline-role">Senior Java Engineer</span></div>
+          <div class="timeline-date">Apr 2025 – Present</div>
+        </div>
+        <div class="timeline-item">
+          <div><span class="timeline-company">Sai Gon – Ha Noi Commercial Joint Stock Bank (SHB)</span> — <span class="timeline-role">Software Engineer</span></div>
+          <div class="timeline-date">Sep 2022 – Mar 2025</div>
+        </div>
+        <div class="timeline-item">
+          <div><span class="timeline-company">Alphaway Technology Company</span> — <span class="timeline-role">Software Engineer</span></div>
+          <div class="timeline-date">Aug 2019 – Aug 2022</div>
+        </div>
+        <div class="timeline-item">
+          <div><span class="timeline-company">Ominext Joint Stock Company (JSC)</span> — <span class="timeline-role">Java Developer</span></div>
+          <div class="timeline-date">Dec 2018 – Jun 2019</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Project Details -->
+    <section class="section">
+      <h2 class="section-title">Key Projects</h2>
+
+      <!-- VPBANK -->
+      <div class="project-card">
+        <div class="project-header">
+          <span class="project-title">PDMS Service — Physical Document Management System</span>
+          <span class="project-meta">Apr 2025 – Present (VPBank)</span>
+        </div>
+        <div class="project-subtitle">Role: Senior Java Engineer (Project entering maintenance/CR phase)</div>
+        <div class="project-tech">Java 21 · Spring Boot 3.4 · PostgreSQL · Apache Kafka · Keycloak · AWS S3 · Redis · Docker · ShedLock · Resilience4j</div>
+        <p class="project-desc">
+          Led architecture design and development of the core backend service for VPBank's enterprise Physical Document Management System — a bank-wide platform managing the full lifecycle of 7M+ physical banking documents across 50+ warehouse locations, serving more than 1000 internal users daily. Delivered 20+ release candidates in 14 months, transitioning the project from greenfield to production stability.
+        </p>
+        
+        <div class="project-section-title">Scale & Impact</div>
+        <ul class="project-list">
+          <li><strong>Domain & API Scope:</strong> Engineered 239+ REST API endpoints across 53 components, organized into 7 functional domains (accounting records, credit documents, distributed documents, warehouse operations, reporting, system admin, and RBAC).</li>
+          <li><strong>Large-Scale Data Migration:</strong> Migrated 7M+ legacy credit case records (CasePDM) from multiple source systems via multi-phase PostgreSQL stored procedures, processing 5,000–10,000 records per batch with session-scoped lookup tables, composite indexes, and FOR UPDATE SKIP LOCKED to prevent concurrent deadlocks.</li>
+          <li><strong>Incremental Ingestion:</strong> Designed and optimized a weekly incremental data ingestion pipeline from upstream systems (Jarvis, EDA Card, SFTP sources) to handle sustained throughput under high cumulative entity growth.</li>
+        </ul>
+
+        <div class="project-section-title">AI-Augmented SDLC (Dev Cycle Reduced by ~40%)</div>
+        <ul class="project-list">
+          <li><strong>Requirements Analysis:</strong> Utilized Kiro + Confluence MCP integration to auto-read Confluence specs, perform gap analysis between requirements and existing code, and generate structured technical documents.</li>
+          <li><strong>Sprint Planning Optimization:</strong> Integrated Kiro + Jira MCP to auto-generate subtasks, acceptance criteria, and implementation plans from Jira epics/stories, reducing planning overhead by ~60%.</li>
+          <li><strong>Code Generation & Review:</strong> Leveraged AI-assisted coding for boilerplate patterns (CRUD endpoints, DTO mappings, validation logic, migration scripts), with human review focusing on core business logic (achieving 20+ RCs in 14 months).</li>
+          <li><strong>Test Generation:</strong> Automated unit test scaffolding for 150+ test classes using property-based testing (jqwik), maintaining 80%+ JaCoCo coverage.</li>
+          <li><strong>Documentation Sync & RAG:</strong> Automated API spec review (Swagger auditing) and Confluence updates. Configured an internal RAG MCP server backed by Bedrock for semantic code search and domain knowledge retrieval.</li>
+          <li><strong>Test Management:</strong> Integrated Zephyr MCP to automate test case creation and execution tracking directly mapped to Jira stories.</li>
+        </ul>
+
+        <div class="project-section-title">Large-Scale Data Processing Solutions</div>
+        <ul class="project-list">
+          <li><strong>Streaming Excel Export:</strong> Built a custom SXSSFStreamingWriter framework on Apache POI SXSSF to support memory-efficient Excel exports of 100K+ rows with constant heap usage (paginated reads, lazy initialization).</li>
+          <li><strong>Async Reporting:</strong> Implemented asynchronous report generation (@Async + dedicated thread pools) with automated AWS S3 upload, preventing blocking of application request threads.</li>
+          <li><strong>Configurable SFTP Pipeline:</strong> Designed a chunk-based streaming pipeline (CSV/Excel) with a dynamic SQL rule engine, enabling zero-code onboarding of new data sources with configurable batch sizes.</li>
+          <li><strong>Batch Database Tuning:</strong> Optimized stored procedures using session tables with targeted indexes, CTE chains for parallel business rule validation (10+ rules per record), and chunked commits to prevent WAL bloat.</li>
+        </ul>
+
+        <div class="project-section-title">Architecture & Engineering Leadership</div>
+        <ul class="project-list">
+          <li><strong>Clean Architecture:</strong> Enforced Hexagonal Architecture (ports & adapters) to separate core domain, application, and infrastructure layers, facilitating rigorous testing.</li>
+          <li><strong>Event-Driven Integration:</strong> Deployed Apache Kafka (SASL_SSL, SCRAM-SHA-512) for SFTP notifications, BPM workflow callbacks, and authorization snapshot events.</li>
+          <li><strong>Distributed Coordination & Security:</strong> Used ShedLock over JDBC to prevent duplicate execution of 15+ scheduled jobs. Integrated Keycloak OAuth2/OIDC with custom Gateway filters to enforce service-layer RBAC. Patched 15+ high/critical CVEs.</li>
+        </ul>
+
+        <div class="project-section-title">Data Migration & Integrity</div>
+        <ul class="project-list">
+          <li><strong>Remediation Scripts:</strong> Identified 5 critical business gaps and resolved structural data integrity issues where credit documents were incorrectly linked across multiple warehouses; implemented idempotent 10-step cleanup scripts.</li>
+          <li><strong>Maker-Checker Workflow:</strong> Designed batch confirmation workflows with pessimistic locking, maker-checker validation, and post-commit notifications, supporting 500 documents per request with transactional safety.</li>
+        </ul>
+      </div>
+
+      <div class="page-break"></div>
+
+      <!-- SHB COREBANK -->
+      <div class="project-card">
+        <div class="project-header">
+          <span class="project-title">Corebank Extension & Hygiene System</span>
+          <span class="project-meta">Sep 2022 – Mar 2025 (SHB)</span>
+        </div>
+        <div class="project-subtitle">Role: Software Engineer (Corebank Intellect) | Team Size: 10</div>
+        <div class="project-tech">Spring Boot · REST API · Oracle (PL/SQL) · Spring Data JPA · Docker · Kubernetes · BlackDuck · Coverity</div>
+        <p class="project-desc">
+          Developed transactional modules and compliance extensions surrounding SHB's core-banking platform.
+        </p>
+        <ul class="project-list">
+          <li>Maintained and fixed issues for the web system on demand.</li>
+          <li>Developed and integrated the email notification system for lending and tide modules.</li>
+          <li>Developed and optimized batch jobs to process update of expired identity documents in compliance with Circular 17/2024/TT-NHNN of the State Bank of Vietnam, processing millions of records in seconds.</li>
+          <li>Integrated BlackDuck (SCA) and Coverity (SAST) security pipelines to perform dependency and static code scanning prior to deployment.</li>
+        </ul>
+      </div>
+
+      <!-- SHB CORECARD -->
+      <div class="project-card">
+        <div class="project-header">
+          <span class="project-title">Corecard Integration & Migration</span>
+          <span class="project-meta">Sep 2022 – Mar 2025 (SHB)</span>
+        </div>
+        <div class="project-subtitle">Role: Software Engineer (Corecard SmartVista) | Team Size: 4</div>
+        <div class="project-tech">Spring Boot · REST API · Oracle (PL/SQL) · Spring Data JPA · Keycloak IDP · Docker · Kubernetes · GitLab CI/CD · ELK Stack · JasperReports</div>
+        <p class="project-desc">
+          Spearheaded the migration of the SmartVista core card system utility (CardUtility) and deployed enterprise identity management.
+        </p>
+        <ul class="project-list">
+          <li>Deployed Keycloak Identity Provider (IDP) and configured Single Sign-On (SSO) integration across the organization.</li>
+          <li>Migrated 17 core CardUtility functions (card/PIN issuance, Visa/Mastercard reporting, ATM/POS management, smartvisa CBS reporting) to meet upgraded SVNG core requirements.</li>
+          <li>Redesigned CardUtility into microservices containerized on Kubernetes and established GitLab CI/CD automation pipelines.</li>
+          <li>Deployed ELK stack on containers for centralized resource monitoring and log tracing.</li>
+          <li>Developed high-performance batch updates for expired identity documents and built extensive reports using JasperReports.</li>
+        </ul>
+      </div>
+
+      <!-- WAY4BATCH -->
+      <div class="project-card">
+        <div class="project-header">
+          <span class="project-title">Way4Batch Scheduling System</span>
+          <span class="project-meta">Jan 2022 – Aug 2022 (Military Bank)</span>
+        </div>
+        <div class="project-subtitle">Role: Software Engineer | Team Size: 13</div>
+        <div class="project-tech">Spring Boot · SOAP/REST WebServices · JDBC · Oracle (PL/SQL) · Multithreading</div>
+        <p class="project-desc">
+          Built a high-concurrency job scheduling system handling card lot processing and transactional banking tasks.
+        </p>
+        <ul class="project-list">
+          <li>Built multithreaded job scheduling for card issuance, payment accounting, card reissuing, and limit changes.</li>
+          <li>Managed and completed JDK upgrade from 1.6 to 11 with zero service disruption.</li>
+          <li>Collaborated in an Agile/Scrum team to deliver request improvements and meet sprint goals.</li>
+        </ul>
+      </div>
+
+      <!-- CARD ISSUE -->
+      <div class="project-card">
+        <div class="project-header">
+          <span class="project-title">Card Issue Gateway</span>
+          <span class="project-meta">Jan 2022 – Aug 2022 (Military Bank)</span>
+        </div>
+        <div class="project-subtitle">Role: Software Engineer | Team Size: 13</div>
+        <div class="project-tech">Spring Boot · SOAP/REST WebServices · JDBC · Oracle (PL/SQL)</div>
+        <p class="project-desc">
+          Developed gateway services for partner integrations.
+        </p>
+        <ul class="project-list">
+          <li>Built up gateway APIs for issuing UnionPay card and virtual card (card-by-code).</li>
+          <li>Completed sprint goals under Scrum model.</li>
+        </ul>
+      </div>
+
+      <!-- CARD PORTAL -->
+      <div class="project-card">
+        <div class="project-header">
+          <span class="project-title">CardPortal System</span>
+          <span class="project-meta">Jan 2022 – Aug 2022 (Military Bank)</span>
+        </div>
+        <div class="project-subtitle">Role: Software Engineer | Team Size: 13</div>
+        <div class="project-tech">Windows Server · ExtJS · SOAP WebServices · Oracle (PL/SQL) · Way4 Corecard</div>
+        <p class="project-desc">
+          Built services and management screens for card operation workflows.
+        </p>
+        <ul class="project-list">
+          <li>Developed functionalities for card issuing, report generation, PIN management, card reissuing, customer updates, and stoplist/blacklist card.</li>
+        </ul>
+      </div>
+
+      <!-- CARD GATEWAY -->
+      <div class="project-card">
+        <div class="project-header">
+          <span class="project-title">CardGateway Notification System</span>
+          <span class="project-meta">Jan 2022 – Aug 2022 (Military Bank)</span>
+        </div>
+        <div class="project-subtitle">Role: Software Engineer | Team Size: 3</div>
+        <div class="project-tech">Windows Server · ExtJS · SOAP WebServices · Oracle (PL/SQL) · Way4 Corecard</div>
+        <p class="project-desc">
+          Card management system for operation and card lot processing counter channels.
+        </p>
+        <ul class="project-list">
+          <li>Developed partner channel configuration screens and set up cryptographic keys.</li>
+          <li>Configured SMS message template and distribution for balance changes, and active/close MCredit/MB card events.</li>
+        </ul>
+      </div>
+
+      <!-- WEALTH MANAGEMENT -->
+      <div class="project-card">
+        <div class="project-header">
+          <span class="project-title">Wealth Management System</span>
+          <span class="project-meta">Oct 2021 – Dec 2021 (Military Bank)</span>
+        </div>
+        <div class="project-subtitle">Role: Software Engineer | Team Size: 30</div>
+        <div class="project-tech">Spring Cloud · Keycloak · SOAP/REST WebServices · Oracle</div>
+        <p class="project-desc">
+          Built core modules for an investment and wealth management system.
+        </p>
+        <ul class="project-list">
+          <li>Configured user administration and access control using Keycloak.</li>
+          <li>Implemented portfolio restructuring and financial settlement algorithms for wealth experts.</li>
+          <li>Built up customer profile CRUD APIs.</li>
+        </ul>
+      </div>
+
+      <div class="page-break"></div>
+
+      <!-- WALLET CORE -->
+      <div class="project-card">
+        <div class="project-header">
+          <span class="project-title">Wallet Core Conversion (ViettelPay)</span>
+          <span class="project-meta">Jan 2021 – Sep 2021 (Military Bank)</span>
+        </div>
+        <div class="project-subtitle">Role: Software Engineer | Team Size: 7</div>
+        <div class="project-tech">Spring Boot · Oracle · SOAP/REST WebServices · Socket ISO8583</div>
+        <p class="project-desc">
+          Migrated the ViettelPay wallet connection layer off the core card system.
+        </p>
+        <ul class="project-list">
+          <li>Modified and constructed socket connection streams (ISO8583) to wallet core for: balance queries, card locking/unlocking, beneficiary lookup, customer status synchronization, and transaction history.</li>
+          <li>Developed app-based cash withdrawal feature (Cash-by-code).</li>
+        </ul>
+      </div>
+
+      <!-- CREDIT RATING ABB -->
+      <div class="project-card">
+        <div class="project-header">
+          <span class="project-title">Credit Rating System</span>
+          <span class="project-meta">Jan 2021 – Jun 2021 (An Binh Bank)</span>
+        </div>
+        <div class="project-subtitle">Role: Software Engineer | Team Size: 4</div>
+        <div class="project-tech">iDempiere Server · ZK Framework · JDBC · Oracle</div>
+        <p class="project-desc">
+          Developed an enterprise credit rating system for individuals and corporate businesses.
+        </p>
+        <ul class="project-list">
+          <li>Built interactive credit scoring interfaces, customer record management screens, and Credit Information Center (CIC) records integration.</li>
+          <li>Developed score rating templates and export functionality via JasperReports.</li>
+        </ul>
+      </div>
+
+      <!-- CREDIT RATING LPB -->
+      <div class="project-card">
+        <div class="project-header">
+          <span class="project-title">Credit Rating System</span>
+          <span class="project-meta">Apr 2020 – Dec 2020 (Lien Viet Postbank)</span>
+        </div>
+        <div class="project-subtitle">Role: Software Engineer | Team Size: 7</div>
+        <div class="project-tech">iDempiere Server · ZK Framework · JDBC · Oracle</div>
+        <p class="project-desc">
+          Developed an enterprise credit rating system for individuals and corporate businesses.
+        </p>
+        <ul class="project-list">
+          <li>Built scoring screens, customer records, and CIC records matching workflows.</li>
+          <li>Built scoring templates and ratings reporting on JasperReports.</li>
+        </ul>
+      </div>
+
+      <!-- ECABINET -->
+      <div class="project-card">
+        <div class="project-header">
+          <span class="project-title">Government eCabinet meeting portal</span>
+          <span class="project-meta">Aug 2019 – Mar 2020 (Government Client)</span>
+        </div>
+        <div class="project-subtitle">Role: Software Engineer | Team Size: 8</div>
+        <div class="project-tech">J2EE · JSP / Servlet · JDBC · DB2 · IBM WebSphere</div>
+        <p class="project-desc">
+          Designed and built modules for the official government cabinet meeting and voting system.
+        </p>
+        <ul class="project-list">
+          <li>Developed screens for news feed, meeting coordination, real-time voting, and role-based permissions.</li>
+        </ul>
+      </div>
+
+      <!-- SECOM -->
+      <div class="project-card">
+        <div class="project-header">
+          <span class="project-title">Secom Electronic Medical Record System</span>
+          <span class="project-meta">Mar 2019 – June 2019 (Japanese Client)</span>
+        </div>
+        <div class="project-subtitle">Role: Java Developer | Team Size: 7</div>
+        <div class="project-tech">J2EE · JSP / Servlet · JDBC · DB2 · IBM WebSphere</div>
+        <p class="project-desc">
+          Maintained electronic medical record systems and resolved on-demand system issues.
+        </p>
+      </div>
+
+      <!-- FINE MEDICAL -->
+      <div class="project-card">
+        <div class="project-header">
+          <span class="project-title">Fine Medical Pharmacy System</span>
+          <span class="project-meta">Dec 2018 – Apr 2019 (Japanese Client)</span>
+        </div>
+        <div class="project-subtitle">Role: Java Developer | Team Size: 6</div>
+        <div class="project-tech">SpringBoot · Hibernate · JSF · MySQL</div>
+        <p class="project-desc">
+          Developed pharmacy management and inventory control CRUD interfaces.
+        </p>
+      </div>
+
+    </section>
+  </div>
+</body>
+</html>
