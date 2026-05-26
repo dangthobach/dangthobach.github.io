@@ -70,7 +70,6 @@ const NoteCard = ({ note, index }) => {
             {note.category}
           </span>
         </div>
-        <span className="blog__card-time">⏱️ {note.readTime}</span>
       </div>
 
       <h3 className="blog__card-title">{note.title}</h3>
