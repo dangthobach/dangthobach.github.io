@@ -6,6 +6,54 @@
       <description>Last 10 notes on Dang Tho Bach&#039;s Knowledge Base</description>
       <generator>Quartz -- quartz.jzhao.xyz</generator>
       <item>
+    <title>04-Fory-Java-Quickstart</title>
+    <link>https://dangthobach.github.io/knowledge/Apache-Fory/04-Fory-Java-Quickstart</link>
+    <guid>https://dangthobach.github.io/knowledge/Apache-Fory/04-Fory-Java-Quickstart</guid>
+    <description><![CDATA[ 04 — Fory Java Quickstart: Setup, Register, Serialize Series: 00-MOC-Apache-Fory-Series Tags: apache-fory java spring-boot quickstart Level: Beginner-Intermediate Prerequisite: 03-Fory-vs-Avro-Protobuf-Positioning 🎯 Bạn sẽ học được gì? Thêm Fory vào Maven/Gradle project Khởi tạo đúng cách: ThreadSa... ]]></description>
+    <pubDate>Thu, 28 May 2026 06:33:23 GMT</pubDate>
+  </item><item>
+    <title>05-Fory-Java-Modes</title>
+    <link>https://dangthobach.github.io/knowledge/Apache-Fory/05-Fory-Java-Modes</link>
+    <guid>https://dangthobach.github.io/knowledge/Apache-Fory/05-Fory-Java-Modes</guid>
+    <description><![CDATA[ 05 — Fory Java Modes: Native, Compatible, XLang Series: 00-MOC-Apache-Fory-Series Tags: apache-fory java schema-evolution modes xlang Level: Intermediate Prerequisite: 04-Fory-Java-Quickstart 🎯 Bạn sẽ học được gì? 3 modes của Fory và trade-off của từng mode Schema evolution: thêm/xóa/rename field a... ]]></description>
+    <pubDate>Thu, 28 May 2026 06:33:23 GMT</pubDate>
+  </item><item>
+    <title>06-Fory-Java-Spring-Redis-Cache</title>
+    <link>https://dangthobach.github.io/knowledge/Apache-Fory/06-Fory-Java-Spring-Redis-Cache</link>
+    <guid>https://dangthobach.github.io/knowledge/Apache-Fory/06-Fory-Java-Spring-Redis-Cache</guid>
+    <description><![CDATA[ 06 — Fory + Spring Boot + Redis: Production-Grade Cache Series: 00-MOC-Apache-Fory-Series Tags: apache-fory spring-boot redis cache production Level: Intermediate-Advanced Prerequisite: 05-Fory-Java-Modes 🎯 Bạn sẽ học được gì? Production-grade Spring Boot + Redis + Fory config Migration strategy từ... ]]></description>
+    <pubDate>Thu, 28 May 2026 06:33:23 GMT</pubDate>
+  </item><item>
+    <title>07-Fory-Java-Kafka-Internal-Events</title>
+    <link>https://dangthobach.github.io/knowledge/Apache-Fory/07-Fory-Java-Kafka-Internal-Events</link>
+    <guid>https://dangthobach.github.io/knowledge/Apache-Fory/07-Fory-Java-Kafka-Internal-Events</guid>
+    <description><![CDATA[ 07 — Fory + Kafka: Internal Event Serialization Series: 00-MOC-Apache-Fory-Series Tags: apache-fory kafka events serialization spring-boot Level: Intermediate-Advanced Prerequisite: 06-Fory-Java-Spring-Redis-Cache 🎯 Bạn sẽ học được gì? Khi nào dùng Fory thay Avro cho Kafka topics Implement Fory Ser... ]]></description>
+    <pubDate>Thu, 28 May 2026 06:33:23 GMT</pubDate>
+  </item><item>
+    <title>08-Fory-Java-Schema-Evolution</title>
+    <link>https://dangthobach.github.io/knowledge/Apache-Fory/08-Fory-Java-Schema-Evolution</link>
+    <guid>https://dangthobach.github.io/knowledge/Apache-Fory/08-Fory-Java-Schema-Evolution</guid>
+    <description><![CDATA[ 08 — Schema Evolution Deep Dive: Version Strategy &amp; Migration Series: 00-MOC-Apache-Fory-Series Tags: apache-fory schema-evolution versioning migration backward-compat Level: Advanced Prerequisite: 05-Fory-Java-Modes 🎯 Bạn sẽ học được gì? Schema evolution compatibility matrix đầy đủ Version str... ]]></description>
+    <pubDate>Thu, 28 May 2026 06:33:23 GMT</pubDate>
+  </item><item>
+    <title>09-Fory-Go-Quickstart</title>
+    <link>https://dangthobach.github.io/knowledge/Apache-Fory/09-Fory-Go-Quickstart</link>
+    <guid>https://dangthobach.github.io/knowledge/Apache-Fory/09-Fory-Go-Quickstart</guid>
+    <description><![CDATA[ 09 — Apache Fory Go: Quickstart &amp; Cross-Service Serialization Series: 00-MOC-Apache-Fory-Series Tags: apache-fory golang xlang cross-language microservices Level: Intermediate Prerequisite: 05-Fory-Java-Modes 🎯 Bạn sẽ học được gì? Setup Fory Go SDK Serialize / deserialize Go structs XLang inter... ]]></description>
+    <pubDate>Thu, 28 May 2026 06:33:23 GMT</pubDate>
+  </item><item>
+    <title>10-Fory-Rust-Quickstart</title>
+    <link>https://dangthobach.github.io/knowledge/Apache-Fory/10-Fory-Rust-Quickstart</link>
+    <guid>https://dangthobach.github.io/knowledge/Apache-Fory/10-Fory-Rust-Quickstart</guid>
+    <description><![CDATA[ 10 — Apache Fory Rust: Quickstart, Serde Interop &amp; Async Series: 00-MOC-Apache-Fory-Series Tags: apache-fory rust tokio async xlang serde Level: Intermediate-Advanced Prerequisite: 09-Fory-Go-Quickstart 🎯 Bạn sẽ học được gì? Setup Fory Rust crate Serialize/deserialize Rust structs XLang interop... ]]></description>
+    <pubDate>Thu, 28 May 2026 06:33:23 GMT</pubDate>
+  </item><item>
+    <title>11-Fory-XLang-Java-Go-Rust</title>
+    <link>https://dangthobach.github.io/knowledge/Apache-Fory/11-Fory-XLang-Java-Go-Rust</link>
+    <guid>https://dangthobach.github.io/knowledge/Apache-Fory/11-Fory-XLang-Java-Go-Rust</guid>
+    <description><![CDATA[ 11 — Full XLang Demo: Java Producer → Go + Rust Consumers Series: 00-MOC-Apache-Fory-Series Tags: apache-fory xlang java golang rust kafka polyglot Level: Advanced Prerequisite: 09-Fory-Go-Quickstart | 10-Fory-Rust-Quickstart 🎯 Bạn sẽ học được gì? End-to-end XLang flow: 1 byte stream, 3 language co... ]]></description>
+    <pubDate>Thu, 28 May 2026 06:33:23 GMT</pubDate>
+  </item><item>
     <title>00-MOC-Apache-Fory-Series</title>
     <link>https://dangthobach.github.io/knowledge/Apache-Fory/00-MOC-Apache-Fory-Series</link>
     <guid>https://dangthobach.github.io/knowledge/Apache-Fory/00-MOC-Apache-Fory-Series</guid>
@@ -17,54 +65,6 @@
     <guid>https://dangthobach.github.io/knowledge/Apache-Fory/01-Why-Serialization-Matters</guid>
     <description><![CDATA[ 01 — Tại Sao Serialization Quan Trọng &amp; Lịch Sử Vấn Đề Series: 00-MOC-Apache-Fory-Series Tags: serialization fundamentals apache-fory distributed-systems Level: Beginner → Intermediate 🎯 Bạn sẽ học được gì? Serialization là gì và tại sao nó là “xương sống” của distributed systems Lịch sử tiến h... ]]></description>
     <pubDate>Wed, 27 May 2026 15:08:20 GMT</pubDate>
-  </item><item>
-    <title>02-How-Fory-Works-Internals</title>
-    <link>https://dangthobach.github.io/knowledge/Apache-Fory/02-How-Fory-Works-Internals</link>
-    <guid>https://dangthobach.github.io/knowledge/Apache-Fory/02-How-Fory-Works-Internals</guid>
-    <description><![CDATA[ 02 — Cơ Chế Hoạt Động Của Apache Fory: JIT, Zero-Copy, Object Graph Series: 00-MOC-Apache-Fory-Series Tags: apache-fory internals jit zero-copy performance Level: Intermediate Prerequisite: 01-Why-Serialization-Matters 🎯 Bạn sẽ học được gì? Fory JIT compilation hoạt động như thế nào (khác gì JVM JI... ]]></description>
-    <pubDate>Wed, 27 May 2026 15:08:20 GMT</pubDate>
-  </item><item>
-    <title>03-Fory-vs-Avro-Protobuf-Positioning</title>
-    <link>https://dangthobach.github.io/knowledge/Apache-Fory/03-Fory-vs-Avro-Protobuf-Positioning</link>
-    <guid>https://dangthobach.github.io/knowledge/Apache-Fory/03-Fory-vs-Avro-Protobuf-Positioning</guid>
-    <description><![CDATA[ 03 — Fory vs Avro vs Protobuf: Định Vị &amp; Decision Framework Series: 00-MOC-Apache-Fory-Series Tags: apache-fory avro protobuf architecture-decision kafka Level: Intermediate Prerequisite: 02-How-Fory-Works-Internals 🎯 Bạn sẽ học được gì? Hiểu root cause tại sao 3 framework này KHÔNG thay thế nh... ]]></description>
-    <pubDate>Wed, 27 May 2026 15:08:20 GMT</pubDate>
-  </item><item>
-    <title>Hibernate-Performance-Deep-Dive</title>
-    <link>https://dangthobach.github.io/knowledge/Database-Patterns/Hibernate-Performance-Deep-Dive</link>
-    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/Hibernate-Performance-Deep-Dive</guid>
-    <description><![CDATA[ Hibernate Performance Deep Dive — Từ Cơ Bản Đến Nâng Cao Audience: Senior engineer, quen RDBMS, muốn hiểu tại sao Hibernate hoạt động thế — không chỉ cách dùng. ]]></description>
-    <pubDate>Tue, 26 May 2026 00:59:06 GMT</pubDate>
-  </item><item>
-    <title>21-Error-Handling-Global-Patterns</title>
-    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/21-Error-Handling-Global-Patterns</link>
-    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/21-Error-Handling-Global-Patterns</guid>
-    <description><![CDATA[ 21. ]]></description>
-    <pubDate>Mon, 25 May 2026 13:56:44 GMT</pubDate>
-  </item><item>
-    <title>22-Routing-Layout-SearchState</title>
-    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/22-Routing-Layout-SearchState</link>
-    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/22-Routing-Layout-SearchState</guid>
-    <description><![CDATA[ Angular Routing — Layout Cố Định &amp; Search State Preservation tags: angular routing layout search-state frontend 1. ]]></description>
-    <pubDate>Mon, 25 May 2026 13:56:44 GMT</pubDate>
-  </item><item>
-    <title>23-Multiple-Router-Outlets-Named-Auxiliary</title>
-    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/23-Multiple-Router-Outlets-Named-Auxiliary</link>
-    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/23-Multiple-Router-Outlets-Named-Auxiliary</guid>
-    <description><![CDATA[ Multiple Router Outlets trong SPA — Named &amp; Auxiliary Routes tags: angular react solidjs routing named-outlet auxiliary-route 1. ]]></description>
-    <pubDate>Mon, 25 May 2026 13:56:44 GMT</pubDate>
-  </item><item>
-    <title>24-Two-Way-Binding-Internals</title>
-    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/24-Two-Way-Binding-Internals</link>
-    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/24-Two-Way-Binding-Internals</guid>
-    <description><![CDATA[ Angular Two-Way Data Binding — Cơ chế bên dưới tags: angular data-binding zone-js change-detection signals internals 1. ]]></description>
-    <pubDate>Mon, 25 May 2026 13:56:44 GMT</pubDate>
-  </item><item>
-    <title>00-Hub-Database-Persistence</title>
-    <link>https://dangthobach.github.io/knowledge/Database-Patterns/00-Hub-Database-Persistence</link>
-    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/00-Hub-Database-Persistence</guid>
-    <description><![CDATA[ Database Persistence in Java — Bức Tranh Tổng Quan Mục tiêu: Trả lời câu hỏi “Dùng cái gì?” trước khi đi vào từng thứ. ]]></description>
-    <pubDate>Mon, 25 May 2026 13:56:44 GMT</pubDate>
   </item>
     </channel>
   </rss>
