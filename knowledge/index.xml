@@ -6,6 +6,18 @@
       <description>Last 10 notes on Dang Tho Bach&#039;s Knowledge Base</description>
       <generator>Quartz -- quartz.jzhao.xyz</generator>
       <item>
+    <title>12-Fory-PDMS-Integration-Blueprint</title>
+    <link>https://dangthobach.github.io/knowledge/Apache-Fory/12-Fory-PDMS-Integration-Blueprint</link>
+    <guid>https://dangthobach.github.io/knowledge/Apache-Fory/12-Fory-PDMS-Integration-Blueprint</guid>
+    <description><![CDATA[ 12 — PDMS Integration Blueprint: Fory End-to-End Series: 00-MOC-Apache-Fory-Series Tags: apache-fory pdms architecture migration blueprint Level: Advanced Prerequisite: 11-Fory-XLang-Java-Go-Rust 🎯 Bạn sẽ học được gì? Blueprint tích hợp Fory vào PDMS từng layer Migration plan 4 phases với timeline ... ]]></description>
+    <pubDate>Thu, 28 May 2026 14:01:09 GMT</pubDate>
+  </item><item>
+    <title>13-Fory-Performance-Benchmarks</title>
+    <link>https://dangthobach.github.io/knowledge/Apache-Fory/13-Fory-Performance-Benchmarks</link>
+    <guid>https://dangthobach.github.io/knowledge/Apache-Fory/13-Fory-Performance-Benchmarks</guid>
+    <description><![CDATA[ 13 — Fory Performance Benchmarks: Số Liệu Thực Tế Series: 00-MOC-Apache-Fory-Series Tags: apache-fory benchmark performance jmh profiling Level: Advanced Prerequisite: 04-Fory-Java-Quickstart 🎯 Bạn sẽ học được gì? Setup JMH benchmark đúng cách (tránh JIT warm-up bias) Benchmark methodology: micro v... ]]></description>
+    <pubDate>Thu, 28 May 2026 14:01:09 GMT</pubDate>
+  </item><item>
     <title>04-Fory-Java-Quickstart</title>
     <link>https://dangthobach.github.io/knowledge/Apache-Fory/04-Fory-Java-Quickstart</link>
     <guid>https://dangthobach.github.io/knowledge/Apache-Fory/04-Fory-Java-Quickstart</guid>
@@ -53,18 +65,6 @@
     <guid>https://dangthobach.github.io/knowledge/Apache-Fory/11-Fory-XLang-Java-Go-Rust</guid>
     <description><![CDATA[ 11 — Full XLang Demo: Java Producer → Go + Rust Consumers Series: 00-MOC-Apache-Fory-Series Tags: apache-fory xlang java golang rust kafka polyglot Level: Advanced Prerequisite: 09-Fory-Go-Quickstart | 10-Fory-Rust-Quickstart 🎯 Bạn sẽ học được gì? End-to-end XLang flow: 1 byte stream, 3 language co... ]]></description>
     <pubDate>Thu, 28 May 2026 06:33:23 GMT</pubDate>
-  </item><item>
-    <title>00-MOC-Apache-Fory-Series</title>
-    <link>https://dangthobach.github.io/knowledge/Apache-Fory/00-MOC-Apache-Fory-Series</link>
-    <guid>https://dangthobach.github.io/knowledge/Apache-Fory/00-MOC-Apache-Fory-Series</guid>
-    <description><![CDATA[ 🗺️ Apache Fory — Series Map of Content Apache Fory (formerly Fury) — Blazingly fast multi-language serialization framework Top-Level Apache Project · Graduated July 2025 · Production-ready 🎯 Mục tiêu Series Từ nguyên lý → Triển khai thực tế trong Java, Rust, Go Hiểu tại sao Fory tồn tại, dùng ở đâ... ]]></description>
-    <pubDate>Wed, 27 May 2026 15:08:20 GMT</pubDate>
-  </item><item>
-    <title>01-Why-Serialization-Matters</title>
-    <link>https://dangthobach.github.io/knowledge/Apache-Fory/01-Why-Serialization-Matters</link>
-    <guid>https://dangthobach.github.io/knowledge/Apache-Fory/01-Why-Serialization-Matters</guid>
-    <description><![CDATA[ 01 — Tại Sao Serialization Quan Trọng &amp; Lịch Sử Vấn Đề Series: 00-MOC-Apache-Fory-Series Tags: serialization fundamentals apache-fory distributed-systems Level: Beginner → Intermediate 🎯 Bạn sẽ học được gì? Serialization là gì và tại sao nó là “xương sống” của distributed systems Lịch sử tiến h... ]]></description>
-    <pubDate>Wed, 27 May 2026 15:08:20 GMT</pubDate>
   </item>
     </channel>
   </rss>
