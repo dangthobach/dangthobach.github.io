@@ -6,6 +6,12 @@
       <description>Last 10 notes on Dang Tho Bach&#039;s Knowledge Base</description>
       <generator>Quartz -- quartz.jzhao.xyz</generator>
       <item>
+    <title>Apache-Avro-Deep-Dive</title>
+    <link>https://dangthobach.github.io/knowledge/Microservices-Patterns/Apache-Avro-Deep-Dive</link>
+    <guid>https://dangthobach.github.io/knowledge/Microservices-Patterns/Apache-Avro-Deep-Dive</guid>
+    <description><![CDATA[ Apache Avro — Deep Dive: Internals, Schema Evolution &amp; Kafka Integration Tags: avro kafka schema-registry serialization microservices data-engineering Level: Intermediate → Advanced Related: Kafka-Configuration-Deep-Dive | gRPC-Deep-Dive | 03-Fory-vs-Avro-Protobuf-Positioning | Debezium-CDC-Deep... ]]></description>
+    <pubDate>Fri, 29 May 2026 23:24:16 GMT</pubDate>
+  </item><item>
     <title>00-MOC-Apache-Fory-Series</title>
     <link>https://dangthobach.github.io/knowledge/Apache-Fory/00-MOC-Apache-Fory-Series</link>
     <guid>https://dangthobach.github.io/knowledge/Apache-Fory/00-MOC-Apache-Fory-Series</guid>
@@ -58,12 +64,6 @@
     <link>https://dangthobach.github.io/knowledge/Apache-Fory/08-Fory-Java-Schema-Evolution</link>
     <guid>https://dangthobach.github.io/knowledge/Apache-Fory/08-Fory-Java-Schema-Evolution</guid>
     <description><![CDATA[ 08 — Schema Evolution Deep Dive: Version Strategy &amp; Migration Series: 00-MOC-Apache-Fory-Series Tags: apache-fory schema-evolution versioning migration backward-compat Level: Advanced Prerequisite: 05-Fory-Java-Modes 🎯 Bạn sẽ học được gì? Schema evolution compatibility matrix đầy đủ Version str... ]]></description>
-    <pubDate>Thu, 28 May 2026 06:33:23 GMT</pubDate>
-  </item><item>
-    <title>09-Fory-Go-Quickstart</title>
-    <link>https://dangthobach.github.io/knowledge/Apache-Fory/09-Fory-Go-Quickstart</link>
-    <guid>https://dangthobach.github.io/knowledge/Apache-Fory/09-Fory-Go-Quickstart</guid>
-    <description><![CDATA[ 09 — Apache Fory Go: Quickstart &amp; Cross-Service Serialization Series: 00-MOC-Apache-Fory-Series Tags: apache-fory golang xlang cross-language microservices Level: Intermediate Prerequisite: 05-Fory-Java-Modes 🎯 Bạn sẽ học được gì? Setup Fory Go SDK Serialize / deserialize Go structs XLang inter... ]]></description>
     <pubDate>Thu, 28 May 2026 06:33:23 GMT</pubDate>
   </item>
     </channel>
