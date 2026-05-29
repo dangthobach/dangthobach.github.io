@@ -75,7 +75,7 @@
     <lastmod>2026-05-25T13:56:44.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Apache-Fory/00-MOC-Apache-Fory-Series</loc>
-    <lastmod>2026-05-27T15:08:20.000Z</lastmod>
+    <lastmod>2026-05-29T01:44:43.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Apache-Fory/01-Why-Serialization-Matters</loc>
     <lastmod>2026-05-27T15:08:20.000Z</lastmod>
@@ -115,6 +115,9 @@
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Apache-Fory/13-Fory-Performance-Benchmarks</loc>
     <lastmod>2026-05-28T14:01:09.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Apache-Fory/14-Fory-Production-Checklist</loc>
+    <lastmod>2026-05-29T01:44:43.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/00-Hub-Database-Persistence</loc>
     <lastmod>2026-05-25T13:56:44.000Z</lastmod>

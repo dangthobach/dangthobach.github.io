@@ -6,6 +6,18 @@
       <description>Last 10 notes on Dang Tho Bach&#039;s Knowledge Base</description>
       <generator>Quartz -- quartz.jzhao.xyz</generator>
       <item>
+    <title>00-MOC-Apache-Fory-Series</title>
+    <link>https://dangthobach.github.io/knowledge/Apache-Fory/00-MOC-Apache-Fory-Series</link>
+    <guid>https://dangthobach.github.io/knowledge/Apache-Fory/00-MOC-Apache-Fory-Series</guid>
+    <description><![CDATA[ 🗺️ Apache Fory — Series Map of Content Apache Fory (formerly Fury) — Blazingly fast multi-language serialization framework Top-Level Apache Project · Graduated July 2025 · Production-ready 🎯 Mục tiêu Series Từ nguyên lý → Triển khai thực tế trong Java, Rust, Go Hiểu tại sao Fory tồn tại, dùng ở đâ... ]]></description>
+    <pubDate>Fri, 29 May 2026 01:44:43 GMT</pubDate>
+  </item><item>
+    <title>14-Fory-Production-Checklist</title>
+    <link>https://dangthobach.github.io/knowledge/Apache-Fory/14-Fory-Production-Checklist</link>
+    <guid>https://dangthobach.github.io/knowledge/Apache-Fory/14-Fory-Production-Checklist</guid>
+    <description><![CDATA[ 14 — Fory Production Checklist: Security, Versioning, Monitoring Series: 00-MOC-Apache-Fory-Series Tags: apache-fory production security checklist monitoring Level: Advanced Prerequisite: 12-Fory-PDMS-Integration-Blueprint | 13-Fory-Performance-Benchmarks 🎯 Bạn sẽ học được gì? Security hardening: c... ]]></description>
+    <pubDate>Fri, 29 May 2026 01:44:43 GMT</pubDate>
+  </item><item>
     <title>12-Fory-PDMS-Integration-Blueprint</title>
     <link>https://dangthobach.github.io/knowledge/Apache-Fory/12-Fory-PDMS-Integration-Blueprint</link>
     <guid>https://dangthobach.github.io/knowledge/Apache-Fory/12-Fory-PDMS-Integration-Blueprint</guid>
@@ -52,18 +64,6 @@
     <link>https://dangthobach.github.io/knowledge/Apache-Fory/09-Fory-Go-Quickstart</link>
     <guid>https://dangthobach.github.io/knowledge/Apache-Fory/09-Fory-Go-Quickstart</guid>
     <description><![CDATA[ 09 — Apache Fory Go: Quickstart &amp; Cross-Service Serialization Series: 00-MOC-Apache-Fory-Series Tags: apache-fory golang xlang cross-language microservices Level: Intermediate Prerequisite: 05-Fory-Java-Modes 🎯 Bạn sẽ học được gì? Setup Fory Go SDK Serialize / deserialize Go structs XLang inter... ]]></description>
-    <pubDate>Thu, 28 May 2026 06:33:23 GMT</pubDate>
-  </item><item>
-    <title>10-Fory-Rust-Quickstart</title>
-    <link>https://dangthobach.github.io/knowledge/Apache-Fory/10-Fory-Rust-Quickstart</link>
-    <guid>https://dangthobach.github.io/knowledge/Apache-Fory/10-Fory-Rust-Quickstart</guid>
-    <description><![CDATA[ 10 — Apache Fory Rust: Quickstart, Serde Interop &amp; Async Series: 00-MOC-Apache-Fory-Series Tags: apache-fory rust tokio async xlang serde Level: Intermediate-Advanced Prerequisite: 09-Fory-Go-Quickstart 🎯 Bạn sẽ học được gì? Setup Fory Rust crate Serialize/deserialize Rust structs XLang interop... ]]></description>
-    <pubDate>Thu, 28 May 2026 06:33:23 GMT</pubDate>
-  </item><item>
-    <title>11-Fory-XLang-Java-Go-Rust</title>
-    <link>https://dangthobach.github.io/knowledge/Apache-Fory/11-Fory-XLang-Java-Go-Rust</link>
-    <guid>https://dangthobach.github.io/knowledge/Apache-Fory/11-Fory-XLang-Java-Go-Rust</guid>
-    <description><![CDATA[ 11 — Full XLang Demo: Java Producer → Go + Rust Consumers Series: 00-MOC-Apache-Fory-Series Tags: apache-fory xlang java golang rust kafka polyglot Level: Advanced Prerequisite: 09-Fory-Go-Quickstart | 10-Fory-Rust-Quickstart 🎯 Bạn sẽ học được gì? End-to-end XLang flow: 1 byte stream, 3 language co... ]]></description>
     <pubDate>Thu, 28 May 2026 06:33:23 GMT</pubDate>
   </item>
     </channel>
