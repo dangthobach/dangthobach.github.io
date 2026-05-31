@@ -6,6 +6,18 @@
       <description>Last 10 notes on Dang Tho Bach&#039;s Knowledge Base</description>
       <generator>Quartz -- quartz.jzhao.xyz</generator>
       <item>
+    <title>Kafka-Multi-Consumer-Sync-Completion</title>
+    <link>https://dangthobach.github.io/knowledge/Microservices-Patterns/Kafka-Multi-Consumer-Sync-Completion</link>
+    <guid>https://dangthobach.github.io/knowledge/Microservices-Patterns/Kafka-Multi-Consumer-Sync-Completion</guid>
+    <description><![CDATA[ 🔄 Kafka — Multi-Consumer Sync Completion Guarantee Bài toán: Source-of-truth service publish snapshot event lên Kafka. ]]></description>
+    <pubDate>Sun, 31 May 2026 14:24:43 GMT</pubDate>
+  </item><item>
+    <title>Source-Of-Truth-Snapshot-Strategy</title>
+    <link>https://dangthobach.github.io/knowledge/Microservices-Patterns/Source-Of-Truth-Snapshot-Strategy</link>
+    <guid>https://dangthobach.github.io/knowledge/Microservices-Patterns/Source-Of-Truth-Snapshot-Strategy</guid>
+    <description><![CDATA[ 🗄️ Source of Truth &amp; Snapshot Strategy — Quản Lý Dữ Liệu Chia Sẻ Trong Microservices TL;DR: Khi 1 service owns domain data (source of truth) và các service khác cần dùng, đừng share database — hãy snapshot đúng cách. ]]></description>
+    <pubDate>Sun, 31 May 2026 14:24:43 GMT</pubDate>
+  </item><item>
     <title>Apache-Avro-Deep-Dive</title>
     <link>https://dangthobach.github.io/knowledge/Microservices-Patterns/Apache-Avro-Deep-Dive</link>
     <guid>https://dangthobach.github.io/knowledge/Microservices-Patterns/Apache-Avro-Deep-Dive</guid>
@@ -52,18 +64,6 @@
     <link>https://dangthobach.github.io/knowledge/Apache-Fory/06-Fory-Java-Spring-Redis-Cache</link>
     <guid>https://dangthobach.github.io/knowledge/Apache-Fory/06-Fory-Java-Spring-Redis-Cache</guid>
     <description><![CDATA[ 06 — Fory + Spring Boot + Redis: Production-Grade Cache Series: 00-MOC-Apache-Fory-Series Tags: apache-fory spring-boot redis cache production Level: Intermediate-Advanced Prerequisite: 05-Fory-Java-Modes 🎯 Bạn sẽ học được gì? Production-grade Spring Boot + Redis + Fory config Migration strategy từ... ]]></description>
-    <pubDate>Thu, 28 May 2026 06:33:23 GMT</pubDate>
-  </item><item>
-    <title>07-Fory-Java-Kafka-Internal-Events</title>
-    <link>https://dangthobach.github.io/knowledge/Apache-Fory/07-Fory-Java-Kafka-Internal-Events</link>
-    <guid>https://dangthobach.github.io/knowledge/Apache-Fory/07-Fory-Java-Kafka-Internal-Events</guid>
-    <description><![CDATA[ 07 — Fory + Kafka: Internal Event Serialization Series: 00-MOC-Apache-Fory-Series Tags: apache-fory kafka events serialization spring-boot Level: Intermediate-Advanced Prerequisite: 06-Fory-Java-Spring-Redis-Cache 🎯 Bạn sẽ học được gì? Khi nào dùng Fory thay Avro cho Kafka topics Implement Fory Ser... ]]></description>
-    <pubDate>Thu, 28 May 2026 06:33:23 GMT</pubDate>
-  </item><item>
-    <title>08-Fory-Java-Schema-Evolution</title>
-    <link>https://dangthobach.github.io/knowledge/Apache-Fory/08-Fory-Java-Schema-Evolution</link>
-    <guid>https://dangthobach.github.io/knowledge/Apache-Fory/08-Fory-Java-Schema-Evolution</guid>
-    <description><![CDATA[ 08 — Schema Evolution Deep Dive: Version Strategy &amp; Migration Series: 00-MOC-Apache-Fory-Series Tags: apache-fory schema-evolution versioning migration backward-compat Level: Advanced Prerequisite: 05-Fory-Java-Modes 🎯 Bạn sẽ học được gì? Schema evolution compatibility matrix đầy đủ Version str... ]]></description>
     <pubDate>Thu, 28 May 2026 06:33:23 GMT</pubDate>
   </item>
     </channel>
