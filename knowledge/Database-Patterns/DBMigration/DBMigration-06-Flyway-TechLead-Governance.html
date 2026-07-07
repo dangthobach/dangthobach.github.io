@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>DBMigration-06-Flyway-TechLead-Governance</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="Dang Tho Bach's Knowledge Base"/><meta property="og:title" content="DBMigration-06-Flyway-TechLead-Governance"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="DBMigration-06-Flyway-TechLead-Governance"/><meta name="twitter:description" content="Flyway cho Technical Leader — Quản trị DDL ở hệ thống 100+ bảng Góc nhìn: Bài này không dạy Flyway basics."/><meta property="og:description" content="Flyway cho Technical Leader — Quản trị DDL ở hệ thống 100+ bảng Góc nhìn: Bài này không dạy Flyway basics."/><meta property="og:image:alt" content="Flyway cho Technical Leader — Quản trị DDL ở hệ thống 100+ bảng Góc nhìn: Bài này không dạy Flyway basics."/><meta property="twitter:domain" content="dangthobach.github.io/knowledge"/><meta property="og:url" content="https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-06-Flyway-TechLead-Governance"/><meta property="twitter:url" content="https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-06-Flyway-TechLead-Governance"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="Flyway cho Technical Leader — Quản trị DDL ở hệ thống 100+ bảng Góc nhìn: Bài này không dạy Flyway basics."/><meta name="generator" content="Quartz"/><link href="../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiL2hvbWUvcnVubmVyL3dvcmsvZGFuZ3Rob2JhY2guZ2l0aHViLmlvL2Rhbmd0aG9iYWNoLmdpdGh1Yi5pby9xdWFydHovcXVhcnR6L2NvbXBvbmVudHMvc3R5bGVzIiwic291cmNlcyI6WyJtZXJtYWlkLmlubGluZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFHRjtFQUNFOzs7QUFLRjtFQUNFO0VBQ0E7OztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTs7QUFJRjtFQUNFO0VBQ0E7RUFDQSIsInNvdXJjZXNDb250ZW50IjpbIi5leHBhbmQtYnV0dG9uIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbG9hdDogcmlnaHQ7XG4gIHBhZGRpbmc6IDAuNHJlbTtcbiAgbWFyZ2luOiAwLjNyZW07XG4gIHJpZ2h0OiAwOyAvLyBOT1RFOiByaWdodCB3aWxsIGJlIHNldCBpbiBtZXJtYWlkLmlubGluZS50c1xuICBjb2xvcjogdmFyKC0tZ3JheSk7XG4gIGJvcmRlci1jb2xvcjogdmFyKC0tZGFyayk7XG4gIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgYm9yZGVyOiAxcHggc29saWQ7XG4gIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgb3BhY2l0eTogMDtcbiAgdHJhbnNpdGlvbjogMC4ycztcblxuICAmID4gc3ZnIHtcbiAgICBmaWxsOiB2YXIoLS1saWdodCk7XG4gICAgZmlsdGVyOiBjb250cmFzdCgwLjMpO1xuICB9XG5cbiAgJjpob3ZlciB7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIGJvcmRlci1jb2xvcjogdmFyKC0tc2Vjb25kYXJ5KTtcbiAgfVxuXG4gICY6Zm9jdXMge1xuICAgIG91dGxpbmU6IDA7XG4gIH1cbn1cblxucHJlIHtcbiAgJjpob3ZlciA+IC5leHBhbmQtYnV0dG9uIHtcbiAgICBvcGFjaXR5OiAxO1xuICAgIHRyYW5zaXRpb246IDAuMnM7XG4gIH1cbn1cblxuI21lcm1haWQtY29udGFpbmVyIHtcbiAgcG9zaXRpb246IGZpeGVkO1xuICBjb250YWluOiBsYXlvdXQ7XG4gIHotaW5kZXg6IDk5OTtcbiAgbGVmdDogMDtcbiAgdG9wOiAwO1xuICB3aWR0aDogMTAwdnc7XG4gIGhlaWdodDogMTAwdmg7XG4gIG92ZXJmbG93OiBoaWRkZW47XG4gIGRpc3BsYXk6IG5vbmU7XG4gIGJhY2tkcm9wLWZpbHRlcjogYmx1cig0cHgpO1xuICBiYWNrZ3JvdW5kOiByZ2JhKDAsIDAsIDAsIDAuNSk7XG5cbiAgJi5hY3RpdmUge1xuICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgfVxuXG4gICYgPiAjbWVybWFpZC1zcGFjZSB7XG4gICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gICAgYm9yZGVyLXJhZGl1czogNXB4O1xuICAgIHBvc2l0aW9uOiBmaXhlZDtcbiAgICB0b3A6IDUwJTtcbiAgICBsZWZ0OiA1MCU7XG4gICAgdHJhbnNmb3JtOiB0cmFuc2xhdGUoLTUwJSwgLTUwJSk7XG4gICAgaGVpZ2h0OiA4MHZoO1xuICAgIHdpZHRoOiA4MHZ3O1xuICAgIG92ZXJmbG93OiBoaWRkZW47XG5cbiAgICAmID4gLm1lcm1haWQtY29udGVudCB7XG4gICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgICB0cmFuc2Zvcm0tb3JpZ2luOiAwIDA7XG4gICAgICB0cmFuc2l0aW9uOiB0cmFuc2Zvcm0gMC4xcyBlYXNlO1xuICAgICAgb3ZlcmZsb3c6IHZpc2libGU7XG4gICAgICBtaW4taGVpZ2h0OiAyMDBweDtcbiAgICAgIG1pbi13aWR0aDogMjAwcHg7XG5cbiAgICAgIHByZSB7XG4gICAgICAgIG1hcmdpbjogMDtcbiAgICAgICAgYm9yZGVyOiBub25lO1xuICAgICAgfVxuXG4gICAgICBzdmcge1xuICAgICAgICBtYXgtd2lkdGg6IG5vbmU7XG4gICAgICAgIGhlaWdodDogYXV0bztcbiAgICAgIH1cbiAgICB9XG5cbiAgICAmID4gLm1lcm1haWQtY29udHJvbHMge1xuICAgICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgICAgYm90dG9tOiAyMHB4O1xuICAgICAgcmlnaHQ6IDIwcHg7XG4gICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgZ2FwOiA4cHg7XG4gICAgICBwYWRkaW5nOiA4cHg7XG4gICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgYm9yZGVyLXJhZGl1czogNnB4O1xuICAgICAgYm94LXNoYWRvdzogMCAycHggNHB4IHJnYmEoMCwgMCwgMCwgMC4xKTtcbiAgICAgIHotaW5kZXg6IDI7XG5cbiAgICAgIC5tZXJtYWlkLWNvbnRyb2wtYnV0dG9uIHtcbiAgICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgIHdpZHRoOiAzMnB4O1xuICAgICAgICBoZWlnaHQ6IDMycHg7XG4gICAgICAgIHBhZGRpbmc6IDA7XG4gICAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgICAgY29sb3I6IHZhcigtLWRhcmspO1xuICAgICAgICBib3JkZXItcmFkaXVzOiA0cHg7XG4gICAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICAgICAgZm9udC1zaXplOiAxNnB4O1xuICAgICAgICBmb250LWZhbWlseTogdmFyKC0tYm9keUZvbnQpO1xuICAgICAgICB0cmFuc2l0aW9uOiBhbGwgMC4ycyBlYXNlO1xuXG4gICAgICAgICY6aG92ZXIge1xuICAgICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIH1cblxuICAgICAgICAmOmFjdGl2ZSB7XG4gICAgICAgICAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKDFweCk7XG4gICAgICAgIH1cblxuICAgICAgICAvLyBTdHlsZSB0aGUgcmVzZXQgYnV0dG9uIGRpZmZlcmVudGx5XG4gICAgICAgICY6bnRoLWNoaWxkKDIpIHtcbiAgICAgICAgICB3aWR0aDogYXV0bztcbiAgICAgICAgICBwYWRkaW5nOiAwIDEycHg7XG4gICAgICAgICAgZm9udC1zaXplOiAxNHB4O1xuICAgICAgICB9XG4gICAgICB9XG4gICAgfVxuICB9XG59XG4iXX0= */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://dangthobach.github.io/knowledge/index.xml"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image" content="https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-06-Flyway-TechLead-Governance-og-image.webp"/><meta property="og:image:url" content="https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-06-Flyway-TechLead-Governance-og-image.webp"/><meta name="twitter:image" content="https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-06-Flyway-TechLead-Governance-og-image.webp"/><meta property="og:image:type" content="image/.webp"/></head><body data-slug="Database-Patterns/DBMigration/DBMigration-06-Flyway-TechLead-Governance"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../..">Dang Tho Bach's Knowledge Base</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-143"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-143" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Database-Patterns/">Database Patterns</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Database-Patterns/DBMigration/">DBMigration</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>DBMigration 06 Flyway TechLead Governance</a></div></nav><h1 class="article-title">DBMigration-06-Flyway-TechLead-Governance</h1><p show-comma="true" class="content-meta"><time datetime="2026-07-07T17:51:13.000Z">Jul 07, 2026</time><span>24 min read</span></p><ul class="tags"><li><a href="../../tags/flyway" class="internal tag-link">flyway</a></li><li><a href="../../tags/tech-lead" class="internal tag-link">tech-lead</a></li><li><a href="../../tags/database-governance" class="internal tag-link">database-governance</a></li><li><a href="../../tags/ddl" class="internal tag-link">ddl</a></li><li><a href="../../tags/migration" class="internal tag-link">migration</a></li><li><a href="../../tags/production" class="internal tag-link">production</a></li><li><a href="../../tags/postgresql" class="internal tag-link">postgresql</a></li><li><a href="../../tags/pdms" class="internal tag-link">pdms</a></li></ul></div></div><article class="popover-hint"><h1 id="flyway-cho-technical-leader--quản-trị-ddl-ở-hệ-thống-100-bảng">Flyway cho Technical Leader — Quản trị DDL ở hệ thống 100+ bảng<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#flyway-cho-technical-leader--quản-trị-ddl-ở-hệ-thống-100-bảng" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<blockquote>
+<p><strong>Góc nhìn</strong>: Bài này không dạy Flyway basics. Bài này dạy cách <strong>làm chủ</strong> Flyway khi bạn chịu trách nhiệm toàn bộ schema của một hệ thống production nghiêm túc — nơi một migration sai có thể làm sập service lúc 2AM.</p>
+</blockquote>
+<p><strong>Series</strong>: <a href="../../Database-Patterns/DBMigration/DBMigration-MOC" class="internal" data-slug="Database-Patterns/DBMigration/DBMigration-MOC">DBMigration-MOC</a> | <strong>Prerequisite</strong>: <a href="../../Database-Patterns/DBMigration/DBMigration-01-Flyway-Deep-Dive" class="internal" data-slug="Database-Patterns/DBMigration/DBMigration-01-Flyway-Deep-Dive">DBMigration-01-Flyway-Deep-Dive</a></p>
+<hr/>
+<h2 id="1-mental-model-của-technical-leader">1. Mental Model của Technical Leader<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-mental-model-của-technical-leader" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Developer dùng Flyway để “apply SQL”. Technical Leader dùng Flyway để <strong>kiểm soát drift</strong> — khoảng cách giữa những gì code expect và những gì DB thực sự có.</p>
+<pre><code>Developer's mental model:
+  &quot;Tôi thêm column → tôi viết migration → merge → xong&quot;
+
+TechLead's mental model:
+  Schema = Shared contract giữa tất cả services
+  Migration = Immutable append-only ledger của contract changes
+  flyway_schema_history = Source of truth cho mọi thay đổi đã xảy ra
+  
+  Câu hỏi không phải &quot;migration này có chạy không?&quot;
+  Câu hỏi là &quot;migration này có SAFE không ở mọi môi trường?&quot;
+               &quot;ai có thể review nó?&quot;
+               &quot;nếu nó fail ở production, chúng ta làm gì?&quot;
+               &quot;6 tháng nữa đọc lại có hiểu không?&quot;
+</code></pre>
+<p>Triết lý cốt lõi:</p>
+<pre><code>DDL changes are permanent.
+Code có thể rollback qua git revert.
+Schema changes không có git revert.
+</code></pre>
+<hr/>
+<h2 id="2-the-golden-rules--10-nguyên-tắc-bất-di-bất-dịch">2. The Golden Rules — 10 Nguyên tắc Bất di bất dịch<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-the-golden-rules--10-nguyên-tắc-bất-di-bất-dịch" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Đây là các nguyên tắc mà bất kỳ ai trong team vi phạm đều cần được đặt câu hỏi ngay:</p>
+<h3 id="rule-1-không-bao-giờ-sửa-file-migration-đã-merge">Rule 1: Không bao giờ sửa file migration đã merge<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#rule-1-không-bao-giờ-sửa-file-migration-đã-merge" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>WRONG:
+  V3__add_status_column.sql đã merge và chạy trên staging
+  → Dev sửa typo trong comment của file này
+
+IMPACT:
+  Checksum mismatch trên mọi môi trường chưa repair
+  Mất tính nhất quán lịch sử migration
+  
+RIGHT:
+  Nếu cần sửa behavior → tạo V4__fix_status_column.sql
+  Nếu là comment/whitespace sai và chưa push lên main → revert + fix
+  Nếu đã merge → flyway repair + document lý do
+</code></pre>
+<h3 id="rule-2-một-migration--một-đơn-vị-công-việc-có-thể-rollback-logic">Rule 2: Một migration = Một đơn vị công việc có thể rollback logic<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#rule-2-một-migration--một-đơn-vị-công-việc-có-thể-rollback-logic" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="sql" data-theme="github-light github-dark"><code data-language="sql" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- WRONG: V5__mixed_changes.sql</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">CREATE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> TABLE</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> new_feature</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (...);</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ALTER</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> TABLE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> document </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ADD</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> COLUMN feature_flag </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">BOOLEAN</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">DROP</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> TABLE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> old_cache;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">UPDATE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> config </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SET</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> value</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> 'new'</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> WHERE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> key</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> 'mode'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Nếu fail ở giữa → không biết rollback cái gì</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Không biết SQL nào đã chạy</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- RIGHT: Tách ra</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- V5__add_new_feature_table.sql</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- V5_1__add_feature_flag_to_document.sql</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- V5_2__drop_old_cache_table.sql</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- V5_3__update_config_mode.sql</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Mỗi file atomic. Fail file nào → biết chính xác cần xử lý gì</span></span></code></pre></figure>
+<h3 id="rule-3-mọi-ddl-đều-phải-backward-compatible-trước-khi-deploy-code">Rule 3: Mọi DDL đều phải backward-compatible trước khi deploy code<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#rule-3-mọi-ddl-đều-phải-backward-compatible-trước-khi-deploy-code" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>Expand-Contract Pattern (bắt buộc):
+
+Phase 1 — Expand (DB migration trước):
+  - Add column nullable
+  - Add new table
+  - Add index
+  → Deploy DB migration: production đang chạy old code + new schema
+  → old code không biết column mới → không sao, column nullable
+
+Phase 2 — Contract (code sau):
+  - Code mới dùng column mới
+  → Deploy code: production dùng new schema + new code
+  → Không có downtime, không có incompatibility
+
+Phase 3 — Cleanup (sau khi code stable, optional):
+  - Set NOT NULL nếu cần (sau khi data đã fill)
+  - Drop column không còn dùng
+  - Drop old table
+</code></pre>
+<p>Nguyên tắc cụ thể:</p>
+<pre><code>SAFE to do anytime:
+  ✅ ADD column (nullable)
+  ✅ ADD table
+  ✅ ADD index (CONCURRENT)
+  ✅ ADD constraint (không restrict existing data)
+  ✅ CREATE stored procedure (CREATE OR REPLACE)
+
+MUST use Expand-Contract:
+  ⚠️ RENAME column → add new column + migrate data + drop old
+  ⚠️ RENAME table → add view + migrate + drop view
+  ⚠️ CHANGE column type → add new column + migrate + drop old
+  ⚠️ ADD NOT NULL constraint → fill data first + add constraint
+
+NEVER do in same deploy as code change:
+  ❌ DROP column being used by current code
+  ❌ DROP table being read by current code
+  ❌ RENAME anything code refers to
+  ❌ CHANGE column type breaking serialization
+</code></pre>
+<h3 id="rule-4-production-migration-phải-được-test-trên-staging-với-production-data-volume">Rule 4: Production migration phải được test trên staging với production data volume<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#rule-4-production-migration-phải-được-test-trên-staging-với-production-data-volume" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>Sai lầm phổ biến:
+  - Test trên staging với 1000 rows
+  - ALTER TABLE document ADD COLUMN... → chạy trong 0.1s
+  - Deploy production với 50 triệu rows → table lock 45 phút
+  - Service timeout toàn bộ
+
+Checklist trước khi merge migration vào main:
+
+[ ] Đã test trên staging với volume tương đương production?
+[ ] EXPLAIN ANALYZE trên query performance sau migration?
+[ ] Ước tính execution time ở production data volume?
+[ ] Nếu > 30 giây → có kế hoạch minimize lock không?
+[ ] Migration có idempotent không? (IF NOT EXISTS, OR REPLACE)
+</code></pre>
+<h3 id="rule-5-không-bao-giờ-đặt-business-logic-trong-migration">Rule 5: Không bao giờ đặt business logic trong migration<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#rule-5-không-bao-giờ-đặt-business-logic-trong-migration" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="sql" data-theme="github-light github-dark"><code data-language="sql" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- WRONG: Migration làm business logic</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- V8__migrate_old_status_to_new.sql</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">UPDATE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> document</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SET</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> status_id </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    SELECT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> id </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">FROM</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> status</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> WHERE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> code </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    CASE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> old_status</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        WHEN</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> 'PENDING'</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> THEN</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> 'IN_REVIEW'</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        WHEN</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> 'DONE'</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> THEN</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> 'COMPLETED'</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        ELSE</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> 'UNKNOWN'</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    END</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- VẤN ĐỀ:</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Logic này không được unit test</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Không audit được ai chạy, khi nào</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Không rollback được nếu logic sai</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Khó debug khi status_id bị sai sau này</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- RIGHT: Migration chỉ đổi schema</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- V8__add_new_status_column.sql</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ALTER</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> TABLE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> document </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ADD</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> COLUMN new_status_id </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">BIGINT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ALTER</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> TABLE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> document </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ADD</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> CONSTRAINT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> fk_doc_new_status</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    FOREIGN KEY</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (new_status_id) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">REFERENCES</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> status</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(id);</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Logic business: viết code Java (có unit test, có audit, có rollback)</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- DataMigrationService.migrateDocumentStatuses()</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Chạy qua admin endpoint, có progress tracking, có error reporting</span></span></code></pre></figure>
+<h3 id="rule-6-index-migration-không-được-dùng-create-index-thông-thường-trên-bảng-lớn">Rule 6: Index migration không được dùng CREATE INDEX thông thường trên bảng lớn<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#rule-6-index-migration-không-được-dùng-create-index-thông-thường-trên-bảng-lớn" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="sql" data-theme="github-light github-dark"><code data-language="sql" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- WRONG trên production (bảng 50M rows):</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- V9__add_indexes.sql</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">CREATE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> INDEX</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> idx_document_tenant</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> ON</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> document(tenant_code);</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- → Exclusive lock trên toàn bộ bảng trong thời gian build index</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- → Service không thể read/write document trong thời gian đó</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- RIGHT: Tách index ra khỏi app startup</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Option A: Chạy index migration TRƯỚC deploy, manual trên prod:</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Psql session:</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">CREATE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> INDEX</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> CONCURRENTLY</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> IF</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> NOT</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> EXISTS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> idx_document_tenant</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    ON</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> document(tenant_code);</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- CONCURRENTLY: không lock table, chỉ chậm hơn, chạy background</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Option B: Flyway non-transactional migration (Flyway 9+)</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Tạo file với prefix đặc biệt và configure nonTransactionalMigrations</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Hoặc dùng migration wrapper</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Rule của team:</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Index trên bảng &lt; 1M rows: OK trong migration file bình thường</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Index trên bảng > 1M rows: PHẢI chạy CONCURRENTLY, không trong Flyway</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Flyway chỉ lưu record &quot;index creation script&quot; để audit</span></span></code></pre></figure>
+<h3 id="rule-7-migration-phải-self-documenting">Rule 7: Migration phải self-documenting<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#rule-7-migration-phải-self-documenting" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="sql" data-theme="github-light github-dark"><code data-language="sql" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- WRONG:</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- V12__update_tables.sql</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ALTER</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> TABLE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> a </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ADD</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> COLUMN x </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">INT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ALTER</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> TABLE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> b </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ALTER</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> COLUMN y </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">TYPE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> BIGINT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Đọc lại 6 tháng sau: không biết tại sao, context là gì</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- RIGHT:</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- V12__expand_document_id_to_bigint_for_volume.sql</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- =============================================================</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Migration: Expand document.id từ INT → BIGINT</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Reason: Document count dự kiến vượt 2.1B vào Q3 2025</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Ticket: PDMS-1234</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Author: nguyenvana@vpbank.com</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Reviewed by: tranthib@vpbank.com</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Risk: MEDIUM — bảng lớn, cần chạy ngoài giờ cao điểm</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Estimated execution time on prod: ~15 phút (CONCURRENTLY)</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Rollback plan: Không rollback được sau khi ALTER; phải test kỹ staging</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- =============================================================</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Step 1: Add new BIGINT column (nullable, immediate)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ALTER</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> TABLE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> document </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ADD</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> COLUMN id_new </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">BIGINT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Step 2: Create sequence (sẽ được dùng sau khi migrate)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">CREATE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> SEQUENCE</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> IF</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> NOT</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> EXISTS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> document_id_bigint_seq;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- ... (tiếp theo các step)</span></span></code></pre></figure>
+<h3 id="rule-8-có-migration-rollback-plan-kể-cả-khi-không-có-undo">Rule 8: Có migration “rollback” plan kể cả khi không có Undo<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#rule-8-có-migration-rollback-plan-kể-cả-khi-không-có-undo" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Flyway Community không có Undo. Nhưng TechLead phải có plan:</p>
+<pre><code>Trước mỗi migration phức tạp, document trong file:
+
+1. FORWARD plan: migration làm gì, theo thứ tự nào
+2. VERIFICATION: sau khi chạy, check gì để biết thành công
+3. BACKWARD plan: nếu fail, làm gì
+
+Các loại backward plan:
+a) No rollback needed: column mới nullable, không break gì
+   → Có thể revert code, DB ổn
+
+b) Manual rollback script: chuẩn bị sẵn
+   -- rollback_V12.sql (KHÔNG đặt trong db/migration/)
+   ALTER TABLE document DROP COLUMN IF EXISTS new_feature_flag;
+   
+c) Feature flag rollback: code cũ bypass column mới
+   → Code có thể disable feature, không cần touch DB
+
+d) Smoke and mirrors: không rollback được
+   → Document rõ ràng: &quot;Once applied, this is permanent&quot;
+   → Đảm bảo test kỹ hơn trước khi apply production
+</code></pre>
+<h3 id="rule-9-migration-version--timestamp-cho-team-nhiều-người">Rule 9: Migration version = Timestamp cho team nhiều người<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#rule-9-migration-version--timestamp-cho-team-nhiều-người" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>Version số (V1, V2, V3) → CONFLICT khi nhiều branch song song:
+  Branch A: viết V5__feature_a.sql
+  Branch B: viết V5__feature_b.sql (cùng lúc)
+  Merge → hai V5 conflict → chaos
+
+Giải pháp: Version = Timestamp (recommended cho team > 3 người)
+  V20250115_1030__add_tenant_support.sql
+  V20250116_0900__add_credit_module_tables.sql
+  V20250116_1400__add_audit_indexes.sql
+
+Hoặc: Prefix bằng sprint/ticket:
+  V2025S01_001__baseline.sql     ← Sprint 1, migration 001
+  V2025S01_002__add_lookups.sql
+  V2025S02_001__tenant_support.sql
+
+Rule cho PDMS team:
+  Format: V{YYYYMMDD}{HH24MI}__{description}.sql
+  Author tự chọn timestamp khi tạo file
+  Nếu timestamp trùng: người tạo sau thêm _1, _2...
+  Không dùng version số tuyến tính nữa
+</code></pre>
+<h3 id="rule-10-flyway_schema_history-không-được-touch-bằng-tay">Rule 10: flyway_schema_history không được touch bằng tay<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#rule-10-flyway_schema_history-không-được-touch-bằng-tay" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>TUYỆT ĐỐI KHÔNG:
+  DELETE FROM flyway_schema_history WHERE version = '5';
+  UPDATE flyway_schema_history SET success = true WHERE success = false;
+
+Luôn dùng:
+  flyway repair    (lệnh chính thức để fix issues)
+  flyway validate  (xem trạng thái trước khi action)
+  flyway info      (xem tất cả migrations và state)
+
+Nếu ai trong team nói &quot;tôi cần xóa row trong flyway_schema_history&quot;:
+  → Đó là dấu hiệu có vấn đề lớn hơn cần giải quyết đúng cách
+  → Dừng lại, hiểu root cause, dùng flyway repair đúng cách
+</code></pre>
+<hr/>
+<h2 id="3-ddl-governance-model--quy-trình-kiểm-soát-thay-đổi">3. DDL Governance Model — Quy trình kiểm soát thay đổi<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-ddl-governance-model--quy-trình-kiểm-soát-thay-đổi" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="pipeline-bắt-buộc-cho-mọi-migration">Pipeline bắt buộc cho mọi migration<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#pipeline-bắt-buộc-cho-mọi-migration" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>Developer                 Tech Lead              CI/CD                  Production DB
+    |                         |                    |                         |
+    |-- Viết migration ------->|                    |                         |
+    |   (draft branch)        |                    |                         |
+    |                         |                    |                         |
+    |&lt;-- Review + feedback ----|                    |                         |
+    |   (naming, safety,       |                    |                         |
+    |    backward compat,      |                    |                         |
+    |    risk assessment)      |                    |                         |
+    |                         |                    |                         |
+    |-- Fix + re-submit ------>|                    |                         |
+    |                         |                    |                         |
+    |&lt;-- Approved + merge -----|                    |                         |
+    |                         |                    |                         |
+    |                         |--- CI: flyway validate ------------------>   |
+    |                         |--- CI: flyway info (dry run check) ----->   |
+    |                         |--- CI: apply to staging ----------------->  |
+    |                         |                    |                         |
+    |                         |&lt;-- Staging smoke test --------------------|  |
+    |                         |                    |                         |
+    |                         |--- Manual approval (for prod) ----------->  |
+    |                         |                    |                         |
+    |                         |--- Deploy to production ------------------>  |
+    |                         |                    |                         |
+    |                         |&lt;-- Monitor: slow query, locks, errors ----|  |
+</code></pre>
+<h3 id="migration-review-checklist-cho-tech-lead">Migration Review Checklist (cho Tech Lead)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#migration-review-checklist-cho-tech-lead" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>NAMING:
+[ ] File name theo convention? (V{timestamp}__{verb}_{subject}.sql)
+[ ] Description đủ descriptive? Đọc tên file có hiểu không?
+[ ] Mô tả đúng những gì file làm?
+
+CONTENT — HEADER:
+[ ] Có comment header không? (reason, ticket, author, risk, estimated time)
+[ ] Risk level có realistic không? (LOW/MEDIUM/HIGH/CRITICAL)
+
+CONTENT — SAFETY:
+[ ] Có IF NOT EXISTS / IF EXISTS ở mọi DDL statement?
+[ ] Có CREATE OR REPLACE cho functions/views?
+[ ] Không có DROP CASCADE bừa bãi?
+[ ] Không có TRUNCATE không cần thiết?
+
+BACKWARD COMPATIBILITY:
+[ ] New columns có nullable hoặc có DEFAULT không?
+[ ] Không RENAME gì mà code đang dùng?
+[ ] Không DROP gì mà code đang dùng?
+[ ] Không CHANGE TYPE theo cách không backward-compatible?
+
+PERFORMANCE:
+[ ] ALTER TABLE trên bảng lớn: có minimize lock không?
+[ ] CREATE INDEX: có dùng CONCURRENTLY không (nếu bảng > 1M rows)?
+[ ] UPDATE large table: có batch không?
+[ ] Không có Cartesian join hoặc nested select không có index?
+
+TRANSACTIONS:
+[ ] File có thể run trong single transaction không?
+[ ] Nếu dùng CREATE INDEX CONCURRENTLY → cần non-transactional approach?
+
+IDEMPOTENCY:
+[ ] Có thể chạy lại (sau repair) mà không fail?
+[ ] IF NOT EXISTS / IF EXISTS ở mọi nơi cần thiết?
+
+ROLLBACK:
+[ ] Backward plan được document không?
+[ ] Nếu &quot;no rollback possible&quot; → đã test kỹ trên staging chưa?
+</code></pre>
+<hr/>
+<h2 id="4-schema-design-patterns-cho-100-tables">4. Schema Design Patterns cho 100+ Tables<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-schema-design-patterns-cho-100-tables" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="phân-nhóm-migration-theo-module">Phân nhóm migration theo module<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#phân-nhóm-migration-theo-module" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>db/
+└── migration/
+    ├── v1_foundation/               ← Toàn bộ schema baseline
+    │   ├── V20250101_0000__bootstrap_extensions.sql
+    │   ├── V20250101_0001__create_lookup_tables.sql
+    │   ├── V20250101_0002__create_iam_tables.sql
+    │   ├── V20250101_0003__create_document_tables.sql
+    │   ├── V20250101_0004__create_credit_tables.sql
+    │   ├── V20250101_0005__create_warehouse_tables.sql
+    │   ├── V20250101_0006__create_audit_tables.sql
+    │   ├── V20250101_0007__add_foreign_keys_foundation.sql
+    │   └── V20250101_0008__create_foundation_indexes.sql
+    │
+    ├── v2_features/                 ← Feature increments
+    │   ├── V20250201_0900__expand_tenant_support.sql
+    │   └── V20250215_1400__add_notification_tables.sql
+    │
+    └── v3_performance/              ← Performance tuning schema
+        └── V20250301_1000__add_composite_indexes.sql
+</code></pre>
+<p>Flyway không cần subfolder structure đặc biệt — nó scan đệ quy. Nhưng việc phân nhóm giúp onboarding và audit dễ hơn nhiều.</p>
+<h3 id="bảng-audit-toàn-hệ-thống--template-chuẩn">Bảng audit toàn hệ thống — Template chuẩn<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#bảng-audit-toàn-hệ-thống--template-chuẩn" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="sql" data-theme="github-light github-dark"><code data-language="sql" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- V20250101_0006__create_audit_tables.sql</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Mọi bảng business đều inherit pattern này</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Audit log centralized</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">CREATE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> TABLE</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> system_audit_log</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    id              </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">BIGSERIAL</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">       PRIMARY KEY</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    entity_type     </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">VARCHAR</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">100</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)    </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">NOT NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,   </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- 'DOCUMENT', 'CREDIT_CASE'</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    entity_id       </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">VARCHAR</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">100</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)    </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">NOT NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,   </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- UUID hoặc business key</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    action</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">          VARCHAR</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">50</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)     </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">NOT NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,   </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- 'CREATE', 'UPDATE', 'DELETE'</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    old_data        JSONB,                      </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Snapshot trước thay đổi</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    new_data        JSONB,                      </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Snapshot sau thay đổi</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    changed_fields  </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">TEXT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">[],                     </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- [&quot;status_id&quot;, &quot;updated_by&quot;]</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    performed_by    </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">VARCHAR</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">100</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)    </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">NOT NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,   </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- User ID</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    performed_at    </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">TIMESTAMPTZ</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">     NOT NULL</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> DEFAULT</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> NOW</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(),</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    tenant_code     </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">VARCHAR</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">20</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)     </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">NOT NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    correlation_id  UUID,                       </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Trace ID từ request</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    source_service  </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">VARCHAR</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">100</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)                </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- 'process-management', 'iam'</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Partitioning theo tháng (cần thiết cho 100M+ audit rows)</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Partition sẽ được tạo dynamic bởi pg_partman hoặc manual</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">CREATE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> INDEX</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> idx_audit_entity</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> ON</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> system_audit_log(entity_type, entity_id);</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">CREATE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> INDEX</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> idx_audit_performed_at</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> ON</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> system_audit_log(performed_at </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">DESC</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">CREATE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> INDEX</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> idx_audit_tenant</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> ON</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> system_audit_log(tenant_code, performed_at </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">DESC</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span></code></pre></figure>
+<h3 id="soft-delete-pattern-nhất-quán">Soft delete pattern nhất quán<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#soft-delete-pattern-nhất-quán" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="sql" data-theme="github-light github-dark"><code data-language="sql" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Pattern áp dụng cho mọi bảng có business data</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- V20250101_0003__create_document_tables.sql (excerpt)</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">CREATE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> TABLE</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> document</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">    -- === IDENTITY ===</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    id              UUID            </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">NOT NULL</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> DEFAULT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> gen_random_uuid(),</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    document_code   </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">VARCHAR</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">50</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)     </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">NOT NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,   </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Business key</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">    -- === BUSINESS FIELDS ===</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    case_id         UUID            </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">NOT NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    warehouse_id    UUID            </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">NOT NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    status_id       </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">BIGINT</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">          NOT NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    tenant_code     </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">VARCHAR</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">20</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)     </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">NOT NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">    -- === LIFECYCLE TIMESTAMPS ===</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    created_at      </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">TIMESTAMPTZ</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">     NOT NULL</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> DEFAULT</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> NOW</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(),</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    created_by      </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">VARCHAR</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">100</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)    </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">NOT NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    updated_at      </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">TIMESTAMPTZ</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    updated_by      </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">VARCHAR</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">100</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">),</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">    -- === SOFT DELETE (bắt buộc cho mọi bảng business) ===</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    is_deleted      </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">BOOLEAN</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">         NOT NULL</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> DEFAULT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> FALSE,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    deleted_at      </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">TIMESTAMPTZ</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    deleted_by      </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">VARCHAR</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">100</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">),</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">    -- === VERSION (Optimistic Locking) ===</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    version</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">         INT</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">             NOT NULL</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> DEFAULT</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    CONSTRAINT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> pk_document </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">PRIMARY KEY</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (id),</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    CONSTRAINT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> uq_document_code </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">UNIQUE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (document_code)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Partial index cho common queries (chỉ non-deleted)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">CREATE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> INDEX</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> idx_document_active</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> ON</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> document(tenant_code, status_id)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    WHERE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> is_deleted </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> FALSE;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Comment bắt buộc</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">COMMENT ON TABLE document IS </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">'Hồ sơ vật lý tín dụng — core entity PDMS'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">COMMENT ON COLUMN document.version IS </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">'Optimistic locking version — tăng mỗi UPDATE'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">COMMENT ON COLUMN document.is_deleted IS </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">'Soft delete flag — không bao giờ DELETE vật lý'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span></code></pre></figure>
+<h3 id="lookup-tables-pattern">Lookup tables pattern<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#lookup-tables-pattern" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="sql" data-theme="github-light github-dark"><code data-language="sql" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- V20250101_0001__create_lookup_tables.sql</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Mọi &quot;master data&quot; đều theo pattern này</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Generic lookup (cho các danh mục nhỏ)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">CREATE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> TABLE</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> lookup_category</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    id          </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">BIGSERIAL</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">   PRIMARY KEY</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    code        </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">VARCHAR</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">50</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">NOT NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    name</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        VARCHAR</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">200</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">NOT NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    description</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> TEXT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    is_active   </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">BOOLEAN</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">     NOT NULL</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> DEFAULT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> TRUE,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    sort_order  </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">INT</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">         NOT NULL</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> DEFAULT</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    parent_id   </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">BIGINT</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">      REFERENCES</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> lookup_category(id),</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    created_at  </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">TIMESTAMPTZ</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> NOT NULL</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> DEFAULT</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> NOW</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(),</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    CONSTRAINT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> uq_lookup_code </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">UNIQUE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (code)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Specific lookup (cho danh mục có nhiều thuộc tính riêng)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">CREATE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> TABLE</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> document_status</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    id              </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">BIGSERIAL</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">   PRIMARY KEY</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    code            </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">VARCHAR</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">50</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">NOT NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    name_vi         </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">VARCHAR</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">200</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">NOT NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    name_en         </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">VARCHAR</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">200</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">),</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    is_terminal     </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">BOOLEAN</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">     NOT NULL</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> DEFAULT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> FALSE,  </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- trạng thái cuối</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    is_active       </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">BOOLEAN</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">     NOT NULL</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> DEFAULT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> TRUE,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    allowed_transitions </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">BIGINT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">[],  </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Array of status IDs có thể chuyển sang</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    CONSTRAINT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> uq_doc_status_code </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">UNIQUE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (code)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">COMMENT ON COLUMN document_status.is_terminal IS</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">    'TRUE = không thể chuyển sang status khác (ARCHIVED, COMPLETED)'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">COMMENT ON COLUMN document_status.allowed_transitions IS</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">    'Array of document_status.id mà status này có thể transition sang'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span></code></pre></figure>
+<hr/>
+<h2 id="5-xử-lý-tình-huống-khó">5. Xử lý Tình huống Khó<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5-xử-lý-tình-huống-khó" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="tình-huống-1-onboard-db-có-sẵn-không-từ-đầu">Tình huống 1: Onboard DB có sẵn (không từ đầu)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#tình-huống-1-onboard-db-có-sẵn-không-từ-đầu" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>Bài toán: PDMS đang chạy, có 80 bảng, chưa có Flyway.
+Làm sao integrate Flyway mà không phá gì?
+
+Bước 1: Dump schema hiện tại KHÔNG có data
+pg_dump --schema-only --no-owner --no-acl \
+  -d pdms_db -f V1__Baseline_existing_schema.sql
+
+Bước 2: Chỉnh sửa file dump
+  - Remove DROP statements (nếu có)
+  - Add IF NOT EXISTS ở mọi CREATE
+  - Remove sequence reset nếu không cần
+  - Chia nhỏ nếu quá lớn (tuỳ chọn)
+
+Bước 3: Configure Flyway baseline
+spring:
+  flyway:
+    baseline-on-migrate: true
+    baseline-version: &quot;1&quot;
+    baseline-description: &quot;Existing PDMS schema before Flyway&quot;
+
+Bước 4: Chạy baseline (CHỈ làm trên mọi môi trường chưa có flyway_schema_history)
+flyway baseline
+
+Kết quả: flyway_schema_history có 1 row:
+  version=1, type=BASELINE, success=true
+
+Bước 5: Mọi migration sau đó (V2 trở đi) hoạt động bình thường
+
+QUAN TRỌNG:
+  - baseline-on-migrate: true CHỈ để true trong lần đầu onboard
+  - Sau khi tất cả môi trường đã có baseline → đổi lại false
+  - File V1 (baseline) không cần run thực sự — chỉ là dấu mốc
+</code></pre>
+<h3 id="tình-huống-2-migration-fail-ở-production-giữa-chừng">Tình huống 2: Migration fail ở production giữa chừng<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#tình-huống-2-migration-fail-ở-production-giữa-chừng" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>Timeline:
+  14:00 - Deploy V15__add_credit_scoring_tables.sql lên production
+  14:03 - Flyway bắt đầu chạy migration
+  14:07 - ERROR: null value in column &quot;score_type_id&quot; violates not-null constraint
+
+Tình trạng:
+  - flyway_schema_history: V15, success=false
+  - DB: một phần schema đã tạo, một phần chưa
+  - App: không thể start (Flyway fail → Spring context fail)
+
+Xử lý:
+
+Step 1 — Assess damage (không làm gì vội)
+  psql production
+  SELECT installed_rank, version, description, success
+  FROM flyway_schema_history ORDER BY installed_rank;
+  
+  -- Xem exactly cái gì đã chạy trong transaction
+  -- PostgreSQL: nếu migration chạy trong 1 transaction và fail
+  --   → toàn bộ bị rollback automatically (PostgreSQL DDL là transactional)
+  -- Kiểm tra: bảng mới có tồn tại không?
+  \dt credit_scoring*
+
+Step 2 — Fix the migration
+  -- Option A: Migration fail và PostgreSQL đã rollback toàn bộ
+  --   → Fix SQL trong file V15 → flyway repair → redeploy
+  
+  -- Option B: Migration fail và đã chạy PARTIAL (có statement DML, non-transactional)
+  --   → Cần manual cleanup trước khi repair
+  --   → DROP những gì đã tạo → flyway repair → fix → redeploy
+
+Step 3 — flyway repair
+  flyway repair
+  -- Xóa row failed khỏi history
+  -- Cập nhật checksum nếu đã sửa file
+
+Step 4 — Verify
+  flyway info
+  -- V15 không còn trong history
+  -- V15 status: Pending
+
+Step 5 — Redeploy với file đã fix
+  -- Rollout → Flyway chạy lại V15 từ đầu
+
+LESSON LEARNED:
+  - Luôn test migration trên staging với data tương tự prod
+  - Sử dụng IF NOT EXISTS để migration có thể retry an toàn
+  - Với PostgreSQL: DDL trong 1 transaction → rollback tự động nếu fail
+  - Đây là lý do tại sao &quot;1 file = 1 atomic unit&quot; là quan trọng
+</code></pre>
+<h3 id="tình-huống-3-hai-branch-tạo-migration-cùng-version">Tình huống 3: Hai branch tạo migration cùng version<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#tình-huống-3-hai-branch-tạo-migration-cùng-version" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>Bài toán:
+  Branch A (developer Hùng): V20250115_1000__add_notification.sql
+  Branch B (developer Lan): V20250115_1000__add_reporting.sql (cùng timestamp!)
+  Cả hai merge vào main → conflict
+
+Cách phòng tránh:
+  1. Convention: Timestamp tính theo giờ thực tế TẠO FILE (không phải giờ merge)
+  2. CI/CD check: validate không có 2 files cùng version trong migration folder
+  3. Developer thêm suffix nếu conflict: V20250115_1000_A và V20250115_1000_B
+
+Cách xử lý khi đã conflict:
+  - Người merge chịu trách nhiệm resolve
+  - Rename một trong hai: V20250115_1001__add_reporting.sql
+  - Nếu một trong hai đã deploy lên staging: cái đó giữ nguyên, cái kia đổi
+  - Nếu chưa deploy đâu cả: đổi cái nào cũng được, ưu tiên cái &quot;ít quan trọng hơn&quot; đổi
+
+Script CI check:
+  #!/bin/bash
+  # Chạy trong CI để detect duplicate versions
+  duplicates=$(find db/migration -name &quot;V*.sql&quot; | \
+    sed 's/.*\(V[0-9_]*\)__.*/\1/' | sort | uniq -d)
+  if [ -n &quot;$duplicates&quot; ]; then
+    echo &quot;ERROR: Duplicate migration versions detected: $duplicates&quot;
+    exit 1
+  fi
+</code></pre>
+<h3 id="tình-huống-4-cần-thêm-not-null-column-vào-bảng-50m-rows">Tình huống 4: Cần thêm NOT NULL column vào bảng 50M rows<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#tình-huống-4-cần-thêm-not-null-column-vào-bảng-50m-rows" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="sql" data-theme="github-light github-dark"><code data-language="sql" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- WRONG (downtime):</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ALTER</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> TABLE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> document </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ADD</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> COLUMN priority_score </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">INT</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> NOT NULL</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> DEFAULT</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Trên PostgreSQL &lt; 11: rewrite toàn bộ table → lock hàng giờ</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Trên PostgreSQL >= 11: với constant DEFAULT, no rewrite (fast)</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Nhưng nếu DEFAULT là expression (NOW(), gen_random_uuid()): vẫn rewrite</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Quy trình an toàn cho bất kỳ trường hợp nào:</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Migration 1: V20250201_0900__add_priority_score_nullable.sql</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ALTER</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> TABLE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> document</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    ADD</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> COLUMN </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">IF</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> NOT</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> EXISTS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> priority_score </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">INT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Nullable, không có DEFAULT → immediate, không lock</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- (Deploy code v1: đọc/ghi priority_score nếu có, dùng null-safe logic)</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Migration 2: V20250205_1000__backfill_priority_score.sql</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Chạy trong giờ thấp điểm, outside of deployment</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">DO $$</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">DECLARE</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    batch_size  </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">INT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> :</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 10000</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    last_id     UUID :</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> '00000000-0000-0000-0000-000000000000'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    batch_count </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">INT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> :</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">BEGIN</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    LOOP</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        WITH</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> batch </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">AS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">            SELECT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> id </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">FROM</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> document</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">            WHERE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> priority_score </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">IS</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> NULL</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">              AND</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> id </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">></span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> last_id</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">            ORDER BY</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> id</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">            LIMIT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> batch_size</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        )</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        UPDATE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> document d</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        SET</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> priority_score </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        FROM</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> batch b</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        WHERE</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> d</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">id</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> b</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">id</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        GET</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> DIAGNOSTICS batch_count </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> ROW_COUNT;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        EXIT </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">WHEN</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> batch_count </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        SELECT</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> MAX</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(id) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">INTO</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> last_id</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        FROM</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> document </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">WHERE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> priority_score </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">IS</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> RETURNING id;</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">        -- Actually: track last processed id</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        PERFORM pg_sleep(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">); </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Breathing room cho production queries</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    END</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> LOOP</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">END</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> $$;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Migration 3: V20250210_0900__set_priority_score_not_null.sql</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Chạy sau khi đã verify toàn bộ data đã fill</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ALTER</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> TABLE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> document</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    ALTER</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> COLUMN priority_score </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SET</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> NOT NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    ALTER</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> COLUMN priority_score </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SET</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> DEFAULT</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Fast trên PostgreSQL nếu không cần rewrite (constraint check fast khi data đã fill)</span></span></code></pre></figure>
+<hr/>
+<h2 id="6-cicd-integration--production-grade-pipeline">6. CI/CD Integration — Production-grade Pipeline<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#6-cicd-integration--production-grade-pipeline" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="github-actions-workflow">GitHub Actions workflow<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#github-actions-workflow" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="yaml" data-theme="github-light github-dark"><code data-language="yaml" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># .github/workflows/db-migration.yml</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">Database Migration</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">on</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">  push</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">    paths</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">      - </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">'src/main/resources/db/**'</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">    branches</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: [</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">main</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">staging</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">]</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">jobs</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">  validate-migrations</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">    name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">Validate Migration Files</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">    runs-on</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">ubuntu-latest</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">    steps</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">      - </span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">uses</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">actions/checkout@v4</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">      - </span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">Check duplicate versions</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">        run</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">|</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">          duplicates=$(find src/main/resources/db/migration -name &quot;V*.sql&quot; | \</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">            sed 's/.*\(V[0-9_]*\)__.*/\1/' | sort | uniq -d)</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">          if [ -n &quot;$duplicates&quot; ]; then</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">            echo &quot;❌ Duplicate migration versions: $duplicates&quot;</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">            exit 1</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">          fi</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">          echo &quot;✅ No duplicate versions&quot;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">      - </span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">Check naming convention</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">        run</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">|</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">          find src/main/resources/db/migration -name &quot;*.sql&quot; | while read f; do</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">            basename &quot;$f&quot; | grep -qE '^(V[0-9]{8}_[0-9]{4}__|R__[0-9]{3}_).+\.sql$' || \</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">              { echo &quot;❌ Invalid naming: $f&quot;; exit 1; }</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">          done</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">          echo &quot;✅ Naming convention OK&quot;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">      - </span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">Flyway validate against staging</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">        run</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">|</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">          flyway validate \</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">            -url=${{ secrets.STAGING_DB_URL }} \</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">            -user=${{ secrets.STAGING_FLYWAY_USER }} \</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">            -password=${{ secrets.STAGING_FLYWAY_PASSWORD }} \</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">            -locations=filesystem:src/main/resources/db/migration</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">        env</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">          FLYWAY_EDITION</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">community</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">      - </span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">Flyway info (check pending)</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">        run</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">|</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">          flyway info \</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">            -url=${{ secrets.STAGING_DB_URL }} \</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">            -user=${{ secrets.STAGING_FLYWAY_USER }} \</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">            -password=${{ secrets.STAGING_FLYWAY_PASSWORD }} \</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">            -locations=filesystem:src/main/resources/db/migration</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">  apply-staging</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">    name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">Apply to Staging</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">    needs</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">validate-migrations</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">    runs-on</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">ubuntu-latest</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">    environment</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">staging</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">    if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">github.ref == 'refs/heads/staging'</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">    steps</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">      - </span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">Flyway migrate staging</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">        run</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">|</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">          flyway migrate \</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">            -url=${{ secrets.STAGING_DB_URL }} \</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">            -user=${{ secrets.STAGING_FLYWAY_USER }} \</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">            -password=${{ secrets.STAGING_FLYWAY_PASSWORD }} \</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">            -locations=filesystem:src/main/resources/db/migration \</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">            -outOfOrder=false \</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">            -validateOnMigrate=true</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">  apply-production</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">    name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">Apply to Production (Manual Approval)</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">    needs</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">apply-staging</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">    runs-on</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">ubuntu-latest</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">    environment</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">production</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">  # GitHub environment với required reviewers</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">    if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">github.ref == 'refs/heads/main'</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">    steps</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">      - </span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">Pre-migration info</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">        run</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">flyway info -url=${{ secrets.PROD_DB_URL }} ...</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">      - </span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">Apply production migration</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">        run</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">|</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">          flyway migrate \</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">            -url=${{ secrets.PROD_DB_URL }} \</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">            -user=${{ secrets.PROD_FLYWAY_USER }} \</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">            -password=${{ secrets.PROD_FLYWAY_PASSWORD }} \</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">            -cleanDisabled=true \</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">            -outOfOrder=false \</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">            -validateOnMigrate=true</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">      - </span><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">Post-migration verification</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">        run</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">|</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">          # Chạy smoke test queries</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">          psql ${{ secrets.PROD_DB_URL }} -c &quot;</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">            SELECT COUNT(*) as pending_migrations</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">            FROM flyway_schema_history</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">            WHERE success = false;</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">          &quot;</span></span></code></pre></figure>
+<h3 id="dedicated-flyway-db-user-bắt-buộc">Dedicated Flyway DB User (bắt buộc)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#dedicated-flyway-db-user-bắt-buộc" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="sql" data-theme="github-light github-dark"><code data-language="sql" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Chạy một lần, bằng DB admin</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Flyway user chỉ có quyền DDL, không có quyền DML production data</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">CREATE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> USER</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> flyway_user</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> WITH</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> PASSWORD</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> 'strong_password_here'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Quyền cơ bản</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">GRANT</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> CONNECT</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> ON</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> DATABASE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> pdms_db </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">TO</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> flyway_user;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">GRANT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> USAGE </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ON</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> SCHEMA</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> public </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">TO</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> flyway_user;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">GRANT</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> CREATE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> ON</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> SCHEMA</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> public </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">TO</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> flyway_user;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Flyway cần CREATE TABLE (cho flyway_schema_history)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">GRANT</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> CREATE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> ON</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> SCHEMA</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> public </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">TO</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> flyway_user;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Quyền trên existing tables (nếu migration cần ALTER existing)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">GRANT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> ALL </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ON</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> ALL TABLES </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">IN</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> SCHEMA</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> public </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">TO</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> flyway_user;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">GRANT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> ALL </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ON</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> ALL SEQUENCES </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">IN</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> SCHEMA</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> public </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">TO</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> flyway_user;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Future tables</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ALTER</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> DEFAULT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> PRIVILEGES </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">IN</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> SCHEMA</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> public</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    GRANT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> ALL </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ON</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> TABLES </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">TO</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> flyway_user;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ALTER</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> DEFAULT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> PRIVILEGES </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">IN</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> SCHEMA</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> public</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    GRANT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> ALL </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ON</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> SEQUENCES </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">TO</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> flyway_user;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- KHÔNG grant: DELETE, TRUNCATE trên production data tables</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- KHÔNG grant: Superuser, REPLICATION</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">COMMENT </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ON</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> ROLE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> flyway_user </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">IS</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">    'Dedicated user cho Flyway migration — chỉ dùng trong CI/CD pipeline'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span></code></pre></figure>
+<hr/>
+<h2 id="7-monitoring-và-alerting">7. Monitoring và Alerting<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#7-monitoring-và-alerting" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="dashboard-queries-cho-tech-lead">Dashboard queries cho Tech Lead<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#dashboard-queries-cho-tech-lead" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="sql" data-theme="github-light github-dark"><code data-language="sql" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Query 1: Trạng thái migration giữa các môi trường</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- (Chạy trên từng môi trường, so sánh kết quả)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SELECT</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    version</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    description</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    type</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    installed_on,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    execution_time </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">||</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> 'ms'</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> AS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> exec_time,</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    CASE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> success </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">WHEN</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> true </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">THEN</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> '✅'</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> ELSE</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> '❌'</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> END</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> AS</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> status</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">FROM</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> flyway_schema_history</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ORDER BY</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> installed_rank </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">DESC</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">LIMIT</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 20</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Query 2: Migrations chạy lâu bất thường (> 30 giây)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SELECT</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    version</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    description</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    script,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    execution_time,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    installed_on,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    installed_by</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">FROM</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> flyway_schema_history</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">WHERE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> execution_time </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">></span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 30000</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">  -- 30 giây</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ORDER BY</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> execution_time </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">DESC</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Query 3: History migrations trong 7 ngày qua</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SELECT</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    DATE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(installed_on) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">AS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> migration_date,</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">    COUNT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">AS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> migrations_applied,</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">    SUM</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(execution_time) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">AS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> total_time_ms,</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">    MAX</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">CASE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> success </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">WHEN</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> false </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">THEN</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 1</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> ELSE</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> END</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">AS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> had_failures</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">FROM</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> flyway_schema_history</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">WHERE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> installed_on </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">></span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> NOW</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">() </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> INTERVAL </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">'7 days'</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">GROUP BY</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> DATE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(installed_on)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ORDER BY</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> migration_date </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">DESC</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Query 4: Repeatable migrations cần re-run (bị outdated)</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Không thể query trực tiếp vì Flyway manage này</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Dùng: flyway info | grep Outdated</span></span></code></pre></figure>
+<h3 id="alert-nên-có">Alert nên có<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#alert-nên-có" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>1. Alert: flyway_schema_history có row success=false
+   → PagerDuty severity HIGH
+   → Nghĩa là có migration fail, app có thể không start
+
+2. Alert: Execution time migration > 60 seconds
+   → Slack warning
+   → Cần review xem có lock table không
+
+3. Alert: flyway_schema_history không có thêm row trong 30 ngày
+   → Slack info: &quot;Reminder: DB migration stale, đã có update nào chưa?&quot;
+
+4. Alert: flyway_schema_history count khác nhau giữa staging và prod
+   → Slack warning: schema drift detected
+</code></pre>
+<hr/>
+<h2 id="8-schema-documentation--bắt-buộc-cho-100-tables">8. Schema Documentation — Bắt buộc cho 100+ Tables<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#8-schema-documentation--bắt-buộc-cho-100-tables" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="tự-động-generate-schema-documentation">Tự động generate schema documentation<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#tự-động-generate-schema-documentation" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="sql" data-theme="github-light github-dark"><code data-language="sql" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Query xuất documentation cho tất cả tables</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SELECT</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">    t</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">table_name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    obj_description(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">pc</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">oid</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">'pg_class'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">AS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> table_comment,</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">    c</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">column_name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">    c</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">data_type</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">    c</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">character_maximum_length</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">    c</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">is_nullable</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">    c</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">column_default</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">    pgd</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">description</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> AS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> column_comment</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">FROM</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">    information_schema</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">tables</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> t</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    JOIN</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> pg_class pc </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ON</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> pc</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">relname</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> t</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">table_name</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    JOIN</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> information_schema</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">columns</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> c</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        ON</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> c</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">table_name</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> t</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">table_name</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> AND</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> c</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">table_schema</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> t</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">table_schema</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    LEFT JOIN</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> pg_catalog</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">pg_statio_all_tables</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> st</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        ON</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> st</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">relname</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> t</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">table_name</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    LEFT JOIN</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> pg_catalog</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">pg_description</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> pgd</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        ON</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> pgd</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">objoid</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> pc</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">oid</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> AND</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> pgd</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">objsubid</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> c</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">ordinal_position</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">WHERE</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">    t</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">table_schema</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> 'public'</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    AND</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> t</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">table_type</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> 'BASE TABLE'</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ORDER BY</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">    t</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">table_name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">c</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">ordinal_position</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span></code></pre></figure>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="sql" data-theme="github-light github-dark"><code data-language="sql" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Flyway migration để enforce table comments</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- V20250101_0099__add_table_comments.sql</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">DO $$</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">DECLARE</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    tables_without_comment RECORD;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">BEGIN</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    FOR</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> tables_without_comment </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">IN</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        SELECT</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> t</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">table_name</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        FROM</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> information_schema</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">tables</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> t</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        LEFT JOIN</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> pg_class pc </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ON</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> pc</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">relname</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> t</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">table_name</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        WHERE</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> t</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">table_schema</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> 'public'</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">          AND</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> t</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">table_type</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> 'BASE TABLE'</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">          AND</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> obj_description(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">pc</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">oid</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">'pg_class'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">IS</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> NULL</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">          AND</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> t</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">table_name</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> NOT</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> LIKE</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> 'flyway_%'</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    LOOP</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        RAISE WARNING </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">'Table % has no comment'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">tables_without_comment</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">table_name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    END</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> LOOP</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">END</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> $$;</span></span></code></pre></figure>
+<hr/>
+<h2 id="9-quick-reference--lệnh-thường-dùng-hàng-ngày">9. Quick Reference — Lệnh thường dùng hàng ngày<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#9-quick-reference--lệnh-thường-dùng-hàng-ngày" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># === THƯỜNG DÙNG NHẤT ===</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Xem trạng thái tất cả migrations</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">flyway</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> info</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Apply pending migrations (staging/dev)</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">flyway</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> migrate</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Validate files vs DB history</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">flyway</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> validate</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Fix failed migration (sau khi đã sửa file)</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">flyway</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> repair</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># === DEBUG ===</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Xem migration nào đang pending</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">flyway</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> info</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> |</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> grep</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> Pending</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Xem migration nào outdated (repeatable)</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">flyway</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> info</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> |</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> grep</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> Outdated</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Dry run (Teams only, nhưng có thể simulate với validate)</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">flyway</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> validate</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -ignorePendingMigrations=false</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># === KHI CÓ VẤN ĐỀ ===</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Check checksum của file hiện tại vs database</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">flyway</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> validate</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> 2>&amp;1</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> |</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> grep</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -A5</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;checksum mismatch&quot;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Xem chi tiết execution history</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">psql</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -c</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;SELECT * FROM flyway_schema_history ORDER BY installed_rank DESC LIMIT 10;&quot;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># === NEVER ON PRODUCTION ===</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># flyway clean     ← DROP toàn bộ DB</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># flyway undo      ← Chỉ có Teams edition</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Manual DELETE FROM flyway_schema_history</span></span></code></pre></figure>
+<hr/>
+<h2 id="10-kinh-nghiệm-thực-tế-từ-production">10. Kinh nghiệm Thực Tế từ Production<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#10-kinh-nghiệm-thực-tế-từ-production" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="top-5-sai-lầm-phổ-biến-nhất">Top 5 sai lầm phổ biến nhất<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#top-5-sai-lầm-phổ-biến-nhất" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>1. ALTER TABLE ADD COLUMN NOT NULL không có DEFAULT
+   → Table lock hoặc error trên data có sẵn
+   → FIX: Luôn thêm DEFAULT hoặc dùng Expand-Contract
+
+2. CREATE INDEX không có CONCURRENTLY trên bảng lớn
+   → Exclusive lock, service timeout
+   → FIX: CONCURRENTLY cho bảng > 1M rows, chạy ngoài deploy window
+
+3. Sửa file migration đã chạy để fix typo
+   → Checksum mismatch trên production
+   → FIX: Tạo migration mới; dùng flyway repair chỉ khi hiểu rõ consequences
+
+4. Migration có data transformation phức tạp không có batch
+   → Table lock lâu, connection pool exhausted
+   → FIX: Batch + pg_sleep + separate migration cho data vs schema
+
+5. out-of-order migration xuất hiện ở production
+   → Schema dependency violation, ứng dụng crash
+   → FIX: Version = timestamp, conflict detection trong CI
+</code></pre>
+<h3 id="checklist-khi-deploy-migration-lên-production">Checklist khi deploy migration lên Production<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#checklist-khi-deploy-migration-lên-production" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>T-24h (ngày hôm trước):
+[ ] Migration đã test trên staging với production data volume
+[ ] Execution time đã đo: _____ giây
+[ ] Backward-compatible: code cũ chạy được với schema mới
+[ ] Rollback plan được document
+
+T-1h (trước deploy):
+[ ] Notify stakeholders nếu migration > 30 giây
+[ ] DB backup chạy thành công
+[ ] Monitoring dashboard mở sẵn
+[ ] Rollback script prepare (nếu có)
+
+T-0 (deploy):
+[ ] flyway info để xác nhận pending
+[ ] Deploy
+[ ] Watch logs: flyway migration bắt đầu
+[ ] Confirm: flyway_schema_history có row mới, success=true
+[ ] Smoke test: các endpoint chính hoạt động
+
+T+15m (sau deploy):
+[ ] Slow query log: không có query mới chạy chậm
+[ ] Error rate: không tăng
+[ ] Connection pool: stable
+[ ] Sign off
+</code></pre>
+<hr/>
+<h2 id="summary--techlead-flyway-mindset">Summary — TechLead Flyway Mindset<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#summary--techlead-flyway-mindset" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><code>Schema là contract, không phải implementation detail.
+Migration là lịch sử không thể xóa.
+Mọi thay đổi phải backward-compatible.
+Performance test trước khi production.
+Automation (CI/CD) là safety net, không thay thế discipline.
+
+Công cụ mạnh nhất của TechLead không phải là Flyway features —
+mà là culture: team hiểu WHY mỗi rule tồn tại,
+không chỉ follow như checklist mù.
+</code></pre>
+<hr/>
+<p><strong>Related</strong>: <a href="../../Database-Patterns/DBMigration/DBMigration-01-Flyway-Deep-Dive" class="internal" data-slug="Database-Patterns/DBMigration/DBMigration-01-Flyway-Deep-Dive">DBMigration-01-Flyway-Deep-Dive</a> | <a href="../../Database-Patterns/DBMigration/DBMigration-04-Enterprise-Patterns" class="internal" data-slug="Database-Patterns/DBMigration/DBMigration-04-Enterprise-Patterns">DBMigration-04-Enterprise-Patterns</a> | <a href="../../Database-Patterns/DBMigration/DBMigration-05-Adoption-Roadmap" class="internal" data-slug="Database-Patterns/DBMigration/DBMigration-05-Adoption-Roadmap">DBMigration-05-Adoption-Roadmap</a></p>
+<p><a href="../.././../tags/flyway" class="tag-link internal alias" data-slug="tags/flyway">flyway</a> <a href="../.././../tags/tech-lead" class="tag-link internal alias" data-slug="tags/tech-lead">tech-lead</a> <a href="../.././../tags/database-governance" class="tag-link internal alias" data-slug="tags/database-governance">database-governance</a> <a href="../.././../tags/ddl" class="tag-link internal alias" data-slug="tags/ddl">ddl</a> <a href="../.././../tags/migration" class="tag-link internal alias" data-slug="tags/migration">migration</a> <a href="../.././../tags/production" class="tag-link internal alias" data-slug="tags/production">production</a> <a href="../.././../tags/postgresql" class="tag-link internal alias" data-slug="tags/postgresql">postgresql</a> <a href="../.././../tags/pdms" class="tag-link internal alias" data-slug="tags/pdms">pdms</a></p></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-47" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#flyway-cho-technical-leader--quản-trị-ddl-ở-hệ-thống-100-bảng" data-for="flyway-cho-technical-leader--quản-trị-ddl-ở-hệ-thống-100-bảng">Flyway cho Technical Leader — Quản trị DDL ở hệ thống 100+ bảng</a></li><li class="depth-1"><a href="#1-mental-model-của-technical-leader" data-for="1-mental-model-của-technical-leader">1. Mental Model của Technical Leader</a></li><li class="depth-1"><a href="#2-the-golden-rules--10-nguyên-tắc-bất-di-bất-dịch" data-for="2-the-golden-rules--10-nguyên-tắc-bất-di-bất-dịch">2. The Golden Rules — 10 Nguyên tắc Bất di bất dịch</a></li><li class="depth-2"><a href="#rule-1-không-bao-giờ-sửa-file-migration-đã-merge" data-for="rule-1-không-bao-giờ-sửa-file-migration-đã-merge">Rule 1: Không bao giờ sửa file migration đã merge</a></li><li class="depth-2"><a href="#rule-2-một-migration--một-đơn-vị-công-việc-có-thể-rollback-logic" data-for="rule-2-một-migration--một-đơn-vị-công-việc-có-thể-rollback-logic">Rule 2: Một migration = Một đơn vị công việc có thể rollback logic</a></li><li class="depth-2"><a href="#rule-3-mọi-ddl-đều-phải-backward-compatible-trước-khi-deploy-code" data-for="rule-3-mọi-ddl-đều-phải-backward-compatible-trước-khi-deploy-code">Rule 3: Mọi DDL đều phải backward-compatible trước khi deploy code</a></li><li class="depth-2"><a href="#rule-4-production-migration-phải-được-test-trên-staging-với-production-data-volume" data-for="rule-4-production-migration-phải-được-test-trên-staging-với-production-data-volume">Rule 4: Production migration phải được test trên staging với production data volume</a></li><li class="depth-2"><a href="#rule-5-không-bao-giờ-đặt-business-logic-trong-migration" data-for="rule-5-không-bao-giờ-đặt-business-logic-trong-migration">Rule 5: Không bao giờ đặt business logic trong migration</a></li><li class="depth-2"><a href="#rule-6-index-migration-không-được-dùng-create-index-thông-thường-trên-bảng-lớn" data-for="rule-6-index-migration-không-được-dùng-create-index-thông-thường-trên-bảng-lớn">Rule 6: Index migration không được dùng CREATE INDEX thông thường trên bảng lớn</a></li><li class="depth-2"><a href="#rule-7-migration-phải-self-documenting" data-for="rule-7-migration-phải-self-documenting">Rule 7: Migration phải self-documenting</a></li><li class="depth-2"><a href="#rule-8-có-migration-rollback-plan-kể-cả-khi-không-có-undo" data-for="rule-8-có-migration-rollback-plan-kể-cả-khi-không-có-undo">Rule 8: Có migration “rollback” plan kể cả khi không có Undo</a></li><li class="depth-2"><a href="#rule-9-migration-version--timestamp-cho-team-nhiều-người" data-for="rule-9-migration-version--timestamp-cho-team-nhiều-người">Rule 9: Migration version = Timestamp cho team nhiều người</a></li><li class="depth-2"><a href="#rule-10-flyway_schema_history-không-được-touch-bằng-tay" data-for="rule-10-flyway_schema_history-không-được-touch-bằng-tay">Rule 10: flyway_schema_history không được touch bằng tay</a></li><li class="depth-1"><a href="#3-ddl-governance-model--quy-trình-kiểm-soát-thay-đổi" data-for="3-ddl-governance-model--quy-trình-kiểm-soát-thay-đổi">3. DDL Governance Model — Quy trình kiểm soát thay đổi</a></li><li class="depth-2"><a href="#pipeline-bắt-buộc-cho-mọi-migration" data-for="pipeline-bắt-buộc-cho-mọi-migration">Pipeline bắt buộc cho mọi migration</a></li><li class="depth-2"><a href="#migration-review-checklist-cho-tech-lead" data-for="migration-review-checklist-cho-tech-lead">Migration Review Checklist (cho Tech Lead)</a></li><li class="depth-1"><a href="#4-schema-design-patterns-cho-100-tables" data-for="4-schema-design-patterns-cho-100-tables">4. Schema Design Patterns cho 100+ Tables</a></li><li class="depth-2"><a href="#phân-nhóm-migration-theo-module" data-for="phân-nhóm-migration-theo-module">Phân nhóm migration theo module</a></li><li class="depth-2"><a href="#bảng-audit-toàn-hệ-thống--template-chuẩn" data-for="bảng-audit-toàn-hệ-thống--template-chuẩn">Bảng audit toàn hệ thống — Template chuẩn</a></li><li class="depth-2"><a href="#soft-delete-pattern-nhất-quán" data-for="soft-delete-pattern-nhất-quán">Soft delete pattern nhất quán</a></li><li class="depth-2"><a href="#lookup-tables-pattern" data-for="lookup-tables-pattern">Lookup tables pattern</a></li><li class="depth-1"><a href="#5-xử-lý-tình-huống-khó" data-for="5-xử-lý-tình-huống-khó">5. Xử lý Tình huống Khó</a></li><li class="depth-2"><a href="#tình-huống-1-onboard-db-có-sẵn-không-từ-đầu" data-for="tình-huống-1-onboard-db-có-sẵn-không-từ-đầu">Tình huống 1: Onboard DB có sẵn (không từ đầu)</a></li><li class="depth-2"><a href="#tình-huống-2-migration-fail-ở-production-giữa-chừng" data-for="tình-huống-2-migration-fail-ở-production-giữa-chừng">Tình huống 2: Migration fail ở production giữa chừng</a></li><li class="depth-2"><a href="#tình-huống-3-hai-branch-tạo-migration-cùng-version" data-for="tình-huống-3-hai-branch-tạo-migration-cùng-version">Tình huống 3: Hai branch tạo migration cùng version</a></li><li class="depth-2"><a href="#tình-huống-4-cần-thêm-not-null-column-vào-bảng-50m-rows" data-for="tình-huống-4-cần-thêm-not-null-column-vào-bảng-50m-rows">Tình huống 4: Cần thêm NOT NULL column vào bảng 50M rows</a></li><li class="depth-1"><a href="#6-cicd-integration--production-grade-pipeline" data-for="6-cicd-integration--production-grade-pipeline">6. CI/CD Integration — Production-grade Pipeline</a></li><li class="depth-2"><a href="#github-actions-workflow" data-for="github-actions-workflow">GitHub Actions workflow</a></li><li class="depth-2"><a href="#dedicated-flyway-db-user-bắt-buộc" data-for="dedicated-flyway-db-user-bắt-buộc">Dedicated Flyway DB User (bắt buộc)</a></li><li class="depth-1"><a href="#7-monitoring-và-alerting" data-for="7-monitoring-và-alerting">7. Monitoring và Alerting</a></li><li class="depth-2"><a href="#dashboard-queries-cho-tech-lead" data-for="dashboard-queries-cho-tech-lead">Dashboard queries cho Tech Lead</a></li><li class="depth-2"><a href="#alert-nên-có" data-for="alert-nên-có">Alert nên có</a></li><li class="depth-1"><a href="#8-schema-documentation--bắt-buộc-cho-100-tables" data-for="8-schema-documentation--bắt-buộc-cho-100-tables">8. Schema Documentation — Bắt buộc cho 100+ Tables</a></li><li class="depth-2"><a href="#tự-động-generate-schema-documentation" data-for="tự-động-generate-schema-documentation">Tự động generate schema documentation</a></li><li class="depth-1"><a href="#9-quick-reference--lệnh-thường-dùng-hàng-ngày" data-for="9-quick-reference--lệnh-thường-dùng-hàng-ngày">9. Quick Reference — Lệnh thường dùng hàng ngày</a></li><li class="depth-1"><a href="#10-kinh-nghiệm-thực-tế-từ-production" data-for="10-kinh-nghiệm-thực-tế-từ-production">10. Kinh nghiệm Thực Tế từ Production</a></li><li class="depth-2"><a href="#top-5-sai-lầm-phổ-biến-nhất" data-for="top-5-sai-lầm-phổ-biến-nhất">Top 5 sai lầm phổ biến nhất</a></li><li class="depth-2"><a href="#checklist-khi-deploy-migration-lên-production" data-for="checklist-khi-deploy-migration-lên-production">Checklist khi deploy migration lên Production</a></li><li class="depth-1"><a href="#summary--techlead-flyway-mindset" data-for="summary--techlead-flyway-mindset">Summary — TechLead Flyway Mindset</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://dangthobach.github.io/">Back to Portfolio</a></li><li><a href="https://github.com/dangthobach">GitHub</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../postscript.js" type="module" data-persist="true"></script></html>

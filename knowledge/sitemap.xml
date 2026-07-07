@@ -140,6 +140,9 @@
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-05-Adoption-Roadmap</loc>
     <lastmod>2026-05-16T17:39:23.000Z</lastmod>
   </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-06-Flyway-TechLead-Governance</loc>
+    <lastmod>2026-07-07T17:51:13.000Z</lastmod>
+  </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-MOC</loc>
     <lastmod>2026-05-16T17:39:23.000Z</lastmod>
   </url><url>
@@ -1317,7 +1320,7 @@
     <lastmod>2026-05-25T13:56:44.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/_moc/MOC-Memory-Model</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-07-07T17:51:13.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/_moc/MOC-Observability</loc>
     <lastmod>2026-04-14T00:00:00.000Z</lastmod>
@@ -1351,6 +1354,9 @@
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/concepts/React-Compiler-Internals-Memoization</loc>
     <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/concepts/Rust-Java-Build-Compile-Deploy-Memory-Timeline</loc>
+    <lastmod>2026-07-06T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/concepts/SolidJS-vs-React-Reactivity-Model</loc>
     <lastmod>2026-05-25T13:56:44.000Z</lastmod>

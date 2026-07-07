@@ -6,6 +6,24 @@
       <description>Last 10 notes on Dang Tho Bach&#039;s Knowledge Base</description>
       <generator>Quartz -- quartz.jzhao.xyz</generator>
       <item>
+    <title>DBMigration-06-Flyway-TechLead-Governance</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-06-Flyway-TechLead-Governance</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-06-Flyway-TechLead-Governance</guid>
+    <description><![CDATA[ Flyway cho Technical Leader — Quản trị DDL ở hệ thống 100+ bảng Góc nhìn: Bài này không dạy Flyway basics. ]]></description>
+    <pubDate>Tue, 07 Jul 2026 17:51:13 GMT</pubDate>
+  </item><item>
+    <title>MOC-Memory-Model</title>
+    <link>https://dangthobach.github.io/knowledge/_moc/MOC-Memory-Model</link>
+    <guid>https://dangthobach.github.io/knowledge/_moc/MOC-Memory-Model</guid>
+    <description><![CDATA[ 🧠 Memory Model MOC Cross-language: GC (Java) vs Ownership (Rust). ]]></description>
+    <pubDate>Tue, 07 Jul 2026 17:51:13 GMT</pubDate>
+  </item><item>
+    <title>Rust vs Java — Build/Compile/Interpret Timeline &amp; Bộ Nhớ Khi Deploy</title>
+    <link>https://dangthobach.github.io/knowledge/concepts/Rust-Java-Build-Compile-Deploy-Memory-Timeline</link>
+    <guid>https://dangthobach.github.io/knowledge/concepts/Rust-Java-Build-Compile-Deploy-Memory-Timeline</guid>
+    <description><![CDATA[ Rust vs Java — Build/Compile/Interpret Timeline &amp; Bộ Nhớ Khi Deploy Vì sao cần article này riêng? rust-java-go-comparison đã có bảng so sánh compilation model, và gc-llvm-runtime-cpu-memory-internals đã đi sâu cơ chế GC/LLVM ở mức CPU. ]]></description>
+    <pubDate>Mon, 06 Jul 2026 00:00:00 GMT</pubDate>
+  </item><item>
     <title>Kafka-Multi-Consumer-Sync-Completion</title>
     <link>https://dangthobach.github.io/knowledge/Microservices-Patterns/Kafka-Multi-Consumer-Sync-Completion</link>
     <guid>https://dangthobach.github.io/knowledge/Microservices-Patterns/Kafka-Multi-Consumer-Sync-Completion</guid>
@@ -47,24 +65,6 @@
     <guid>https://dangthobach.github.io/knowledge/Apache-Fory/13-Fory-Performance-Benchmarks</guid>
     <description><![CDATA[ 13 — Fory Performance Benchmarks: Số Liệu Thực Tế Series: 00-MOC-Apache-Fory-Series Tags: apache-fory benchmark performance jmh profiling Level: Advanced Prerequisite: 04-Fory-Java-Quickstart 🎯 Bạn sẽ học được gì? Setup JMH benchmark đúng cách (tránh JIT warm-up bias) Benchmark methodology: micro v... ]]></description>
     <pubDate>Thu, 28 May 2026 14:01:09 GMT</pubDate>
-  </item><item>
-    <title>04-Fory-Java-Quickstart</title>
-    <link>https://dangthobach.github.io/knowledge/Apache-Fory/04-Fory-Java-Quickstart</link>
-    <guid>https://dangthobach.github.io/knowledge/Apache-Fory/04-Fory-Java-Quickstart</guid>
-    <description><![CDATA[ 04 — Fory Java Quickstart: Setup, Register, Serialize Series: 00-MOC-Apache-Fory-Series Tags: apache-fory java spring-boot quickstart Level: Beginner-Intermediate Prerequisite: 03-Fory-vs-Avro-Protobuf-Positioning 🎯 Bạn sẽ học được gì? Thêm Fory vào Maven/Gradle project Khởi tạo đúng cách: ThreadSa... ]]></description>
-    <pubDate>Thu, 28 May 2026 06:33:23 GMT</pubDate>
-  </item><item>
-    <title>05-Fory-Java-Modes</title>
-    <link>https://dangthobach.github.io/knowledge/Apache-Fory/05-Fory-Java-Modes</link>
-    <guid>https://dangthobach.github.io/knowledge/Apache-Fory/05-Fory-Java-Modes</guid>
-    <description><![CDATA[ 05 — Fory Java Modes: Native, Compatible, XLang Series: 00-MOC-Apache-Fory-Series Tags: apache-fory java schema-evolution modes xlang Level: Intermediate Prerequisite: 04-Fory-Java-Quickstart 🎯 Bạn sẽ học được gì? 3 modes của Fory và trade-off của từng mode Schema evolution: thêm/xóa/rename field a... ]]></description>
-    <pubDate>Thu, 28 May 2026 06:33:23 GMT</pubDate>
-  </item><item>
-    <title>06-Fory-Java-Spring-Redis-Cache</title>
-    <link>https://dangthobach.github.io/knowledge/Apache-Fory/06-Fory-Java-Spring-Redis-Cache</link>
-    <guid>https://dangthobach.github.io/knowledge/Apache-Fory/06-Fory-Java-Spring-Redis-Cache</guid>
-    <description><![CDATA[ 06 — Fory + Spring Boot + Redis: Production-Grade Cache Series: 00-MOC-Apache-Fory-Series Tags: apache-fory spring-boot redis cache production Level: Intermediate-Advanced Prerequisite: 05-Fory-Java-Modes 🎯 Bạn sẽ học được gì? Production-grade Spring Boot + Redis + Fory config Migration strategy từ... ]]></description>
-    <pubDate>Thu, 28 May 2026 06:33:23 GMT</pubDate>
   </item>
     </channel>
   </rss>
