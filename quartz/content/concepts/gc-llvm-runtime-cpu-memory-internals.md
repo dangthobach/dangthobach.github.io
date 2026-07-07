@@ -4,6 +4,7 @@ tags: [systems, rust, go, java, gc, llvm, runtime, memory, cpu, performance]
 related:
   - "[[rust-java-go-comparison]]"
   - "[[ownership-borrowing]]"
+  - "[[Rust-Java-Build-Compile-Deploy-Memory-Timeline]]"
 created: 2026-05-02
 status: permanent
 ---
@@ -280,6 +281,102 @@ Lý do Java cần generational GC:
   - Go struct được value type → nhiều thứ hơn ở stack
 ```
 
+### 3.5 Tầng Dưới Cùng — OS/Hardware Thực Sự Làm Gì Khi "Free" Bộ Nhớ
+
+Tất cả những gì nói ở trên (Ownership, GC) đều là góc nhìn của ngôn ngữ. Xuống một tầng nữa — **phần cứng không bao giờ "xóa" dữ liệu khi giải phóng**. Ghi đè cả vùng RAM thành số 0 tốn rất nhiều chu kỳ CPU, nên "giải phóng" thực chất là một trò chơi con trỏ + quyền sở hữu ở tầng OS.
+
+#### 3.5.1 Sân chơi chung: Virtual Memory, Page Table, MMU
+
+Cả JVM lẫn Rust binary đều không đụng trực tiếp vào RAM vật lý — chúng nói chuyện với **Virtual Memory** do OS cấp phát.
+
+```mermaid
+graph TB
+    subgraph APP["Process (JVM hoặc Rust binary)"]
+        VA["Virtual Address<br/>0x7fff... (địa chỉ ảo, mỗi process có không gian riêng)"]
+    end
+
+    subgraph CPU["CPU"]
+        MMU["MMU (Memory Management Unit)<br/>Tra cứu Page Table mỗi lần truy cập RAM"]
+    end
+
+    subgraph OS["Hệ điều hành"]
+        PT["Page Table<br/>Ánh xạ: Virtual Page → Physical Page<br/>Đơn vị: 4KB / page"]
+    end
+
+    subgraph RAM["RAM vật lý"]
+        PHYS["Physical Page<br/>(dữ liệu thật nằm ở đây)"]
+    end
+
+    VA --> MMU
+    MMU -->|"tra cứu"| PT
+    PT -->|"map"| PHYS
+
+    style VA fill:#1565c0,color:#fff
+    style MMU fill:#4527a0,color:#fff
+    style PT fill:#37474f,color:#fff
+    style PHYS fill:#2e7d32,color:#fff
+```
+
+- Muốn xin thêm RAM → gọi syscall `mmap`/`sbrk`.
+- Muốn **trả lại** RAM cho OS → gọi `munmap` hoặc `madvise(MADV_DONTNEED)`.
+- **Nguyên lý cốt lõi:** khi "giải phóng", dữ liệu cũ vẫn nằm nguyên trên RAM vật lý. OS chỉ đánh dấu page đó là "rảnh" trong Page Table — sẵn sàng bị ghi đè bởi tác vụ khác. Không có bước "xóa" tường minh nào cả.
+
+#### 3.5.2 Rust — Free List trước, `munmap` sau (tôn trọng OS)
+
+Rust không tự quản lý RAM — nó giao việc cho một **Allocator** (glibc malloc, jemalloc, mimalloc). `drop()` compiler chèn vào không "xóa" gì, nó chỉ báo cho allocator biết.
+
+```mermaid
+sequenceDiagram
+    participant Var as Biến ra khỏi scope
+    participant Drop as drop() compiler-inserted
+    participant Alloc as Allocator user-space
+    participant OS as Hệ điều hành
+
+    Var->>Drop: Scope kết thúc
+    Drop->>Alloc: Bao allocator dung xong vung nho nay
+    Note over Alloc: Buoc 1 - Dua vao Free List<br/>Van thuoc process, du lieu cu con nguyen
+    Alloc->>Alloc: Co request cap phat moi cung kich thuoc?
+    alt Co request moi (thuong xay ra trong micro-giay)
+        Alloc-->>Var: Tai su dung NGAY tu Free List<br/>khong can hoi OS, cuc nhanh
+    else Free List qua day hoac vua free block lon
+        Alloc->>OS: munmap hoac madvise DONTNEED
+        Note over OS: Buoc 2 - Go anh xa khoi Page Table<br/>RAM thuc su tra ve OS
+    end
+```
+
+**Hệ quả phần cứng:** cấp phát/giải phóng của Rust có tính định vị cao (locality), dữ liệu thường nằm liền kề nhau trong vùng nhớ vừa dùng lại → tỷ lệ **CPU Cache Hit** (L1/L2/L3 tìm thấy ngay, không phải với ra RAM) rất cao.
+
+#### 3.5.3 Java/GC — Object chết vẫn "nằm ì", chờ GC gom lô
+
+Khi object mất tham chiếu, **không có gì xảy ra ngay lập tức** — nó vẫn nằm nguyên trên heap, chiếm RAM, chờ đến khi GC được kích hoạt.
+
+```mermaid
+flowchart TB
+    A["Object mất tham chiếu (unreachable)"] --> B["Vẫn nằm nguyên trên Heap<br/>KHÔNG có hành động gì ngay"]
+    B --> C["GC được trigger<br/>(heap gần đầy / định kỳ)"]
+
+    C --> D["① MARK / TRACING<br/>Duyệt Object Graph từ GC Roots<br/>→ CPU nhảy khắp RAM → Cache Miss liên tục"]
+    D --> E["② SWEEP và COMPACT<br/>Bê copy object còn sống,<br/>dồn sát nhau để chống phân mảnh<br/>→ Cập nhật lại hàng triệu con trỏ<br/>→ Stop-The-World hoặc concurrent phức tạp ZGC"]
+    E --> F["③ HOARDING<br/>Vùng trống sau compact<br/>KHÔNG trả về OS, không munmap<br/>→ Giữ lại để cấp phát object tiếp theo"]
+
+    style A fill:#b71c1c,color:#fff
+    style B fill:#b71c1c,color:#fff
+    style D fill:#e65100,color:#fff
+    style E fill:#e65100,color:#fff
+    style F fill:#37474f,color:#fff
+```
+
+Đây là lý do quan sát thực tế trên `htop`/Task Manager: **process Java ăn 2GB RAM và gần như không bao giờ nhả xuống** dù ứng dụng đang rảnh — JVM giữ RAM lại phòng hờ, hiếm khi gọi `munmap`. (G1/ZGC bản mới có tính năng trả bộ nhớ về OS, nhưng mặc định vẫn khá bảo thủ — liên quan trực tiếp đến hiện tượng "RSS creep" đã nói ở mục 2.4 của [[Rust-Java-Build-Compile-Deploy-Memory-Timeline]]).
+
+#### 3.5.4 So sánh ẩn dụ
+
+| | Rust (Allocator-based) | Java (GC-based) |
+|---|---|---|
+| Ẩn dụ | Thuê phòng ngắn hạn — khách trả phòng là dọn ngay, phòng trống lâu thì trả lại cho tòa nhà (OS) | Mua đứt cả tầng — khách dọn đi cũng mặc kệ, đợi gần đầy mới cử đội vệ sinh (GC) dọn hàng loạt, dồn khách còn lại vào một góc |
+| Khi nào trả RAM cho OS | Ngay khi free list dư thừa / free block lớn | Hiếm khi — giữ lại "phòng hờ" |
+| Tác động CPU Cache | Locality cao → Cache Hit nhiều | Tracing nhảy khắp heap → Cache Miss nhiều lúc GC |
+| Ai chủ động | Compiler (compile-time, tất định) | Runtime GC (không tất định về thời điểm) |
+
 ---
 
 ## 4. Native Code vs Runtime — Sự Khác Biệt Vật Lý
@@ -527,3 +624,4 @@ Kết luận cho PDMS stack hiện tại (Java 21 + ZGC + Loom):
 - [Rustonomicon — Memory layout](https://doc.rust-lang.org/nomicon/repr-rust.html)
 - [Write barriers in Go](https://go.googlesource.com/proposal/+/refs/heads/master/design/17503-eliminate-rescan.md)
 - `[[rust-java-go-comparison]]`
+- `[[Rust-Java-Build-Compile-Deploy-Memory-Timeline]]` — timeline build/compile/JIT + bộ nhớ khi deploy container/K8s

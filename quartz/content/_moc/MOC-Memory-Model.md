@@ -49,3 +49,6 @@ Cross-language: GC (Java) vs Ownership (Rust).
 ## 🔗 Links
 - [[MOC-Rust]] — Rust memory concepts chi tiết
 - [[MOC-Concurrency]] — memory safety trong concurrent context
+
+- [[gc-llvm-runtime-cpu-memory-internals]] — cơ chế GC/LLVM/native code ở mức CPU, đo runtime overhead
+- [[Rust-Java-Build-Compile-Deploy-Memory-Timeline]] — timeline build/compile/JIT warm-up theo giây + bộ nhớ thực tế khi deploy trên container/K8s (OOMKilled, resource sizing)
