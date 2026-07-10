@@ -616,7 +616,106 @@ Kết luận cho PDMS stack hiện tại (Java 21 + ZGC + Loom):
 
 ---
 
-## 8. References
+## 8. Use Case Doanh Nghiệp — Khi Nào Rust Thực Sự Đáng Đầu Tư
+
+Phần 6-7 đã chỉ ra *tại sao* Rust nhanh hơn về mặt kỹ thuật. Phần này trả lời câu hỏi thực dụng hơn: **trong bối cảnh doanh nghiệp (như VPBank/PDMS), khi nào việc đầu tư viết Rust thực sự đáng, và khi nào KHÔNG nên.**
+
+### 8.1 Khung quyết định — Có nên dùng Rust không?
+
+```mermaid
+flowchart TD
+    Q1{"Component có phải<br/>CPU-bound / tính toán nặng<br/>không phải I/O-bound?"} -->|Không| KEEP1["Giữ Java<br/>(I/O-bound: overhead runtime<br/>không đáng kể)"]
+    Q1 -->|Có| Q2{"Có SLA latency cực nghiêm ngặt<br/>(P99.99, tail latency deterministic)<br/>vd: risk engine, matching engine?"}
+
+    Q2 -->|Có| RUST1["✅ Rust rất đáng đầu tư<br/>Không GC pause = latency dự đoán được"]
+    Q2 -->|Không| Q3{"Chi phí RAM/CPU ở scale lớn<br/>có phải vấn đề chi phí thực sự?<br/>(hàng trăm pod, sidecar, edge)"}
+
+    Q3 -->|Có| RUST2["✅ Rust đáng đầu tư<br/>RSS thấp hơn 10-40x → giảm số pod/node"]
+    Q3 -->|Không| Q4{"Component có bounded, well-defined<br/>interface (library/FFI/sidecar)<br/>không phải toàn bộ business logic?"}
+
+    Q4 -->|Có| RUST3["✅ Rust hợp lý<br/>Viết như 1 module hẹp, gọi qua JNI/gRPC"]
+    Q4 -->|Không| KEEP2["❌ Giữ Java<br/>Business logic phức tạp, đổi liên tục<br/>→ chi phí dev/maintain Rust cao hơn lợi ích"]
+
+    style RUST1 fill:#2e7d32,color:#fff
+    style RUST2 fill:#2e7d32,color:#fff
+    style RUST3 fill:#2e7d32,color:#fff
+    style KEEP1 fill:#37474f,color:#fff
+    style KEEP2 fill:#37474f,color:#fff
+```
+
+### 8.2 Use case cụ thể — Rust thắng rõ ràng
+
+| Use case | Vì sao Rust tốt hơn Java | Ví dụ thực tế trong ngành |
+|---|---|---|
+| **Risk/fraud scoring real-time** | Latency deterministic, không GC pause giữa lúc tính điểm giao dịch | Các fintech/ngân hàng dùng Rust cho risk engine tốc độ cao |
+| **API Gateway / reverse proxy / sidecar** | CPU-bound (parse header, TLS, routing), chạy 24/7 mật độ traffic cao → RSS thấp giúp co gọn hạ tầng | Cloudflare (Pingora), AWS (Firecracker microVM) |
+| **Batch ETL / xử lý file lớn (CSV/Excel hàng triệu dòng)** | CPU-bound thuần túy, không có I/O wait để "che" GC overhead | Discord viết lại service đọc lịch sử tin nhắn từ Go sang Rust vì GC pause |
+| **Message broker / stream processing hiệu năng cao** | Throughput cao, cần zero-copy, không muốn GC pause chen giữa | Nhiều thành phần hạ tầng dữ liệu hiện đại (một số phần của Kafka ecosystem, InfluxDB) dùng Rust |
+| **Service mesh data plane** | Chạy như sidecar trong MỖI pod → nhân RSS lên hàng trăm/nghìn lần, tiết kiệm RAM cực lớn ở scale | Linkerd2-proxy viết bằng Rust (thay vì Java/Go) chính vì lý do này |
+| **Cryptography / signing / HSM interface** | Cần kiểm soát bộ nhớ chặt (không để secret key nằm lâu trên heap chờ GC), không có side-channel timing từ GC | Thư viện crypto core nhiều nơi dùng Rust (ring, rustls) |
+| **Edge computing / IoT gateway** | Bộ nhớ giới hạn (vài trăm MB), không có chỗ cho JVM + heap | AWS IoT Greengrass components, Azure IoT Edge modules |
+| **WASM plugin / extension runtime** | Compile ra WebAssembly nhỏ gọn, sandbox an toàn, không cần embed cả JVM | Nhiều plugin system hiện đại (Envoy WASM filters, database extension) |
+
+### 8.3 Use case Rust KHÔNG đáng đầu tư (nên giữ Java)
+
+| Tình huống | Lý do giữ Java |
+|---|---|
+| CRUD API nghiệp vụ, business logic thay đổi liên tục theo yêu cầu | Spring ecosystem (validation, transaction, security, audit) đã trưởng thành; Rust chưa có tương đương độ chín |
+| Team hiện tại chủ yếu Java, ít người biết Rust | Chi phí đào tạo + review + maintain > lợi ích performance nếu component không CPU-bound |
+| I/O-bound (gọi DB, gọi API khác, chờ network) | Thời gian chờ I/O >> thời gian CPU xử lý → tối ưu CPU (Rust) không giúp nhiều, ZGC/Loom của Java 21 đã đủ tốt |
+| Cần tích hợp nhanh với hệ sinh thái enterprise (Kafka Connect, Debezium, Camunda BPM) | Ecosystem Java/JVM cho các mảnh này phong phú hơn nhiều |
+| Prototype/MVP cần ra nhanh | Rust compile chậm hơn, learning curve borrow checker làm chậm tốc độ phát triển ban đầu |
+
+### 8.4 Best Practice — Nếu quyết định dùng Rust trong hệ thống Java (PDMS)
+
+**Nguyên tắc: không "rewrite toàn bộ", chỉ "cắt lát mỏng" (thin slice) phần CPU-bound/latency-critical nhất.**
+
+```mermaid
+graph LR
+    subgraph JavaLayer["Java/Spring Boot — Business Logic (giữ nguyên)"]
+        API["REST API<br/>Controller/Service"]
+        BIZ["Domain logic<br/>Validation, workflow, audit"]
+        DB["JPA/Hibernate<br/>PostgreSQL"]
+    end
+
+    subgraph RustLayer["Rust — Component hẹp, CPU-bound"]
+        WORKER["Batch worker<br/>(Excel/CSV validation<br/>hàng triệu dòng)"]
+    end
+
+    API --> BIZ --> DB
+    BIZ -.->|"gRPC / Kafka message<br/>(interface rõ ràng, không JNI)"| WORKER
+    WORKER -.->|"kết quả trả về"| BIZ
+
+    style RustLayer fill:#fff3e0
+    style JavaLayer fill:#e3f2fd
+```
+
+**3 pattern tích hợp Rust vào hệ Java, theo thứ tự ưu tiên (dễ vận hành → khó vận hành):**
+
+1. **Microservice riêng, giao tiếp qua gRPC/Kafka** (khuyến nghị nhất cho PDMS)
+   - Không cần JNI, không rủi ro crash JVM nếu Rust panic
+   - Deploy độc lập trên EKS, scale riêng theo tải CPU-bound
+   - Dễ rollback: nếu có vấn đề, route traffic về lại Java worker cũ
+
+2. **FFI qua JNI/JNA** (chỉ khi cần latency cực thấp trong cùng process)
+   - Rủi ro: Rust panic không bắt đúng cách có thể crash cả JVM
+   - Cần expose qua `extern "C"`, quản lý lifetime thủ công qua boundary
+   - Chỉ nên dùng cho hàm thuần túy (pure function), không giữ state
+
+3. **WASM module chạy trong JVM** (ít phổ biến, cho tương lai)
+   - Sandbox an toàn hơn JNI, nhưng thêm overhead WASM runtime
+
+**Checklist trước khi đề xuất viết một component bằng Rust cho PDMS:**
+- [ ] Component có đo được là CPU-bound (không phải chờ DB/network)?
+- [ ] Có SLA latency hoặc chi phí hạ tầng (RAM × số pod) đủ lớn để biện minh chi phí học Rust?
+- [ ] Interface với phần Java còn lại có thể tách rõ ràng qua gRPC/Kafka (không cần JNI phức tạp)?
+- [ ] Team có ít nhất 1-2 người đủ tự tin maintain lâu dài (không phải chỉ 1 người biết)?
+
+Nếu cả 4 đều "có" → Rust đáng đầu tư. Nếu thiếu 1-2 điều kiện → nên giữ Java, tối ưu bằng ZGC/Loom/tuning trước.
+
+---
+
+## 9. References
 
 - [LLVM Language Reference Manual](https://llvm.org/docs/LangRef.html)
 - [Go GC Guide](https://tip.golang.org/doc/gc-guide)
