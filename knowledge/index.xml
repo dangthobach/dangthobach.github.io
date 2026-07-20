@@ -6,6 +6,12 @@
       <description>Last 10 notes on Dang Tho Bach&#039;s Knowledge Base</description>
       <generator>Quartz -- quartz.jzhao.xyz</generator>
       <item>
+    <title>Kafka-Configuration-Deep-Dive</title>
+    <link>https://dangthobach.github.io/knowledge/Microservices-Patterns/Kafka-Configuration-Deep-Dive</link>
+    <guid>https://dangthobach.github.io/knowledge/Microservices-Patterns/Kafka-Configuration-Deep-Dive</guid>
+    <description><![CDATA[ ⚡ Apache Kafka — Deep Dive Configuration Guide Mục tiêu: Hiểu toàn bộ cấu hình Kafka từ broker đến producer/consumer, áp dụng thực tế trong Spring Boot và Rust (rdkafka). ]]></description>
+    <pubDate>Mon, 20 Jul 2026 17:21:06 GMT</pubDate>
+  </item><item>
     <title>Bai-23-Pointers-Deep-Dive</title>
     <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-23-Pointers-Deep-Dive</link>
     <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-23-Pointers-Deep-Dive</guid>
@@ -58,12 +64,6 @@
     <link>https://dangthobach.github.io/knowledge/Apache-Fory/00-MOC-Apache-Fory-Series</link>
     <guid>https://dangthobach.github.io/knowledge/Apache-Fory/00-MOC-Apache-Fory-Series</guid>
     <description><![CDATA[ 🗺️ Apache Fory — Series Map of Content Apache Fory (formerly Fury) — Blazingly fast multi-language serialization framework Top-Level Apache Project · Graduated July 2025 · Production-ready 🎯 Mục tiêu Series Từ nguyên lý → Triển khai thực tế trong Java, Rust, Go Hiểu tại sao Fory tồn tại, dùng ở đâ... ]]></description>
-    <pubDate>Fri, 29 May 2026 01:44:43 GMT</pubDate>
-  </item><item>
-    <title>14-Fory-Production-Checklist</title>
-    <link>https://dangthobach.github.io/knowledge/Apache-Fory/14-Fory-Production-Checklist</link>
-    <guid>https://dangthobach.github.io/knowledge/Apache-Fory/14-Fory-Production-Checklist</guid>
-    <description><![CDATA[ 14 — Fory Production Checklist: Security, Versioning, Monitoring Series: 00-MOC-Apache-Fory-Series Tags: apache-fory production security checklist monitoring Level: Advanced Prerequisite: 12-Fory-PDMS-Integration-Blueprint | 13-Fory-Performance-Benchmarks 🎯 Bạn sẽ học được gì? Security hardening: c... ]]></description>
     <pubDate>Fri, 29 May 2026 01:44:43 GMT</pubDate>
   </item>
     </channel>
