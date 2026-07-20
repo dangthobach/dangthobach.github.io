@@ -13,17 +13,17 @@ graph TB
         P2[Rust rdkafka Producer]
     end
 
-    subgraph Kafka Cluster
+    subgraph Kafka_Cluster [Kafka Cluster]
         direction TB
-        subgraph Broker 1 ["Broker 1 (Leader)"]
+        subgraph Broker_1 ["Broker 1 (Leader)"]
             T1P0["Topic-A | Partition 0<br/>[Leader]"]
             T1P1["Topic-A | Partition 1<br/>[Follower]"]
         end
-        subgraph Broker 2
+        subgraph Broker_2 [Broker 2]
             T1P0R["Topic-A | Partition 0<br/>[Follower]"]
             T1P1L["Topic-A | Partition 1<br/>[Leader]"]
         end
-        subgraph Broker 3
+        subgraph Broker_3 [Broker 3]
             T1P0R2["Topic-A | Partition 0<br/>[Follower]"]
             T1P1R["Topic-A | Partition 1<br/>[Follower]"]
         end
@@ -35,14 +35,14 @@ graph TB
         C2[Consumer 2<br/>Partition 1]
     end
 
-    P1 -->|"batch + acks"| T1P0
-    P2 -->|"batch + acks"| T1P1L
+    P1 -->|batch + acks| T1P0
+    P2 -->|batch + acks| T1P1L
     T1P0 -->|replicate| T1P0R
     T1P0 -->|replicate| T1P0R2
     T1P1L -->|replicate| T1P1
     T1P1L -->|replicate| T1P1R
-    ZK -.->|"leader election"| Broker 1
-    ZK -.->|"leader election"| Broker 2
+    ZK -.->|leader election| Broker_1
+    ZK -.->|leader election| Broker_2
     T1P0 --> C1
     T1P1L --> C2
 ```
