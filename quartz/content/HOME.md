@@ -129,3 +129,5 @@ Insight mới  →  _inbox/  →  review cuối tuần  →  concepts/  →  lin
 - [[25-Angular-22-Technology-Update-2026|Angular 22]]
 - [[Bai-25-Go-1.26-Technology-Update|Go 1.26]]
 - [[Bai-48-Rust-1.97-Technology-Update|Rust 1.97]]
+- [[Bai-26-Go-Framework-Radar-2026|Go Framework Track 2026]]
+- [[Bai-49-Rust-Framework-Radar-2026|Rust Framework Track 2026]]

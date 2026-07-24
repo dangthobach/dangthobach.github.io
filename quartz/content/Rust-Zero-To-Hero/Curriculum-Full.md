@@ -9,6 +9,8 @@ tags: []
 
 # Rust Web Application — Full Curriculum
 
+> Technology Update 2026: [[Bai-49-Rust-Framework-Radar-2026|Framework Radar]] → [[Bai-50-Tokio-1.52-Runtime-Update|Tokio]] → [[Bai-51-Axum-0.8.9-Production-Update|Axum]] → [[Bai-52-Actix-Web-2026-Update|Actix]] → [[Bai-53-SQLx-0.8-Diesel-2.3-Update|Database]] → [[Bai-54-Tonic-0.14-Production-gRPC|gRPC]] → [[Bai-55-Leptos-0.8-Migration|Leptos]] → [[Bai-56-Dioxus-0.7-to-0.8-Watchlist|Dioxus]]
+
 Mục tiêu: Đủ năng lực triển khai production-grade web application bằng Rust.
 Stack target: **Axum + SQLx + Tokio + Tower + Serde**
 

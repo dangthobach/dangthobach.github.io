@@ -7,7 +7,9 @@ updated: 2026-05-01
 tags: []
 ---
 
-# Go Zero-to-Hero — Curriculum Full (22 Bài)
+# Go Zero-to-Hero — Curriculum Full
+
+> Technology Update 2026: [[Bai-26-Go-Framework-Radar-2026|Framework Radar]] → [[Bai-27-Gin-1.12-Production-Update|Gin]] → [[Bai-28-Fiber-v3-Migration|Fiber]] → [[Bai-29-Echo-v5-Migration|Echo]] → [[Bai-30-Chi-5.3-Production-Router|Chi]] → [[Bai-31-Go-Data-Messaging-Clients-2026|Data & Messaging]]
 
 > Series hoàn chỉnh dành cho Java/Spring Boot developer muốn master Go trong môi trường production.
 

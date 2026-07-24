@@ -49,6 +49,18 @@ Lộ trình này tập trung vào việc chuyển đổi tư duy từ **Managed 
 ---
 
 ## 🗺️ Curriculum đầy đủ
+
+### Technology Update 2026
+
+- [[Bai-48-Rust-1.97-Technology-Update|Rust 1.97]]
+- [[Bai-49-Rust-Framework-Radar-2026|Framework Radar]]
+- [[Bai-50-Tokio-1.52-Runtime-Update|Tokio 1.52]]
+- [[Bai-51-Axum-0.8.9-Production-Update|Axum 0.8.9]]
+- [[Bai-52-Actix-Web-2026-Update|Actix Web]]
+- [[Bai-53-SQLx-0.8-Diesel-2.3-Update|SQLx & Diesel]]
+- [[Bai-54-Tonic-0.14-Production-gRPC|Tonic]]
+- [[Bai-55-Leptos-0.8-Migration|Leptos]]
+- [[Bai-56-Dioxus-0.7-to-0.8-Watchlist|Dioxus]]
 Xem [[Curriculum-Full]] để biết tất cả topics theo layer.
 
 ---
