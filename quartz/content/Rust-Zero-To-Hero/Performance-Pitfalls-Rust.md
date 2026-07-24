@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/rust
+status: active
+created: 2026-05-03
+updated: 2026-05-03
+tags: []
+---
+
 # Rust Performance Pitfalls: Sai Lầm Phổ Biến & Cách Tối Ưu
 
 > **Mục tiêu:** Hiểu *tại sao* code Rust chậm/tốn memory — dựa trên ownership model, allocator, LLVM IR, async runtime (Tokio). Mỗi pitfall có prototype minh hoạ, số liệu benchmark thực tế, và fix chuẩn. Đây là nội dung **khác** Bài 17 (zero-cost abstractions) — tập trung vào sai lầm mà ngay cả Rust developer kinh nghiệm vẫn hay mắc.

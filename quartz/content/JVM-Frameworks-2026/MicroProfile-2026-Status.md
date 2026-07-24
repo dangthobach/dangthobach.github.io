@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/jvm
+status: active
+created: 2026-05-05
+updated: 2026-05-05
+tags: []
+---
+
 # MicroProfile 2026 — Status & Relevance
 
 > **Cập nhật:** 2026-05

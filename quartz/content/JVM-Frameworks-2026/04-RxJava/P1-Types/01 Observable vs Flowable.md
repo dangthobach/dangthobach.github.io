@@ -5,6 +5,9 @@ status: active
 week: 21
 phase: P1-Types
 framework: rxjava
+type: course
+domain: languages/jvm
+updated: 2026-04-13
 ---
 
 # Observable vs Flowable

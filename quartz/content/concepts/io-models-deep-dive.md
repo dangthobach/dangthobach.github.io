@@ -4,6 +4,10 @@ created: 2026-05-02
 difficulty: intermediate
 estimated-read: 25 min
 links: [event-loop-model, os-process-thread-scheduling, backpressure-explained]
+type: concept
+domain: concepts
+status: active
+updated: 2026-05-02
 ---
 
 # ⚡ I/O Models Deep Dive — Từ Blocking đến io_uring

@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-08-30T22:40
+type: reference
+domain: reference-library
+status: active
+created: 2025-08-30
+updated: 2025-08-30
+tags: []
+distillation: reference
 ---
 The success of a software application often hinges on the choice of the right databases. As developers, we're faced with a vast array of database options. It is crucial for us to understand the differences between these options and how to select the ones that best align with our project's requirements. A complex application usually uses several different databases, each catering to a specific aspect of the application’s needs.
 

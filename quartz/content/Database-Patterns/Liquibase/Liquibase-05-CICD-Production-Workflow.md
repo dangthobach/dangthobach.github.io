@@ -1,3 +1,12 @@
+---
+type: guide
+domain: database
+status: active
+created: 2026-05-11
+updated: 2026-05-11
+tags: []
+---
+
 # Liquibase 05 — CI/CD & Production Workflow: Golive Không Còn Đau
 
 > **Mục tiêu**: Quy trình hoàn chỉnh từ dev đến production — giải quyết triệt để bài toán compare scripts, zero-downtime migration, và rollback plan cho hệ thống 200 bảng.

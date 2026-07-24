@@ -1,3 +1,12 @@
+---
+type: guide
+domain: architecture/microservices
+status: active
+created: 2026-04-12
+updated: 2026-07-21
+tags: []
+---
+
 # ⚡ Apache Kafka — Deep Dive Configuration Guide
 
 > **Mục tiêu:** Hiểu toàn bộ cấu hình Kafka từ broker đến producer/consumer, áp dụng thực tế trong Spring Boot và Rust (rdkafka). Mỗi config đều có giải thích cơ chế hoạt động bên trong.

@@ -2,6 +2,11 @@
 tags: [microservices, patterns, kafka, outbox, cdc, atomicity, messaging]
 up: "[[02-Communication]]"
 related: "[[Idempotent-Consumer]], [[Saga-Pattern]], [[CQRS-Materialized-View]]"
+type: guide
+domain: architecture/microservices
+status: active
+created: 2026-04-12
+updated: 2026-04-12
 ---
 
 # 📬 Transactional Outbox Pattern

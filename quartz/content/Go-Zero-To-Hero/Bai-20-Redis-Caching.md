@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/go
+status: active
+created: 2026-05-01
+updated: 2026-05-01
+tags: []
+---
+
 # Bài 20: Redis Caching & Distributed Locks
 
 > **Mục tiêu:** Implement caching patterns, pub/sub, và distributed locks với go-redis trong Go.

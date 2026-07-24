@@ -1,3 +1,12 @@
+---
+type: guide
+domain: database
+status: active
+created: 2026-05-06
+updated: 2026-05-06
+tags: []
+---
+
 # 05 — Performance Tuning: Memory, Vacuum, Monitoring
 
 > Moved & consolidated từ `concepts/postgresql-performance-deep-dive.md`.  

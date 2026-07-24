@@ -1,3 +1,12 @@
+---
+type: guide
+domain: architecture/microservices
+status: active
+created: 2026-05-31
+updated: 2026-05-31
+tags: []
+---
+
 # 🔄 Kafka — Multi-Consumer Sync Completion Guarantee
 
 > **Bài toán:** Source-of-truth service publish snapshot event lên Kafka. N downstream services phải consume + apply thành công. Làm sao đảm bảo **tất cả** đã sync xong trước khi coi business operation là hoàn thành?

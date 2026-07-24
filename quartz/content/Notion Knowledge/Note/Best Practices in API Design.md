@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-08-31T00:05
+type: reference
+domain: reference-library
+status: active
+created: 2025-08-31
+updated: 2025-08-31
+tags: []
+distillation: reference
 ---
 ## **Best Practices in API Design**
 

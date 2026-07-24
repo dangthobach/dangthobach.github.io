@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-09-15T05:33
+type: reference
+domain: reference-library
+status: active
+created: 2025-09-15
+updated: 2025-09-15
+tags: []
+distillation: reference
 ---
 The Internet has become an integral part of our daily lives, shaping how we communicate, access information, and conduct business. At its core, the Internet is a global system of interconnected computer networks that use standardized communication protocols to facilitate data exchange. This enables the transmission of text, images, videos, and more, across all sorts of devices.
 

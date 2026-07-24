@@ -1,3 +1,12 @@
+---
+type: course
+domain: frontend/angular
+status: active
+created: 2026-05-08
+updated: 2026-05-08
+tags: []
+---
+
 # 14. Kiến trúc Enterprise & Standalone 🏗️🏢
 
 Chào mừng bạn đến với bài học cuối cùng! Đây là nơi chúng ta học cách tổ chức một dự án "khủng" sao cho nó không trở thành một mớ hỗn độn.

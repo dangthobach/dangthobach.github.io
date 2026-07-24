@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/rust
+status: active
+created: 2026-04-18
+updated: 2026-04-18
+tags: []
+---
+
 # Bài 9c: Tokio — Cơ Chế Nội Tại (Mental Models & Diagrams)
 
 > Mục tiêu: thấy được cái gì đang xảy ra bên trong, không chỉ biết API.

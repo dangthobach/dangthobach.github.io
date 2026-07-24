@@ -4,6 +4,10 @@ created: 2026-05-02
 difficulty: advanced
 estimated-read: 25 min
 links: [clean-architecture-hexagonal, ddd-tactical, consistency-models-spectrum]
+type: concept
+domain: concepts
+status: active
+updated: 2026-05-02
 ---
 
 # 🗺️ DDD Strategic — Bounded Contexts, Context Maps & Ubiquitous Language

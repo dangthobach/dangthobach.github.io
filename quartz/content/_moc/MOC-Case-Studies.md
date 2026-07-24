@@ -1,5 +1,10 @@
 ---
 tags: [moc, case-studies, real-systems, engineering]
+type: moc
+domain: knowledge-management
+status: active
+created: 2026-04-12
+updated: 2026-04-14
 ---
 
 # 🏢 MOC — Case Studies (Real Systems)
@@ -51,7 +56,7 @@ tags: [moc, case-studies, real-systems, engineering]
 
 - [[How Grab Built An Authentication System for 180+ Million Users|Grab: Auth at 180M Users]]
   → **Key insight:** Token revocation at scale (distributed blacklist vs short-lived tokens). Multi-region auth failover.
-- [[How Tinder's API Gateway Handles A Billion Swipes Per Day|Tinder: 1B Swipes/Day]]
+- [[How Tinder’s API Gateway Handles A Billion Swipes Per Day|Tinder: 1B Swipes/Day]]
   → **Key insight:** Recommendation pre-computation, gateway-level caching, request deduplication.
 
 ---

@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/rust
+status: active
+created: 2026-04-12
+updated: 2026-04-12
+tags: []
+---
+
 # Bài 24: Axum Advanced — WebSocket · SSE · File Upload · OpenAPI
 
 > **Prerequisite:** Bài 10 (Axum Core) + Bài 11 (Middleware & Error)  

@@ -1,3 +1,12 @@
+---
+type: concept
+domain: concepts
+status: active
+created: 2026-05-15
+updated: 2026-05-15
+tags: []
+---
+
 # React Compiler — Cơ chế thu hẹp gap với SolidJS
 
 tags: #react #react-compiler #memoization #performance #compiler #HIR #SSA #internals

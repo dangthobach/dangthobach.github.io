@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/rust
+status: active
+created: 2026-04-10
+updated: 2026-04-10
+tags: []
+---
+
 # Bài 1: Ownership - Chìa khóa Tối ưu Bộ nhớ
 
 Chào Chuyên gia Java, hãy quên Garbage Collector (GC) trong chốc lát. Trong Java, bạn tạo Object và mặc kệ nó. Trong Rust, mọi vùng nhớ phải có một "Chủ sở hữu" duy nhất.

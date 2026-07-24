@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/jvm
+status: active
+created: 2026-05-05
+updated: 2026-05-05
+tags: []
+---
+
 # 02 — Jakarta REST 5.0 (JAX-RS)
 
 > **Spec:** Jakarta RESTful Web Services 5.0 | **Profile:** Core

@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/go
+status: active
+created: 2026-05-01
+updated: 2026-05-01
+tags: []
+---
+
 # Java Virtual Threads vs Go Goroutines vs Rust Async — Deep Dive 2026
 
 > **Bài viết phân tích:** Kể từ Java 21 (LTS), Virtual Threads (Project Loom) chính thức GA. Liệu rằng Java đã "bắt kịp" Go và Rust trong concurrency? Câu trả lời phức tạp hơn nhiều người nghĩ.

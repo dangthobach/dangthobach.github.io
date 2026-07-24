@@ -1,3 +1,12 @@
+---
+type: guide
+domain: architecture/microservices
+status: active
+created: 2026-05-29
+updated: 2026-05-30
+tags: []
+---
+
 # Apache Avro — Deep Dive: Internals, Schema Evolution & Kafka Integration
 
 > **Tags:** #avro #kafka #schema-registry #serialization #microservices #data-engineering  

@@ -1,3 +1,12 @@
+---
+type: moc
+domain: frontend/solidjs
+status: active
+created: 2026-05-08
+updated: 2026-05-08
+tags: []
+---
+
 # SolidJS Series — Master Index (MOC)
 
 #solidjs #frontend #moc
@@ -112,3 +121,7 @@ SolidJS-Series/
 ---
 
 *Hoàn thành: 2026-05 · 12 modules · 3 phases*
+
+## 🔗 Concept Graph
+
+- [[frontend-concept-map|Frontend Concept Map — SolidJS ↔ React ↔ Angular]]

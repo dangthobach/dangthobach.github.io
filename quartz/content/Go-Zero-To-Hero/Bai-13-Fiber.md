@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/go
+status: active
+created: 2026-05-01
+updated: 2026-05-01
+tags: []
+---
+
 # Bài 13: Fiber Framework — Zero Allocation, Express-style
 
 > **Mục tiêu:** Hiểu tại sao Fiber nhanh nhất trong Go ecosystem, sử dụng Fiber cho high-performance API, và biết khi nào chọn Fiber vs Gin.

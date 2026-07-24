@@ -2,6 +2,11 @@
 tags: [rust, axum, leptos, dioxus, background-jobs, caching, redis, http-cache, production]
 prerequisites: [Bai-44-Styling-Pipeline]
 next: null
+type: course
+domain: languages/rust
+status: active
+created: 2026-05-06
+updated: 2026-05-06
 ---
 
 # Bài 45: Background Jobs & Caching — Production Scale

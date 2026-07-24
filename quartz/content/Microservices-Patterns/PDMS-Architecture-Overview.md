@@ -4,6 +4,9 @@ up: "[[MOC-PDMS]]"
 related: "[[Cross-Service-Join-AuthZ-Fine-Grained-Filter]], [[Transactional-Outbox]], [[CQRS-Materialized-View]]"
 created: 2026-04-14
 updated: 2026-04-15
+type: project
+domain: architecture/microservices
+status: active
 ---
 
 # 🏗️ PDMS Architecture Overview

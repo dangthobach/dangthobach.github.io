@@ -4,6 +4,10 @@ created: 2026-05-02
 difficulty: advanced
 estimated-read: 25 min
 links: [postgresql-index-internals, query-planner-optimizer]
+type: guide
+domain: systems/performance
+status: active
+updated: 2026-05-02
 ---
 
 # 🌳 B-Tree vs LSM-Tree — Hai Triết lý Storage Engine

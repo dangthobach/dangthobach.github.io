@@ -1,3 +1,12 @@
+---
+type: course
+domain: data/serialization
+status: active
+created: 2026-05-27
+updated: 2026-05-27
+tags: []
+---
+
 # 02 — Cơ Chế Hoạt Động Của Apache Fory: JIT, Zero-Copy, Object Graph
 
 > **Series:** [[00-MOC-Apache-Fory-Series]]  

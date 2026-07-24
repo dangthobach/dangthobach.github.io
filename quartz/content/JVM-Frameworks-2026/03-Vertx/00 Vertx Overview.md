@@ -4,6 +4,9 @@ created: 2026-04-12
 status: active
 week: 15-20
 framework: vertx
+type: course
+domain: languages/jvm
+updated: 2026-05-17
 ---
 
 # △ Vert.x — Tổng Quan

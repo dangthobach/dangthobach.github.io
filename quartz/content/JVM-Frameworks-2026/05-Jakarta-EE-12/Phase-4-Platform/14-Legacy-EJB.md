@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/jvm
+status: active
+created: 2026-05-05
+updated: 2026-05-05
+tags: []
+---
+
 # 14 — Jakarta EJB 4.x (Legacy)
 
 > **Spec:** Jakarta Enterprise Beans 4.x | **Profile:** Full Platform

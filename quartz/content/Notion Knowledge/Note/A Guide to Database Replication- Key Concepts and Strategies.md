@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-09-14T17:17
+type: reference
+domain: reference-library
+status: active
+created: 2025-09-14
+updated: 2025-09-14
+tags: []
+distillation: reference
 ---
 Every modern application relies on data, and users expect that data to be fast, current, and always accessible. However, databases are not magic. They can fail or slow down under load. They can also encounter physical and geographic limits, which is where replication becomes necessary.
 

@@ -3,6 +3,9 @@ tags: []
 aliases: []
 created: {{date}}
 status: draft
+type: guide
+domain: knowledge-management
+updated: 2026-04-12
 ---
 
 # {{title}}

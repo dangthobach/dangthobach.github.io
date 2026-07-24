@@ -1,3 +1,12 @@
+---
+type: course
+domain: data/serialization
+status: active
+created: 2026-05-27
+updated: 2026-05-27
+tags: []
+---
+
 # 01 — Tại Sao Serialization Quan Trọng & Lịch Sử Vấn Đề
 
 > **Series:** [[00-MOC-Apache-Fory-Series]]  

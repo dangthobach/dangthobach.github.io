@@ -5,6 +5,9 @@ status: active
 week: 19
 phase: P3-Data
 framework: vertx
+type: course
+domain: languages/jvm
+updated: 2026-04-13
 ---
 
 # Reactive SQL Client

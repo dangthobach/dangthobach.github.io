@@ -1,5 +1,10 @@
 ---
 tags: [template, framework-concept]
+type: guide
+domain: knowledge-management
+status: active
+created: 2026-04-12
+updated: 2026-04-12
 ---
 
 # {{title}}

@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/rust
+status: active
+created: 2026-04-12
+updated: 2026-04-18
+tags: []
+---
+
 # Bài 9: Async/Await & Tokio — Engine Của Web App
 
 Chào Chuyên gia Java. Đây là bài quan trọng nhất trước khi bước vào Axum. Tokio là Spring WebFlux Reactor của Rust — nhưng được bake vào language thay vì là library add-on.

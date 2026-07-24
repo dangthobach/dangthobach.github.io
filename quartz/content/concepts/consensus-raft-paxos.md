@@ -4,6 +4,10 @@ created: 2026-05-02
 difficulty: advanced
 estimated-read: 25 min
 links: [distributed-clocks-ordering, consistency-models-spectrum, cap-pacelc-deep-dive]
+type: concept
+domain: concepts
+status: active
+updated: 2026-05-02
 ---
 
 # 🗳️ Consensus — Raft & Paxos: Tại sao Distributed Agreement là vấn đề khó

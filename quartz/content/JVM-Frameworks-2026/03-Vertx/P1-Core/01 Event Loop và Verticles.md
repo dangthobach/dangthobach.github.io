@@ -5,6 +5,9 @@ status: active
 week: 15
 phase: P1-Core
 framework: vertx
+type: course
+domain: languages/jvm
+updated: 2026-04-12
 ---
 
 # Event Loop và Verticles

@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-09-09T01:01
+type: reference
+domain: reference-library
+status: active
+created: 2025-09-09
+updated: 2025-09-09
+tags: []
+distillation: reference
 ---
 Creating an index is easy. Nearly every developer has created or used an index at some point, whether directly or indirectly. But knowing what to index is only one part of the equation. The more difficult question is understanding how the index works underneath.
 

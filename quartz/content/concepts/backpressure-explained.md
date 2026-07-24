@@ -3,6 +3,9 @@ tags: [java, reactive, rxjava, concurrency, evergreen]
 aliases: [backpressure, flow-control, reactive-backpressure]
 created: 2026-04-13
 status: evergreen
+type: concept
+domain: concepts
+updated: 2026-04-13
 ---
 
 # Backpressure Explained

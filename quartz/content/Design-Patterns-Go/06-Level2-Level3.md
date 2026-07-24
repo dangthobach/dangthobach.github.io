@@ -1,3 +1,12 @@
+---
+type: course
+domain: architecture/design-patterns/go
+status: active
+created: 2026-05-03
+updated: 2026-05-03
+tags: []
+---
+
 # Level 2 · Idiomatic + Level 3 · Concurrency Patterns
 
 ```

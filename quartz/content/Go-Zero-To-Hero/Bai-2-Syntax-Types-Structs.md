@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/go
+status: active
+created: 2026-05-01
+updated: 2026-05-01
+tags: []
+---
+
 # Bài 2: Syntax, Types, Structs & Methods
 
 > **Mục tiêu:** Nắm vững hệ thống kiểu dữ liệu Go, struct, methods, pointers — so sánh trực tiếp Java/Rust.

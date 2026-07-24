@@ -1,3 +1,12 @@
+---
+type: course
+domain: architecture/design-patterns/rust
+status: active
+created: 2026-05-03
+updated: 2026-05-03
+tags: []
+---
+
 # Structural Patterns in Rust
 
 > *Structural patterns giải quyết cách **kết hợp** objects và classes thành cấu trúc lớn hơn. Rust không có inheritance — chỉ có composition, traits, và generics. Điều này làm nhiều structural patterns trở nên rõ ràng và type-safe hơn.*

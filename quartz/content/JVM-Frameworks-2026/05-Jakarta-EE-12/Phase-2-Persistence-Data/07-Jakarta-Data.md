@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/jvm
+status: active
+created: 2026-05-05
+updated: 2026-05-05
+tags: []
+---
+
 # 07 — Jakarta Data 1.1 ⭐ New in EE 12
 
 > **Spec:** Jakarta Data 1.1 | **Profile:** Web Profile

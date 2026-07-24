@@ -1,6 +1,10 @@
 ---
 tags: [database, internals, lsm-tree, sstable, storage]
 created: 2026-05-01
+type: guide
+domain: systems/performance
+status: active
+updated: 2026-05-01
 ---
 
 # 04. Định dạng SSTable (Sorted String Table)

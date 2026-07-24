@@ -1,3 +1,12 @@
+---
+type: course
+domain: frontend/angular
+status: active
+created: 2026-05-08
+updated: 2026-05-08
+tags: []
+---
+
 # 13. Kiểm thử cơ bản (Testing Fundamentals) 🧪
 
 Viết code mà không viết Test giống như việc bạn xây nhà mà không có bảo hiểm. Khi bạn thay đổi một thứ gì đó, bạn không thể chắc chắn liệu những thứ khác có bị hỏng hay không.

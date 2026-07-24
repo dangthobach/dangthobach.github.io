@@ -1,6 +1,11 @@
 ---
 tags: [microservices, cheatsheet, quick-reference]
 up: "[[00-Hub-Microservices-Patterns]]"
+type: guide
+domain: architecture/microservices
+status: active
+created: 2026-04-12
+updated: 2026-04-12
 ---
 
 # ⚡ Microservices Patterns — Cheat Sheet

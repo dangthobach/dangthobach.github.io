@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-08-31T00:06
+type: reference
+domain: reference-library
+status: active
+created: 2025-08-31
+updated: 2025-08-31
+tags: []
+distillation: reference
 ---
 Scalability is the ability of a system to handle growth (more users, more data, and more requests) with high performance. In modern distributed systems, scalability is not a nice-to-have. Whether serving a global user base or responding to a viral spike, systems that fail to scale often fail outright.
 

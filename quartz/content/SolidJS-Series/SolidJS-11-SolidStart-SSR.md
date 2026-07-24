@@ -1,3 +1,12 @@
+---
+type: guide
+domain: frontend/solidjs
+status: active
+created: 2026-05-08
+updated: 2026-05-17
+tags: []
+---
+
 # SolidJS 11 — SolidStart & SSR: Server Functions, Streaming, Islands
 
 #solidjs #frontend #solidstart #ssr #server-functions #phase-3-enterprise

@@ -1,3 +1,12 @@
+---
+type: course
+domain: architecture/design-patterns/rust
+status: active
+created: 2026-05-03
+updated: 2026-05-03
+tags: []
+---
+
 # Level 4 · Type System Mastery
 
 > *"Compiler proves correctness". Level này là nơi Rust không có đối thủ — encode invariants vào types để errors impossible tại runtime. GATs, HRTB, Const Generics, Variance là tools của senior Rustacean.*

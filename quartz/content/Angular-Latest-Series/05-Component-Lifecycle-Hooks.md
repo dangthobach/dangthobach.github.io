@@ -1,3 +1,12 @@
+---
+type: course
+domain: frontend/angular
+status: active
+created: 2026-05-08
+updated: 2026-05-08
+tags: []
+---
+
 # 05. Vòng đời Component (Lifecycle Hooks) 🌱➡️🌳➡️🍂
 
 Mỗi Component trong Angular đều có một "vòng đời": được sinh ra, lớn lên, thay đổi và cuối cùng là biến mất. Angular cung cấp các **Hooks** (điểm móc) để bạn có thể nhảy vào xử lý code tại đúng thời điểm đó.

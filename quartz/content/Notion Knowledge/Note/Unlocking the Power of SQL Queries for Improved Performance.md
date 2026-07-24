@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-09-25T02:15
+type: reference
+domain: reference-library
+status: active
+created: 2025-09-25
+updated: 2025-09-25
+tags: []
+distillation: reference
 ---
 SQL, or Structured Query Language, is the backbone of modern data management. It enables efficient retrieval, manipulation, and management of data in a Database Management System (DBMS). Each SQL command taps into a complex sequence within a database, building on concepts like the connection pool, query cache, command parser, optimizer, and executor, which we covered in our last issue.
 

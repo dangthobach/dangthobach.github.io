@@ -1,3 +1,12 @@
+---
+type: course
+domain: architecture/design-patterns/rust
+status: active
+created: 2026-05-03
+updated: 2026-05-03
+tags: []
+---
+
 # Level 2 · Idiomatic Patterns
 
 > *"Code compiles" → "Code is Rusty". Level này là sự khác biệt giữa developer viết Java-with-Rust-syntax và Rustacean thực thụ. Mỗi pattern ở đây giải quyết friction phổ biến khi làm việc với ownership + type system.*

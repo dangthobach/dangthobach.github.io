@@ -2,6 +2,11 @@
 tags: [microservices, patterns, strangler-fig, migration, monolith, anti-corruption-layer]
 up: "[[05-Decomposition]]"
 related: "[[Database-per-Service]], [[Transactional-Outbox]], [[CQRS-Materialized-View]]"
+type: guide
+domain: architecture/microservices
+status: active
+created: 2026-04-12
+updated: 2026-04-12
 ---
 
 # 🌿 Strangler Fig Pattern

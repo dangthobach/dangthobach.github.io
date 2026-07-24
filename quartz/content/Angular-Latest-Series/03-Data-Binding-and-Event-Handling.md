@@ -1,3 +1,12 @@
+---
+type: course
+domain: frontend/angular
+status: active
+created: 2026-05-08
+updated: 2026-05-17
+tags: []
+---
+
 # 03. Data Binding & Xử lý Sự kiện ⚡
 
 > **Mục tiêu**: Hiểu sâu 4 loại data binding, signal-based two-way binding (Angular 17+), event handling nâng cao, và các pattern thực tế trong dự án enterprise như PDMS.

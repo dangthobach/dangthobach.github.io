@@ -1,3 +1,12 @@
+---
+type: guide
+domain: frontend/solidjs
+status: active
+created: 2026-05-08
+updated: 2026-05-17
+tags: []
+---
+
 # SolidJS 10 — Complex UI Patterns: Forms, Data Tables, Virtual Scroll
 
 #solidjs #frontend #forms #data-table #virtual-scroll #phase-3-enterprise

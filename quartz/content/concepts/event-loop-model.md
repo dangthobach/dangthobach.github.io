@@ -3,6 +3,9 @@ tags: [java, concurrency, reactive, vertx, evergreen]
 aliases: [event-loop, non-blocking-io, nio, event-driven]
 created: 2026-04-13
 status: evergreen
+type: concept
+domain: concepts
+updated: 2026-04-13
 ---
 
 # Event Loop Model

@@ -1,3 +1,12 @@
+---
+type: concept
+domain: concepts
+status: active
+created: 2026-04-14
+updated: 2026-04-14
+tags: []
+---
+
 # PostgreSQL Performance Deep Dive
 
 > **Audience**: Senior engineers với nền tảng RDBMS vững, đã hiểu SQL cơ bản.  

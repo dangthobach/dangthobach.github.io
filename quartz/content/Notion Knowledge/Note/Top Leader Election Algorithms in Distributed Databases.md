@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-08-30T23:56
+type: reference
+domain: reference-library
+status: active
+created: 2025-08-30
+updated: 2025-08-30
+tags: []
+distillation: reference
 ---
 Distributed database systems rely on coordination to work properly. When multiple nodes replicate data and process requests across regions or zones, a particular node has to take charge of write operations. This node is typically called the leader: a single node responsible for ordering updates, committing changes, and ensuring the system remains consistent even under failure.
 

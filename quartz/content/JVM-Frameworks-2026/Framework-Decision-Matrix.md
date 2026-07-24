@@ -2,6 +2,9 @@
 tags: [jvm-frameworks, decision, architecture, spring, quarkus, micronaut, vertx]
 created: 2026-04-13
 status: evergreen
+type: decision
+domain: languages/jvm
+updated: 2026-05-17
 ---
 
 # Framework Decision Matrix

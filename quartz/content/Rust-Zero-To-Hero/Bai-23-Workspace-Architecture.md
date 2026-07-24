@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/rust
+status: active
+created: 2026-04-12
+updated: 2026-04-12
+tags: []
+---
+
 # Bài 23: Workspace Architecture & Crate Design
 
 > **Java analog:** Maven multi-module project. Nhưng Rust workspace có compile-time crate boundary enforcement — không thể accidentally import internal implementation details như trong Java's package-private.

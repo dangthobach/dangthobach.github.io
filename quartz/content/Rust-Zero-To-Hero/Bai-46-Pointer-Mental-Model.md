@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/rust
+status: active
+created: 2026-07-10
+updated: 2026-07-10
+tags: []
+---
+
 # Bài 46: Pointer — Bản Chất, Phân Loại & Tư Duy Tối Ưu
 
 > Chào Chuyên gia Java. Bài 8 và Bài 19 đã cho bạn *API* của smart pointer và raw pointer. Bài này cho bạn *mental model* — thứ khiến bạn từ "biết dùng `Box`, `Rc`, `&`" chuyển sang "biết tại sao, khi nào, và trả giá gì". Đây là bài bạn cần đọc chậm, vì nó là nền móng cho toàn bộ hiểu biết hệ thống (systems-level understanding) sau này.

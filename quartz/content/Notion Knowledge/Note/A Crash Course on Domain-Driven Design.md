@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-09-25T01:57
+type: reference
+domain: reference-library
+status: active
+created: 2025-09-25
+updated: 2025-09-25
+tags: []
+distillation: reference
 ---
 Developing software for complex domains is a challenging task.
 

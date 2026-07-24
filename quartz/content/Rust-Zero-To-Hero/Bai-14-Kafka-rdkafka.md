@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/rust
+status: active
+created: 2026-04-12
+updated: 2026-04-12
+tags: []
+---
+
 # Bài 14: Kafka với rdkafka — Messaging Layer
 
 ---

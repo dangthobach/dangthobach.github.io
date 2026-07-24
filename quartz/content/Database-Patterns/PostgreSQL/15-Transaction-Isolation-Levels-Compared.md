@@ -1,3 +1,12 @@
+---
+type: guide
+domain: database
+status: active
+created: 2026-05-07
+updated: 2026-05-07
+tags: []
+---
+
 # 15 — Transaction Isolation Levels: So Sánh Across Databases
 
 > **Audience:** Senior engineers cần hiểu isolation levels ở mức chính xác, không phải "textbook definition".  

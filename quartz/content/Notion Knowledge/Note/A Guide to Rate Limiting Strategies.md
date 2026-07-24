@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-09-09T00:55
+type: reference
+domain: reference-library
+status: active
+created: 2025-09-09
+updated: 2025-09-09
+tags: []
+distillation: reference
 ---
 No matter how many resources are allocated, systems have a specific capacity beyond which they don’t operate efficiently. Traffic can arrive in bursts, clients retry aggressively, and shared infrastructure makes one team spike everyone’s outage.
 

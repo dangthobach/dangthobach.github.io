@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/jvm
+status: active
+created: 2026-05-05
+updated: 2026-05-05
+tags: []
+---
+
 # 11 — Jakarta Concurrency 3.x
 
 > **Spec:** Jakarta Concurrency 3.x | **Profile:** Web Profile

@@ -1,3 +1,12 @@
+---
+type: course
+domain: frontend/react
+status: active
+created: 2026-05-09
+updated: 2026-05-17
+tags: []
+---
+
 # Bài 22: Portals & Modals — Render ngoài DOM tree 🪟
 
 > **Mục tiêu**: Hiểu React Portals, xây dựng Modal/Dialog enterprise-grade với focus trap, keyboard navigation, animation, và Modal Manager pattern để quản lý nhiều modal đồng thời trong PDMS.

@@ -1,3 +1,12 @@
+---
+type: guide
+domain: frontend/solidjs
+status: active
+created: 2026-05-14
+updated: 2026-05-14
+tags: []
+---
+
 # Multiple Outlets trong SolidJS — Store-driven Pattern
 
 tags: #solidjs #solid-router #routing #multiple-outlets #parallel

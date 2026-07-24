@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-09-25T01:56
+type: reference
+domain: reference-library
+status: active
+created: 2025-09-25
+updated: 2025-09-25
+tags: []
+distillation: reference
 ---
 The API (Application Programming Interface) layer serves as the backbone for communication between clients and the backend services in modern internet-based applications.
 

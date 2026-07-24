@@ -2,6 +2,11 @@
 tags: [microservices, patterns, circuit-breaker, resilience4j, reliability, cascade-failure]
 up: "[[03-Reliability]]"
 related: "[[03-Reliability]], [[02-Communication]], [[04-Observability]]"
+type: guide
+domain: architecture/microservices
+status: active
+created: 2026-04-12
+updated: 2026-04-12
 ---
 
 # ⚡ Circuit Breaker

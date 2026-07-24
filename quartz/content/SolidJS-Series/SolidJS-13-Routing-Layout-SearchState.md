@@ -1,3 +1,12 @@
+---
+type: guide
+domain: frontend/solidjs
+status: active
+created: 2026-05-14
+updated: 2026-05-14
+tags: []
+---
+
 # SolidJS Routing — Layout Cố Định & Search State Preservation
 
 tags: #solidjs #solid-router #routing #layout #search-state #frontend

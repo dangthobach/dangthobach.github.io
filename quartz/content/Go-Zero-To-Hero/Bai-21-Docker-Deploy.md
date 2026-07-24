@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/go
+status: active
+created: 2026-05-01
+updated: 2026-05-01
+tags: []
+---
+
 # Bài 21: Docker, CI/CD & Kubernetes Deployment
 
 > **Mục tiêu:** Đóng gói Go service thành Docker image tối ưu, thiết lập CI/CD pipeline, và deploy lên Kubernetes với health checks, resource limits.

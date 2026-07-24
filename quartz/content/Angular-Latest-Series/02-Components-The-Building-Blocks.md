@@ -1,3 +1,12 @@
+---
+type: course
+domain: frontend/angular
+status: active
+created: 2026-05-08
+updated: 2026-05-17
+tags: []
+---
+
 # 02. Component: Viên gạch xây nhà 🧱
 
 > **Bài học nền tảng** — Mọi thứ trong Angular đều là Component. Hiểu sâu Component là nền tảng để học toàn bộ framework.

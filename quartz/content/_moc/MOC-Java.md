@@ -1,5 +1,10 @@
 ---
 tags: [moc, java, spring]
+type: moc
+domain: knowledge-management
+status: active
+created: 2026-04-12
+updated: 2026-05-01
 ---
 
 # ☕ Java MOC
@@ -29,7 +34,7 @@ Map of Content cho Java/Spring ecosystem knowledge.
 ## ⚡ Concurrency
 - [[java-virtual-threads-deep-dive|Virtual Threads (Java 21) Deep Dive]] — Project Loom, cơ chế Mount/Unmount
 - `CompletableFuture` — async composition
-- `AtomicReference` — lock-free shared state ≈ [[Arc<T>]] Rust
+- `AtomicReference` — lock-free shared state ≈ Arc<T> *(planned)* Rust
 - `ExecutorService`, `ThreadPoolExecutor`
 
 ---

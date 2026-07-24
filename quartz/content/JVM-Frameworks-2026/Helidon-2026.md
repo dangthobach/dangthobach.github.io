@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/jvm
+status: active
+created: 2026-05-05
+updated: 2026-05-05
+tags: []
+---
+
 # Helidon 2026 — Oracle's Strategic Framework
 
 > **Cập nhật:** 2026-05 | **Backed by:** Oracle

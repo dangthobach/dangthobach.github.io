@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/go
+status: active
+created: 2026-05-01
+updated: 2026-05-01
+tags: []
+---
+
 # Bài 3: Goroutines & Channels — Go Concurrency Model
 
 > **Mục tiêu:** Hiểu sâu GMP scheduler, channel patterns, common concurrency patterns — so sánh với Java và Rust.

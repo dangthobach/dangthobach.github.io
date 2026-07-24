@@ -2,6 +2,11 @@
 tags: [rust, leptos, dioxus, wasm, wasm-bindgen, web-sys, js-interop, chartjs, d3, production]
 prerequisites: [Bai-41-Auth-SSR]
 next: Bai-43-Form-Validation
+type: course
+domain: languages/rust
+status: active
+created: 2026-05-06
+updated: 2026-05-06
 ---
 
 # Bài 42: JS Interop — wasm-bindgen, web-sys & Gọi Chart.js / D3

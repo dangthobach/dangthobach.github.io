@@ -3,6 +3,9 @@ tags: [java, quarkus, graalvm, native, performance, evergreen]
 aliases: [native-image, graalvm, aot-compilation, jit-compilation, ahead-of-time]
 created: 2026-04-13
 status: evergreen
+type: concept
+domain: concepts
+updated: 2026-04-13
 ---
 
 # Native Image, AOT vs JIT

@@ -1,3 +1,12 @@
+---
+type: course
+domain: frontend/angular
+status: active
+created: 2026-05-08
+updated: 2026-05-08
+tags: []
+---
+
 # 01. Nhập môn & Cài đặt Môi trường 🛠️
 
 Chào mừng bạn đến với thế giới của Angular! Nếu bạn là một "tân binh", đừng lo lắng, chúng ta sẽ bắt đầu từ con số 0.

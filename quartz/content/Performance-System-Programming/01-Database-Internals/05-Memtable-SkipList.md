@@ -1,6 +1,10 @@
 ---
 tags: [database, internals, memtable, skiplist, rust]
 created: 2026-05-01
+type: guide
+domain: systems/performance
+status: active
+updated: 2026-05-01
 ---
 
 # 05. Memtable & SkipList — Trái tim của LSM-Tree

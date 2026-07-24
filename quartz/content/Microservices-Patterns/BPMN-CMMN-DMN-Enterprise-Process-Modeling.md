@@ -1,3 +1,12 @@
+---
+type: guide
+domain: architecture/microservices
+status: active
+created: 2026-04-29
+updated: 2026-04-29
+tags: []
+---
+
 # BPMN · CMMN · DMN — Enterprise Process Modeling Deep Dive
 
 > **Tags:** #bpmn #cmmn #dmn #process-modeling #workflow #enterprise #camunda #pdms  

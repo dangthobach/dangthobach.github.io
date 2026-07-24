@@ -5,6 +5,9 @@ status: active
 week: 7
 phase: P4-Native
 framework: quarkus
+type: course
+domain: languages/jvm
+updated: 2026-05-17
 ---
 
 # GraalVM Native Image

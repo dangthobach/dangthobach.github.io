@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-09-09T01:15
+type: reference
+domain: reference-library
+status: active
+created: 2025-09-09
+updated: 2025-09-09
+tags: []
+distillation: reference
 ---
 APIs are the front doors to most systems.
 

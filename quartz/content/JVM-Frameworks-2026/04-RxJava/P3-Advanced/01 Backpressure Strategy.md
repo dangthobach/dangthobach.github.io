@@ -5,6 +5,9 @@ status: active
 week: 23
 phase: P3-Advanced
 framework: rxjava
+type: course
+domain: languages/jvm
+updated: 2026-04-13
 ---
 
 # Backpressure Strategy

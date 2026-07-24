@@ -2,6 +2,11 @@
 tags: [microservices, patterns, cqrs, kafka, read-model, n+1]
 up: "[[01-Data-Consistency]]"
 related: "[[Database-per-Service]], [[Event-Sourcing]], [[Transactional-Outbox]]"
+type: guide
+domain: architecture/microservices
+status: active
+created: 2026-04-12
+updated: 2026-04-12
 ---
 
 # 📊 CQRS — Command Query Responsibility Segregation

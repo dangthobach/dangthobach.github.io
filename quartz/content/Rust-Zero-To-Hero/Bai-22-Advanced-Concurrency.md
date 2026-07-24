@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/rust
+status: active
+created: 2026-04-12
+updated: 2026-04-12
+tags: []
+---
+
 # Bài 22: Advanced Concurrency — Atomics, Lock-free & Rayon
 
 > **Java dev context:** Java concurrent package có `AtomicLong`, `ConcurrentHashMap`, `ForkJoinPool`. Rust có equivalents nhưng với ownership model rõ ràng hơn và không có GC interference. Bài này cover: memory ordering, lock-free patterns, và CPU-bound parallelism với rayon.

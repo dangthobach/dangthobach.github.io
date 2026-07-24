@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-09-15T05:26
+type: reference
+domain: reference-library
+status: active
+created: 2025-09-15
+updated: 2025-09-15
+tags: []
+distillation: reference
 ---
 Serverless computing refers to the paradigm of building and running applications without managing the underlying servers. With serverless, the cloud provider abstracts away the servers, runtimes, scaling, and capacity planning from the developer. The developer focuses on the application code and business logic, while the cloud provider handles provisioning servers, auto-scaling, monitoring, etc., under the hood. Over the past decade, this “no-ops” approach has greatly simplified deploying cloud-native applications.
 

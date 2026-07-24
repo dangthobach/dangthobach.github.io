@@ -1,6 +1,11 @@
 ---
 tags: [microservices, patterns, observability, tracing, metrics, logging]
 up: "[[00-Hub-Microservices-Patterns]]"
+type: guide
+domain: architecture/microservices
+status: active
+created: 2026-04-12
+updated: 2026-04-12
 ---
 
 # 🔭 04 — Observability Patterns

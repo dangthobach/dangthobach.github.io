@@ -1,3 +1,12 @@
+---
+type: course
+domain: architecture/design-patterns/rust
+status: active
+created: 2026-05-03
+updated: 2026-05-03
+tags: []
+---
+
 # Level 1 · Foundation Patterns
 
 > *Mục tiêu: Code không chỉ compile — mà đúng idiom. Đây là baseline mọi Rustacean cần thuần thục trước khi đụng đến advanced patterns.*

@@ -1,3 +1,12 @@
+---
+type: concept
+domain: concepts
+status: active
+created: 2026-05-08
+updated: 2026-05-17
+tags: []
+---
+
 # SSR vs CSR — Cơ Chế Thực Sự, Workflow & Những Hiểu Lầm Phổ Biến
 
 > **Tags:** #frontend #web-rendering #SSR #CSR #performance #architecture  

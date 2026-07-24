@@ -2,6 +2,11 @@
 tags: [microservices, observability, tracing, opentelemetry, prometheus, grafana, elk, loki]
 up: "[[04-Observability]]"
 related: "[[Circuit-Breaker]], [[03-Reliability]]"
+type: guide
+domain: architecture/microservices
+status: active
+created: 2026-04-12
+updated: 2026-04-12
 ---
 
 # 🔭 Distributed Tracing — Deep Dive

@@ -1,5 +1,10 @@
 ---
 tags: [moc, pdms, vpbank, project]
+type: moc
+domain: knowledge-management
+status: active
+created: 2026-04-12
+updated: 2026-04-15
 ---
 
 # 📁 PDMS Project MOC

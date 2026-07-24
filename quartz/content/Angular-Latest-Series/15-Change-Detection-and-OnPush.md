@@ -1,3 +1,12 @@
+---
+type: course
+domain: frontend/angular
+status: active
+created: 2026-05-09
+updated: 2026-05-17
+tags: []
+---
+
 # 15. Change Detection & OnPush Strategy: Bộ não phản xạ của Angular ⚡
 
 > **Tại sao cần học bài này?**

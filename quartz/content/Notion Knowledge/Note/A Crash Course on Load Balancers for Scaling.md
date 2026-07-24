@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-09-25T01:54
+type: reference
+domain: reference-library
+status: active
+created: 2025-09-25
+updated: 2025-09-25
+tags: []
+distillation: reference
 ---
 Over the years, load balancers have become a crucial component of system architecture, acting as the front-line gatekeepers that distribute incoming network traffic across multiple servers.
 

@@ -1,3 +1,12 @@
+---
+type: guide
+domain: frontend/solidjs
+status: active
+created: 2026-05-08
+updated: 2026-05-08
+tags: []
+---
+
 # Bài 4: Store Management - Quản Lý State Phức Tạp
 
 Khi ứng dụng phát triển, việc sử dụng quá nhiều `createSignal` riêng lẻ sẽ khiến code trở nên khó quản lý. SolidJS cung cấp `createStore` để xử lý các đối tượng state lồng nhau một cách hiệu quả.

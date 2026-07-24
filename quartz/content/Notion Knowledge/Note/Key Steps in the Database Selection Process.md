@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-09-29T01:10
+type: reference
+domain: reference-library
+status: active
+created: 2025-09-29
+updated: 2025-09-29
+tags: []
+distillation: reference
 ---
 Welcome to the final part of our series on mastering database selection. In the first two parts, we learned the basics of databases and important factors for choosing one. Now, in Part 3, we'll apply this knowledge together.
 

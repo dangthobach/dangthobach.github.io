@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-09-09T01:18
+type: reference
+domain: reference-library
+status: active
+created: 2025-09-09
+updated: 2025-09-09
+tags: []
+distillation: reference
 ---
 Microservices architecture is a software design pattern where an application is built as a collection of small, independent services, each responsible for a specific function.
 

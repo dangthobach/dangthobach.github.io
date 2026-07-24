@@ -7,6 +7,9 @@ related:
   - "[[Rust-Java-Build-Compile-Deploy-Memory-Timeline]]"
 created: 2026-05-02
 status: permanent
+type: concept
+domain: concepts
+updated: 2026-07-08
 ---
 
 # GC · LLVM · Native Code · Runtime Overhead — Bản Chất CPU & Memory

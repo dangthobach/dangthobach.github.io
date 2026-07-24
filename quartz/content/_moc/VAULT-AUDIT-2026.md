@@ -2,10 +2,16 @@
 tags: [moc, audit, roadmap, architecture, meta]
 created: 2026-05-02
 status: living-document
+type: moc
+domain: knowledge-management
+updated: 2026-05-02
 ---
 
 # 🔍 Vault Audit — Software Architecture & Engineering Knowledge Map
 > *Đánh giá toàn bộ knowledge đã có, gap analysis, và roadmap bổ sung cho mục tiêu: hiểu đúng bản chất của một hệ thống.*
+
+> [!important] Historical audit
+> Snapshot bên dưới được lập ngày 02/05/2026 và được giữ để theo dõi tiến trình. Hiện trạng tự động theo metadata nằm tại [[VAULT-DASHBOARD|Vault Dashboard]]; không dùng checklist cũ để kết luận một article còn thiếu.
 
 ---
 

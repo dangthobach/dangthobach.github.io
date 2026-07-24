@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-09-15T05:42
+type: reference
+domain: reference-library
+status: active
+created: 2025-09-15
+updated: 2025-09-15
+tags: []
+distillation: reference
 ---
 Asynchronous communication has become an important strategy for modern software systems, particularly in distributed and large-scale applications.
 

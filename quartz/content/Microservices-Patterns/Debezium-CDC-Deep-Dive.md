@@ -4,6 +4,10 @@ aliases: [Debezium, CDC Deep Dive]
 up: "[[00-Hub-Microservices-Patterns]]"
 related: ["[[Transactional-Outbox]]", "[[CQRS-Materialized-View]]", "[[Kafka-Configuration-Deep-Dive]]"]
 created: 2026-04-15
+type: guide
+domain: architecture/microservices
+status: active
+updated: 2026-04-15
 ---
 
 # 🔄 Debezium & CDC — Deep Dive

@@ -2,6 +2,10 @@
 tags: [moc, microservices, patterns, architecture, system-design]
 aliases: [Microservices Hub, MS Patterns]
 created: 2026-04-12
+type: moc
+domain: architecture/microservices
+status: active
+updated: 2026-04-15
 ---
 
 # 🏗️ Microservices Patterns — Hub

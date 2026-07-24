@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/rust
+status: active
+created: 2026-04-12
+updated: 2026-04-12
+tags: []
+---
+
 # Bài 20: Macro System — Code Sinh Ra Code
 
 > **Java analog:** Annotation Processing (APT) + Lombok. Nhưng Rust macros mạnh hơn nhiều: operate trên AST, không cần reflection, zero runtime overhead, và có thể tạo bất kỳ valid Rust code nào.

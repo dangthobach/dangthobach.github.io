@@ -1,3 +1,12 @@
+---
+type: guide
+domain: architecture/microservices
+status: active
+created: 2026-04-19
+updated: 2026-05-17
+tags: []
+---
+
 # 🧩 Kafka Internals — Partition & Offset: Tại Sao Tồn Tại & Hoạt Động Như Thế Nào
 
 > **Mục tiêu:** Hiểu *tại sao* Kafka cần partition và offset — không phải chỉ "chúng là gì", mà là vấn đề gì chúng giải quyết, cơ chế hoạt động bên dưới, và tác động thực tế khi thiết kế hệ thống. Đọc bài này trước [[Kafka-Configuration-Deep-Dive]] để có nền tảng vững.

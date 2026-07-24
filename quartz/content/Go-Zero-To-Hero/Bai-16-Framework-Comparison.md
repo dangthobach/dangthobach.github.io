@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/go
+status: active
+created: 2026-05-01
+updated: 2026-05-01
+tags: []
+---
+
 # Bài 16: Framework So Sánh & Decision Matrix
 
 > **Mục tiêu:** Hiểu rõ trade-offs của từng framework, biết chọn đúng framework cho đúng use case.

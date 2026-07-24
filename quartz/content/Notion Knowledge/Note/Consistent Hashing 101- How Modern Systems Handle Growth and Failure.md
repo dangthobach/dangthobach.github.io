@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-09-14T16:04
+type: reference
+domain: reference-library
+status: active
+created: 2025-09-14
+updated: 2025-09-14
+tags: []
+distillation: reference
 ---
 In the world of distributed systems, one of the hardest problems isn’t just storing or retrieving data. It’s figuring out where that data should live when we have dozens, hundreds, or even thousands of servers.
 

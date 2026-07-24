@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/jvm
+status: active
+created: 2026-05-05
+updated: 2026-05-05
+tags: []
+---
+
 # 01 — CDI 5.0: Contexts & Dependency Injection
 
 > **Spec:** Jakarta CDI 5.0 | **Profile:** Core

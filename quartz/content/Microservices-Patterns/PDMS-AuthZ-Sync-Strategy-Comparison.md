@@ -3,6 +3,10 @@ tags: [pdms, vpbank, authz, cross-service, cdc, kafka, sync, comparison, archite
 up: "[[PDMS-Architecture-Overview]]"
 related: "[[Cross-Service-Join-AuthZ-Fine-Grained-Filter]], [[PDMS-AuthZ-Fine-Grained-Design]]"
 created: 2026-04-15
+type: decision
+domain: architecture/microservices
+status: active
+updated: 2026-04-15
 ---
 
 # ⚖️ PDMS — AuthZ Sync Strategy: So Sánh 4 Lựa Chọn

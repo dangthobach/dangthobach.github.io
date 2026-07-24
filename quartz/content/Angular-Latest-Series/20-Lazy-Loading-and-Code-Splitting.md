@@ -1,3 +1,12 @@
+---
+type: course
+domain: frontend/angular
+status: active
+created: 2026-05-09
+updated: 2026-05-17
+tags: []
+---
+
 # 20. Lazy Loading & Code Splitting: Tối ưu Bundle Size 🚀
 
 > **Tại sao quan trọng với enterprise?**

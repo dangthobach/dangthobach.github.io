@@ -1,3 +1,12 @@
+---
+type: moc
+domain: languages/rust
+status: active
+created: 2026-04-10
+updated: 2026-04-12
+tags: []
+---
+
 # Lộ trình Rust Zero to Hero cho Chuyên gia Java/Spring Boot
 
 Lộ trình này tập trung vào việc chuyển đổi tư duy từ **Managed Memory (GC)** sang **Ownership/Borrowing** và xây dựng Web Backend hiệu năng cao.

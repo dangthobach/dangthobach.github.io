@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/rust
+status: active
+created: 2026-04-12
+updated: 2026-04-12
+tags: []
+---
+
 # Bài 6: Generics, Trait Bounds & Trait Objects — Polymorphism Kiểu Rust
 
 Chào Chuyên gia Java. Bài này giải quyết câu hỏi: "Nếu Rust không có inheritance, làm sao tôi viết code tổng quát và polymorphic?" Câu trả lời là **Generics + Traits** — và thực ra mạnh hơn Java Generics nhiều.

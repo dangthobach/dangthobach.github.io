@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/rust
+status: active
+created: 2026-04-12
+updated: 2026-04-12
+tags: []
+---
+
 # Bài 26: SQLx Advanced — Compile-time SQL, Custom Types, Bulk Ops & Testing
 
 > **Prerequisite:** Bài 12 (SQLx Basics)  

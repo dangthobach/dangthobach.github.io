@@ -3,6 +3,10 @@ tags: [debezium, cdc, postgresql, mongodb, migration, kafka-connect, zero-to-her
 aliases: [Postgres to Mongo Migration, CDC Migration Guide]
 up: "[[Debezium-CDC-Deep-Dive]]"
 created: 2026-04-15
+type: guide
+domain: architecture/microservices
+status: active
+updated: 2026-04-15
 ---
 
 # 🚀 Debezium: Migrate PostgreSQL → MongoDB — Zero to Hero

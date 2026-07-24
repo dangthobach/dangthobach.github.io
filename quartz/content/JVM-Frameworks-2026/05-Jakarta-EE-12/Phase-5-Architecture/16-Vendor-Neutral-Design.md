@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/jvm
+status: active
+created: 2026-05-05
+updated: 2026-05-05
+tags: []
+---
+
 # 16 — Vendor-Neutral System Design
 
 > **Topic:** Thiết kế hệ thống không bị lock-in vào vendor/framework

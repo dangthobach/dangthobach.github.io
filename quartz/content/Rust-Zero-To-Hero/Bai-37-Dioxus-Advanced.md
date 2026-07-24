@@ -2,6 +2,11 @@
 tags: [rust, dioxus, wasm, state-management, performance, testing]
 prerequisites: [Bai-36-Dioxus-Core]
 next: Bai-38-Dioxus-Desktop-Mobile
+type: course
+domain: languages/rust
+status: active
+created: 2026-05-05
+updated: 2026-05-05
 ---
 
 # Bài 37: Dioxus Advanced — State Management, Performance & Patterns

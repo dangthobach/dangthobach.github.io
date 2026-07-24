@@ -1,3 +1,12 @@
+---
+type: guide
+domain: frontend/solidjs
+status: active
+created: 2026-05-08
+updated: 2026-05-17
+tags: []
+---
+
 # SolidJS 07 — Context & Dependency Injection: createContext, Provider, Service Layer
 
 #solidjs #frontend #context #dependency-injection #phase-2-state

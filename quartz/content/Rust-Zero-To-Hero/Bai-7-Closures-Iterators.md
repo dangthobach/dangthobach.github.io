@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/rust
+status: active
+created: 2026-04-12
+updated: 2026-04-12
+tags: []
+---
+
 # Bài 7: Closures & Iterators — Functional Core của Rust
 
 Chào Chuyên gia Java. Nếu bạn đã quen với Java `Stream<T>` và `Function<T,R>`, bài này sẽ rất familiar — nhưng Rust version không bị boxing overhead và lazy hơn thật sự.

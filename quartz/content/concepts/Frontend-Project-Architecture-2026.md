@@ -1,3 +1,12 @@
+---
+type: concept
+domain: concepts
+status: active
+created: 2026-05-12
+updated: 2026-05-17
+tags: []
+---
+
 # Frontend Project Architecture 2026 — Kiến Trúc Nào Cho Usecase Nào?
 
 > **Status:** 🟢 Active  

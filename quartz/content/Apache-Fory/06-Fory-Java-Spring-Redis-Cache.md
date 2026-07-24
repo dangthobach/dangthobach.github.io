@@ -1,3 +1,12 @@
+---
+type: course
+domain: data/serialization
+status: active
+created: 2026-05-28
+updated: 2026-05-28
+tags: []
+---
+
 # 06 — Fory + Spring Boot + Redis: Production-Grade Cache
 
 > **Series:** [[00-MOC-Apache-Fory-Series]]  

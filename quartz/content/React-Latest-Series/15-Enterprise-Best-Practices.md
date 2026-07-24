@@ -1,3 +1,12 @@
+---
+type: course
+domain: frontend/react
+status: active
+created: 2026-05-08
+updated: 2026-05-08
+tags: []
+---
+
 # Bài 15: Best Practices cho Dự án lớn - Chuyên nghiệp hóa 🏢
 
 Chúc mừng bạn đã đi đến chặng đường cuối cùng! Để làm việc trong các công ty lớn (Enterprise), chỉ giỏi code thôi là chưa đủ. Bạn cần biết cách tổ chức code sao cho hàng chục người có thể cùng làm việc mà không dẫm chân lên nhau.

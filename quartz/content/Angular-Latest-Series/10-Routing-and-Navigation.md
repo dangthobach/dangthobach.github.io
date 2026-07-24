@@ -1,3 +1,12 @@
+---
+type: course
+domain: frontend/angular
+status: active
+created: 2026-05-08
+updated: 2026-05-09
+tags: []
+---
+
 # 10. Routing & Navigation — Lazy Loading, Guards và withComponentInputBinding 🗺️
 
 > **Mục tiêu**: Cấu hình routes enterprise, lazy loading với `loadComponent`/`loadChildren`, `withComponentInputBinding`, `PreloadStrategy`, route guards hiện đại (functional), và resolvers để prefetch data.

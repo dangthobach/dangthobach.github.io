@@ -1,3 +1,12 @@
+---
+type: guide
+domain: frontend/solidjs
+status: active
+created: 2026-05-08
+updated: 2026-05-08
+tags: []
+---
+
 # Bài 3: Control Flow - Tối Ưu Hóa Render Danh Sách
 
 Trong SolidJS, việc điều khiển luồng hiển thị (vòng lặp, điều kiện) không đơn giản là dùng các câu lệnh JavaScript thuần túy nếu bạn muốn đạt hiệu suất tối đa.

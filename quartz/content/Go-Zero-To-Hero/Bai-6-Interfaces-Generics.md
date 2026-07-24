@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/go
+status: active
+created: 2026-05-01
+updated: 2026-05-01
+tags: []
+---
+
 # Bài 6: Interfaces Deep Dive & Generics
 
 > **Mục tiêu:** Hiểu interface implicit của Go, composition pattern, type system, và Generics từ Go 1.18+. Đây là tính năng QUAN TRỌNG NHẤT của Go type system.

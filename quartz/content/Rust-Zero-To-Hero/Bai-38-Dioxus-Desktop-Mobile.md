@@ -2,6 +2,11 @@
 tags: [rust, dioxus, desktop, mobile, tui, cross-platform, tauri]
 prerequisites: [Bai-37-Dioxus-Advanced]
 next: null
+type: course
+domain: languages/rust
+status: active
+created: 2026-05-05
+updated: 2026-05-05
 ---
 
 # Bài 38: Dioxus Desktop, Mobile & TUI

@@ -1,3 +1,12 @@
+---
+type: guide
+domain: database
+status: active
+created: 2026-05-07
+updated: 2026-05-07
+tags: []
+---
+
 # 17 — Time Series: PostgreSQL & Oracle Full-Feature Guide
 
 > **Audience:** Engineers xây dựng time-series data systems — metrics, IoT, financial ticks, audit logs.  

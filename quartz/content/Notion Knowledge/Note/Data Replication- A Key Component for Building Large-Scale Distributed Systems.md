@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-09-25T02:20
+type: reference
+domain: reference-library
+status: active
+created: 2025-09-25
+updated: 2025-09-25
+tags: []
+distillation: reference
 ---
 Data replication is critical for building reliable, large-scale distributed systems. In this issue, we will explore common replication strategies and key factors in choosing a suitable strategy.
 

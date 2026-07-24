@@ -5,6 +5,9 @@ status: active
 week: 5
 phase: P3-Reactive
 framework: quarkus
+type: course
+domain: languages/jvm
+updated: 2026-04-12
 ---
 
 # Mutiny — Uni\<T\> và Multi\<T\>

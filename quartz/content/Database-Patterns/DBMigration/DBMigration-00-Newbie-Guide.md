@@ -1,3 +1,12 @@
+---
+type: guide
+domain: database
+status: active
+created: 2026-05-12
+updated: 2026-05-17
+tags: []
+---
+
 # Database Migration — Giải thích từ đầu cho người mới
 
 > Bài này giải thích **tại sao** migration tools tồn tại, **cơ chế thực sự** bên trong, và những khái niệm dễ nhầm nhất — trước khi đọc các bài chuyên sâu.

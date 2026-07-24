@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/jvm
+status: active
+created: 2026-05-05
+updated: 2026-05-05
+tags: []
+---
+
 # 04 — Jakarta Validation 4.0
 
 > **Spec:** Jakarta Bean Validation 4.0 | **Profile:** Core

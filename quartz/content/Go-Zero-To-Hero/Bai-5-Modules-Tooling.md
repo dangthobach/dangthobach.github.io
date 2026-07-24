@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/go
+status: active
+created: 2026-05-01
+updated: 2026-05-01
+tags: []
+---
+
 # Bài 5: Packages, Modules & Go Tooling
 
 > **Mục tiêu:** Hiểu hệ thống module của Go, cách tổ chức packages, và làm chủ bộ công cụ CLI của Go.

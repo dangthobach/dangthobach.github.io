@@ -1,3 +1,12 @@
+---
+type: guide
+domain: database
+status: active
+created: 2026-05-11
+updated: 2026-05-11
+tags: []
+---
+
 # Liquibase 04 — Advanced Enterprise: Multi-schema, Multi-tenant, Diff & generateChangeLog
 
 > **Mục tiêu**: Các pattern nâng cao cho enterprise — đặc biệt là `diff` và `generateChangeLog` để giải quyết bài toán compare scripts trước golive.

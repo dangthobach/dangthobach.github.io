@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-09-09T00:57
+type: reference
+domain: reference-library
+status: active
+created: 2025-09-09
+updated: 2025-09-09
+tags: []
+distillation: reference
 ---
 A system's usefulness depends heavily on its ability to communicate with other systems.
 

@@ -1,3 +1,12 @@
+---
+type: guide
+domain: architecture/microservices
+status: active
+created: 2026-05-17
+updated: 2026-05-17
+tags: []
+---
+
 # REST API vs GraphQL vs Webhook vs gRPC — Lựa Chọn Khoa Học
 
 > **Tags:** #api-design #rest #graphql #webhook #grpc #architecture #microservices  

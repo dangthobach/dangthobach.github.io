@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-09-09T01:14
+type: reference
+domain: reference-library
+status: active
+created: 2025-09-09
+updated: 2025-09-09
+tags: []
+distillation: reference
 ---
 Writing clean, maintainable, and scalable code sounds easy as a requirement, but is a constant challenge when developing real-world applications.
 

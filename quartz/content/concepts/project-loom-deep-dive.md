@@ -3,6 +3,9 @@ tags: [java, concurrency, virtual-threads, loom, reactive, architecture-decision
 created: 2026-04-14
 status: evergreen
 links: [MOC-Concurrency, MOC-JVM-Frameworks, ADR-002-Project-Loom-vs-Reactive-for-PDMS]
+type: concept
+domain: concepts
+updated: 2026-04-14
 ---
 
 # ⚡ Project Loom Deep Dive — Virtual Threads vs Reactive

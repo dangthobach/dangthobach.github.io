@@ -1,3 +1,12 @@
+---
+type: guide
+domain: database
+status: active
+created: 2026-04-14
+updated: 2026-04-14
+tags: []
+---
+
 # Hibernate Reactive Deep Dive
 
 > **Định nghĩa nhanh:** Hibernate Reactive = toàn bộ Hibernate ORM (Persistence Context, dirty checking, lazy loading, L1/L2 cache) — nhưng thay JDBC driver bằng **Vert.x SQL Client** để non-blocking I/O.

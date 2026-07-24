@@ -1,3 +1,12 @@
+---
+type: guide
+domain: database
+status: active
+created: 2026-05-11
+updated: 2026-05-17
+tags: []
+---
+
 # Flyway Deep Dive — Cơ chế hoạt động & Enterprise Patterns
 
 > **Flyway**: Migration tool SQL-first, versioned, đơn giản nhưng mạnh mẽ. Triết lý: **"Plain SQL is king"** — không wrapper, không XML, không magic.

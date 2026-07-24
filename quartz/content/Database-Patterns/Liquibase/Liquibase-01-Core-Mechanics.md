@@ -1,3 +1,12 @@
+---
+type: guide
+domain: database
+status: active
+created: 2026-05-11
+updated: 2026-05-11
+tags: []
+---
+
 # Liquibase 01 — Core Mechanics: Cơ chế hoạt động nội tại
 
 > **Mục tiêu**: Hiểu sâu cách Liquibase hoạt động bên trong — để khi gặp vấn đề production, bạn biết chính xác điều gì đang xảy ra.

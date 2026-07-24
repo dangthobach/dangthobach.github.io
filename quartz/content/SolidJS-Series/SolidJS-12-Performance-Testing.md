@@ -1,3 +1,12 @@
+---
+type: guide
+domain: frontend/solidjs
+status: active
+created: 2026-05-08
+updated: 2026-05-17
+tags: []
+---
+
 # SolidJS 12 — Performance & Testing: Profiling, Vitest, Architecture
 
 #solidjs #frontend #performance #testing #architecture #phase-3-enterprise

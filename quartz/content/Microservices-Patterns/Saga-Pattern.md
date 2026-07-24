@@ -2,6 +2,11 @@
 tags: [microservices, patterns, saga, distributed-transaction, consistency]
 up: "[[01-Data-Consistency]]"
 related: "[[Database-per-Service]], [[Transactional-Outbox]]"
+type: guide
+domain: architecture/microservices
+status: active
+created: 2026-04-12
+updated: 2026-04-12
 ---
 
 # 🔄 Saga Pattern

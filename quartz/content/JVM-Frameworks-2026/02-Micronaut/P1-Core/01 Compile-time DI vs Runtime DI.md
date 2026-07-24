@@ -5,6 +5,9 @@ status: active
 week: 9
 phase: P1-Core
 framework: micronaut
+type: course
+domain: languages/jvm
+updated: 2026-05-17
 ---
 
 # Compile-time DI vs Runtime DI

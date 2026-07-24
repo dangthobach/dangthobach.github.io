@@ -1,3 +1,12 @@
+---
+type: guide
+domain: architecture/microservices
+status: active
+created: 2026-05-17
+updated: 2026-05-24
+tags: []
+---
+
 # AuthZ Platform — Dynamic 5-Layer Design
 
 > **Context:** Thiết kế nền tảng phân quyền động cho enterprise system, áp dụng cho PDMS (Physical Document Management System) tại VPBank và mọi bài toán doanh nghiệp quy mô lớn. Toàn bộ policy, role, permission, field/row filter, relation tuple đều cấu hình xuống database — không hardcode logic trong code.

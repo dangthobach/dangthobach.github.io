@@ -2,6 +2,11 @@
 tags: [microservices, observability, logging, elk, loki, structured-logging]
 up: "[[04-Observability]]"
 related: "[[Distributed-Tracing]], [[Metrics-and-Alerting]]"
+type: guide
+domain: architecture/microservices
+status: active
+created: 2026-04-12
+updated: 2026-04-12
 ---
 
 # 📝 Log Aggregation — Deep Dive

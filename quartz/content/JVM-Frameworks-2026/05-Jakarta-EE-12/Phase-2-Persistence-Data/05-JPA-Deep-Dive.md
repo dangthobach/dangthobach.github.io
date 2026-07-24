@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/jvm
+status: active
+created: 2026-05-05
+updated: 2026-05-05
+tags: []
+---
+
 # 05 — Jakarta Persistence 4.0 (JPA)
 
 > **Spec:** Jakarta Persistence 4.0 | **Profile:** Web Profile

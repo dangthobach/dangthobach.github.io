@@ -1,5 +1,10 @@
 ---
 tags: [moc, distributed-systems, fundamentals]
+type: moc
+domain: knowledge-management
+status: active
+created: 2026-04-12
+updated: 2026-04-12
 ---
 
 # 🌐 MOC — Distributed Systems
@@ -15,7 +20,7 @@ tags: [moc, distributed-systems, fundamentals]
   → Communication (TCP/TLS/DNS), Coordination (Raft, vector clocks), Scalability patterns, Resiliency patterns. **Đây là note nền tảng — đọc đầu tiên.**
 
 ### CAP / PACELC / ACID / BASE
-- [[CAP, PACELC, ACID, BASE - Essential Concepts for an Architect's Toolkit|CAP, PACELC, ACID, BASE]]
+- [[CAP, PACELC, ACID, BASE - Essential Concepts for an Architect’s Toolkit|CAP, PACELC, ACID, BASE]]
   → Bộ tứ khái niệm architect phải thuộc lòng. CAP: chỉ được 2 trong 3. PACELC: mở rộng khi không có partition.
 - [[Consistency and Partition Tolerance- Understanding CAP vs PACELC|CAP vs PACELC — So sánh chi tiết]]
   → Tại sao PACELC thực tế hơn CAP. Latency vs Consistency trade-off khi mạng ổn định.

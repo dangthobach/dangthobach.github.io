@@ -2,6 +2,11 @@
 tags: [microservices, observability, prometheus, grafana, metrics, alerting]
 up: "[[04-Observability]]"
 related: "[[Distributed-Tracing]], [[Log-Aggregation]], [[Circuit-Breaker]]"
+type: guide
+domain: architecture/microservices
+status: active
+created: 2026-04-12
+updated: 2026-04-12
 ---
 
 # 📈 Metrics & Alerting — Deep Dive

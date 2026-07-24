@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-09-14T18:04
+type: reference
+domain: reference-library
+status: active
+created: 2025-09-14
+updated: 2025-09-14
+tags: []
+distillation: reference
 ---
 Modern software systems rarely live in isolation. Most applications today are stitched together from dozens,  sometimes hundreds, of independently deployed services, each handling a piece of the puzzle. This helps create smaller units of responsibility and loose coupling. However, the flexibility comes with a new kind of complexity, especially around how these services communicate.
 

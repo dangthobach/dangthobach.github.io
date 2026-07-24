@@ -5,6 +5,9 @@ status: active
 week: 8
 phase: P4-Native
 framework: quarkus
+type: course
+domain: languages/jvm
+updated: 2026-04-13
 ---
 
 # Kubernetes & Health Checks

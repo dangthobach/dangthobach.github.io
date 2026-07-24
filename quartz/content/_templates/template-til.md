@@ -2,6 +2,10 @@
 tags: [til]
 created: {{date}}
 source: 
+type: guide
+domain: knowledge-management
+status: active
+updated: 2026-04-12
 ---
 
 # TIL: {{title}}

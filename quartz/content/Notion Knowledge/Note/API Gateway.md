@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-09-15T05:37
+type: reference
+domain: reference-library
+status: active
+created: 2025-09-15
+updated: 2025-09-15
+tags: []
+distillation: reference
 ---
 API Gateways are essential components in modern software architectures, particularly microservices-based systems.
 

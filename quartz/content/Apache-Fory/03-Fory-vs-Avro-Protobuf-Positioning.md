@@ -1,3 +1,12 @@
+---
+type: course
+domain: data/serialization
+status: active
+created: 2026-05-27
+updated: 2026-05-27
+tags: []
+---
+
 # 03 — Fory vs Avro vs Protobuf: Định Vị & Decision Framework
 
 > **Series:** [[00-MOC-Apache-Fory-Series]]  

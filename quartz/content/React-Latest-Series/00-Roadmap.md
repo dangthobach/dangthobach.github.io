@@ -1,3 +1,12 @@
+---
+type: moc
+domain: frontend/react
+status: active
+created: 2026-05-08
+updated: 2026-05-17
+tags: []
+---
+
 # Lộ trình React "Zero to Hero" cho Dự án Enterprise 🚀
 
 > Series này đi từ **Newbie đến Enterprise-ready** — bao gồm TypeScript, State Management, Authentication, Advanced Patterns, Performance, và UI Patterns nâng cao. Ví dụ thực tế từ hệ thống PDMS (banking document management).
@@ -139,3 +148,7 @@ React Testing Library + Vitest
 ---
 
 *Cập nhật: React 19 | TypeScript-first | 22 bài | PDMS domain examples*
+
+## 🔗 Concept Graph
+
+- [[frontend-concept-map|Frontend Concept Map — React ↔ Angular ↔ SolidJS]]

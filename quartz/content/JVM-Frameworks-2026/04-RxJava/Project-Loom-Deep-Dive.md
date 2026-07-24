@@ -4,6 +4,9 @@ created: 2026-04-13
 status: active
 week: 21-24
 framework: jvm-core
+type: project
+domain: languages/jvm
+updated: 2026-04-13
 ---
 
 # 🪢 Project Loom — Deep Dive Toàn Diện

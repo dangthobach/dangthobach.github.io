@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/jvm
+status: active
+created: 2026-05-05
+updated: 2026-05-05
+tags: []
+---
+
 # 12 — Jakarta Messaging (JMS) 3.x
 
 > **Spec:** Jakarta Messaging 3.x (JMS) | **Profile:** Full Platform

@@ -1,3 +1,12 @@
+---
+type: course
+domain: frontend/react
+status: active
+created: 2026-05-08
+updated: 2026-05-08
+tags: []
+---
+
 # Bài 04: Render có điều kiện - Cách React "quyết định" hiển thị 💡
 
 Không phải lúc nào chúng ta cũng muốn hiển thị mọi thứ lên màn hình. Đôi khi bạn cần đăng nhập mới thấy được nội dung, hoặc hiển thị thông báo lỗi khi có vấn đề. Đó gọi là **Conditional Rendering**.

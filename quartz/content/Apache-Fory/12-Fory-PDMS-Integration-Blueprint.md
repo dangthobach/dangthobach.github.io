@@ -1,3 +1,12 @@
+---
+type: project
+domain: data/serialization
+status: active
+created: 2026-05-28
+updated: 2026-05-28
+tags: []
+---
+
 # 12 — PDMS Integration Blueprint: Fory End-to-End
 
 > **Series:** [[00-MOC-Apache-Fory-Series]]  

@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/go
+status: active
+created: 2026-05-01
+updated: 2026-05-01
+tags: []
+---
+
 # Bài 12: Gin Advanced — JWT, CORS, Rate Limit, WebSocket
 
 > **Mục tiêu:** Xây dựng production-ready API với Gin — authentication, authorization, rate limiting, graceful shutdown, và WebSocket.

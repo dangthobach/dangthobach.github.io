@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/rust
+status: active
+created: 2026-04-12
+updated: 2026-04-12
+tags: []
+---
+
 # Bài 33: Background Jobs — Scheduler · Worker Pool · Job Queue
 
 > **Prerequisite:** Bài 9 (Tokio), Bài 12 (SQLx), Bài 31 (Redis)  

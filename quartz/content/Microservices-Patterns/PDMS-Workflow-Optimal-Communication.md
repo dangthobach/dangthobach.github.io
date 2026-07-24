@@ -3,6 +3,10 @@ tags: [pdms, vpbank, workflow, cross-service, kafka, authz, performance, consist
 up: "[[PDMS-Architecture-Overview]]"
 related: "[[Cross-Service-Join-AuthZ-Fine-Grained-Filter]], [[Transactional-Outbox]], [[CQRS-Materialized-View]], [[PDMS-AuthZ-Sync-Strategy-Comparison]]"
 created: 2026-04-15
+type: project
+domain: architecture/microservices
+status: active
+updated: 2026-04-15
 ---
 
 # 🔄 PDMS — Workflow Tối Ưu Giao Tiếp Giữa Các Service

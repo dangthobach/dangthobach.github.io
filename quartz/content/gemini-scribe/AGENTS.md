@@ -1,3 +1,12 @@
+---
+type: guide
+domain: knowledge-management
+status: active
+created: 2026-04-10
+updated: 2026-04-13
+tags: []
+---
+
 # AGENTS.md
 
 This file provides context about this Obsidian vault for AI agents.

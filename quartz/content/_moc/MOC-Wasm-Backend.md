@@ -1,6 +1,10 @@
 ---
 tags: [moc, wasm, webassembly, server-side, rust]
 created: 2026-05-01
+type: moc
+domain: knowledge-management
+status: active
+updated: 2026-05-01
 ---
 
 # ⚡ WebAssembly (Wasm) Server-side — MOC
@@ -13,16 +17,16 @@ created: 2026-05-01
 
 ### 🔵 Level 1: Core Concepts
 - [[01-Wasm-Fundamentals|01. Wasm Fundamentals]] — Stack machine, Linear memory, và Security model.
-- [[02-Wasm-vs-Docker|02. Wasm vs Docker]] — Tại sao chúng ta cần cả hai?
-- [[03-WASI-Interface|03. WASI (WebAssembly System Interface)]] — Cách Wasm giao tiếp với OS.
+- 02. Wasm vs Docker *(planned)* — Tại sao chúng ta cần cả hai?
+- 03. WASI (WebAssembly System Interface) *(planned)* — Cách Wasm giao tiếp với OS.
 
 ### 🟣 Level 2: Frameworks & Runtimes
-- [[04-Wasmtime-Runtime|04. Wasmtime Deep-dive]] — Engine đứng sau Spin và Fastly.
+- 04. Wasmtime Deep-dive *(planned)* — Engine đứng sau Spin và Fastly.
 - [[05-Spin-Framework|05. Spin Framework]] — Xây dựng Microservices với Wasm.
 
 ### 🔴 Level 3: Advanced Integration
-- [[06-Component-Model|06. The Component Model]] — Tương lai của việc kết hợp các ngôn ngữ.
-- [[07-Wasm-Edge-Computing|07. Serverless at the Edge]] — Deploy Wasm lên Cloudflare/Vercel.
+- 06. The Component Model *(planned)* — Tương lai của việc kết hợp các ngôn ngữ.
+- 07. Serverless at the Edge *(planned)* — Deploy Wasm lên Cloudflare/Vercel.
 
 ---
 

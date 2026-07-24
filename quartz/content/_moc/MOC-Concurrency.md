@@ -1,5 +1,10 @@
 ---
 tags: [moc, concurrency, threading, async, cross-language]
+type: moc
+domain: knowledge-management
+status: active
+created: 2026-04-12
+updated: 2026-05-01
 ---
 
 # ⚡ MOC — Concurrency

@@ -2,6 +2,10 @@
 tags: [moc, database, internals, performance, rust]
 aliases: [DB Internals MOC]
 created: 2026-05-01
+type: moc
+domain: knowledge-management
+status: active
+updated: 2026-05-01
 ---
 
 # 🗄️ Database Internals — MOC
@@ -15,21 +19,21 @@ created: 2026-05-01
 ### 🟢 Level 1: Log-Structured Storage (Bitcask)
 - [[01-Bitcask-Architecture|01. Kiến trúc Bitcask]] — Hash Table + Append-only Log.
 - [[02-Append-Only-Log-Rust|02. Triển khai Append-only Log với Rust]] — `std::fs` và Binary Encoding.
-- [[03-Bitcask-Merge-Compaction|03. Cơ chế Merge & Compaction]] — Dọn dẹp đĩa hiệu quả.
+- 03. Cơ chế Merge & Compaction *(planned)* — Dọn dẹp đĩa hiệu quả.
 
 ### 🟡 Level 2: Sorted Storage (LSM-Tree)
 - [[04-SSTable-Format|04. Định dạng SSTable]] — Sorted String Table.
 - [[05-Memtable-SkipList|05. Memtable & SkipList]] — Cấu trúc dữ liệu trong bộ nhớ.
-- [[06-Bloom-Filters|06. Bloom Filters]] — Tối ưu hóa I/O cho "Key not found".
+- 06. Bloom Filters *(planned)* — Tối ưu hóa I/O cho "Key not found".
 
 ### 🔴 Level 3: Advanced Topics
-- [[07-B-Tree-vs-LSM-Tree|07. B-Tree vs LSM-Tree]] — Khi nào dùng cái nào?
-- [[08-WAL-Recovery|08. Write-Ahead Log & Crash Recovery]].
+- 07. B-Tree vs LSM-Tree *(planned)* — Khi nào dùng cái nào?
+- 08. Write-Ahead Log & Crash Recovery *(planned)*.
 
 ---
 
 ## 🛠️ ViperKV Project Log
-- [[ViperKV-Project-Log|Mật ký dự án ViperKV]]
+- Mật ký dự án ViperKV *(planned)*
 
 ---
 

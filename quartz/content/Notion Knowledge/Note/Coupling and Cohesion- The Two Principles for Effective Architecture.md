@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-09-09T01:13
+type: reference
+domain: reference-library
+status: active
+created: 2025-09-09
+updated: 2025-09-09
+tags: []
+distillation: reference
 ---
 Every large system that spirals out of control starts the same way: small, functional, and deceptively simple. However, as the system evolves, things spiral out of control.
 

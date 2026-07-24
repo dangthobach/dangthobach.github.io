@@ -1,3 +1,12 @@
+---
+type: guide
+domain: database
+status: active
+created: 2026-04-14
+updated: 2026-04-14
+tags: []
+---
+
 # JDBC vs R2DBC vs Virtual Threads — Bức Tranh Thực Tế 2025/2026
 
 > **Câu hỏi cốt lõi:** R2DBC non-blocking có thực sự là xu hướng tất yếu, hay Virtual Threads (Project Loom) đã thay đổi cuộc chơi?

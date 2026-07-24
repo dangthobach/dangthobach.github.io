@@ -1,3 +1,12 @@
+---
+type: moc
+domain: languages/rust
+status: active
+created: 2026-04-12
+updated: 2026-04-12
+tags: []
+---
+
 # Rust Web Application — Full Curriculum
 
 Mục tiêu: Đủ năng lực triển khai production-grade web application bằng Rust.

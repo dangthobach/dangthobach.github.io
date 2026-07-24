@@ -4,6 +4,10 @@ created: 2026-05-02
 difficulty: intermediate
 estimated-read: 20 min
 links: [io-models-deep-dive, memory-hierarchy-cpu-cache, java-virtual-threads-deep-dive]
+type: concept
+domain: concepts
+status: active
+updated: 2026-05-02
 ---
 
 # 🔧 OS Process, Thread & Scheduling — Nền tảng của mọi Concurrency Model

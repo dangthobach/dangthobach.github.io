@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/jvm
+status: active
+created: 2026-05-05
+updated: 2026-05-05
+tags: []
+---
+
 # 06 — Jakarta Transactions 2.1
 
 > **Spec:** Jakarta Transactions 2.1 | **Profile:** Web Profile

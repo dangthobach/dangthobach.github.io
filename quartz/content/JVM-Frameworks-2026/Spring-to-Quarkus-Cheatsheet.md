@@ -3,6 +3,9 @@ tags: [quarkus, spring, cheatsheet, migration, reference, evergreen]
 aliases: [spring-quarkus-mapping, quarkus-cheatsheet]
 created: 2026-04-13
 status: evergreen
+type: course
+domain: languages/jvm
+updated: 2026-04-13
 ---
 
 # Spring Boot → Quarkus Cheatsheet

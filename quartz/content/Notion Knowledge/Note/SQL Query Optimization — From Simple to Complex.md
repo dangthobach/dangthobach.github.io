@@ -2,6 +2,11 @@
 tags: [database, postgresql, sql, optimization, performance, query-planning]
 Created: 2026-04-12
 MOC: "[[MOC-Database]]"
+type: reference
+domain: reference-library
+status: active
+updated: 2026-04-12
+distillation: reference
 ---
 
 # ⚡ SQL Query Optimization — From Simple to Complex

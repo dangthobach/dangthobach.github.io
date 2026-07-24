@@ -1,3 +1,12 @@
+---
+type: guide
+domain: frontend/solidjs
+status: active
+created: 2026-05-08
+updated: 2026-05-08
+tags: []
+---
+
 # Bài 1: Nội Tại Của Hệ Thống Phản Ứng (Reactivity Internals)
 
 SolidJS không sử dụng Virtual DOM. Thay vào đó, nó dựa trên một hệ thống **Fine-grained Reactivity** (Hệ thống phản ứng chi tiết) để cập nhật trực tiếp các node DOM.

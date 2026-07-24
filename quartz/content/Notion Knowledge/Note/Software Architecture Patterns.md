@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-08-30T23:29
+type: reference
+domain: reference-library
+status: active
+created: 2025-08-30
+updated: 2025-08-30
+tags: []
+distillation: reference
 ---
 Software architects often encounter similar goals and problems repeatedly throughout their careers. These challenges can arise within a single project, across multiple projects within a company, or even throughout an architect's career.
 

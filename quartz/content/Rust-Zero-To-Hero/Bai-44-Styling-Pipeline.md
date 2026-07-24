@@ -2,6 +2,11 @@
 tags: [rust, leptos, dioxus, tailwindcss, styling, css, build-pipeline, production]
 prerequisites: [Bai-43-Form-Validation]
 next: Bai-45-Background-Caching
+type: course
+domain: languages/rust
+status: active
+created: 2026-05-06
+updated: 2026-05-06
 ---
 
 # Bài 44: Styling Pipeline — Tailwind + Leptos/Dioxus

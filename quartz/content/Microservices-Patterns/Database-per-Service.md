@@ -2,6 +2,11 @@
 tags: [microservices, patterns, database, coupling, architecture]
 up: "[[01-Data-Consistency]]"
 related: "[[Saga-Pattern]], [[CQRS-Materialized-View]]"
+type: guide
+domain: architecture/microservices
+status: active
+created: 2026-04-12
+updated: 2026-04-12
 ---
 
 # 🗄️ Database per Service

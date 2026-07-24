@@ -1,3 +1,12 @@
+---
+type: course
+domain: frontend/angular
+status: active
+created: 2026-05-13
+updated: 2026-05-13
+tags: []
+---
+
 # Angular Routing — Layout Cố Định & Search State Preservation
 
 tags: #angular #routing #layout #search-state #frontend

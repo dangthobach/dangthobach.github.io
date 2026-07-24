@@ -1,3 +1,12 @@
+---
+type: guide
+domain: database
+status: active
+created: 2026-05-11
+updated: 2026-05-11
+tags: []
+---
+
 # Liquibase 02 — Configuration & Spring Boot Enterprise Setup
 
 > **Mục tiêu**: Cấu hình Liquibase vào project Spring Boot enterprise đúng cách — từ dependency đến multi-datasource, từ local dev đến production.

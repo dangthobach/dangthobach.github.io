@@ -1,3 +1,12 @@
+---
+type: guide
+domain: frontend/solidjs
+status: active
+created: 2026-05-08
+updated: 2026-05-17
+tags: []
+---
+
 # SolidJS 05 — Control Flow Primitives: Show, For, Index, Switch
 
 #solidjs #frontend #control-flow #phase-1-core

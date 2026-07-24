@@ -1,3 +1,12 @@
+---
+type: guide
+domain: database
+status: active
+created: 2026-05-07
+updated: 2026-05-07
+tags: []
+---
+
 # 12 — Tối Ưu UNION và LIKE Search
 
 > **Audience:** Backend engineers cần tối ưu queries dùng UNION và LIKE trong production.  

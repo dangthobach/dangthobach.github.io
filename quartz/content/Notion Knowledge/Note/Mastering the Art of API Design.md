@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-09-29T01:13
+type: reference
+domain: reference-library
+status: active
+created: 2025-09-29
+updated: 2025-09-29
+tags: []
+distillation: reference
 ---
 In this three-part series, we talk about API design:
 

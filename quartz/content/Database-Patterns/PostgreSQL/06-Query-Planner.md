@@ -1,3 +1,12 @@
+---
+type: guide
+domain: database
+status: active
+created: 2026-05-06
+updated: 2026-05-06
+tags: []
+---
+
 # 06 — Query Planner & Optimizer
 
 > Moved & consolidated từ `concepts/query-planner-optimizer.md`.  

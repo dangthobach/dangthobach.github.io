@@ -1,3 +1,12 @@
+---
+type: moc
+domain: languages/go
+status: active
+created: 2026-05-01
+updated: 2026-05-01
+tags: []
+---
+
 # Go Zero-to-Hero — Curriculum Full (22 Bài)
 
 > Series hoàn chỉnh dành cho Java/Spring Boot developer muốn master Go trong môi trường production.

@@ -1,3 +1,12 @@
+---
+type: concept
+domain: concepts
+status: active
+created: 2026-05-15
+updated: 2026-05-15
+tags: []
+---
+
 # SolidJS vs React — Fine-grained Reactivity vs Virtual DOM
 
 tags: #solidjs #react #reactivity #virtual-dom #signals #performance #internals

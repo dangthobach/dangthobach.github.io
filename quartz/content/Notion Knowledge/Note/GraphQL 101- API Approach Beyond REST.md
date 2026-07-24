@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-09-28T13:47
+type: reference
+domain: reference-library
+status: active
+created: 2025-09-28
+updated: 2025-09-28
+tags: []
+distillation: reference
 ---
 GraphQL is a modern way to build and use APIs. It was first created by Facebook in 2012 and later released as open source in 2015. Unlike the traditional REST approach, where the server decides what data is returned, GraphQL allows the client to ask for exactly what it needs. This simple shift makes APIs more flexible and efficient, especially when dealing with complex applications that use data from many different sources.
 

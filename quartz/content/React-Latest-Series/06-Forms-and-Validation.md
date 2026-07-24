@@ -1,3 +1,12 @@
+---
+type: course
+domain: frontend/react
+status: active
+created: 2026-05-08
+updated: 2026-05-17
+tags: []
+---
+
 # Bài 06: Forms & Validation — React Hook Form + Zod Mastery 📝
 
 > **Mục tiêu**: Làm chủ hoàn toàn RHF + Zod từ form đơn giản đến enterprise patterns: conditional validation, nested objects, FieldArray, server error mapping, và reusable form components cho PDMS.

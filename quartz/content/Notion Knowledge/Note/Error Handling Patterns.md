@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-03-29T21:40
+type: reference
+domain: reference-library
+status: active
+created: 2025-03-29
+updated: 2025-03-29
+tags: []
+distillation: reference
 ---
 Để đảm bảo xử lý lỗi khi publish message từ một microservice lên Kafka, bạn có thể áp dụng một số **pattern** và **best practices** trong hệ thống microservices. Dưới đây là các pattern phổ biến và cách áp dụng chúng để xử lý lỗi khi publish message:
 

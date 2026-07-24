@@ -1,3 +1,12 @@
+---
+type: guide
+domain: knowledge-management
+status: active
+created: 2026-04-10
+updated: 2026-04-10
+tags: []
+---
+
 # Note-taking Methods & Vault Ideas
 
 Based on research into Personal Knowledge Management (PKM), here are several popular note-taking methods and ideas for how to apply them to this Obsidian vault.

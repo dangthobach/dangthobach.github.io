@@ -7,6 +7,9 @@ related:
   - "[[MOC-Memory-Model]]"
 created: 2026-07-06
 status: permanent
+type: concept
+domain: concepts
+updated: 2026-07-06
 ---
 
 # Rust vs Java — Build/Compile/Interpret Timeline & Bộ Nhớ Khi Deploy

@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/jvm
+status: active
+created: 2026-05-05
+updated: 2026-05-05
+tags: []
+---
+
 # 17 — Spring → Jakarta EE Migration Path
 
 > **Topic:** Lộ trình thực tế migrate từ Spring Boot → Jakarta EE runtime

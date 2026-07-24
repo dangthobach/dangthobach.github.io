@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-09-09T00:56
+type: reference
+domain: reference-library
+status: active
+created: 2025-09-09
+updated: 2025-09-09
+tags: []
+distillation: reference
 ---
 Every time a user opens an app, browses a product page, or scrolls a social feed, there’s a system somewhere trying to serve that request fast. Mostly, the goal is to serve the request predictably fast, even under load, across geographies, and during traffic spikes.
 

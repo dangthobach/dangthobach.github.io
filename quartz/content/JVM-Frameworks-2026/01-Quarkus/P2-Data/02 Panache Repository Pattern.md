@@ -5,6 +5,9 @@ status: active
 week: 3
 phase: P2-Data
 framework: quarkus
+type: course
+domain: languages/jvm
+updated: 2026-05-17
 ---
 
 # Panache Repository Pattern

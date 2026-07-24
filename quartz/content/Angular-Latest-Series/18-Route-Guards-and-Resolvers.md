@@ -1,3 +1,12 @@
+---
+type: course
+domain: frontend/angular
+status: active
+created: 2026-05-09
+updated: 2026-05-17
+tags: []
+---
+
 # 18. Route Guards & Resolvers: Kiểm soát điều hướng 🛡️
 
 > **Tại sao quan trọng?**

@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-08-30T23:43
+type: reference
+domain: reference-library
+status: active
+created: 2025-08-30
+updated: 2025-08-30
+tags: []
+distillation: reference
 ---
 Token-based authentication has become quite popular over the years. Traditionally, JWTs have dominated this space.
 

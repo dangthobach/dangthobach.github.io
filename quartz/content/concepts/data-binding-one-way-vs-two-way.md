@@ -1,3 +1,12 @@
+---
+type: concept
+domain: concepts
+status: active
+created: 2026-05-08
+updated: 2026-05-17
+tags: []
+---
+
 # Data Binding — One-Way vs Two-Way: React & Angular Internals
 
 > **Tags:** #frontend #react #angular #data-binding #state-management #architecture  

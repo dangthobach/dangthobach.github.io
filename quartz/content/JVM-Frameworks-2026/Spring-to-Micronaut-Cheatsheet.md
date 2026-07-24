@@ -3,6 +3,9 @@ tags: [micronaut, spring, cheatsheet, migration, reference, evergreen]
 aliases: [spring-micronaut-mapping, micronaut-cheatsheet]
 created: 2026-04-13
 status: evergreen
+type: course
+domain: languages/jvm
+updated: 2026-04-13
 ---
 
 # Spring Boot → Micronaut Cheatsheet

@@ -1,3 +1,12 @@
+---
+type: guide
+domain: frontend/solidjs
+status: active
+created: 2026-05-08
+updated: 2026-05-08
+tags: []
+---
+
 # Bài 5: Async và Suspense - Xử Lý Dữ Liệu Bất Đồng Bộ
 
 Xử lý async là một trong những thách thức lớn của Frontend. SolidJS cung cấp các công cụ mạnh mẽ để biến các luồng dữ liệu async thành các tín hiệu (signals) mượt mà.

@@ -1,3 +1,12 @@
+---
+type: course
+domain: architecture/design-patterns/rust
+status: active
+created: 2026-05-03
+updated: 2026-05-03
+tags: []
+---
+
 # Level 3 · Architecture Patterns
 
 > *"Code scales" — Đây là level thiết kế hệ thống lớn bằng Rust. Handle/Arena giải quyết lifetime hell trong graph structures. Blanket impl tạo behavior automatically. Error hierarchy structuring cho production systems.*

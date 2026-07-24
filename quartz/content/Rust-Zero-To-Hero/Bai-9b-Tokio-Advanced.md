@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/rust
+status: active
+created: 2026-04-18
+updated: 2026-04-18
+tags: []
+---
+
 # Bài 9b: Tokio Advanced — Những Gì Bài 9 Chưa Đủ
 
 > Prerequisites: [[Bai-9-Async-Tokio|Bài 9]] — nắm Future model, spawn, channels, select!

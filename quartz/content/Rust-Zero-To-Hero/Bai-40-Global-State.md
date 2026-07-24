@@ -2,6 +2,11 @@
 tags: [rust, axum, leptos, dioxus, state-management, context, reducer, production]
 prerequisites: [Bai-39-Security-Production]
 next: Bai-41-Auth-SSR
+type: course
+domain: languages/rust
+status: active
+created: 2026-05-06
+updated: 2026-05-06
 ---
 
 # Bài 40: Global State Management — Tránh Prop Drilling

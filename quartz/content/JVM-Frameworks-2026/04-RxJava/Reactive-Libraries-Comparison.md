@@ -4,6 +4,9 @@ created: 2026-04-13
 status: active
 week: 21-24
 framework: all
+type: course
+domain: languages/jvm
+updated: 2026-05-17
 ---
 
 # ⚡ Reactive & Async Libraries — Bản Đồ So Sánh Toàn Diện

@@ -1,3 +1,12 @@
+---
+type: guide
+domain: frontend/solidjs
+status: active
+created: 2026-05-08
+updated: 2026-05-17
+tags: []
+---
+
 # SolidJS 06 — Stores & Nested State: createStore, produce, reconcile
 
 #solidjs #frontend #store #state-management #phase-2-state

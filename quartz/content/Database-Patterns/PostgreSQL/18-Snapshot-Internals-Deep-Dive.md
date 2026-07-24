@@ -1,3 +1,12 @@
+---
+type: guide
+domain: database
+status: active
+created: 2026-05-07
+updated: 2026-05-07
+tags: []
+---
+
 # 18 — PostgreSQL Snapshot Internals: Cơ Chế Thực Sự & Giới Hạn So Với Oracle
 
 > **Audience:** Senior engineers cần hiểu sâu cơ chế snapshot để debug isolation bugs, tune performance, và đưa ra quyết định kiến trúc đúng đắn.

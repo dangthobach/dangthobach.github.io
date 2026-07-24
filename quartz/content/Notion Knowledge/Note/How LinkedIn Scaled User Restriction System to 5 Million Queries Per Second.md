@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-08-31T00:13
+type: reference
+domain: reference-library
+status: active
+created: 2025-08-31
+updated: 2025-08-31
+tags: []
+distillation: reference
 ---
 _Disclaimer: The details in this post have been derived from the LinkedIn Engineering Blog. All credit for the technical details goes to the LinkedIn engineering team. The links to the original articles are present in the references section at the end of the post. We’ve attempted to analyze the details and provide our input about them. If you find any inaccuracies or omissions, please leave a comment, and we will do our best to fix them._
 

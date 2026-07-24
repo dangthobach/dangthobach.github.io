@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-09-15T05:34
+type: moc
+domain: reference-library
+status: active
+created: 2025-09-15
+updated: 2025-09-15
+tags: []
+distillation: reference
 ---
 Containers, led by technologies like Docker, offer a lightweight, portable, and consistent way to package applications and their dependencies.
 

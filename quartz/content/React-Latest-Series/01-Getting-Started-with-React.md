@@ -1,3 +1,12 @@
+---
+type: course
+domain: frontend/react
+status: active
+created: 2026-05-08
+updated: 2026-05-08
+tags: []
+---
+
 # Bài 01: Bắt đầu với React - JSX, Component và Props 🚀
 
 Chào mừng bạn đến với thế giới của React! Trong bài học đầu tiên này, chúng ta sẽ cùng nhau tìm hiểu về 3 cột trụ chính tạo nên một ứng dụng React.

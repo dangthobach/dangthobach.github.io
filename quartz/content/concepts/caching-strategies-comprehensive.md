@@ -4,6 +4,10 @@ created: 2026-05-02
 difficulty: intermediate
 estimated-read: 25 min
 links: [consistency-models-spectrum, clean-architecture-hexagonal]
+type: concept
+domain: concepts
+status: active
+updated: 2026-05-02
 ---
 
 # ⚡ Caching Strategies — Toàn cảnh từ L1 đến Distributed Cache

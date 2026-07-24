@@ -1,3 +1,12 @@
+---
+type: guide
+domain: database
+status: active
+created: 2026-05-07
+updated: 2026-05-07
+tags: []
+---
+
 # 10 — Sharding: Khi Nào, Vấn Đề Phiền Toái, và Giải Pháp
 
 > **Audience:** Senior engineers đang scale database lên hàng chục/trăm triệu records hoặc evaluating sharding.  

@@ -1,5 +1,10 @@
 ---
 tags: [moc, database, postgresql, sql, nosql]
+type: moc
+domain: knowledge-management
+status: active
+created: 2026-04-12
+updated: 2026-05-06
 ---
 
 # 🗄️ MOC — Database

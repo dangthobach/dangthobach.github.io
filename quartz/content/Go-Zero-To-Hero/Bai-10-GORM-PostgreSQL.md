@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/go
+status: active
+created: 2026-05-01
+updated: 2026-05-01
+tags: []
+---
+
 # Bài 10: GORM & PostgreSQL Integration
 
 > **Mục tiêu:** Làm chủ GORM — ORM phổ biến nhất trong Go ecosystem. So sánh với JPA/Hibernate, học patterns quan trọng cho production.

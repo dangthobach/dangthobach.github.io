@@ -1,3 +1,12 @@
+---
+type: course
+domain: frontend/angular
+status: active
+created: 2026-05-14
+updated: 2026-05-14
+tags: []
+---
+
 # Angular Two-Way Data Binding — Cơ chế bên dưới
 
 tags: #angular #data-binding #zone-js #change-detection #signals #internals

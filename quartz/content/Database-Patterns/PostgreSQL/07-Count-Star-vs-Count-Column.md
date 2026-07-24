@@ -1,3 +1,12 @@
+---
+type: guide
+domain: database
+status: active
+created: 2026-05-07
+updated: 2026-05-07
+tags: []
+---
+
 # 07 — COUNT(*) vs COUNT(column): Hiểu Đúng Để Dùng Đúng
 
 > **Audience:** Backend engineers hay dùng COUNT mà không rõ sự khác biệt về semantic và performance.  

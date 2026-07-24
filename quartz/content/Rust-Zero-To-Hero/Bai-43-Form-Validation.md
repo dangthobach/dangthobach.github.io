@@ -2,6 +2,11 @@
 tags: [rust, leptos, dioxus, forms, validation, file-upload, isomorphic, production]
 prerequisites: [Bai-42-JS-Interop, Bai-39-Security-Production]
 next: Bai-44-Styling-Pipeline
+type: course
+domain: languages/rust
+status: active
+created: 2026-05-06
+updated: 2026-05-06
 ---
 
 # Bài 43: Form Handling & Isomorphic Validation

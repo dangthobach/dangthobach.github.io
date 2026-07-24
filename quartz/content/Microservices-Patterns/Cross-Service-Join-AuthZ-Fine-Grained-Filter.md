@@ -2,6 +2,11 @@
 tags: [microservices, patterns, authz, join, cdc, replication, fine-grained-access, kafka, performance]
 up: "[[01-Data-Consistency]]"
 related: "[[CQRS-Materialized-View]], [[Transactional-Outbox]], [[Database-per-Service]]"
+type: guide
+domain: architecture/microservices
+status: active
+created: 2026-04-12
+updated: 2026-05-17
 ---
 
 # 🔐 Cross-Service Join — AuthZ & Fine-Grained Data Filtering tại Scale

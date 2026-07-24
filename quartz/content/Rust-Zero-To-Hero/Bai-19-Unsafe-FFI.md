@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/rust
+status: active
+created: 2026-04-12
+updated: 2026-04-12
+tags: []
+---
+
 # Bài 19: Unsafe Rust & FFI — Khi Safe Không Đủ
 
 > **Tại sao học Unsafe?** Không phải để dùng nhiều — mà để hiểu **tại sao** safe Rust có những restrictions như vậy. Khi bạn biết điều gì xảy ra trong unsafe, toàn bộ borrow checker trở nên có lý. 95% code Rust production không cần unsafe.

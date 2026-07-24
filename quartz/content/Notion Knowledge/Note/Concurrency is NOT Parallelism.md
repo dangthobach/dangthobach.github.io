@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-08-30T23:42
+type: reference
+domain: reference-library
+status: active
+created: 2025-08-30
+updated: 2025-08-30
+tags: []
+distillation: reference
 ---
 ## **Concurrency is NOT Parallelism**
 

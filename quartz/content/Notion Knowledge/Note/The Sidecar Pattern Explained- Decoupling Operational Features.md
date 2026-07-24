@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-09-15T05:51
+type: reference
+domain: reference-library
+status: active
+created: 2025-09-15
+updated: 2025-09-15
+tags: []
+distillation: reference
 ---
 Design patterns are reusable solutions to common problems in software design. They provide a structured approach to solving architectural challenges without reinventing the wheel each time.
 

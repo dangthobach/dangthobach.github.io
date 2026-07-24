@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-09-14T17:22
+type: reference
+domain: reference-library
+status: active
+created: 2025-09-14
+updated: 2025-09-14
+tags: []
+distillation: reference
 ---
 When query performance degrades, most engineers tend to reach for the application code first to identify issues.
 

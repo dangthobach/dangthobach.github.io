@@ -1,3 +1,12 @@
+---
+type: course
+domain: frontend/react
+status: active
+created: 2026-05-08
+updated: 2026-05-08
+tags: []
+---
+
 # Bài 07: React Router v6 - Bản đồ điều hướng cho ứng dụng 🗺️
 
 Trong ứng dụng Single Page Application (SPA), chúng ta không thực sự chuyển sang trang HTML khác. Thay vào đó, chúng ta thay đổi Component hiển thị dựa trên đường dẫn (URL). **React Router** là thư viện giúp làm việc này.

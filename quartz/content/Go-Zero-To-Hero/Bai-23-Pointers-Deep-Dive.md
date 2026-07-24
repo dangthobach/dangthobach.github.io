@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/go
+status: active
+created: 2026-07-13
+updated: 2026-07-13
+tags: []
+---
+
 # Bài 23: Pointers Deep Dive — Bản Chất, Escape Analysis & Tối Ưu
 
 > **Mục tiêu:** Hiểu pointer trong Go ở tầng bản chất (memory layout, escape analysis, GC interaction) — không chỉ "cú pháp `&` và `*`" — để ra quyết định đúng về performance và correctness. So sánh trực tiếp với Java reference và Rust ownership.

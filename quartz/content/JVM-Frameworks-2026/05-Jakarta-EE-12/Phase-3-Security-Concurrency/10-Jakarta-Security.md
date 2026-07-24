@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/jvm
+status: active
+created: 2026-05-05
+updated: 2026-05-05
+tags: []
+---
+
 # 10 — Jakarta Security 4.x
 
 > **Spec:** Jakarta Security 4.x | **Profile:** Web Profile

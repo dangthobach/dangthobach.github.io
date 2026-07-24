@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/rust
+status: active
+created: 2026-04-10
+updated: 2026-04-10
+tags: []
+---
+
 # Bài 3: Structs, Enums & Traits - "Class" kiểu mới trong Rust
 
 Chào Chuyên gia Java, ở bài này chúng ta sẽ trả lời câu hỏi: "Nếu không có Class và Interface, làm sao tôi đóng gói (encapsulate) và trừu tượng hóa (abstract) dữ liệu?"

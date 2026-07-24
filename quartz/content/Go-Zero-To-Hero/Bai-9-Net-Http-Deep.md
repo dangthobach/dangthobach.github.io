@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/go
+status: active
+created: 2026-05-01
+updated: 2026-05-01
+tags: []
+---
+
 # Bài 9: net/http Deep Dive — Standard Library
 
 > **Mục tiêu:** Hiểu HTTP server của Go từ bên trong — Handler, ServeMux, middleware chaining, connection lifecycle. Nền tảng để hiểu Gin/Echo/Fiber.

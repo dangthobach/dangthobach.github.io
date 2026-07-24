@@ -1,3 +1,12 @@
+---
+type: course
+domain: frontend/react
+status: active
+created: 2026-05-09
+updated: 2026-05-17
+tags: []
+---
+
 # 19. Authentication & Protected Routes 🔐
 
 > **Tại sao đây là chủ đề quan trọng trong enterprise?**

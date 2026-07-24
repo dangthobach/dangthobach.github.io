@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-09-15T05:58
+type: reference
+domain: reference-library
+status: active
+created: 2025-09-15
+updated: 2025-09-15
+tags: []
+distillation: reference
 ---
 CQRS, which stands for Command Query Responsibility Segregation, is an architectural pattern that separates the concerns of reading and writing data.
 

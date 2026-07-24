@@ -1,3 +1,12 @@
+---
+type: guide
+domain: architecture/microservices
+status: active
+created: 2026-04-19
+updated: 2026-05-17
+tags: []
+---
+
 # 🐰 RabbitMQ — Troubleshooting, Errors & Tips Thực Tế
 
 > **Mục tiêu:** Catalog đầy đủ các lỗi hay gặp, sự cố triển khai, và tips tối ưu khi vận hành RabbitMQ trong production — đặc biệt với Spring AMQP và Rust (lapin/deadpool-lapin) trên PDMS.

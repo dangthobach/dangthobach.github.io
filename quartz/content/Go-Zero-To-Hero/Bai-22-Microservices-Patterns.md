@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/go
+status: active
+created: 2026-05-01
+updated: 2026-05-01
+tags: []
+---
+
 # Bài 22: Microservices Patterns trong Go
 
 > **Mục tiêu:** Nắm vững các pattern thiết yếu cho microservices production — Saga, Outbox, Circuit Breaker, Service Discovery. Đây là bài tổng kết toàn bộ series.

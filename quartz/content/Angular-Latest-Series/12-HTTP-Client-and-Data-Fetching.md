@@ -1,3 +1,12 @@
+---
+type: course
+domain: frontend/angular
+status: active
+created: 2026-05-08
+updated: 2026-05-17
+tags: []
+---
+
 # 12. HTTP Client — Typed Client, Interceptors và Resource API 🌐
 
 > **Mục tiêu**: Xây dựng HTTP layer enterprise-grade với `HttpClient` typed, functional interceptors, retry/timeout strategies, và `resource()` API mới của Angular 19 cho declarative data fetching.

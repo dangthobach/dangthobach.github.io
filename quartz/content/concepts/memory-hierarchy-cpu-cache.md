@@ -4,6 +4,10 @@ created: 2026-05-02
 difficulty: intermediate
 estimated-read: 20 min
 links: [io-models-deep-dive, os-process-thread-scheduling]
+type: concept
+domain: concepts
+status: active
+updated: 2026-05-02
 ---
 
 # 🧠 CPU Cache & Memory Hierarchy — Tại sao Data Locality quyết định Performance

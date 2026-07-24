@@ -1,3 +1,12 @@
+---
+type: concept
+domain: concepts
+status: active
+created: 2026-05-02
+updated: 2026-05-02
+tags: []
+---
+
 # API Security Patterns — Deep Dive
 
 ---

@@ -3,6 +3,9 @@ tags: [observability, metrics, sre, monitoring, fundamentals]
 created: 2026-04-14
 status: evergreen
 links: [MOC-Observability, MOC-Scalability]
+type: concept
+domain: concepts
+updated: 2026-04-14
 ---
 
 # 📊 Four Golden Signals — Ngôn ngữ Chung của System Health

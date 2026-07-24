@@ -4,6 +4,9 @@ up: "[[PDMS-Architecture-Overview]]"
 related: "[[PDMS-AuthZ-Fine-Grained-Design]], [[PDMS-AuthZ-Sync-Strategy-Comparison]], [[MOC-Auth-Security]]"
 created: 2026-04-15
 updated: 2026-04-15
+type: project
+domain: architecture/microservices
+status: active
 ---
 
 # 🏛️ IAM Multi-Domain Authorization — Thiết Kế Mở Rộng

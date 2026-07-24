@@ -1,3 +1,12 @@
+---
+type: course
+domain: frontend/react
+status: active
+created: 2026-05-08
+updated: 2026-05-08
+tags: []
+---
+
 # Bài 09: Context API và Chia sẻ State - Kết nối không giới hạn 🌐
 
 Khi ứng dụng lớn dần, việc truyền dữ liệu qua nhiều tầng Component (Prop Drilling) sẽ trở thành cơn ác mộng. **Context API** sinh ra để giải quyết vấn đề đó bằng cách tạo ra một "kênh truyền hình" mà bất cứ Component nào cũng có thể bật lên xem.

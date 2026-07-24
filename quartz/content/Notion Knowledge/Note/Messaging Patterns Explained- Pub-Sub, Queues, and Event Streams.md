@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-09-09T00:47
+type: reference
+domain: reference-library
+status: active
+created: 2025-09-09
+updated: 2025-09-09
+tags: []
+distillation: reference
 ---
 Modern software rarely lives on one machine anymore. Services run across clusters, web applications are dynamically rendered on the browser, and data resides on a mix of cloud platforms and in-house data centers.
 

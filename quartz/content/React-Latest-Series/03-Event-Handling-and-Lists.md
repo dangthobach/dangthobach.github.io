@@ -1,3 +1,12 @@
+---
+type: course
+domain: frontend/react
+status: active
+created: 2026-05-08
+updated: 2026-05-08
+tags: []
+---
+
 # Bài 03: Xử lý Sự kiện và Hiển thị Danh sách 🖱️📋
 
 Trong bài này, chúng ta sẽ học cách làm cho ứng dụng phản hồi lại người dùng và cách hiển thị một danh sách dữ liệu (ví dụ: danh sách việc cần làm).

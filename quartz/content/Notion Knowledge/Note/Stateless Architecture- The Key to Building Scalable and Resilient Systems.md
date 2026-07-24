@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-09-15T05:56
+type: reference
+domain: reference-library
+status: active
+created: 2025-09-15
+updated: 2025-09-15
+tags: []
+distillation: reference
 ---
 In today's rapidly evolving digital landscape, developers face the constant challenge of building applications that are not only robust and secure but also infinitely scalable.
 

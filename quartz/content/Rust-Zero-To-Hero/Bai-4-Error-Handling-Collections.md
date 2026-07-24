@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/rust
+status: active
+created: 2026-04-10
+updated: 2026-04-10
+tags: []
+---
+
 # Bài 4: Error Handling & Collections - Tạm biệt Null và Try-Catch
 
 Chào Chuyên gia Java, trong thế giới Spring Boot, chúng ta đã quá quen với việc ném `RuntimeException` hoặc kiểm tra `if (obj != null)`. Trong Rust, chúng ta xử lý lỗi và dữ liệu tập hợp (Collections) theo một cách "tường minh" hơn nhiều, giúp loại bỏ hoàn toàn lỗi runtime kinh điển.

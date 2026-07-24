@@ -1,3 +1,12 @@
+---
+type: course
+domain: frontend/angular
+status: active
+created: 2026-05-08
+updated: 2026-05-08
+tags: []
+---
+
 # 11. Dependency Injection & Services: Hệ thống Điện Nước 💉🚰
 
 Trong Angular, **Service** là nơi chứa các logic dùng chung cho nhiều Component, còn **Dependency Injection (DI)** là cách để các Component "mượn" các Service đó.

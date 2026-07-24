@@ -1,3 +1,12 @@
+---
+type: guide
+domain: frontend/solidjs
+status: active
+created: 2026-05-08
+updated: 2026-05-08
+tags: []
+---
+
 # SolidJS 04 — JSX & Component Model: Cơ chế biên dịch
 
 #solidjs #frontend #jsx #components #phase-1-core

@@ -1,3 +1,12 @@
+---
+type: guide
+domain: database
+status: active
+created: 2026-05-11
+updated: 2026-05-11
+tags: []
+---
+
 # Liquibase 03 — Changelog Mastery: Viết Changelog chuẩn cho hệ thống 200 bảng
 
 > **Mục tiêu**: Nắm vững cách viết changelog XML/SQL đúng cách, strategies tổ chức cho dự án lớn, và các patterns tránh lỗi production.

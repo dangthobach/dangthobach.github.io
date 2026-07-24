@@ -1,3 +1,12 @@
+---
+type: guide
+domain: frontend/solidjs
+status: active
+created: 2026-05-08
+updated: 2026-05-08
+tags: []
+---
+
 # Bài 6: Enterprise Architecture - Kiến Trúc Ứng Dụng Quy Mô Lớn
 
 Để xây dựng một ứng dụng có thể bảo trì và mở rộng trong môi trường doanh nghiệp, chúng ta cần một kiến trúc vững chắc. SolidJS, với tính linh hoạt của mình, cho phép chúng ta áp dụng nhiều mô hình thiết kế hiện đại.

@@ -1,3 +1,12 @@
+---
+type: course
+domain: frontend/react
+status: active
+created: 2026-05-09
+updated: 2026-05-17
+tags: []
+---
+
 # 20. Advanced Component Patterns: Viết component như Senior 🎨
 
 > **Tại sao cần biết patterns này?**

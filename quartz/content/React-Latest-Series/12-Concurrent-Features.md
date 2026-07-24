@@ -1,3 +1,12 @@
+---
+type: course
+domain: frontend/react
+status: active
+created: 2026-05-08
+updated: 2026-05-08
+tags: []
+---
+
 # Bài 12: Tính năng Concurrent - Đa nhiệm thông minh 🧠
 
 Trong các phiên bản React mới (18+), React đã trở nên thông minh hơn trong việc xử lý các tác vụ nặng mà không làm "đứng" giao diện. Đó chính là nhờ các tính năng **Concurrent** (Đồng thời).

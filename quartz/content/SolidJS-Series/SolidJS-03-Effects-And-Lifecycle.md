@@ -1,3 +1,12 @@
+---
+type: guide
+domain: frontend/solidjs
+status: active
+created: 2026-05-08
+updated: 2026-05-17
+tags: []
+---
+
 # SolidJS 03 — Effects & Lifecycle: createEffect, onMount, onCleanup
 
 #solidjs #frontend #effects #lifecycle #phase-1-core

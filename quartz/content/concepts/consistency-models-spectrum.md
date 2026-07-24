@@ -4,6 +4,10 @@ created: 2026-05-02
 difficulty: advanced
 estimated-read: 25 min
 links: [consensus-raft-paxos, distributed-clocks-ordering, cap-pacelc-deep-dive]
+type: concept
+domain: concepts
+status: active
+updated: 2026-05-02
 ---
 
 # 🔄 Consistency Models Spectrum — Từ Linearizability đến Eventual Consistency

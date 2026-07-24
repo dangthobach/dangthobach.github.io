@@ -5,6 +5,9 @@ status: active
 week: 21-24
 framework: reactor
 cross-ref: rxjava, mutiny, loom
+type: project
+domain: languages/jvm
+updated: 2026-05-17
 ---
 
 # ⚛️ Project Reactor — Deep Dive Toàn Diện

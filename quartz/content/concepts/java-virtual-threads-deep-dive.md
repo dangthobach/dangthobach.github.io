@@ -3,6 +3,9 @@ tags: [java, concurrency, project-loom, senior-dev]
 aliases: [Virtual Threads, Project Loom]
 created: 2026-05-01
 status: in-progress
+type: concept
+domain: concepts
+updated: 2026-05-02
 ---
 
 # Java Virtual Threads: Bản chất và Cơ chế hoạt động (Deep Dive)

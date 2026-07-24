@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/jvm
+status: active
+created: 2026-05-05
+updated: 2026-05-05
+tags: []
+---
+
 # Java 2026 — Điểm Nhấn Xu Hướng
 
 > **Cập nhật:** 2026-05 | **Context:** Enterprise / Spring Boot / Banking

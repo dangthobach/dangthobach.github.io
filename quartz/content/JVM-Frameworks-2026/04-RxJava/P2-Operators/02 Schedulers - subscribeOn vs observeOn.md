@@ -5,6 +5,9 @@ status: active
 week: 22
 phase: P2-Operators
 framework: rxjava
+type: course
+domain: languages/jvm
+updated: 2026-04-13
 ---
 
 # Schedulers — subscribeOn vs observeOn

@@ -1,3 +1,12 @@
+---
+type: course
+domain: frontend/react
+status: active
+created: 2026-05-08
+updated: 2026-05-17
+tags: []
+---
+
 # Bài 10: Data Fetching & Error Boundaries — TanStack Query Integration 📡
 
 > **Mục tiêu**: Xây dựng data fetching layer production-grade với TanStack Query v5: query keys, cache invalidation, optimistic updates, pagination, Suspense integration, và Error Boundaries đúng cách.

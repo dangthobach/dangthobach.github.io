@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/rust
+status: active
+created: 2026-04-12
+updated: 2026-04-12
+tags: []
+---
+
 # Bài 17: Zero-cost Abstractions & Performance Optimization
 
 > **Java dev mindset shift:** Trong Java bạn viết code đẹp rồi JIT tự optimize. Trong Rust, compiler optimize tại compile time — bạn phải **biết compiler nghĩ gì** để tận dụng. Không có GC pause, không có JIT warmup — nhưng bạn phải explicit hơn về allocation.

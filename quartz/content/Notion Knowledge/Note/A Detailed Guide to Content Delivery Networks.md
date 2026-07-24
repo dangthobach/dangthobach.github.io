@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-08-30T21:46
+type: reference
+domain: reference-library
+status: active
+created: 2025-08-30
+updated: 2025-08-30
+tags: []
+distillation: reference
 ---
 On the modern web, speed is a critical factor. When a page takes five seconds to load, conversion rates collapse. When it loads in under two seconds, engagement jumps and sales follow. The difference often comes down to how far the content has to travel.
 

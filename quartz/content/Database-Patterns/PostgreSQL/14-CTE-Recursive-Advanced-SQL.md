@@ -1,3 +1,12 @@
+---
+type: guide
+domain: database
+status: active
+created: 2026-05-07
+updated: 2026-05-07
+tags: []
+---
+
 # 14 — CTE, Recursive, INTERSECT, EXCEPT, Subquery: Powerful SQL Techniques
 
 > **Audience:** Senior engineers muốn viết SQL elegant, maintainable, và performant.  

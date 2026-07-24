@@ -1,3 +1,12 @@
+---
+type: guide
+domain: architecture/microservices
+status: active
+created: 2026-04-19
+updated: 2026-05-17
+tags: []
+---
+
 # 🔥 Kafka — Troubleshooting, Errors & Tips
 
 > **Mục tiêu:** Catalog đầy đủ các lỗi, sự cố thường gặp khi triển khai Kafka production, kèm nguyên nhân gốc rễ, cách chẩn đoán nhanh và fix. Đây là phần **bổ sung** cho [[Kafka-Configuration-Deep-Dive]].

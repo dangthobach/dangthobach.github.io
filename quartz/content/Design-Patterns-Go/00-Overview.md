@@ -1,3 +1,12 @@
+---
+type: moc
+domain: architecture/design-patterns/go
+status: active
+created: 2026-05-03
+updated: 2026-05-03
+tags: []
+---
+
 # Go Design Patterns — Series Overview
 
 ```

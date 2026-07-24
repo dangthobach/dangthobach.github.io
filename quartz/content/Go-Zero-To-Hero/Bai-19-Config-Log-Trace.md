@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/go
+status: active
+created: 2026-05-01
+updated: 2026-05-01
+tags: []
+---
+
 # Bài 19: Config, Logging & Distributed Tracing
 
 > **Mục tiêu:** Production-ready observability stack — Viper cho config, Zap cho structured logging, OpenTelemetry cho distributed tracing.

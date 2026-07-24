@@ -1,3 +1,12 @@
+---
+type: course
+domain: frontend/angular
+status: active
+created: 2026-05-08
+updated: 2026-05-08
+tags: []
+---
+
 # 08. Signals: Phản xạ hiện đại 📡
 
 **Signals** là một tính năng mới của Angular (từ bản v16) giúp ứng dụng của bạn chạy nhanh hơn và code dễ viết hơn rất nhiều so với RxJS.

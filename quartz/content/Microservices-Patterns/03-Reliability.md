@@ -1,6 +1,11 @@
 ---
 tags: [microservices, patterns, reliability, circuit-breaker, resilience4j]
 up: "[[00-Hub-Microservices-Patterns]]"
+type: guide
+domain: architecture/microservices
+status: active
+created: 2026-04-12
+updated: 2026-04-12
 ---
 
 # 🛡️ 03 — Reliability Patterns

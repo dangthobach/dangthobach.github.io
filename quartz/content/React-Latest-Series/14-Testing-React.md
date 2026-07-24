@@ -1,3 +1,12 @@
+---
+type: course
+domain: frontend/react
+status: active
+created: 2026-05-08
+updated: 2026-05-08
+tags: []
+---
+
 # Bài 14: Testing trong React - Để đêm về ngủ ngon giấc 😴
 
 Viết code mà không có Test giống như bạn xây nhà mà không kiểm tra móng. Có thể bây giờ nó đứng vững, nhưng chỉ cần sửa một viên gạch nhỏ, cả tòa nhà có thể sập. **Testing** giúp bạn tự tin rằng code mình viết ra luôn chạy đúng.

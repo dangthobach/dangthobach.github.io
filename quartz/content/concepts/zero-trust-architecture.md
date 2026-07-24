@@ -1,3 +1,12 @@
+---
+type: concept
+domain: concepts
+status: active
+created: 2026-05-02
+updated: 2026-05-02
+tags: []
+---
+
 # Zero Trust Architecture — Deep Dive
 
 ---

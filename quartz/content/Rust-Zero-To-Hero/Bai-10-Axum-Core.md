@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/rust
+status: active
+created: 2026-04-12
+updated: 2026-04-12
+tags: []
+---
+
 # Bài 10: Axum Core — Routing, Extractors & App State
 
 Chào Chuyên gia Java. Đây là bài bạn đã chờ đợi. Axum = Spring MVC nhưng compile-time safe, zero reflection, và build trên tokio. Mọi thứ từ Bài 1–9 đều hội tụ tại đây.

@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/rust
+status: active
+created: 2026-04-12
+updated: 2026-04-12
+tags: []
+---
+
 # Bài 18: Type System Nâng Cao — Phantom Types, Typestate, HRTB, GAT
 
 > **Java dev insight:** Java type system giải quyết OOP. Rust type system giải quyết *correctness* — encode invariants vào types để compiler bắt lỗi logic thay vì để lọt vào runtime. Đây là điểm Rust vượt xa Java generics.

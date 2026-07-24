@@ -3,6 +3,10 @@ tags: [cqrs, rust, spring-boot, architecture, comparison, axum, tokio, ddd]
 up: "[[CQRS-Materialized-View]]"
 related: "[[Event-Sourcing]], [[Bai-9-Async-Tokio]], [[Bai-23-Workspace-Architecture]]"
 created: 2026-04-15
+type: guide
+domain: architecture/microservices
+status: active
+updated: 2026-04-15
 ---
 
 # CQRS: Rust (Axum/Tokio) vs Spring Boot — So sánh chuyên sâu

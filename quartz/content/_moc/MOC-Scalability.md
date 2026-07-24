@@ -1,5 +1,10 @@
 ---
 tags: [moc, scalability, performance, infrastructure]
+type: moc
+domain: knowledge-management
+status: active
+created: 2026-04-12
+updated: 2026-04-12
 ---
 
 # ⚡ MOC — Scalability & Infrastructure
@@ -14,7 +19,7 @@ tags: [moc, scalability, performance, infrastructure]
   → Vertical vs Horizontal scaling. Stateless vs Stateful services. Scale-out bottlenecks. Amdahl's Law.
 - [[Top Scalability Strategies for Real-World Load|Top Scalability Strategies]]
   → Caching, CDN, async processing, DB read replicas, sharding, queue-based load leveling. Priority order.
-- [[Stateless Architecture- The Key to Building Scalable Systems|Stateless Architecture]]
+- [[Stateless Architecture- The Key to Building Scalable and Resilient Systems|Stateless Architecture]]
   → Session externalization (Redis), JWT vs server-side session, sticky sessions anti-pattern. **Core principle của microservices.**
 - [[Non-Functional Requirements- The Backbone of Great Software - Part 1|NFR Part 1 — Fundamentals]]
   → Availability, Reliability, Scalability, Performance, Security. Cách đo và đặt mục tiêu (SLA/SLO/SLI).
@@ -60,7 +65,7 @@ tags: [moc, scalability, performance, infrastructure]
 
 - [[Infrastructure as Code|Infrastructure as Code]]
   → Terraform, Ansible, CloudFormation. Idempotency trong IaC. GitOps workflow.
-- [[Kubernetes Made Easy- A Beginner's Roadmap to Container Orchestration|Kubernetes Roadmap]]
+- Kubernetes Roadmap *(planned)*
   → Pod, Deployment, Service, Ingress, ConfigMap, Secret. HPA (Horizontal Pod Autoscaler). Rolling update.
 - [[What are the differences between Virtualization (VMware) and Containerization (Docker)|Virtualization vs Containerization]]
   → VM hypervisor vs container runtime (containerd). Isolation level trade-off. When to use VMs still.
@@ -79,7 +84,7 @@ tags: [moc, scalability, performance, infrastructure]
   → Fan-out strategies, write-heavy vs read-heavy optimization, real-time delivery với WebSocket.
 - [[How Slack Supports Billions of Daily Messages|Slack: Billions of Daily Messages]]
   → Message storage, search indexing, presence system. Channel-based sharding.
-- [[How Tinder's API Gateway Handles A Billion Swipes Per Day|Tinder: 1B Swipes/Day API Gateway]]
+- [[How Tinder’s API Gateway Handles A Billion Swipes Per Day|Tinder: 1B Swipes/Day API Gateway]]
   → Gateway architecture, request coalescing, cache strategy for recommendations.
 - [[Shopify Tech Stack|Shopify Tech Stack]]
   → Rails monolith at scale, Liquid templating, Kafka for async, Kubernetes deployment. Cell-based architecture.

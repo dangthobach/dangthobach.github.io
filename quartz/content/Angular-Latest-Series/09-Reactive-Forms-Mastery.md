@@ -1,3 +1,12 @@
+---
+type: course
+domain: frontend/angular
+status: active
+created: 2026-05-08
+updated: 2026-05-17
+tags: []
+---
+
 # 09. Reactive Forms Mastery — Form phức tạp cho ứng dụng enterprise 📝
 
 > **Mục tiêu**: Làm chủ toàn bộ Reactive Forms từ cơ bản đến nâng cao: FormBuilder, dynamic FormArray, cross-field validators, async validators, và xây dựng form hồ sơ tín dụng đa bước thực tế.

@@ -1,3 +1,12 @@
+---
+type: guide
+domain: database
+status: active
+created: 2026-05-06
+updated: 2026-05-06
+tags: []
+---
+
 # 01 — ACID Internals: Bản Chất Thật Sự của PostgreSQL
 
 > **Audience:** Senior engineers đã biết định nghĩa ACID, muốn hiểu **cơ chế thật sự** bên dưới.  

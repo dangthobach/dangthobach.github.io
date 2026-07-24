@@ -2,6 +2,9 @@
 tags: [moc, java, quarkus, micronaut, vertx, rxjava, learning-2026]
 created: 2026-04-12
 status: active
+type: moc
+domain: knowledge-management
+updated: 2026-04-13
 ---
 
 # ⚡ JVM Modern Frameworks — MOC
@@ -72,7 +75,7 @@ gantt
 
 ### Reactive
 - [[01 Mutiny - Uni và Multi]]
-- [[02 RESTEasy Reactive]]
+- 02 RESTEasy Reactive *(planned)*
 - [[03 SmallRye Kafka]]
 
 ### Production
@@ -86,15 +89,15 @@ gantt
 ### Overview & Core
 - [[00 Micronaut Overview]]
 - [[01 Compile-time DI vs Runtime DI]]
-- [[02 Controller và HTTP Layer]]
+- 02 Controller và HTTP Layer *(planned)*
 
 ### Data & Integration
-- [[01 Micronaut Data JPA]]
+- 01 Micronaut Data JPA *(planned)*
 - [[02 Declarative HTTP Client]]
 
 ### Reactive & Messaging
 - [[01 Micronaut Kafka]]
-- [[02 Compile-time AOP]]
+- 02 Compile-time AOP *(planned)*
 
 ---
 
@@ -103,15 +106,15 @@ gantt
 ### Core Concepts
 - [[00 Vertx Overview]]
 - [[01 Event Loop và Verticles]]
-- [[02 Event Bus]]
+- 02 Event Bus *(planned)*
 
 ### HTTP & Client
 - [[01 Router và Route Handlers]]
-- [[02 WebClient]]
+- 02 WebClient *(planned)*
 
 ### Data & Kafka
 - [[01 Reactive SQL Client]]
-- [[02 Vertx với Quarkus]]
+- 02 Vertx với Quarkus *(planned)*
 
 ---
 
@@ -120,7 +123,7 @@ gantt
 ### Types & Basics
 - [[00 RxJava Overview]]
 - [[01 Observable vs Flowable]]
-- [[02 Single, Maybe, Completable]]
+- 02 Single, Maybe, Completable *(planned)*
 
 ### Operators & Schedulers
 - [[01 Core Operators]]
@@ -149,7 +152,7 @@ gantt
 - [[MOC-Java]] — Spring Boot foundation
 - [[MOC-Distributed-Systems]] — Kafka, messaging patterns
 - [[MOC-Concurrency]] — Async, reactive programming model
-- [[]] — Architecture patterns áp dụng
+-  *(planned)* — Architecture patterns áp dụng
 
 ---
 

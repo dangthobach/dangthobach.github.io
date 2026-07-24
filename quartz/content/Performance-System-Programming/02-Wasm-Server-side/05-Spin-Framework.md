@@ -1,6 +1,10 @@
 ---
 tags: [wasm, spin, serverless, microservices, rust]
 created: 2026-05-01
+type: guide
+domain: systems/performance
+status: active
+updated: 2026-05-01
 ---
 
 # 05. Spin Framework — Xây dựng Microservices với Wasm

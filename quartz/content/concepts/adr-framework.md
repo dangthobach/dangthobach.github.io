@@ -1,3 +1,12 @@
+---
+type: decision
+domain: concepts
+status: active
+created: 2026-05-02
+updated: 2026-05-02
+tags: []
+---
+
 # ADR — Architecture Decision Records
 
 ---

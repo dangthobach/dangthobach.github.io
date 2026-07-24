@@ -1,5 +1,10 @@
 ---
 tags: [moc, system-design, reading-list]
+type: moc
+domain: knowledge-management
+status: active
+created: 2026-04-12
+updated: 2026-04-12
 ---
 
 # 📚 Reading List MOC — System Design & Architecture
@@ -28,7 +33,7 @@ Archive từ Notion — các bài newsletter/article về system design. Dùng n
 
 ## 🌐 Distributed Systems
 - [[A Crash Course on Distributed Systems|Distributed Systems Crash Course]]
-- [[CAP, PACELC, ACID, BASE - Essential Concepts for an Architect's Toolkit|CAP, PACELC, ACID, BASE]]
+- [[CAP, PACELC, ACID, BASE - Essential Concepts for an Architect’s Toolkit|CAP, PACELC, ACID, BASE]]
 - [[Consistency and Partition Tolerance- Understanding CAP vs PACELC|CAP vs PACELC]]
 - [[Dark Side of Distributed Systems- Latency and Partition Tolerance|Dark Side of Distributed Systems]]
 - [[Engineering Trade-offs- Eventual Consistency in Practice|Eventual Consistency in Practice]]
@@ -121,7 +126,7 @@ Archive từ Notion — các bài newsletter/article về system design. Dùng n
 - [[A Deep Dive into HTTP- From HTTP 1 to HTTP 3|HTTP 1→3 Deep Dive]]
 - [[HTTP1 vs HTTP2 vs HTTP3 - A Deep Dive|HTTP Versions Comparison]]
 - [[Infrastructure as Code|Infrastructure as Code]]
-- [[Kubernetes Made Easy- A Beginner's Roadmap to Container Orchestration|Kubernetes Roadmap]]
+- Kubernetes Roadmap *(planned)*
 - [[What are the differences between Virtualization (VMware) and Containerization (Docker)|Virtualization vs Containerization]]
 - [[A Crash Course on Cell-based Architecture|Cell-based Architecture]]
 - [[Why is a solid-state drive (SSD) fast|Why is SSD Fast]]
@@ -135,7 +140,7 @@ Archive từ Notion — các bài newsletter/article về system design. Dùng n
 - [[How LinkedIn Scaled User Restriction System to 5 Million Queries Per Second|LinkedIn: 5M QPS Restriction]]
 - [[How Reddit Delivers Notifications to Tens of Millions of Users|Reddit: Notifications at Scale]]
 - [[How Slack Supports Billions of Daily Messages|Slack: Billions of Messages]]
-- [[How Tinder's API Gateway Handles A Billion Swipes Per Day|Tinder: 1B Swipes/Day]]
+- [[How Tinder’s API Gateway Handles A Billion Swipes Per Day|Tinder: 1B Swipes/Day]]
 - [[How Uber Eats Deduplicates Hundreds of Millions of Product Images|Uber Eats: Image Dedup]]
 - [[How to avoid crawling duplicate URLs at Google scale|Google: URL Dedup at Scale]]
 - [[Shopify Tech Stack|Shopify Tech Stack]]

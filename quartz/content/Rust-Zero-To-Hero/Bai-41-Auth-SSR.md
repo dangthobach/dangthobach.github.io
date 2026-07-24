@@ -2,6 +2,11 @@
 tags: [rust, axum, leptos, dioxus, auth, jwt, cookie, ssr, protected-routes, production]
 prerequisites: [Bai-40-Global-State]
 next: Bai-42-JS-Interop
+type: course
+domain: languages/rust
+status: active
+created: 2026-05-06
+updated: 2026-05-06
 ---
 
 # Bài 41: Auth Flow — Cookie, SSR Hydration & Protected Routes

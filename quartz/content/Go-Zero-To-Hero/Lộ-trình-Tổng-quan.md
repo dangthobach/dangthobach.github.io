@@ -1,3 +1,12 @@
+---
+type: moc
+domain: languages/go
+status: active
+created: 2026-05-01
+updated: 2026-05-01
+tags: []
+---
+
 # Lộ trình Go Zero to Hero — Dành cho Java/Spring Boot Developer
 
 > **Mục tiêu:** Thành thạo Go từ nền tảng đến production — microservices, frameworks hot nhất 2026, concurrency model, tooling ecosystem.
@@ -179,3 +188,7 @@ Xem [[Curriculum-Full]] để biết tất cả topics theo layer.
 ---
 
 *Tip: Go có triết lý "less is more" — code đơn giản, rõ ràng hơn Java rất nhiều. Hãy resist the urge to over-engineer!*
+
+## 🔄 Technology Updates
+
+- [[Bai-25-Go-1.26-Technology-Update|Go 1.26 — Technology Update]]

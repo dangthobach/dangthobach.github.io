@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/go
+status: active
+created: 2026-05-03
+updated: 2026-05-03
+tags: []
+---
+
 # Go Performance Pitfalls: Sai Lầm Phổ Biến & Cách Tối Ưu
 
 > **Mục tiêu:** Hiểu *tại sao* code Go chậm/tốn memory — dựa trên cơ chế runtime, escape analysis, GC, scheduler. Mỗi pitfall có prototype minh hoạ, benchmark số liệu thực tế, và fix chuẩn.

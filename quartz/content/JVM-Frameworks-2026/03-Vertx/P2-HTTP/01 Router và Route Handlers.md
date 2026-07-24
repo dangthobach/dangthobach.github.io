@@ -5,6 +5,9 @@ status: active
 week: 17
 phase: P2-HTTP
 framework: vertx
+type: course
+domain: languages/jvm
+updated: 2026-04-13
 ---
 
 # Router và Route Handlers

@@ -3,6 +3,10 @@ tags: [pdms, vpbank, authz, iam, fine-grained, department, permission, rbac, aba
 up: "[[PDMS-Architecture-Overview]]"
 related: "[[Cross-Service-Join-AuthZ-Fine-Grained-Filter]], [[MOC-Auth-Security]], [[PDMS-AuthZ-Sync-Strategy-Comparison]]"
 created: 2026-04-15
+type: project
+domain: architecture/microservices
+status: active
+updated: 2026-04-15
 ---
 
 # 🔐 PDMS — IAM Service & Fine-Grained Authorization Design

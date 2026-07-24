@@ -1,3 +1,12 @@
+---
+type: course
+domain: architecture/design-patterns/rust
+status: active
+created: 2026-05-03
+updated: 2026-05-03
+tags: []
+---
+
 # Behavioral Patterns in Rust
 
 > *Behavioral patterns định nghĩa cách objects **communicate** và phân chia responsibilities. Đây là nhóm phức tạp nhất trong Rust vì ownership model làm một số patterns (Observer, Mediator) khó hơn đáng kể, nhưng một số patterns khác (Iterator, Strategy) lại trở nên mạnh hơn.*

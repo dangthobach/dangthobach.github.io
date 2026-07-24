@@ -1,3 +1,12 @@
+---
+type: course
+domain: frontend/react
+status: active
+created: 2026-05-15
+updated: 2026-05-15
+tags: []
+---
+
 # React Virtual DOM vs SolidJS Fine-grained Reactivity
 
 tags: #react #solidjs #virtual-dom #performance #reconciler #fiber

@@ -1,3 +1,12 @@
+---
+type: guide
+domain: knowledge-management
+status: active
+created: 2026-04-12
+updated: 2026-04-12
+tags: []
+---
+
 # 📥 Inbox
 
 Mọi note mới đều vào đây trước. Xử lý định kỳ (cuối ngày hoặc cuối tuần):

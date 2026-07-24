@@ -5,6 +5,9 @@ status: active
 week: 4
 phase: P2-Data
 framework: quarkus
+type: course
+domain: languages/jvm
+updated: 2026-04-13
 ---
 
 # Quarkus Transactions

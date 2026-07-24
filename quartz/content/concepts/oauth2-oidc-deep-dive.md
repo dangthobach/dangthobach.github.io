@@ -4,6 +4,10 @@ created: 2026-05-02
 difficulty: advanced
 estimated-read: 25 min
 links: [clean-architecture-hexagonal, ddd-strategic]
+type: concept
+domain: concepts
+status: active
+updated: 2026-05-02
 ---
 
 # 🔐 OAuth 2.0 & OIDC Deep Dive — Từ Protocol đến Keycloak Production

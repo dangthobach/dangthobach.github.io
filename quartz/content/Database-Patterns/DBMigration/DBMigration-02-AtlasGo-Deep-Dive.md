@@ -1,3 +1,12 @@
+---
+type: guide
+domain: database
+status: active
+created: 2026-05-11
+updated: 2026-05-17
+tags: []
+---
+
 # Atlas Go Deep Dive — Schema-as-Code & Declarative Migrations
 
 > **Atlas Go**: Công cụ migration thế hệ mới — triết lý **declarative** (khai báo trạng thái mong muốn, Atlas tự tính diff). Mạnh nhất ở auto-diff và CI/CD linting schema.

@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/rust
+status: active
+created: 2026-04-12
+updated: 2026-04-12
+tags: []
+---
+
 # Bài 35: Resilience — Circuit Breaker · Retry · Bulkhead · Tower Patterns
 
 > **Prerequisite:** Bài 9 (Tokio), Bài 10-11 (Axum + Tower), Bài 34 (OTel)  

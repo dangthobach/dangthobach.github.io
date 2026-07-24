@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/jvm
+status: active
+created: 2026-05-05
+updated: 2026-05-05
+tags: []
+---
+
 # 15 — Profile Design Patterns
 
 > **Topic:** Chọn và thiết kế theo Jakarta EE Profile | **Phase:** Architect Synthesis

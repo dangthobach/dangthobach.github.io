@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/rust
+status: active
+created: 2026-04-12
+updated: 2026-04-12
+tags: []
+---
+
 # Bài 27: Diesel — Type-safe ORM, DSL Queries & diesel-async
 
 > **Prerequisite:** Bài 26 (SQLx Advanced) — học Diesel sau SQLx giúp hiểu rõ sự khác biệt  

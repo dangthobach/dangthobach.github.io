@@ -1,3 +1,12 @@
+---
+type: course
+domain: frontend/angular
+status: active
+created: 2026-05-09
+updated: 2026-05-17
+tags: []
+---
+
 # 21. Error Handling & Global Patterns: Xử lý lỗi như người lớn 🛡️
 
 > **Tại sao quan trọng?**

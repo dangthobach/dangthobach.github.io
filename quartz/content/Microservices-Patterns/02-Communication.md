@@ -1,6 +1,11 @@
 ---
 tags: [microservices, patterns, communication, kafka, messaging, outbox]
 up: "[[00-Hub-Microservices-Patterns]]"
+type: guide
+domain: architecture/microservices
+status: active
+created: 2026-04-12
+updated: 2026-04-12
 ---
 
 # 📡 02 — Communication Patterns

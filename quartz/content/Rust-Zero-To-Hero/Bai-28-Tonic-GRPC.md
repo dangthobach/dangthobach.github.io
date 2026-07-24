@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/rust
+status: active
+created: 2026-04-12
+updated: 2026-04-12
+tags: []
+---
+
 # Bài 28: Tonic / gRPC — Full Course từ Cơ Bản đến Nâng Cao
 
 > **Prerequisite:** Bài 9 (Tokio) + Bài 24-25 (Web Frameworks)  

@@ -1,3 +1,12 @@
+---
+type: guide
+domain: frontend/solidjs
+status: active
+created: 2026-05-08
+updated: 2026-05-08
+tags: []
+---
+
 # SolidJS 08 — Async & Resources: createResource, Suspense, ErrorBoundary
 
 #solidjs #frontend #async #resources #suspense #phase-2-state

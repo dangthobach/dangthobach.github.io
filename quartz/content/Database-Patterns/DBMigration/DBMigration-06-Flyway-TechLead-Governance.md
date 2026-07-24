@@ -1,3 +1,12 @@
+---
+type: guide
+domain: database
+status: active
+created: 2026-06-01
+updated: 2026-06-01
+tags: []
+---
+
 # Flyway cho Technical Leader — Quản trị DDL ở hệ thống 100+ bảng
 
 > **Góc nhìn**: Bài này không dạy Flyway basics. Bài này dạy cách **làm chủ** Flyway khi bạn chịu trách nhiệm toàn bộ schema của một hệ thống production nghiêm túc — nơi một migration sai có thể làm sập service lúc 2AM.

@@ -1,5 +1,10 @@
 ---
 tags: [moc, memory, rust, java]
+type: moc
+domain: knowledge-management
+status: active
+created: 2026-04-12
+updated: 2026-07-06
 ---
 
 # 🧠 Memory Model MOC

@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/jvm
+status: active
+created: 2026-05-05
+updated: 2026-05-05
+tags: []
+---
+
 # 03 — Jakarta JSON-P 2.2 + JSON-B 3.x
 
 > **Specs:** Jakarta JSON Processing 2.2 + Jakarta JSON Binding 3.x | **Profile:** Core

@@ -1,6 +1,10 @@
 ---
 tags: [home, dashboard, meta]
 updated: 2026-04-13
+type: guide
+domain: knowledge-management
+status: active
+created: 2026-04-12
 ---
 
 # Bach — Engineering Knowledge Base
@@ -60,12 +64,12 @@ RxJava    ░░░░░░░░░░░░░░░░░░░░  Chưa b�
 |--------|------|
 | Database Internals | [[MOC-Database-Internals]] |
 | Wasm Server-side | [[MOC-Wasm-Backend]] |
-| Rust Performance | [[MOC-Rust-Performance]] |
+| Rust Performance | [[Performance-Pitfalls-Rust|Rust Performance Pitfalls]] |
 
 ### 📁 Projects
 | Project | Link |
 |---------|------|
-| ViperKV (Custom DB) | [[ViperKV-Project-Log|ViperKV]] |
+| ViperKV (Custom DB) | Planned — project log chưa được tạo |
 | PDMS — VPBank | [[MOC-PDMS]] |
 | Case Studies | [[MOC-Case-Studies]] |
 
@@ -78,8 +82,8 @@ RxJava    ░░░░░░░░░░░░░░░░░░░░  Chưa b�
 
 | # | Topic | Tuần | Notes |
 |---|-------|------|-------|
-| 1 | 🗄️ DB Internals | 1-4 | [[01-Bitcask-Architecture|Bitcask]] · [[02-LSM-Tree-Deep-Dive|LSM-Tree]] |
-| 2 | ⚡ Wasm Server | 5-8 | [[01-Wasm-Fundamentals|Wasm Core]] · [[02-Spin-Framework|Spin Framework]] |
+| 1 | 🗄️ DB Internals | 1-4 | [[01-Bitcask-Architecture|Bitcask]] · [[03-BTree-vs-LSM|B-Tree vs LSM-Tree]] |
+| 2 | ⚡ Wasm Server | 5-8 | [[01-Wasm-Fundamentals|Wasm Core]] · [[05-Spin-Framework|Spin Framework]] |
 
 ### ⬡ JVM Modern Frameworks 2026
 **24 tuần · Bắt đầu 14/04/2026**
@@ -118,3 +122,10 @@ Insight mới  →  _inbox/  →  review cuối tuần  →  concepts/  →  lin
 
 ## 🛠️ Tools
 - [[AGENTS|Gemini Scribe Agents]]
+- [[VAULT-DASHBOARD|Vault Dashboard — metadata, audit và distillation queue]]
+
+## 🔄 Technology Updates
+
+- [[25-Angular-22-Technology-Update-2026|Angular 22]]
+- [[Bai-25-Go-1.26-Technology-Update|Go 1.26]]
+- [[Bai-48-Rust-1.97-Technology-Update|Rust 1.97]]

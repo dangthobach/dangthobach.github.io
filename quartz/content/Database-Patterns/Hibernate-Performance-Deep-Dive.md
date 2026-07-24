@@ -1,3 +1,12 @@
+---
+type: guide
+domain: database
+status: active
+created: 2026-04-14
+updated: 2026-05-26
+tags: []
+---
+
 # Hibernate Performance Deep Dive — Từ Cơ Bản Đến Nâng Cao
 
 > **Audience:** Senior engineer, quen RDBMS, muốn hiểu *tại sao* Hibernate hoạt động thế — không chỉ *cách dùng*.

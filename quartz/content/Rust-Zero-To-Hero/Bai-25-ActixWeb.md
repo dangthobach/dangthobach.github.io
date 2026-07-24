@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/rust
+status: active
+created: 2026-04-12
+updated: 2026-04-12
+tags: []
+---
+
 # Bài 25: ActixWeb — Full Course từ Cơ Bản đến Nâng Cao
 
 > **Prerequisite:** Bài 9 (Tokio) + Bài 10-11 (Axum) — biết Axum giúp học ActixWeb nhanh hơn nhiều  

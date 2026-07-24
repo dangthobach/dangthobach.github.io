@@ -1,3 +1,12 @@
+---
+type: guide
+domain: database
+status: active
+created: 2026-05-07
+updated: 2026-05-07
+tags: []
+---
+
 # 09 — Kiểu Dữ Liệu Thời Gian Tối Ưu trong PostgreSQL
 
 > **Audience:** Backend engineers hay gặp bug timezone, lúng túng khi chọn giữa timestamp/timestamptz/date.  

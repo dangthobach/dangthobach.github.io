@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/rust
+status: active
+created: 2026-04-12
+updated: 2026-04-12
+tags: []
+---
+
 # Bài 30: Validation — validator · garde · Custom FromRequest
 
 > **Prerequisite:** Bài 10-11 (Axum), Bài 13 (Serde)  

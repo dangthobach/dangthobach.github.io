@@ -1,3 +1,12 @@
+---
+type: guide
+domain: frontend/solidjs
+status: active
+created: 2026-05-08
+updated: 2026-05-17
+tags: []
+---
+
 # SolidJS 01 — Reactivity Internals: Bản chất Fine-Grained Reactivity
 
 #solidjs #frontend #reactivity #phase-1-core

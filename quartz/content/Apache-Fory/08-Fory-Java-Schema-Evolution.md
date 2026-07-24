@@ -1,3 +1,12 @@
+---
+type: course
+domain: data/serialization
+status: active
+created: 2026-05-28
+updated: 2026-05-28
+tags: []
+---
+
 # 08 — Schema Evolution Deep Dive: Version Strategy & Migration
 
 > **Series:** [[00-MOC-Apache-Fory-Series]]  

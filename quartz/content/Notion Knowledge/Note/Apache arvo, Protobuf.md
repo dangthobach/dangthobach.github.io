@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2024-11-14T22:47
+type: reference
+domain: reference-library
+status: active
+created: 2024-11-14
+updated: 2024-11-14
+tags: []
+distillation: reference
 ---
 ### **Serialization và Deserialization: Giải thích chuyên sâu**
 

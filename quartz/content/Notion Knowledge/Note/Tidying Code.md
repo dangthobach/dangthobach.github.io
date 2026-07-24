@@ -3,6 +3,12 @@ Created by: Bách Đặng Thọ
 Created time: 2025-09-25T02:01
 tags:
   - Story
+type: reference
+domain: reference-library
+status: active
+created: 2025-09-25
+updated: 2025-09-25
+distillation: reference
 ---
 I’ve found my new favorite book on refactoring code. It’s “[Tidy First?](https://www.amazon.com/Tidy-First-Personal-Exercise-Empirical/dp/1098151240/)” by Kent Beck.
 

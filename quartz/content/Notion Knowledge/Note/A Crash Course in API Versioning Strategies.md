@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-09-25T02:23
+type: reference
+domain: reference-library
+status: active
+created: 2025-09-25
+updated: 2025-09-25
+tags: []
+distillation: reference
 ---
 Developing an API involves a lot of work, from planning to implementation. It's crucial to have a clear and easy-to-understand versioning strategy to avoid confusing developers. In this week's issue, we'll explore different versioning strategies for APIs.
 

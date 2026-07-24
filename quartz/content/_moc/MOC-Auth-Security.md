@@ -1,5 +1,10 @@
 ---
 tags: [moc, auth, security, oauth, jwt, sso]
+type: moc
+domain: knowledge-management
+status: active
+created: 2026-04-12
+updated: 2026-04-12
 ---
 
 # 🔐 MOC — Auth & Security

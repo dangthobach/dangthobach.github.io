@@ -1,3 +1,12 @@
+---
+type: moc
+domain: frontend/solidjs
+status: active
+created: 2026-05-08
+updated: 2026-05-08
+tags: []
+---
+
 # Lộ Trình Học Tập SolidJS: Từ Cơ Bản Đến Chuyên Sâu (Enterprise-Ready)
 
 Chào mừng bạn đến với series học tập SolidJS chuyên sâu. Series này được thiết kế theo cách tiếp cận khoa học, tập trung vào việc hiểu rõ bản chất (internals) của framework thay vì chỉ học cách sử dụng API.

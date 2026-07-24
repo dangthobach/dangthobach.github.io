@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/go
+status: active
+created: 2026-05-01
+updated: 2026-05-01
+tags: []
+---
+
 # Bài 17: Kafka với Go — Sarama & confluent-kafka-go
 
 > **Mục tiêu:** Build Kafka Producer/Consumer trong Go, consumer group, offset management, error handling — so sánh với Java Kafka client.

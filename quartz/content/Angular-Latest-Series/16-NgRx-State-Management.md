@@ -1,3 +1,12 @@
+---
+type: course
+domain: frontend/angular
+status: active
+created: 2026-05-09
+updated: 2026-05-17
+tags: []
+---
+
 # 16. NgRx: Quản lý State tập trung cho dự án lớn 🏪
 
 > **Tại sao cần NgRx?**

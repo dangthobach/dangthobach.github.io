@@ -1,3 +1,12 @@
+---
+type: moc
+domain: architecture/design-patterns/rust
+status: active
+created: 2026-05-03
+updated: 2026-05-03
+tags: []
+---
+
 # GoF Design Patterns in Rust — Series Overview
 
 > **Tại sao Rust thay đổi Design Patterns?**

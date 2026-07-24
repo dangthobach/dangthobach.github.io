@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/go
+status: active
+created: 2026-05-01
+updated: 2026-05-01
+tags: []
+---
+
 # Bài 15: Chi + Clean Architecture
 
 > **Mục tiêu:** Dùng Chi router để build Clean Architecture — tách biệt domain logic khỏi infrastructure, dễ test, dễ maintain.

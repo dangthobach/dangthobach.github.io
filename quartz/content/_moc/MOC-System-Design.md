@@ -1,5 +1,10 @@
 ---
 tags: [moc, architecture, design-patterns, clean-architecture, ddd]
+type: moc
+domain: knowledge-management
+status: active
+created: 2026-04-12
+updated: 2026-05-12
 ---
 
 # 🏛️ MOC — Architecture & Design Patterns

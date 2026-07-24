@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-08-31T00:22
+type: reference
+domain: reference-library
+status: active
+created: 2025-08-31
+updated: 2025-08-31
+tags: []
+distillation: reference
 ---
 Modern databases don’t run on a single box anymore. They span regions, replicate data across nodes, and serve millions of queries in parallel.
 

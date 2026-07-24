@@ -3,6 +3,8 @@ tags: [learning-tracker, jvm-frameworks, weekly-review]
 created: 2026-04-12
 updated: 2026-05
 status: active
+type: course
+domain: languages/jvm
 ---
 
 # 📅 JVM Frameworks — Weekly Study Log

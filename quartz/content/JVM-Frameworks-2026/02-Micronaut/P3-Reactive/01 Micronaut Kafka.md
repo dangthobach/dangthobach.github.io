@@ -5,6 +5,9 @@ status: active
 week: 13
 phase: P3-Reactive
 framework: micronaut
+type: course
+domain: languages/jvm
+updated: 2026-04-13
 ---
 
 # Micronaut Kafka

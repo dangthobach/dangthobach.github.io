@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-09-15T06:02
+type: reference
+domain: reference-library
+status: active
+created: 2025-09-15
+updated: 2025-09-15
+tags: []
+distillation: reference
 ---
 In today's world, distributed systems have become ubiquitous, powering everything from social media platforms and e-commerce websites to financial systems and healthcare applications.
 

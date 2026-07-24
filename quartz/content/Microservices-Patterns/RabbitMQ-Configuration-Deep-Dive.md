@@ -1,3 +1,12 @@
+---
+type: guide
+domain: architecture/microservices
+status: active
+created: 2026-04-12
+updated: 2026-05-17
+tags: []
+---
+
 # 🐰 RabbitMQ — Deep Dive Configuration Guide
 
 > **Mục tiêu:** Hiểu toàn bộ cơ chế AMQP model của RabbitMQ — Exchange, Queue, Binding, từng loại Exchange, Durability, QoS, Dead Letter, Priority Queue — áp dụng thực tế trong Spring AMQP và Rust (lapin/deadpool-lapin).

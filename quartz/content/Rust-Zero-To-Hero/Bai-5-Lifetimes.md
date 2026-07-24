@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/rust
+status: active
+created: 2026-04-12
+updated: 2026-04-12
+tags: []
+---
+
 # Bài 5: Lifetimes — Khi Compiler Hỏi "Mượn Bao Lâu?"
 
 Chào Chuyên gia Java. Đây là topic khiến nhiều người bỏ cuộc với Rust. Nhưng với background của bạn, có một cách nhìn rất thực tế: **Lifetime là cách compiler hỏi một câu hỏi mà Java runtime thường chỉ phát hiện lúc crash.**

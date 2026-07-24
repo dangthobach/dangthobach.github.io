@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-09-15T06:01
+type: reference
+domain: reference-library
+status: active
+created: 2025-09-15
+updated: 2025-09-15
+tags: []
+distillation: reference
 ---
 Event-driven architecture (EDA) is a software design approach emphasizing the production, detection, consumption, and reaction to events. In this architecture, events are state changes or updates within a system.
 

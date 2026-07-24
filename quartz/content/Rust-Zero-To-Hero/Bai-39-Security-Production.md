@@ -2,6 +2,11 @@
 tags: [rust, axum, leptos, dioxus, security, cors, rate-limiting, validation, production]
 prerequisites: [Bai-24-Axum-Advanced, Bai-29-Leptos, Bai-36-Dioxus-Core]
 next: Bai-40-Global-State
+type: course
+domain: languages/rust
+status: active
+created: 2026-05-06
+updated: 2026-05-06
 ---
 
 # Bài 39: Security & Traffic Control — Production-Ready

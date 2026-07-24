@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/go
+status: active
+created: 2026-05-01
+updated: 2026-05-01
+tags: []
+---
+
 # Bài 4: Error Handling, defer, panic & recover
 
 > **Mục tiêu:** Nắm vững triết lý xử lý lỗi của Go — error-as-value, defer stack, panic/recover pattern. So sánh sâu với Java exceptions và Rust Result<T,E>.

@@ -3,6 +3,12 @@ Created by: Bách Đặng Thọ
 Created time: 2024-02-16T00:40
 tags:
   - Database
+type: reference
+domain: reference-library
+status: active
+created: 2024-02-16
+updated: 2024-02-16
+distillation: reference
 ---
 # **Lightning Fast SQL with Real Time Materialized Views**
 

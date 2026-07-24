@@ -3,6 +3,9 @@ tags: [java, di, quarkus, micronaut, spring, evergreen]
 aliases: [compile-time-di, aot-di, runtime-di, dependency-injection-comparison]
 created: 2026-04-13
 status: evergreen
+type: concept
+domain: concepts
+updated: 2026-04-13
 ---
 
 # Compile-time vs Runtime Dependency Injection

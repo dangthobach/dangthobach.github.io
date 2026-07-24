@@ -1,3 +1,12 @@
+---
+type: course
+domain: frontend/react
+status: active
+created: 2026-05-08
+updated: 2026-05-08
+tags: []
+---
+
 # Bài 05: Hooks, Vòng đời và useEffect - Kết nối với thế giới bên ngoài 🌍
 
 Trong bài này, chúng ta sẽ học cách xử lý các tác vụ bên lề (Side Effects) như gọi API, thiết lập bộ đếm thời gian, hoặc tương tác trực tiếp với DOM thông qua Hook quan trọng: `useEffect`.

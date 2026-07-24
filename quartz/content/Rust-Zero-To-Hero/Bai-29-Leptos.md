@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/rust
+status: active
+created: 2026-04-12
+updated: 2026-05-05
+tags: []
+---
+
 # Bài 29: Leptos — Fullstack Rust Web (SSR + CSR + Hydration)
 
 > **Prerequisite:** Bài 24 (Axum Advanced) + Bài 26 (SQLx Advanced)  

@@ -1,3 +1,12 @@
+---
+type: course
+domain: frontend/angular
+status: active
+created: 2026-05-08
+updated: 2026-05-08
+tags: []
+---
+
 # 06. Giao tiếp giữa các Component 👨‍👩‍👦
 
 Trong một ứng dụng lớn, các Component không thể sống cô lập. Chúng cần nói chuyện và trao đổi dữ liệu với nhau.

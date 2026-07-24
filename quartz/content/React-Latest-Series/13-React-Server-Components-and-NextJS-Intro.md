@@ -1,3 +1,12 @@
+---
+type: course
+domain: frontend/react
+status: active
+created: 2026-05-08
+updated: 2026-05-08
+tags: []
+---
+
 # Bài 13: React Server Components & Next.js - Tương lai của React 🚀
 
 Bạn đã quen với việc React chạy hoàn toàn trên trình duyệt của người dùng (Client-side). Nhưng thế giới React đang thay đổi với sự xuất hiện của **React Server Components (RSC)** và **Next.js**.

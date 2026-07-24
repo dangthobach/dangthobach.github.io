@@ -1,3 +1,12 @@
+---
+type: moc
+domain: database
+status: active
+created: 2026-04-14
+updated: 2026-05-06
+tags: []
+---
+
 # Database Persistence in Java — Bức Tranh Tổng Quan
 
 > **Mục tiêu:** Trả lời câu hỏi "Dùng cái gì?" trước khi đi vào từng thứ. Mỗi implementation có một chỗ đứng — không có cái nào "tốt nhất" vô điều kiện.

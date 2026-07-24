@@ -1,3 +1,12 @@
+---
+type: course
+domain: frontend/react
+status: active
+created: 2026-05-08
+updated: 2026-05-08
+tags: []
+---
+
 # Bài 02: Quản lý State - "Trí nhớ" của Component 🧠
 
 Trong bài học này, chúng ta sẽ tìm hiểu cách làm cho Component của bạn trở nên "sống động" bằng cách ghi nhớ thông tin.

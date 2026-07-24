@@ -1,3 +1,12 @@
+---
+type: course
+domain: architecture/design-patterns/rust
+status: active
+created: 2026-05-03
+updated: 2026-05-03
+tags: []
+---
+
 # Rust Idiomatic Patterns — Beyond GoF
 
 > GoF patterns giải quyết vấn đề OOP phổ quát. Nhưng Rust có **ownership model, type system, và zero-cost abstraction** tạo ra một tập patterns riêng — một số không tồn tại ở ngôn ngữ khác, một số thay thế hoàn toàn GoF patterns.

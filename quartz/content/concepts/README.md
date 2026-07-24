@@ -1,3 +1,12 @@
+---
+type: concept
+domain: concepts
+status: active
+created: 2026-04-12
+updated: 2026-04-13
+tags: []
+---
+
 # Concepts — Atomic Knowledge Notes
 
 Thư mục này chứa **atomic concept notes** — mỗi file = 1 concept.

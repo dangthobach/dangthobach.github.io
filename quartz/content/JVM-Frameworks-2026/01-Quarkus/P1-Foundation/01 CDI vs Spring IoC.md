@@ -5,6 +5,9 @@ status: active
 week: 1
 phase: P1-Foundation
 framework: quarkus
+type: course
+domain: languages/jvm
+updated: 2026-05-17
 ---
 
 # CDI (ArC) vs Spring IoC

@@ -1,3 +1,12 @@
+---
+type: moc
+domain: database
+status: active
+created: 2026-05-11
+updated: 2026-05-17
+tags: []
+---
+
 # Database Migration Tools — Map of Content
 
 > **Series mục tiêu**: So sánh chuyên sâu Flyway · Atlas Go · Liquibase — lựa chọn đúng công cụ, triển khai đúng cách cho hệ thống enterprise 200+ bảng, 50+ stored procedures. Kèm **lộ trình triển khai thực tế** cho dự án đang chạy giữa chừng.

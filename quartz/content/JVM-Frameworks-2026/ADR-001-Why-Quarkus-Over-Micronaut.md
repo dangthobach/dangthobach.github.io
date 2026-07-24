@@ -3,6 +3,9 @@ tags: [adr, decision-record, jvm-frameworks, quarkus, micronaut, architecture]
 created: 2026-04-14
 status: accepted
 deciders: [Bach]
+type: decision
+domain: languages/jvm
+updated: 2026-04-14
 ---
 
 # ADR-001 — Chọn Quarkus thay vì Micronaut cho PDMS Migration

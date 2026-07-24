@@ -1,3 +1,12 @@
+---
+type: moc
+domain: frontend/angular
+status: active
+created: 2026-05-08
+updated: 2026-05-09
+tags: []
+---
+
 # Lộ trình Angular "Zero to Hero" cho Dự án Enterprise 🚀
 
 > Series này được thiết kế cho **Newbie đến Enterprise** — từ khái niệm cơ bản đến kiến trúc dự án banking phức tạp. Mỗi bài đều có ví dụ thực tế từ domain **PDMS (Document Management System)**.
@@ -138,4 +147,9 @@ Angular DevTools (Chrome extension)
 
 ---
 
-*Cập nhật: Angular 17-19 | Standalone-first | Signal-first | 21 bài | PDMS domain examples*
+*Cập nhật: Angular 17-22 | Standalone-first | Signal-first | PDMS domain examples*
+
+## 🔄 Technology Update
+
+- [[25-Angular-22-Technology-Update-2026|Angular 22 — Technology Update 2026]]
+- [[frontend-concept-map|Frontend Concept Map — Angular ↔ React ↔ SolidJS]]

@@ -1,3 +1,12 @@
+---
+type: course
+domain: architecture/design-patterns/rust
+status: active
+created: 2026-05-03
+updated: 2026-05-03
+tags: []
+---
+
 # Creational Patterns in Rust
 
 > *Creational patterns giải quyết vấn đề "tạo object như thế nào". Trong Rust, ownership model thay đổi căn bản cách tiếp cận — không có `new` keyword, không có constructor, không có garbage collector.*

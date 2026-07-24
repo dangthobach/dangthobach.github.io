@@ -4,6 +4,12 @@ Created time: 2024-07-30T22:52
 Date: 2025-03-29
 tags:
   - ByteByteGo
+type: reference
+domain: reference-library
+status: active
+created: 2024-07-30
+updated: 2024-07-30
+distillation: reference
 ---
 Imagine trying to build a complex machine, but instead of using pre-made, reusable parts, we have to carve each component. Every screw, bolt, and gear must be recreated from scratch, making the process slow, error-prone, and nearly impossible to scale.
 

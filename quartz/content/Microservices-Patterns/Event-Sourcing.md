@@ -2,6 +2,11 @@
 tags: [microservices, patterns, event-sourcing, cqrs, audit, banking]
 up: "[[01-Data-Consistency]]"
 related: "[[CQRS-Materialized-View]], [[Transactional-Outbox]], [[Saga-Pattern]]"
+type: guide
+domain: architecture/microservices
+status: active
+created: 2026-04-12
+updated: 2026-04-12
 ---
 
 # 📜 Event Sourcing

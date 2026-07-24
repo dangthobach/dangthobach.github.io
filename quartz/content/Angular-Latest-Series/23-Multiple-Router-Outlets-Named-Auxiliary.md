@@ -1,3 +1,12 @@
+---
+type: course
+domain: frontend/angular
+status: active
+created: 2026-05-14
+updated: 2026-05-14
+tags: []
+---
+
 # Multiple Router Outlets trong SPA — Named & Auxiliary Routes
 
 tags: #angular #react #solidjs #routing #named-outlet #auxiliary-route

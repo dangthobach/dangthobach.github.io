@@ -1,3 +1,12 @@
+---
+type: guide
+domain: database
+status: active
+created: 2026-05-06
+updated: 2026-05-06
+tags: []
+---
+
 # 04 — Index Internals: B-Tree, GIN, BRIN và Hơn Thế Nữa
 
 > Moved & consolidated từ `concepts/postgresql-index-internals.md`.  

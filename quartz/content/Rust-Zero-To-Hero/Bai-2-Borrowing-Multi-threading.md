@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/rust
+status: active
+created: 2026-04-10
+updated: 2026-04-10
+tags: []
+---
+
 # Bài 2: Borrowing & Multi-threading - Bí kíp "Diệt tận gốc" Data Race
 
 Chào Chuyên gia Java, ở Bài 1 chúng ta đã biết về Ownership (quyền sở hữu). Nhưng nếu cứ mỗi lần dùng dữ liệu lại phải "chuyển giao hộ khẩu" (Move) thì code sẽ rất tù túng. Đó là lý do Rust có hệ thống **Borrowing (Vay mượn)**.

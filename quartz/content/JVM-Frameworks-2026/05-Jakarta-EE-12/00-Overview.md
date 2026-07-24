@@ -1,3 +1,12 @@
+---
+type: moc
+domain: languages/jvm
+status: active
+created: 2026-05-05
+updated: 2026-05-05
+tags: []
+---
+
 # Jakarta EE 12 — Full Feature Learning Track
 
 > **Mục tiêu:** Spring Boot expert → Jakarta EE architect, spec-first approach

@@ -1,3 +1,12 @@
+---
+type: guide
+domain: database
+status: active
+created: 2026-05-11
+updated: 2026-05-17
+tags: []
+---
+
 # Enterprise Patterns — 200 Tables + 50 Stored Procedures
 
 > **Mục tiêu**: Patterns và tổ chức file cụ thể cho hệ thống enterprise quy mô lớn — 200 bảng, 50 stored procs/functions, multi-environment, multi-tenant.

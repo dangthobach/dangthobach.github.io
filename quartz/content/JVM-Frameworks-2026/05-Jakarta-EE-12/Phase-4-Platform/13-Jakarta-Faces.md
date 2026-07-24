@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/jvm
+status: active
+created: 2026-05-05
+updated: 2026-05-05
+tags: []
+---
+
 # 13 — Jakarta Faces 5.0 (JSF)
 
 > **Spec:** Jakarta Faces 5.0 | **Profile:** Web Profile

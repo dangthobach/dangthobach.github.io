@@ -1,3 +1,12 @@
+---
+type: project
+domain: frontend/angular
+status: active
+created: 2026-05-09
+updated: 2026-05-09
+tags: []
+---
+
 # 19. Content Projection & Advanced Template Patterns 🎭
 
 > **Tại sao cần học?**

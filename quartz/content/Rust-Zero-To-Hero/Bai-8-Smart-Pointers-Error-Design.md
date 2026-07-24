@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/rust
+status: active
+created: 2026-04-12
+updated: 2026-04-12
+tags: []
+---
+
 # Bài 8: Smart Pointers & Error Design — Foundation của App State
 
 Chào Chuyên gia Java. Bài này có hai phần liên kết chặt: Smart Pointers (cách quản lý ownership phức tạp) và Error Design (cách xây dựng error system cho toàn app). Cả hai đều cần thiết trước khi bước vào Tokio và Axum.

@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-09-25T02:11
+type: reference
+domain: reference-library
+status: active
+created: 2025-09-25
+updated: 2025-09-25
+tags: []
+distillation: reference
 ---
 APIs are the backbone of modern applications. They expose a very large surface area for attacks, increasing the risk of security vulnerabilities. Common threats include SQL injection, cross-site scripting, and distributed denial of service (DDoS) attacks.
 

@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/go
+status: active
+created: 2026-05-01
+updated: 2026-05-01
+tags: []
+---
+
 # Bài 18: gRPC với Go — Protobuf, Unary & Streaming
 
 > **Mục tiêu:** Build gRPC services trong Go — proto3 definition, code generation, interceptors, server/client streaming, health check.

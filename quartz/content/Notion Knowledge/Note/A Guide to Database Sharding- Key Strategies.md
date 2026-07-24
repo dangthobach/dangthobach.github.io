@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-09-09T01:01
+type: reference
+domain: reference-library
+status: active
+created: 2025-09-09
+updated: 2025-09-09
+tags: []
+distillation: reference
 ---
 As usage grows and features pile on, applications begin generating more data, often by the hour. That’s a healthy sign for the business. But architecturally, it raises a red flag: the database starts showing strain.
 

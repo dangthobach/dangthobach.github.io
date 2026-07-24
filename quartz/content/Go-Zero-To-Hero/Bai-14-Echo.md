@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/go
+status: active
+created: 2026-05-01
+updated: 2026-05-01
+tags: []
+---
+
 # Bài 14: Echo Framework — Clean & Balanced
 
 > **Mục tiêu:** Nắm vững Echo — framework cân bằng giữa simplicity, performance và features. Standard context, group routing, auto-TLS.

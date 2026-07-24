@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-08-30T23:45
+type: reference
+domain: reference-library
+status: active
+created: 2025-08-30
+updated: 2025-08-30
+tags: []
+distillation: reference
 ---
 Distributed systems fail all the time. There could be a node crashing, a network link going down, or a dependency timing out. It’s hard to predict when these things can happen.
 

@@ -1,3 +1,12 @@
+---
+type: guide
+domain: database
+status: active
+created: 2026-05-06
+updated: 2026-05-06
+tags: []
+---
+
 # 02 — MVCC & Concurrency Engine: Bên Trong PostgreSQL
 
 > **Audience:** Senior engineers muốn hiểu tại sao PostgreSQL scale tốt cho concurrent workloads.  

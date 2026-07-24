@@ -3,6 +3,12 @@ Created by: Bách Đặng Thọ
 Created time: 2025-09-25T01:45
 tags:
   - Story
+type: reference
+domain: reference-library
+status: active
+created: 2025-09-25
+updated: 2025-09-25
+distillation: reference
 ---
 For this week's issue, I am pleased to introduce our guest author, [Ethan Evans](https://www.linkedin.com/in/ethanevansvp/), an ex-Amazon VP who played a pivotal role in creating some of the groundbreaking services we use today, such as Prime Video, Amazon Video, the Amazon Appstore, Prime Gaming (formerly Twitch Prime), and Twitch Commerce.
 

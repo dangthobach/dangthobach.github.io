@@ -1,3 +1,12 @@
+---
+type: guide
+domain: database
+status: active
+created: 2026-05-06
+updated: 2026-05-06
+tags: []
+---
+
 # 03 — Concurrency Patterns: Edge Cases & Bài Toán Thực Tế
 
 > **Audience:** Senior engineers cần giải quyết concurrency bugs trong production.  

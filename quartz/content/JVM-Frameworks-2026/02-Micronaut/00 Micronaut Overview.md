@@ -4,6 +4,9 @@ created: 2026-04-12
 status: active
 week: 9-14
 framework: micronaut
+type: course
+domain: languages/jvm
+updated: 2026-04-12
 ---
 
 # ◈ Micronaut — Tổng Quan

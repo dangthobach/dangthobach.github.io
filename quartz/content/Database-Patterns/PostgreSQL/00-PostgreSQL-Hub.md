@@ -1,3 +1,12 @@
+---
+type: guide
+domain: database
+status: active
+created: 2026-05-06
+updated: 2026-05-07
+tags: []
+---
+
 # 🐘 PostgreSQL — Hub
 
 > **Entry point duy nhất** cho mọi thứ liên quan PostgreSQL trong vault này.  

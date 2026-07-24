@@ -4,6 +4,10 @@ created: 2026-05-02
 difficulty: intermediate
 estimated-read: 25 min
 links: [ddd-strategic, ddd-tactical, solid-principles-deep-dive]
+type: concept
+domain: concepts
+status: active
+updated: 2026-05-02
 ---
 
 # 🏛️ Clean Architecture & Hexagonal Architecture — Xây dựng System "Sống" được lâu dài

@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-08-31T00:14
+type: reference
+domain: reference-library
+status: active
+created: 2025-08-31
+updated: 2025-08-31
+tags: []
+distillation: reference
 ---
 Database schema design plays a crucial role in determining how quickly queries run, how easily features are implemented, and how well things perform at scale. Schema design is never static. What works at 10K users might collapse at 10 million. The best architects revisit schema choices, adapting structure to scale, shape, and current system goals.
 

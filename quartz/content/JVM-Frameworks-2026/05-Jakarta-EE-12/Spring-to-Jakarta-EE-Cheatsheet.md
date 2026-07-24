@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/jvm
+status: active
+created: 2026-05-05
+updated: 2026-05-05
+tags: []
+---
+
 # Spring → Jakarta EE Cheatsheet
 
 > **Dùng khi:** Đọc Quarkus/Helidon doc, design vendor-neutral APIs

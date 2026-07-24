@@ -1,3 +1,12 @@
+---
+type: guide
+domain: database
+status: active
+created: 2026-05-07
+updated: 2026-05-07
+tags: []
+---
+
 # 08 — MVCC So Sánh: MySQL vs PostgreSQL vs Oracle
 
 > **Audience:** Senior engineers cần hiểu sâu concurrency control để thiết kế hệ thống đúng, hoặc chuẩn bị phỏng vấn system design.  

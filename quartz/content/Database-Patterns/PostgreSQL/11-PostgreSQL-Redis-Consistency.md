@@ -1,3 +1,12 @@
+---
+type: guide
+domain: database
+status: active
+created: 2026-05-07
+updated: 2026-05-07
+tags: []
+---
+
 # 11 — Consistency: PostgreSQL + Redis Song Hành
 
 > **Audience:** Senior engineers xây dựng caching layer và gặp vấn đề cache inconsistency.  

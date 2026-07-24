@@ -1,3 +1,12 @@
+---
+type: course
+domain: frontend/angular
+status: active
+created: 2026-05-08
+updated: 2026-05-08
+tags: []
+---
+
 # 04. Directives & Pipes: Công cụ & Bộ lọc 🛠️🧼
 
 Trong Angular, **Directives** giúp bạn điều khiển cấu trúc HTML, còn **Pipes** giúp bạn định dạng lại dữ liệu hiển thị.

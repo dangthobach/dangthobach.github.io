@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/go
+status: active
+created: 2026-05-01
+updated: 2026-05-01
+tags: []
+---
+
 # Bài 1: Go Mindset — Chuyển tư duy từ Java/Rust sang Go
 
 > **Mục tiêu:** Hiểu triết lý thiết kế của Go, so sánh với Java và Rust, setup workspace chuẩn.

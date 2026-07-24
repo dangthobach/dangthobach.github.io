@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-09-14T17:30
+type: reference
+domain: reference-library
+status: active
+created: 2025-09-14
+updated: 2025-09-14
+tags: []
+distillation: reference
 ---
 Modern applications don’t operate in a vacuum. Every time a ride is booked, an item is purchased, or a balance is updated, the backend juggles multiple operations (reads, writes, validations) often across different tables or services. These operations must either succeed together or fail as a unit.
 

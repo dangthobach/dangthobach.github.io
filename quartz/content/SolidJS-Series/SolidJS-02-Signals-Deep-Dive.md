@@ -1,3 +1,12 @@
+---
+type: guide
+domain: frontend/solidjs
+status: active
+created: 2026-05-08
+updated: 2026-05-17
+tags: []
+---
+
 # SolidJS 02 — Signals Deep Dive: createSignal, createMemo, batch
 
 #solidjs #frontend #signals #phase-1-core

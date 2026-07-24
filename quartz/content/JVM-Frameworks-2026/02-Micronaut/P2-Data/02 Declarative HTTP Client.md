@@ -5,6 +5,9 @@ status: active
 week: 11
 phase: P2-Data
 framework: micronaut
+type: course
+domain: languages/jvm
+updated: 2026-04-13
 ---
 
 # Declarative HTTP Client

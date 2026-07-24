@@ -3,6 +3,12 @@ Created by: Bách Đặng Thọ
 Created time: 2025-09-25T02:23
 tags:
   - Story
+type: reference
+domain: reference-library
+status: active
+created: 2025-09-25
+updated: 2025-09-25
+distillation: reference
 ---
 Imagine it's the early 2000s, and you're a developer with a bold idea. You want to test your software not in a safe, controlled environment but right where the action is: the production environment. This is where real users interact with your system. Back then, suggesting something like this might have gotten you some strange looks from your bosses. But now, testing in the real world is not just okay; it's often recommended.
 

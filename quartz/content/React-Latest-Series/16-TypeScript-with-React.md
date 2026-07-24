@@ -1,3 +1,12 @@
+---
+type: course
+domain: frontend/react
+status: active
+created: 2026-05-09
+updated: 2026-05-17
+tags: []
+---
+
 # 16. TypeScript với React: Viết code an toàn hơn 🛡️
 
 > **Tại sao TypeScript quan trọng với React trong enterprise?**

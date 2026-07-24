@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-09-14T17:38
+type: reference
+domain: reference-library
+status: active
+created: 2025-09-14
+updated: 2025-09-14
+tags: []
+distillation: reference
 ---
 Every modern application, from a ride-hailing service to an e-commerce platform, relies on data, and behind that data sits a database. Whether it's storing customer profiles, tracking inventory, or logging user actions, the database is more than just a storage engine. It's the core system that holds an application’s state together. When the database fails, everything else (APIs, front-end, business logic) comes tumbling down.
 

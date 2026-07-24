@@ -1,3 +1,12 @@
+---
+type: guide
+domain: architecture/microservices
+status: active
+created: 2026-05-31
+updated: 2026-05-31
+tags: []
+---
+
 # 🗄️ Source of Truth & Snapshot Strategy — Quản Lý Dữ Liệu Chia Sẻ Trong Microservices
 
 > **TL;DR:** Khi 1 service owns domain data (source of truth) và các service khác cần dùng, đừng share database — hãy snapshot đúng cách. Rule cốt lõi: **snapshot chỉ những gì bạn thực sự cần, không clone toàn bộ entity, và luôn rõ ràng field nào là "owned" vs "cached".**

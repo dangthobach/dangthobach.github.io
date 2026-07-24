@@ -1,3 +1,12 @@
+---
+type: course
+domain: frontend/react
+status: active
+created: 2026-05-08
+updated: 2026-05-17
+tags: []
+---
+
 # Bài 11: Performance Optimization — Profiling, Memoization & Virtualization 🚀
 
 > **Mục tiêu**: Đo lường đúng cách trước khi optimize, áp dụng `React.memo` + `useMemo` + `useCallback` chính xác, và virtualize danh sách lớn với `react-window` cho bảng hồ sơ 10k+ records.

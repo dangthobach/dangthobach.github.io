@@ -1,3 +1,12 @@
+---
+type: guide
+domain: frontend/solidjs
+status: active
+created: 2026-05-08
+updated: 2026-05-08
+tags: []
+---
+
 # Bài 2: Components và Props - Bí Mật Của Sự Hiệu Quả
 
 Sự khác biệt lớn nhất giữa SolidJS và React nằm ở vòng đời của Component. Trong Solid, một Component thực chất chỉ là một hàm thiết lập (setup function).

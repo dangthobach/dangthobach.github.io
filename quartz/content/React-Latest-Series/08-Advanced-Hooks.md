@@ -1,3 +1,12 @@
+---
+type: course
+domain: frontend/react
+status: active
+created: 2026-05-08
+updated: 2026-05-17
+tags: []
+---
+
 # Bài 08: Advanced Hooks — useRef, useMemo, useCallback, useId, useImperativeHandle, useLayoutEffect ⚡
 
 > **Mục tiêu**: Hiểu sâu cơ chế hoạt động của từng hook nâng cao, biết chính xác khi nào nên/không nên dùng, và áp dụng `useImperativeHandle`, `useLayoutEffect`, `useId` vào UI components enterprise.

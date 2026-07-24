@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-09-25T02:21
+type: reference
+domain: reference-library
+status: active
+created: 2025-09-25
+updated: 2025-09-25
+tags: []
+distillation: reference
 ---
 Welcome to our latest issue on IPv4 addressing. In this issue, we'll learn about the basic parts of IPv4 addressing, including its structure, the role of subnet masks, and the meaning of network, broadcast, and host addresses. IP is used to send packets from the source to their final destination, either within the same network or across multiple networks.
 

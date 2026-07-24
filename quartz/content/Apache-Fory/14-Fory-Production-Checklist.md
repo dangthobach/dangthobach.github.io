@@ -1,3 +1,12 @@
+---
+type: course
+domain: data/serialization
+status: active
+created: 2026-05-29
+updated: 2026-05-29
+tags: []
+---
+
 # 14 — Fory Production Checklist: Security, Versioning, Monitoring
 
 > **Series:** [[00-MOC-Apache-Fory-Series]]  

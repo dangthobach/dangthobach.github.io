@@ -1,3 +1,12 @@
+---
+type: guide
+domain: database
+status: active
+created: 2026-05-11
+updated: 2026-05-17
+tags: []
+---
+
 # Tool Comparison: Liquibase vs Flyway vs Atlas Go
 
 > **Mục tiêu**: So sánh khoa học 3 công cụ migration — use cases, điểm mạnh/yếu, cách kết hợp, và những misuse phổ biến cần tránh.

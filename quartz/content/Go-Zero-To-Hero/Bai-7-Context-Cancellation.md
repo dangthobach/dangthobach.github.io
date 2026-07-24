@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/go
+status: active
+created: 2026-05-01
+updated: 2026-05-01
+tags: []
+---
+
 # Bài 7: Context Package & Cancellation
 
 > **Mục tiêu:** Hiểu và dùng thành thạo context.Context — công cụ số 1 để quản lý lifecycle, cancellation, và truyền metadata trong Go.

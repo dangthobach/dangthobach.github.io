@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/jvm
+status: active
+created: 2026-05-05
+updated: 2026-05-05
+tags: []
+---
+
 # CDI vs Spring IoC — Deep Dive + Thread Management
 
 > **Mục tiêu:** Hiểu rõ sự khác biệt kiến trúc giữa CDI Container và Spring IoC, cùng cơ chế quản lý thread

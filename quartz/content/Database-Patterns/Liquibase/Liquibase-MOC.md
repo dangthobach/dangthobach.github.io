@@ -1,3 +1,12 @@
+---
+type: moc
+domain: database
+status: active
+created: 2026-05-11
+updated: 2026-05-11
+tags: []
+---
+
 # Liquibase — Map of Content
 
 > **Series mục tiêu**: Giải quyết **triệt để** bài toán schema migration, DDL compare, và data seeding khi golive production với hệ thống 200+ bảng — không còn ngồi diff script bằng tay.

@@ -4,6 +4,12 @@ Created time: 2023-10-08T15:02
 tags:
   - ByteByteGo
   - Oauth2
+type: reference
+domain: reference-library
+status: active
+created: 2023-10-08
+updated: 2023-10-08
+distillation: reference
 ---
 Imagine you have a special box called a JWT. Inside this box, there are three parts: a header, a payload, and a signature.
 

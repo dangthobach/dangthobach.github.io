@@ -1,5 +1,10 @@
 ---
 tags: [moc, rust]
+type: moc
+domain: knowledge-management
+status: active
+created: 2026-04-12
+updated: 2026-04-12
 ---
 
 # 🦀 Rust MOC
@@ -27,7 +32,7 @@ Map of Content cho toàn bộ Rust knowledge. Đây là entry point — không p
 ### Smart Pointers
 - `Box<T>` — heap allocation, single owner
 - `Rc<T>` — reference counting, single-thread
-- `Arc<T>` — atomic ref count, multi-thread ≈ [[AtomicReference]] Java
+- `Arc<T>` — atomic ref count, multi-thread ≈ AtomicReference *(planned)* Java
 - `Mutex<T>` / `RwLock<T>` — interior mutability
 
 ### Type System
@@ -42,7 +47,7 @@ Map of Content cho toàn bộ Rust knowledge. Đây là entry point — không p
 ## ⚡ Async & Concurrency
 - `async/await` — zero-cost abstraction trên futures
 - `tokio` — async runtime, tương tự Spring WebFlux reactor
-- `tokio::spawn` ≈ [[CompletableFuture]] / Virtual Threads Java
+- `tokio::spawn` ≈ CompletableFuture *(planned)* / Virtual Threads Java
 - `Arc<Mutex<T>>` — shared state across tasks
 
 ---
@@ -67,3 +72,7 @@ Map of Content cho toàn bộ Rust knowledge. Đây là entry point — không p
 - [[MOC-Concurrency]] — Rust async ↔ Java threads ↔ Virtual Threads
 - [[MOC-Memory-Model]] — Ownership ↔ GC mental model
 - [[MOC-Java]] — mapping concepts sang Java tương đương
+
+## 🔄 Technology Updates
+
+- [[Bai-48-Rust-1.97-Technology-Update|Rust 1.97 — Technology Update]]

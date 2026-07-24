@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-08-31T00:17
+type: reference
+domain: reference-library
+status: active
+created: 2025-08-31
+updated: 2025-08-31
+tags: []
+distillation: reference
 ---
 _Note: This article is written in collaboration with the Shopify engineering team. Special thanks to the Shopify engineering team for sharing details with us about their tech stack and also for reviewing the final article before publication. All credit for the technical details and diagrams shared in this article goes to the Shopify Engineering Team._
 

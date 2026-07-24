@@ -4,6 +4,9 @@ created: 2026-04-12
 status: active
 week: 21-24
 framework: rxjava
+type: course
+domain: languages/jvm
+updated: 2026-05-17
 ---
 
 # ◎ RxJava 3 — Tổng Quan

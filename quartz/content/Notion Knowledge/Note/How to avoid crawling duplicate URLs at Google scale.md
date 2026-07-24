@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-09-28T16:17
+type: reference
+domain: reference-library
+status: active
+created: 2025-09-28
+updated: 2025-09-28
+tags: []
+distillation: reference
 ---
 How to avoid crawling **duplicate URLs** at Google scale?
 

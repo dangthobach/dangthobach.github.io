@@ -1,3 +1,12 @@
+---
+type: moc
+domain: database
+status: active
+created: 2026-05-11
+updated: 2026-05-17
+tags: []
+---
+
 # Adoption Roadmap — Triển khai Migration Tool cho Dự án Đang Giữa Chừng
 
 > **Tình huống thực tế**: Dự án PDMS đang giữa phase với 200 bảng, 50 stored procedures, scripts lưu rải rác, golive bị thiếu scripts. Cần triển khai **nhanh**, **an toàn**, **song song** với feature development.

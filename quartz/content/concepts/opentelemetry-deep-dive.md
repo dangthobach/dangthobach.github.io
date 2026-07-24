@@ -4,6 +4,10 @@ created: 2026-05-02
 difficulty: intermediate
 estimated-read: 20 min
 links: [Microservices-Patterns/04-Observability]
+type: concept
+domain: concepts
+status: active
+updated: 2026-05-02
 ---
 
 # 🔭 OpenTelemetry Deep Dive — The Three Pillars of Observability

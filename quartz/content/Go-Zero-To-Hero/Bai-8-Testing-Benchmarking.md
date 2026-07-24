@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/go
+status: active
+created: 2026-05-01
+updated: 2026-05-01
+tags: []
+---
+
 # Bài 8: Testing, Table-driven Tests & Benchmarking
 
 > **Mục tiêu:** Viết tests chất lượng production — table-driven tests, mocking interfaces, race detection, benchmark và profiling.

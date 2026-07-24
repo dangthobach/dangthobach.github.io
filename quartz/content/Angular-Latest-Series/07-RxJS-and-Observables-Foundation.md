@@ -1,3 +1,12 @@
+---
+type: course
+domain: frontend/angular
+status: active
+created: 2026-05-08
+updated: 2026-05-17
+tags: []
+---
+
 # 07. RxJS & Observables — Làm chủ luồng dữ liệu bất đồng bộ 🌊
 
 > **Mục tiêu**: Hiểu Observable/Observer/Subject, thành thạo các operator quan trọng nhất, quản lý subscription đúng cách với `takeUntilDestroyed`, và áp dụng RxJS vào nghiệp vụ banking phức tạp.

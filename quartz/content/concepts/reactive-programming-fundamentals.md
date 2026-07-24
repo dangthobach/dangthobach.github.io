@@ -3,6 +3,9 @@ tags: [java, reactive, concurrency, evergreen]
 aliases: [reactive-programming, reactive-streams, lập-trình-reactive]
 created: 2026-04-13
 status: evergreen
+type: concept
+domain: concepts
+updated: 2026-04-13
 ---
 
 # Reactive Programming Fundamentals

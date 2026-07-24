@@ -1,3 +1,12 @@
+---
+type: guide
+domain: database
+status: active
+created: 2026-05-07
+updated: 2026-05-07
+tags: []
+---
+
 # 16 — JSON & JSONB: Storing, Querying, Indexing, Real-World Patterns
 
 > **Audience:** Engineers lưu semi-structured data trong PostgreSQL, cần biết khi nào dùng JSON/JSONB và tối ưu như thế nào.  

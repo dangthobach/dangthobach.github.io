@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/rust
+status: active
+created: 2026-04-12
+updated: 2026-04-12
+tags: []
+---
+
 # Bài 21: Async Internals — Pin, Waker & Custom Futures
 
 > **Bài 9 dạy cách dùng async/await. Bài này giải thích tại sao nó hoạt động.** Hiểu cơ chế bên trong giúp bạn debug async issues, viết custom executors, và hiểu tại sao `Pin<P>` tồn tại.

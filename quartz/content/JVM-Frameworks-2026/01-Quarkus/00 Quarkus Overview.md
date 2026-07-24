@@ -4,6 +4,9 @@ created: 2026-04-12
 status: active
 week: 1-8
 framework: quarkus
+type: course
+domain: languages/jvm
+updated: 2026-04-12
 ---
 
 # ⬡ Quarkus — Tổng Quan

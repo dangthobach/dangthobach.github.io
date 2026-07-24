@@ -2,6 +2,10 @@
 tags: [database, internals, bitcask, rust, storage]
 created: 2026-05-01
 phase: Phase-3
+type: guide
+domain: systems/performance
+status: active
+updated: 2026-05-01
 ---
 
 # 01. Kiến trúc Bitcask — Cánh cửa vào Database Internals

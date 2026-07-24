@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/jvm
+status: active
+created: 2026-05-05
+updated: 2026-05-05
+tags: []
+---
+
 # Java Framework Landscape 2026
 
 > **Cập nhật:** 2026-05 | **Scope:** Spring Boot, Quarkus, Micronaut, Helidon, Jakarta EE, MicroProfile

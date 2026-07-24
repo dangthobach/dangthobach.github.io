@@ -4,6 +4,10 @@ created: 2026-05-02
 difficulty: intermediate
 estimated-read: 20 min
 links: [clean-architecture-hexagonal, ddd-tactical]
+type: concept
+domain: concepts
+status: active
+updated: 2026-05-02
 ---
 
 # 🧪 Testing Strategy Pyramid — Viết Test đúng, Đủ, Có giá trị

@@ -1,3 +1,12 @@
+---
+type: guide
+domain: database
+status: active
+created: 2026-05-07
+updated: 2026-05-07
+tags: []
+---
+
 # 13 — Grouping & Aggregation: Từ Cơ Bản Đến Advanced
 
 > **Audience:** Senior engineers cần master aggregation cho reporting, analytics, và banking calculations.  

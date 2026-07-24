@@ -1,3 +1,12 @@
+---
+type: guide
+domain: database
+status: active
+created: 2026-04-14
+updated: 2026-04-14
+tags: []
+---
+
 # Spring Data R2DBC Deep Dive
 
 > **Định nghĩa nhanh:** Spring Data R2DBC = Spring Data repository pattern + R2DBC reactive driver — **KHÔNG có ORM**, không có Persistence Context, không có lazy loading, không có dirty checking.

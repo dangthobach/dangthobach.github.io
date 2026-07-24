@@ -2,6 +2,11 @@
 tags: [rust, dioxus, wasm, frontend, cross-platform]
 prerequisites: [Bai-29-Leptos, Bai-9-Async-Tokio]
 next: Bai-37-Dioxus-Advanced
+type: course
+domain: languages/rust
+status: active
+created: 2026-05-05
+updated: 2026-05-05
 ---
 
 # Bài 36: Dioxus — Cross-Platform UI Framework (Core)

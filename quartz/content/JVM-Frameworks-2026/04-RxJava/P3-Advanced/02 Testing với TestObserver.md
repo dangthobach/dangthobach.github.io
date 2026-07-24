@@ -5,6 +5,9 @@ status: active
 week: 24
 phase: P3-Advanced
 framework: rxjava
+type: course
+domain: languages/jvm
+updated: 2026-04-13
 ---
 
 # Testing với TestObserver & TestScheduler

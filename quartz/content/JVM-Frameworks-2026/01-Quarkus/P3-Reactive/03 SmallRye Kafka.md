@@ -5,6 +5,9 @@ status: active
 week: 6
 phase: P3-Reactive
 framework: quarkus
+type: course
+domain: languages/jvm
+updated: 2026-04-13
 ---
 
 # SmallRye Kafka — Reactive Messaging

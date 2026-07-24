@@ -1,3 +1,12 @@
+---
+type: course
+domain: data/serialization
+status: active
+created: 2026-05-28
+updated: 2026-05-28
+tags: []
+---
+
 # 13 — Fory Performance Benchmarks: Số Liệu Thực Tế
 
 > **Series:** [[00-MOC-Apache-Fory-Series]]  

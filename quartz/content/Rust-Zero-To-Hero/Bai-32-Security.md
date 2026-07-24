@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/rust
+status: active
+created: 2026-04-12
+updated: 2026-04-12
+tags: []
+---
+
 # Bài 32: Security — Rate Limiting · Password Hashing · Security Headers
 
 > **Prerequisite:** Bài 11 (Axum Middleware), Bài 13 (JWT), Bài 31 (Redis)  

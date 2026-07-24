@@ -1,3 +1,12 @@
+---
+type: course
+domain: languages/rust
+status: active
+created: 2026-04-12
+updated: 2026-04-12
+tags: []
+---
+
 # Bài 34: OpenTelemetry — Distributed Tracing · Metrics · Jaeger
 
 > **Prerequisite:** Bài 15 (Tracing cơ bản), Bài 9 (Tokio), Bài 28 (Tonic/gRPC)  

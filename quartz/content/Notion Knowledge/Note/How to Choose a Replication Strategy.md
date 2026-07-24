@@ -1,6 +1,13 @@
 ---
 Created by: Bách Đặng Thọ
 Created time: 2025-09-25T02:19
+type: reference
+domain: reference-library
+status: active
+created: 2025-09-25
+updated: 2025-09-25
+tags: []
+distillation: reference
 ---
 In the last issue, we kicked off a 2-part series exploring common data replication strategies. We learned about the leader-follower model - its synchronous and asynchronous variations, consistency considerations, failure handling, and more.
 

@@ -1,3 +1,12 @@
+---
+type: course
+domain: frontend/react
+status: active
+created: 2026-05-14
+updated: 2026-05-14
+tags: []
+---
+
 # Multiple Router Outlets trong React — Parallel Rendering Pattern
 
 tags: #react #react-router #routing #parallel-routes #named-outlet
