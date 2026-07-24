@@ -341,8 +341,26 @@
     <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-25-Go-1.26-Technology-Update</loc>
     <lastmod>2026-07-24T00:00:00.000Z</lastmod>
   </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-26-Go-Framework-Radar-2026</loc>
+    <lastmod>2026-07-24T00:00:00.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-27-Gin-1.12-Production-Update</loc>
+    <lastmod>2026-07-24T00:00:00.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-28-Fiber-v3-Migration</loc>
+    <lastmod>2026-07-24T00:00:00.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-29-Echo-v5-Migration</loc>
+    <lastmod>2026-07-24T00:00:00.000Z</lastmod>
+  </url><url>
     <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-3-Goroutines-Channels</loc>
     <lastmod>2026-05-01T00:00:00.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-30-Chi-5.3-Production-Router</loc>
+    <lastmod>2026-07-24T00:00:00.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-31-Go-Data-Messaging-Clients-2026</loc>
+    <lastmod>2026-07-24T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-4-Error-Defer-Panic</loc>
     <lastmod>2026-05-01T00:00:00.000Z</lastmod>
@@ -1205,8 +1223,32 @@
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-48-Rust-1.97-Technology-Update</loc>
     <lastmod>2026-07-24T00:00:00.000Z</lastmod>
   </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-49-Rust-Framework-Radar-2026</loc>
+    <lastmod>2026-07-24T00:00:00.000Z</lastmod>
+  </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-5-Lifetimes</loc>
     <lastmod>2026-04-12T00:00:00.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-50-Tokio-1.52-Runtime-Update</loc>
+    <lastmod>2026-07-24T00:00:00.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-51-Axum-0.8.9-Production-Update</loc>
+    <lastmod>2026-07-24T00:00:00.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-52-Actix-Web-2026-Update</loc>
+    <lastmod>2026-07-24T00:00:00.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-53-SQLx-0.8-Diesel-2.3-Update</loc>
+    <lastmod>2026-07-24T00:00:00.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-54-Tonic-0.14-Production-gRPC</loc>
+    <lastmod>2026-07-24T00:00:00.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-55-Leptos-0.8-Migration</loc>
+    <lastmod>2026-07-24T00:00:00.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-56-Dioxus-0.7-to-0.8-Watchlist</loc>
+    <lastmod>2026-07-24T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-6-Generics-Traits-Advanced</loc>
     <lastmod>2026-04-12T00:00:00.000Z</lastmod>

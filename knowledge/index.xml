@@ -24,46 +24,46 @@
     <description><![CDATA[ Go 1.26 — Technology Update Mental model Go 1.26 không thay đổi triết lý ngôn ngữ. ]]></description>
     <pubDate>Fri, 24 Jul 2026 00:00:00 GMT</pubDate>
   </item><item>
+    <title>Bai-26-Go-Framework-Radar-2026</title>
+    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-26-Go-Framework-Radar-2026</link>
+    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-26-Go-Framework-Radar-2026</guid>
+    <description><![CDATA[ Bài 26 — Go Framework Radar 2026 Mục tiêu Học theo chuỗi runtime → HTTP abstraction → data/integration → production, không học framework như các API rời rạc. ]]></description>
+    <pubDate>Fri, 24 Jul 2026 00:00:00 GMT</pubDate>
+  </item><item>
+    <title>Bai-27-Gin-1.12-Production-Update</title>
+    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-27-Gin-1.12-Production-Update</link>
+    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-27-Gin-1.12-Production-Update</guid>
+    <description><![CDATA[ Bài 27 — Gin 1.12 Production Update Vì sao cần học Gin 1.12 không đổi major nhưng chạm vào các vùng production nhạy cảm: binding, proxy headers, streaming/hijacking, resource lifecycle và dependency security. ]]></description>
+    <pubDate>Fri, 24 Jul 2026 00:00:00 GMT</pubDate>
+  </item><item>
+    <title>Bai-28-Fiber-v3-Migration</title>
+    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-28-Fiber-v3-Migration</link>
+    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-28-Fiber-v3-Migration</guid>
+    <description><![CDATA[ Bài 28 — Fiber v3 Migration Mental model trước khi migrate Fiber v3 chạy trên fasthttp, nên lifecycle không giống hoàn toàn net/http. ]]></description>
+    <pubDate>Fri, 24 Jul 2026 00:00:00 GMT</pubDate>
+  </item><item>
+    <title>Bai-29-Echo-v5-Migration</title>
+    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-29-Echo-v5-Migration</link>
+    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-29-Echo-v5-Migration</guid>
+    <description><![CDATA[ Bài 29 — Echo v5 Migration Điều thay đổi về tư duy Echo v5 là major mới. ]]></description>
+    <pubDate>Fri, 24 Jul 2026 00:00:00 GMT</pubDate>
+  </item><item>
+    <title>Bai-30-Chi-5.3-Production-Router</title>
+    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-30-Chi-5.3-Production-Router</link>
+    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-30-Chi-5.3-Production-Router</guid>
+    <description><![CDATA[ Bài 30 — Chi 5.3 Production Router Vì sao Chi quan trọng Chi giữ nguyên net/http contract, nên giá trị lớn nhất là composability thay vì framework magic. ]]></description>
+    <pubDate>Fri, 24 Jul 2026 00:00:00 GMT</pubDate>
+  </item><item>
+    <title>Bai-31-Go-Data-Messaging-Clients-2026</title>
+    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-31-Go-Data-Messaging-Clients-2026</link>
+    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-31-Go-Data-Messaging-Clients-2026</guid>
+    <description><![CDATA[ Bài 31 — Go Data &amp; Messaging Clients 2026 Mục tiêu Hiểu client library như các resource manager có pool, retry, deadline và failure semantics riêng. ]]></description>
+    <pubDate>Fri, 24 Jul 2026 00:00:00 GMT</pubDate>
+  </item><item>
     <title>Bai-47-Rust-Changelog-2026-Deep-Dive</title>
     <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-47-Rust-Changelog-2026-Deep-Dive</link>
     <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-47-Rust-Changelog-2026-Deep-Dive</guid>
     <description><![CDATA[ Bài 47: Rust Changelog 2026 Deep Dive — Symbol Mangling, Cargo Warnings &amp; Một Case Study LLVM Miscompilation Mục tiêu: Hiểu bản chất 3 thay đổi quan trọng nhất của Rust 1.97.0/1.97.1 (bản mới nhất, 09-16/07/2026) — không chỉ để biết “có gì mới” mà để hiểu compiler/toolchain hoạt động ở tầng nào ... ]]></description>
-    <pubDate>Fri, 24 Jul 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>Bai-48-Rust-1.97-Technology-Update</title>
-    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-48-Rust-1.97-Technology-Update</link>
-    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-48-Rust-1.97-Technology-Update</guid>
-    <description><![CDATA[ Rust 1.97 — Technology Update Rust stable mới nhất tại thời điểm kiểm tra là 1.97.1; 1.97.0 phát hành ngày 09/07/2026 và 1.97.1 ngày 16/07/2026. ]]></description>
-    <pubDate>Fri, 24 Jul 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>VAULT-DASHBOARD</title>
-    <link>https://dangthobach.github.io/knowledge/_moc/VAULT-DASHBOARD</link>
-    <guid>https://dangthobach.github.io/knowledge/_moc/VAULT-DASHBOARD</guid>
-    <description><![CDATA[ Vault Dashboard Dashboard sinh trực tiếp từ metadata. Đây là nguồn hiện trạng; VAULT-AUDIT-2026 được giữ như historical audit và roadmap. ]]></description>
-    <pubDate>Fri, 24 Jul 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>frontend-concept-map</title>
-    <link>https://dangthobach.github.io/knowledge/concepts/frontend-concept-map</link>
-    <guid>https://dangthobach.github.io/knowledge/concepts/frontend-concept-map</guid>
-    <description><![CDATA[ Frontend Concept Map Bản đồ nối các learning series với concept dùng chung. Nội dung chi tiết vẫn nằm trong từng article gốc. ]]></description>
-    <pubDate>Fri, 24 Jul 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>hibernate-cache-architecture</title>
-    <link>https://dangthobach.github.io/knowledge/concepts/hibernate-cache-architecture</link>
-    <guid>https://dangthobach.github.io/knowledge/concepts/hibernate-cache-architecture</guid>
-    <description><![CDATA[ Hibernate Cache Architecture Atomic view được tách bằng transclusion; nguồn gốc vẫn được giữ nguyên, không sao chép hay sửa nội dung. ]]></description>
-    <pubDate>Fri, 24 Jul 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>hibernate-entity-state-and-merge</title>
-    <link>https://dangthobach.github.io/knowledge/concepts/hibernate-entity-state-and-merge</link>
-    <guid>https://dangthobach.github.io/knowledge/concepts/hibernate-entity-state-and-merge</guid>
-    <description><![CDATA[ Hibernate Entity State, Persist và Merge Atomic view được tách bằng transclusion; nguồn gốc vẫn được giữ nguyên, không sao chép hay sửa nội dung. ]]></description>
-    <pubDate>Fri, 24 Jul 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>hibernate-transaction-flush-clear</title>
-    <link>https://dangthobach.github.io/knowledge/concepts/hibernate-transaction-flush-clear</link>
-    <guid>https://dangthobach.github.io/knowledge/concepts/hibernate-transaction-flush-clear</guid>
-    <description><![CDATA[ Hibernate Transaction, Flush và Clear Atomic view được tách bằng transclusion; nguồn gốc vẫn được giữ nguyên, không sao chép hay sửa nội dung. ]]></description>
     <pubDate>Fri, 24 Jul 2026 00:00:00 GMT</pubDate>
   </item>
     </channel>
