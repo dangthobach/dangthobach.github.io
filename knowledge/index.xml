@@ -6,65 +6,65 @@
       <description>Last 10 notes on Dang Tho Bach&#039;s Knowledge Base</description>
       <generator>Quartz -- quartz.jzhao.xyz</generator>
       <item>
-    <title>Kafka-Configuration-Deep-Dive</title>
-    <link>https://dangthobach.github.io/knowledge/Microservices-Patterns/Kafka-Configuration-Deep-Dive</link>
-    <guid>https://dangthobach.github.io/knowledge/Microservices-Patterns/Kafka-Configuration-Deep-Dive</guid>
-    <description><![CDATA[ ⚡ Apache Kafka — Deep Dive Configuration Guide Mục tiêu: Hiểu toàn bộ cấu hình Kafka từ broker đến producer/consumer, áp dụng thực tế trong Spring Boot và Rust (rdkafka). ]]></description>
-    <pubDate>Mon, 20 Jul 2026 17:21:06 GMT</pubDate>
+    <title>25-Angular-22-Technology-Update-2026</title>
+    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/25-Angular-22-Technology-Update-2026</link>
+    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/25-Angular-22-Technology-Update-2026</guid>
+    <description><![CDATA[ Angular 22 — Technology Update 2026 Tóm tắt dễ nhớ Angular 22 phát hành ngày 03/06/2026. ]]></description>
+    <pubDate>Fri, 24 Jul 2026 00:00:00 GMT</pubDate>
   </item><item>
-    <title>Bai-23-Pointers-Deep-Dive</title>
-    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-23-Pointers-Deep-Dive</link>
-    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-23-Pointers-Deep-Dive</guid>
-    <description><![CDATA[ Bài 23: Pointers Deep Dive — Bản Chất, Escape Analysis &amp; Tối Ưu Mục tiêu: Hiểu pointer trong Go ở tầng bản chất (memory layout, escape analysis, GC interaction) — không chỉ “cú pháp &amp; và *” — để ra quyết định đúng về performance và correctness. ]]></description>
-    <pubDate>Mon, 13 Jul 2026 06:18:01 GMT</pubDate>
+    <title>Bai-24-Go-1.26-1.27-Changelog-Deep-Dive</title>
+    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-24-Go-1.26-1.27-Changelog-Deep-Dive</link>
+    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-24-Go-1.26-1.27-Changelog-Deep-Dive</guid>
+    <description><![CDATA[ Bài 24: Go 1.26 &amp; 1.27 Changelog Deep Dive — Green Tea GC, Generic Methods &amp; Escape Analysis Update Mục tiêu: Không chỉ liệt kê “có gì mới” — mà hiểu vì sao Go team đổi GC mặc định, đổi cách generic hoạt động, và những thay đổi này tác động gì tới code PDMS đang chạy production. ]]></description>
+    <pubDate>Fri, 24 Jul 2026 00:00:00 GMT</pubDate>
   </item><item>
-    <title>Bai-46-Pointer-Mental-Model</title>
-    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-46-Pointer-Mental-Model</link>
-    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-46-Pointer-Mental-Model</guid>
-    <description><![CDATA[ Bài 46: Pointer — Bản Chất, Phân Loại &amp; Tư Duy Tối Ưu Chào Chuyên gia Java. Bài 8 và Bài 19 đã cho bạn API của smart pointer và raw pointer. ]]></description>
-    <pubDate>Fri, 10 Jul 2026 01:22:21 GMT</pubDate>
+    <title>Bai-25-Go-1.26-Technology-Update</title>
+    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-25-Go-1.26-Technology-Update</link>
+    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-25-Go-1.26-Technology-Update</guid>
+    <description><![CDATA[ Go 1.26 — Technology Update Mental model Go 1.26 không thay đổi triết lý ngôn ngữ. ]]></description>
+    <pubDate>Fri, 24 Jul 2026 00:00:00 GMT</pubDate>
   </item><item>
-    <title>DBMigration-06-Flyway-TechLead-Governance</title>
-    <link>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-06-Flyway-TechLead-Governance</link>
-    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-06-Flyway-TechLead-Governance</guid>
-    <description><![CDATA[ Flyway cho Technical Leader — Quản trị DDL ở hệ thống 100+ bảng Góc nhìn: Bài này không dạy Flyway basics. ]]></description>
-    <pubDate>Tue, 07 Jul 2026 17:51:13 GMT</pubDate>
+    <title>Bai-47-Rust-Changelog-2026-Deep-Dive</title>
+    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-47-Rust-Changelog-2026-Deep-Dive</link>
+    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-47-Rust-Changelog-2026-Deep-Dive</guid>
+    <description><![CDATA[ Bài 47: Rust Changelog 2026 Deep Dive — Symbol Mangling, Cargo Warnings &amp; Một Case Study LLVM Miscompilation Mục tiêu: Hiểu bản chất 3 thay đổi quan trọng nhất của Rust 1.97.0/1.97.1 (bản mới nhất, 09-16/07/2026) — không chỉ để biết “có gì mới” mà để hiểu compiler/toolchain hoạt động ở tầng nào ... ]]></description>
+    <pubDate>Fri, 24 Jul 2026 00:00:00 GMT</pubDate>
   </item><item>
-    <title>MOC-Memory-Model</title>
-    <link>https://dangthobach.github.io/knowledge/_moc/MOC-Memory-Model</link>
-    <guid>https://dangthobach.github.io/knowledge/_moc/MOC-Memory-Model</guid>
-    <description><![CDATA[ 🧠 Memory Model MOC Cross-language: GC (Java) vs Ownership (Rust). ]]></description>
-    <pubDate>Tue, 07 Jul 2026 17:51:13 GMT</pubDate>
+    <title>Bai-48-Rust-1.97-Technology-Update</title>
+    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-48-Rust-1.97-Technology-Update</link>
+    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-48-Rust-1.97-Technology-Update</guid>
+    <description><![CDATA[ Rust 1.97 — Technology Update Rust stable mới nhất tại thời điểm kiểm tra là 1.97.1; 1.97.0 phát hành ngày 09/07/2026 và 1.97.1 ngày 16/07/2026. ]]></description>
+    <pubDate>Fri, 24 Jul 2026 00:00:00 GMT</pubDate>
   </item><item>
-    <title>Rust vs Java — Build/Compile/Interpret Timeline &amp; Bộ Nhớ Khi Deploy</title>
-    <link>https://dangthobach.github.io/knowledge/concepts/Rust-Java-Build-Compile-Deploy-Memory-Timeline</link>
-    <guid>https://dangthobach.github.io/knowledge/concepts/Rust-Java-Build-Compile-Deploy-Memory-Timeline</guid>
-    <description><![CDATA[ Rust vs Java — Build/Compile/Interpret Timeline &amp; Bộ Nhớ Khi Deploy Vì sao cần article này riêng? rust-java-go-comparison đã có bảng so sánh compilation model, và gc-llvm-runtime-cpu-memory-internals đã đi sâu cơ chế GC/LLVM ở mức CPU. ]]></description>
-    <pubDate>Mon, 06 Jul 2026 00:00:00 GMT</pubDate>
+    <title>VAULT-DASHBOARD</title>
+    <link>https://dangthobach.github.io/knowledge/_moc/VAULT-DASHBOARD</link>
+    <guid>https://dangthobach.github.io/knowledge/_moc/VAULT-DASHBOARD</guid>
+    <description><![CDATA[ Vault Dashboard Dashboard sinh trực tiếp từ metadata. Đây là nguồn hiện trạng; VAULT-AUDIT-2026 được giữ như historical audit và roadmap. ]]></description>
+    <pubDate>Fri, 24 Jul 2026 00:00:00 GMT</pubDate>
   </item><item>
-    <title>Kafka-Multi-Consumer-Sync-Completion</title>
-    <link>https://dangthobach.github.io/knowledge/Microservices-Patterns/Kafka-Multi-Consumer-Sync-Completion</link>
-    <guid>https://dangthobach.github.io/knowledge/Microservices-Patterns/Kafka-Multi-Consumer-Sync-Completion</guid>
-    <description><![CDATA[ 🔄 Kafka — Multi-Consumer Sync Completion Guarantee Bài toán: Source-of-truth service publish snapshot event lên Kafka. ]]></description>
-    <pubDate>Sun, 31 May 2026 14:24:43 GMT</pubDate>
+    <title>frontend-concept-map</title>
+    <link>https://dangthobach.github.io/knowledge/concepts/frontend-concept-map</link>
+    <guid>https://dangthobach.github.io/knowledge/concepts/frontend-concept-map</guid>
+    <description><![CDATA[ Frontend Concept Map Bản đồ nối các learning series với concept dùng chung. Nội dung chi tiết vẫn nằm trong từng article gốc. ]]></description>
+    <pubDate>Fri, 24 Jul 2026 00:00:00 GMT</pubDate>
   </item><item>
-    <title>Source-Of-Truth-Snapshot-Strategy</title>
-    <link>https://dangthobach.github.io/knowledge/Microservices-Patterns/Source-Of-Truth-Snapshot-Strategy</link>
-    <guid>https://dangthobach.github.io/knowledge/Microservices-Patterns/Source-Of-Truth-Snapshot-Strategy</guid>
-    <description><![CDATA[ 🗄️ Source of Truth &amp; Snapshot Strategy — Quản Lý Dữ Liệu Chia Sẻ Trong Microservices TL;DR: Khi 1 service owns domain data (source of truth) và các service khác cần dùng, đừng share database — hãy snapshot đúng cách. ]]></description>
-    <pubDate>Sun, 31 May 2026 14:24:43 GMT</pubDate>
+    <title>hibernate-cache-architecture</title>
+    <link>https://dangthobach.github.io/knowledge/concepts/hibernate-cache-architecture</link>
+    <guid>https://dangthobach.github.io/knowledge/concepts/hibernate-cache-architecture</guid>
+    <description><![CDATA[ Hibernate Cache Architecture Atomic view được tách bằng transclusion; nguồn gốc vẫn được giữ nguyên, không sao chép hay sửa nội dung. ]]></description>
+    <pubDate>Fri, 24 Jul 2026 00:00:00 GMT</pubDate>
   </item><item>
-    <title>Apache-Avro-Deep-Dive</title>
-    <link>https://dangthobach.github.io/knowledge/Microservices-Patterns/Apache-Avro-Deep-Dive</link>
-    <guid>https://dangthobach.github.io/knowledge/Microservices-Patterns/Apache-Avro-Deep-Dive</guid>
-    <description><![CDATA[ Apache Avro — Deep Dive: Internals, Schema Evolution &amp; Kafka Integration Tags: avro kafka schema-registry serialization microservices data-engineering Level: Intermediate → Advanced Related: Kafka-Configuration-Deep-Dive | gRPC-Deep-Dive | 03-Fory-vs-Avro-Protobuf-Positioning | Debezium-CDC-Deep... ]]></description>
-    <pubDate>Fri, 29 May 2026 23:24:16 GMT</pubDate>
+    <title>hibernate-entity-state-and-merge</title>
+    <link>https://dangthobach.github.io/knowledge/concepts/hibernate-entity-state-and-merge</link>
+    <guid>https://dangthobach.github.io/knowledge/concepts/hibernate-entity-state-and-merge</guid>
+    <description><![CDATA[ Hibernate Entity State, Persist và Merge Atomic view được tách bằng transclusion; nguồn gốc vẫn được giữ nguyên, không sao chép hay sửa nội dung. ]]></description>
+    <pubDate>Fri, 24 Jul 2026 00:00:00 GMT</pubDate>
   </item><item>
-    <title>00-MOC-Apache-Fory-Series</title>
-    <link>https://dangthobach.github.io/knowledge/Apache-Fory/00-MOC-Apache-Fory-Series</link>
-    <guid>https://dangthobach.github.io/knowledge/Apache-Fory/00-MOC-Apache-Fory-Series</guid>
-    <description><![CDATA[ 🗺️ Apache Fory — Series Map of Content Apache Fory (formerly Fury) — Blazingly fast multi-language serialization framework Top-Level Apache Project · Graduated July 2025 · Production-ready 🎯 Mục tiêu Series Từ nguyên lý → Triển khai thực tế trong Java, Rust, Go Hiểu tại sao Fory tồn tại, dùng ở đâ... ]]></description>
-    <pubDate>Fri, 29 May 2026 01:44:43 GMT</pubDate>
+    <title>hibernate-transaction-flush-clear</title>
+    <link>https://dangthobach.github.io/knowledge/concepts/hibernate-transaction-flush-clear</link>
+    <guid>https://dangthobach.github.io/knowledge/concepts/hibernate-transaction-flush-clear</guid>
+    <description><![CDATA[ Hibernate Transaction, Flush và Clear Atomic view được tách bằng transclusion; nguồn gốc vẫn được giữ nguyên, không sao chép hay sửa nội dung. ]]></description>
+    <pubDate>Fri, 24 Jul 2026 00:00:00 GMT</pubDate>
   </item>
     </channel>
   </rss>

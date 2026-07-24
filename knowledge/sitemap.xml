@@ -1,369 +1,378 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml"><url>
     <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/00-Roadmap</loc>
-    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
+    <lastmod>2026-05-09T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/01-Introduction-and-Environment</loc>
-    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
+    <lastmod>2026-05-08T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/02-Components-The-Building-Blocks</loc>
-    <lastmod>2026-05-16T17:39:23.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/03-Data-Binding-and-Event-Handling</loc>
-    <lastmod>2026-05-16T17:39:23.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/04-Directives-and-Pipes</loc>
-    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
+    <lastmod>2026-05-08T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/05-Component-Lifecycle-Hooks</loc>
-    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
+    <lastmod>2026-05-08T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/06-Component-Communication</loc>
-    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
+    <lastmod>2026-05-08T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/07-RxJS-and-Observables-Foundation</loc>
-    <lastmod>2026-05-16T17:39:23.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/08-Signals-The-Modern-Reactivity</loc>
-    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
+    <lastmod>2026-05-08T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/09-Reactive-Forms-Mastery</loc>
-    <lastmod>2026-05-16T17:39:23.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/10-Routing-and-Navigation</loc>
-    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
+    <lastmod>2026-05-09T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/11-Dependency-Injection-and-Services</loc>
-    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
+    <lastmod>2026-05-08T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/12-HTTP-Client-and-Data-Fetching</loc>
-    <lastmod>2026-05-16T17:39:23.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/13-Testing-Fundamentals</loc>
-    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
+    <lastmod>2026-05-08T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/14-Enterprise-Architecture-and-Standalone</loc>
-    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
+    <lastmod>2026-05-08T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/15-Change-Detection-and-OnPush</loc>
-    <lastmod>2026-05-16T17:39:23.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/16-NgRx-State-Management</loc>
-    <lastmod>2026-05-16T17:39:23.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/17-HTTP-Interceptors-Auth-Patterns</loc>
-    <lastmod>2026-05-16T17:39:23.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/18-Route-Guards-and-Resolvers</loc>
-    <lastmod>2026-05-16T17:39:23.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/19-Content-Projection-and-Advanced-Template</loc>
-    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
+    <lastmod>2026-05-09T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/20-Lazy-Loading-and-Code-Splitting</loc>
-    <lastmod>2026-05-16T17:39:23.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/21-Error-Handling-Global-Patterns</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/22-Routing-Layout-SearchState</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-13T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/23-Multiple-Router-Outlets-Named-Auxiliary</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-14T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/24-Two-Way-Binding-Internals</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-14T00:00:00.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Angular-Latest-Series/25-Angular-22-Technology-Update-2026</loc>
+    <lastmod>2026-07-24T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Apache-Fory/00-MOC-Apache-Fory-Series</loc>
-    <lastmod>2026-05-29T01:44:43.000Z</lastmod>
+    <lastmod>2026-05-29T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Apache-Fory/01-Why-Serialization-Matters</loc>
-    <lastmod>2026-05-27T15:08:20.000Z</lastmod>
+    <lastmod>2026-05-27T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Apache-Fory/02-How-Fory-Works-Internals</loc>
-    <lastmod>2026-05-27T15:08:20.000Z</lastmod>
+    <lastmod>2026-05-27T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Apache-Fory/03-Fory-vs-Avro-Protobuf-Positioning</loc>
-    <lastmod>2026-05-27T15:08:20.000Z</lastmod>
+    <lastmod>2026-05-27T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Apache-Fory/04-Fory-Java-Quickstart</loc>
-    <lastmod>2026-05-28T06:33:23.000Z</lastmod>
+    <lastmod>2026-05-28T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Apache-Fory/05-Fory-Java-Modes</loc>
-    <lastmod>2026-05-28T06:33:23.000Z</lastmod>
+    <lastmod>2026-05-28T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Apache-Fory/06-Fory-Java-Spring-Redis-Cache</loc>
-    <lastmod>2026-05-28T06:33:23.000Z</lastmod>
+    <lastmod>2026-05-28T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Apache-Fory/07-Fory-Java-Kafka-Internal-Events</loc>
-    <lastmod>2026-05-28T06:33:23.000Z</lastmod>
+    <lastmod>2026-05-28T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Apache-Fory/08-Fory-Java-Schema-Evolution</loc>
-    <lastmod>2026-05-28T06:33:23.000Z</lastmod>
+    <lastmod>2026-05-28T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Apache-Fory/09-Fory-Go-Quickstart</loc>
-    <lastmod>2026-05-28T06:33:23.000Z</lastmod>
+    <lastmod>2026-05-28T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Apache-Fory/10-Fory-Rust-Quickstart</loc>
-    <lastmod>2026-05-28T06:33:23.000Z</lastmod>
+    <lastmod>2026-05-28T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Apache-Fory/11-Fory-XLang-Java-Go-Rust</loc>
-    <lastmod>2026-05-28T06:33:23.000Z</lastmod>
+    <lastmod>2026-05-28T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Apache-Fory/12-Fory-PDMS-Integration-Blueprint</loc>
-    <lastmod>2026-05-28T14:01:09.000Z</lastmod>
+    <lastmod>2026-05-28T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Apache-Fory/13-Fory-Performance-Benchmarks</loc>
-    <lastmod>2026-05-28T14:01:09.000Z</lastmod>
+    <lastmod>2026-05-28T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Apache-Fory/14-Fory-Production-Checklist</loc>
-    <lastmod>2026-05-29T01:44:43.000Z</lastmod>
+    <lastmod>2026-05-29T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/00-Hub-Database-Persistence</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-06T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-00-Newbie-Guide</loc>
-    <lastmod>2026-05-16T17:39:23.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-01-Flyway-Deep-Dive</loc>
-    <lastmod>2026-05-16T17:39:23.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-02-AtlasGo-Deep-Dive</loc>
-    <lastmod>2026-05-16T17:39:23.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-03-Tool-Comparison</loc>
-    <lastmod>2026-05-16T17:39:23.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-04-Enterprise-Patterns</loc>
-    <lastmod>2026-05-16T17:39:23.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-05-Adoption-Roadmap</loc>
-    <lastmod>2026-05-16T17:39:23.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-06-Flyway-TechLead-Governance</loc>
-    <lastmod>2026-07-07T17:51:13.000Z</lastmod>
+    <lastmod>2026-06-01T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-MOC</loc>
-    <lastmod>2026-05-16T17:39:23.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/Hibernate-Performance-Deep-Dive</loc>
-    <lastmod>2026-05-26T00:59:06.000Z</lastmod>
+    <lastmod>2026-05-26T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/Hibernate-Reactive-Deep-Dive</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-04-14T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/JDBC-vs-R2DBC-vs-VirtualThreads</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-04-14T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/Liquibase/Liquibase-01-Core-Mechanics</loc>
-    <lastmod>2026-05-11T15:38:06.000Z</lastmod>
+    <lastmod>2026-05-11T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/Liquibase/Liquibase-02-Configuration-SpringBoot</loc>
-    <lastmod>2026-05-11T15:38:06.000Z</lastmod>
+    <lastmod>2026-05-11T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/Liquibase/Liquibase-03-Changelog-Mastery</loc>
-    <lastmod>2026-05-11T15:38:06.000Z</lastmod>
+    <lastmod>2026-05-11T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/Liquibase/Liquibase-04-Advanced-Enterprise</loc>
-    <lastmod>2026-05-11T15:38:06.000Z</lastmod>
+    <lastmod>2026-05-11T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/Liquibase/Liquibase-05-CICD-Production-Workflow</loc>
-    <lastmod>2026-05-11T15:38:06.000Z</lastmod>
+    <lastmod>2026-05-11T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/Liquibase/Liquibase-MOC</loc>
-    <lastmod>2026-05-11T15:38:06.000Z</lastmod>
+    <lastmod>2026-05-11T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/00-PostgreSQL-Hub</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-07T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/01-ACID-Internals</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-06T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/02-MVCC-Concurrency</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-06T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/03-Concurrency-Patterns</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-06T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/04-Index-Internals</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-06T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/05-Performance-Tuning</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-06T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/06-Query-Planner</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-06T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/07-Count-Star-vs-Count-Column</loc>
-    <lastmod>2026-05-06T18:24:09.000Z</lastmod>
+    <lastmod>2026-05-07T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/08-MVCC-MySQL-PostgreSQL-Oracle</loc>
-    <lastmod>2026-05-06T18:24:09.000Z</lastmod>
+    <lastmod>2026-05-07T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/09-Temporal-Data-Types</loc>
-    <lastmod>2026-05-06T18:24:09.000Z</lastmod>
+    <lastmod>2026-05-07T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/10-Sharding-When-Why-Pitfalls</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-07T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/11-PostgreSQL-Redis-Consistency</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-07T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/12-UNION-and-LIKE-Optimization</loc>
-    <lastmod>2026-05-06T18:24:09.000Z</lastmod>
+    <lastmod>2026-05-07T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/13-Grouping-and-Aggregation</loc>
-    <lastmod>2026-05-06T18:24:09.000Z</lastmod>
+    <lastmod>2026-05-07T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/14-CTE-Recursive-Advanced-SQL</loc>
-    <lastmod>2026-05-06T18:24:09.000Z</lastmod>
+    <lastmod>2026-05-07T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/15-Transaction-Isolation-Levels-Compared</loc>
-    <lastmod>2026-05-06T18:24:09.000Z</lastmod>
+    <lastmod>2026-05-07T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/16-JSON-JSONB-Complete-Guide</loc>
-    <lastmod>2026-05-06T18:24:09.000Z</lastmod>
+    <lastmod>2026-05-07T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/17-Time-Series-Complete-Guide</loc>
-    <lastmod>2026-05-06T18:24:09.000Z</lastmod>
+    <lastmod>2026-05-07T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/18-Snapshot-Internals-Deep-Dive</loc>
-    <lastmod>2026-05-07T06:39:59.000Z</lastmod>
+    <lastmod>2026-05-07T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/Spring-Data-R2DBC-Deep-Dive</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-04-14T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Design-Patterns-Go/00-Overview</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-03T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Design-Patterns-Go/01-Creational</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-03T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Design-Patterns-Go/02-Structural</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-03T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Design-Patterns-Go/03-Behavioral</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-03T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Design-Patterns-Go/04-Go-Idiomatic-Overview</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-03T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Design-Patterns-Go/05-Level1-Foundations</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-03T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Design-Patterns-Go/06-Level2-Level3</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-03T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Design-Patterns-Go/08-Level4-Architecture</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-03T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Design-Patterns-Rust/00-Overview</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-03T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Design-Patterns-Rust/01-Creational</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-03T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Design-Patterns-Rust/02-Structural</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-03T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Design-Patterns-Rust/03-Behavioral</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-03T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Design-Patterns-Rust/04-Rust-Idiomatic-Overview</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-03T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Design-Patterns-Rust/05-Level1-Foundations</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-03T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Design-Patterns-Rust/06-Level2-Idiomatic</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-03T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Design-Patterns-Rust/07-Level3-Architecture</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-03T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Design-Patterns-Rust/08-Level4-TypeSystem</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-03T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-1-Go-Mindset</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-05-01T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-10-GORM-PostgreSQL</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-05-01T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-11-Gin-Core</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-05-01T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-12-Gin-Advanced</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-05-01T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-13-Fiber</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-05-01T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-14-Echo</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-05-01T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-15-Chi-Clean-Architecture</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-05-01T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-16-Framework-Comparison</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-05-01T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-17-Kafka-Sarama</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-05-01T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-18-gRPC</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-05-01T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-19-Config-Log-Trace</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-05-01T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-2-Syntax-Types-Structs</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-05-01T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-20-Redis-Caching</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-05-01T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-21-Docker-Deploy</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-05-01T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-22-Microservices-Patterns</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-05-01T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-23-Pointers-Deep-Dive</loc>
-    <lastmod>2026-07-13T06:18:01.000Z</lastmod>
+    <lastmod>2026-07-13T00:00:00.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-24-Go-1.26-1.27-Changelog-Deep-Dive</loc>
+    <lastmod>2026-07-24T00:00:00.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-25-Go-1.26-Technology-Update</loc>
+    <lastmod>2026-07-24T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-3-Goroutines-Channels</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-05-01T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-4-Error-Defer-Panic</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-05-01T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-5-Modules-Tooling</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-05-01T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-6-Interfaces-Generics</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-05-01T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-7-Context-Cancellation</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-05-01T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-8-Testing-Benchmarking</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-05-01T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-9-Net-Http-Deep</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-05-01T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Curriculum-Full</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-01T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Deep-Dive-VirtualThreads-vs-Goroutines-vs-RustAsync</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-01T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/L%E1%BB%99-tr%C3%ACnh-T%E1%BB%95ng-quan</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-05-01T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Performance-Pitfalls-Go</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-03T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/HOME</loc>
     <lastmod>2026-04-13T00:00:00.000Z</lastmod>
@@ -375,163 +384,163 @@
     <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/01-Quarkus/P1-Foundation/01-CDI-vs-Spring-IoC</loc>
-    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/01-Quarkus/P1-Foundation/02-JAX-RS-vs-Spring-MVC</loc>
     <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/01-Quarkus/P1-Foundation/03-Config--and--Dev-Mode</loc>
-    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
+    <lastmod>2026-04-13T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/01-Quarkus/P2-Data/01-Panache-Active-Record</loc>
-    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/01-Quarkus/P2-Data/02-Panache-Repository-Pattern</loc>
-    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/01-Quarkus/P2-Data/03-Quarkus-Transactions</loc>
-    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
+    <lastmod>2026-04-13T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/01-Quarkus/P3-Reactive/01-Mutiny---Uni-v%C3%A0-Multi</loc>
     <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/01-Quarkus/P3-Reactive/03-SmallRye-Kafka</loc>
-    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
+    <lastmod>2026-04-13T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/01-Quarkus/P4-Native/01-GraalVM-Native-Image</loc>
-    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/01-Quarkus/P4-Native/02-Kubernetes--and--Health-Checks</loc>
-    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
+    <lastmod>2026-04-13T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/02-Micronaut/00-Micronaut-Overview</loc>
     <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/02-Micronaut/P1-Core/01-Compile-time-DI-vs-Runtime-DI</loc>
-    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/02-Micronaut/P2-Data/02-Declarative-HTTP-Client</loc>
-    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
+    <lastmod>2026-04-13T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/02-Micronaut/P3-Reactive/01-Micronaut-Kafka</loc>
-    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
+    <lastmod>2026-04-13T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/03-Vertx/00-Vertx-Overview</loc>
-    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/03-Vertx/P1-Core/01-Event-Loop-v%C3%A0-Verticles</loc>
     <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/03-Vertx/P2-HTTP/01-Router-v%C3%A0-Route-Handlers</loc>
-    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
+    <lastmod>2026-04-13T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/03-Vertx/P3-Data/01-Reactive-SQL-Client</loc>
-    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
+    <lastmod>2026-04-13T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/04-RxJava/00-RxJava-Overview</loc>
-    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/04-RxJava/P1-Types/01-Observable-vs-Flowable</loc>
-    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
+    <lastmod>2026-04-13T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/04-RxJava/P2-Operators/01-Core-Operators</loc>
-    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
+    <lastmod>2026-04-13T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/04-RxJava/P2-Operators/02-Schedulers---subscribeOn-vs-observeOn</loc>
-    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
+    <lastmod>2026-04-13T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/04-RxJava/P3-Advanced/01-Backpressure-Strategy</loc>
-    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
+    <lastmod>2026-04-13T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/04-RxJava/P3-Advanced/02-Testing-v%E1%BB%9Bi-TestObserver</loc>
-    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
+    <lastmod>2026-04-13T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/04-RxJava/Project-Loom-Deep-Dive</loc>
     <lastmod>2026-04-13T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/04-RxJava/Project-Reactor-Deep-Dive</loc>
-    <lastmod>2026-04-13T00:00:00.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/04-RxJava/Reactive-Libraries-Comparison</loc>
-    <lastmod>2026-04-13T00:00:00.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/05-Jakarta-EE-12/00-Overview</loc>
-    <lastmod>2026-05-04T19:30:49.000Z</lastmod>
+    <lastmod>2026-05-05T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/05-Jakarta-EE-12/CDI-vs-Spring-IoC-Thread-Deep-Dive</loc>
-    <lastmod>2026-05-05T14:33:32.000Z</lastmod>
+    <lastmod>2026-05-05T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/05-Jakarta-EE-12/Phase-1-Core-Profile/01-CDI-Contexts-DI</loc>
-    <lastmod>2026-05-04T19:30:49.000Z</lastmod>
+    <lastmod>2026-05-05T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/05-Jakarta-EE-12/Phase-1-Core-Profile/02-Jakarta-REST</loc>
-    <lastmod>2026-05-04T19:30:49.000Z</lastmod>
+    <lastmod>2026-05-05T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/05-Jakarta-EE-12/Phase-1-Core-Profile/03-JSON-P-JSON-B</loc>
-    <lastmod>2026-05-04T19:30:49.000Z</lastmod>
+    <lastmod>2026-05-05T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/05-Jakarta-EE-12/Phase-1-Core-Profile/04-Bean-Validation</loc>
-    <lastmod>2026-05-04T19:30:49.000Z</lastmod>
+    <lastmod>2026-05-05T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/05-Jakarta-EE-12/Phase-2-Persistence-Data/05-JPA-Deep-Dive</loc>
-    <lastmod>2026-05-04T19:30:49.000Z</lastmod>
+    <lastmod>2026-05-05T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/05-Jakarta-EE-12/Phase-2-Persistence-Data/06-Transactions</loc>
-    <lastmod>2026-05-04T19:30:49.000Z</lastmod>
+    <lastmod>2026-05-05T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/05-Jakarta-EE-12/Phase-2-Persistence-Data/07-Jakarta-Data</loc>
-    <lastmod>2026-05-04T19:30:49.000Z</lastmod>
+    <lastmod>2026-05-05T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/05-Jakarta-EE-12/Phase-2-Persistence-Data/08-Jakarta-Query</loc>
-    <lastmod>2026-05-04T19:30:49.000Z</lastmod>
+    <lastmod>2026-05-05T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/05-Jakarta-EE-12/Phase-2-Persistence-Data/09-Jakarta-NoSQL</loc>
-    <lastmod>2026-05-04T19:30:49.000Z</lastmod>
+    <lastmod>2026-05-05T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/05-Jakarta-EE-12/Phase-3-Security-Concurrency/10-Jakarta-Security</loc>
-    <lastmod>2026-05-04T19:30:49.000Z</lastmod>
+    <lastmod>2026-05-05T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/05-Jakarta-EE-12/Phase-3-Security-Concurrency/11-Jakarta-Concurrency</loc>
-    <lastmod>2026-05-04T19:30:49.000Z</lastmod>
+    <lastmod>2026-05-05T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/05-Jakarta-EE-12/Phase-4-Platform/12-Jakarta-Messaging</loc>
-    <lastmod>2026-05-04T19:30:49.000Z</lastmod>
+    <lastmod>2026-05-05T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/05-Jakarta-EE-12/Phase-4-Platform/13-Jakarta-Faces</loc>
-    <lastmod>2026-05-04T19:30:49.000Z</lastmod>
+    <lastmod>2026-05-05T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/05-Jakarta-EE-12/Phase-4-Platform/14-Legacy-EJB</loc>
-    <lastmod>2026-05-04T19:30:49.000Z</lastmod>
+    <lastmod>2026-05-05T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/05-Jakarta-EE-12/Phase-5-Architecture/15-Profile-Design</loc>
-    <lastmod>2026-05-04T19:30:49.000Z</lastmod>
+    <lastmod>2026-05-05T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/05-Jakarta-EE-12/Phase-5-Architecture/16-Vendor-Neutral-Design</loc>
-    <lastmod>2026-05-04T19:30:49.000Z</lastmod>
+    <lastmod>2026-05-05T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/05-Jakarta-EE-12/Phase-5-Architecture/17-Spring-to-Jakarta-Migration</loc>
-    <lastmod>2026-05-04T19:30:49.000Z</lastmod>
+    <lastmod>2026-05-05T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/05-Jakarta-EE-12/Spring-to-Jakarta-EE-Cheatsheet</loc>
-    <lastmod>2026-05-04T19:30:49.000Z</lastmod>
+    <lastmod>2026-05-05T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/ADR-001-Why-Quarkus-Over-Micronaut</loc>
     <lastmod>2026-04-14T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/Framework-Decision-Matrix</loc>
-    <lastmod>2026-04-13T00:00:00.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/Framework-Landscape-2026</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-05T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/Helidon-2026</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-05T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/Java-2026-Trends</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-05T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/MicroProfile-2026-Status</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-05T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/JVM-Frameworks-2026/Spring-to-Micronaut-Cheatsheet</loc>
     <lastmod>2026-04-13T00:00:00.000Z</lastmod>
@@ -540,52 +549,52 @@
     <lastmod>2026-04-13T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Microservices-Patterns/00-Hub-Microservices-Patterns</loc>
-    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
+    <lastmod>2026-04-15T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Microservices-Patterns/01-Data-Consistency</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Microservices-Patterns/02-Communication</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Microservices-Patterns/03-Reliability</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Microservices-Patterns/04-Observability</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Microservices-Patterns/05-Decomposition</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Microservices-Patterns/API-Design-REST-GraphQL-Webhook</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Microservices-Patterns/Apache-Avro-Deep-Dive</loc>
-    <lastmod>2026-05-29T23:24:16.000Z</lastmod>
+    <lastmod>2026-05-30T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Microservices-Patterns/AuthZ-Platform-Dynamic-5-Layer-Design</loc>
-    <lastmod>2026-05-24T14:23:58.000Z</lastmod>
+    <lastmod>2026-05-24T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Microservices-Patterns/BPMN-CMMN-DMN-Enterprise-Process-Modeling</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-04-29T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Microservices-Patterns/CQRS-Materialized-View</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Microservices-Patterns/CQRS-Rust-vs-SpringBoot</loc>
     <lastmod>2026-04-15T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Microservices-Patterns/Cheat-Sheet</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Microservices-Patterns/Circuit-Breaker</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Microservices-Patterns/Cross-Service-Join-AuthZ-Fine-Grained-Filter</loc>
-    <lastmod>2026-05-16T18:01:57.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Microservices-Patterns/Database-per-Service</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Microservices-Patterns/Debezium-CDC-Deep-Dive</loc>
     <lastmod>2026-04-15T00:00:00.000Z</lastmod>
@@ -594,28 +603,28 @@
     <lastmod>2026-04-15T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Microservices-Patterns/Distributed-Tracing</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Microservices-Patterns/Event-Sourcing</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Microservices-Patterns/Kafka-Configuration-Deep-Dive</loc>
-    <lastmod>2026-07-20T17:21:06.000Z</lastmod>
+    <lastmod>2026-07-21T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Microservices-Patterns/Kafka-Multi-Consumer-Sync-Completion</loc>
-    <lastmod>2026-05-31T14:24:43.000Z</lastmod>
+    <lastmod>2026-05-31T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Microservices-Patterns/Kafka-Partition-and-Offset-Internals</loc>
-    <lastmod>2026-05-16T17:39:23.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Microservices-Patterns/Kafka-Troubleshooting-and-Tips</loc>
-    <lastmod>2026-05-17T15:42:10.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Microservices-Patterns/Log-Aggregation</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Microservices-Patterns/Metrics-and-Alerting</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Microservices-Patterns/PDMS-Architecture-Overview</loc>
     <lastmod>2026-04-15T00:00:00.000Z</lastmod>
@@ -633,340 +642,340 @@
     <lastmod>2026-04-15T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Microservices-Patterns/RabbitMQ-Configuration-Deep-Dive</loc>
-    <lastmod>2026-05-16T17:39:23.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Microservices-Patterns/RabbitMQ-Troubleshooting-and-Tips</loc>
-    <lastmod>2026-05-16T17:39:23.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Microservices-Patterns/Saga-Pattern</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Microservices-Patterns/Source-Of-Truth-Snapshot-Strategy</loc>
-    <lastmod>2026-05-31T14:24:43.000Z</lastmod>
+    <lastmod>2026-05-31T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Microservices-Patterns/Strangler-Fig</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Microservices-Patterns/Transactional-Outbox</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Microservices-Patterns/gRPC-Deep-Dive</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Note-taking-Methods</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-04-10T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-04-11T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Crash-Course-in-API-Versioning-Strategies</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-25T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Crash-Course-in-Database-Scaling-Strategies</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-25T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Crash-Course-in-Database-Sharding</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-25T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Crash-Course-in-GraphQL</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-25T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Crash-Course-in-IPv4-Addressing</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-25T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Crash-Course-in-Networking</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-15T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Crash-Course-on-Architectural-Scalability</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-25T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Crash-Course-on-Cell-based-Architecture</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2025-09-25T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Crash-Course-on-Distributed-Systems</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-25T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Crash-Course-on-Domain-Driven-Design</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-25T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Crash-Course-on-Load-Balancers-for-Scaling</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-25T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Crash-Course-on-Microservice-Communication-Patterns</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-25T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Crash-Course-on-Microservices-Design-Patterns</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-15T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Crash-Course-on-Relational-Database-Design</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-25T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Crash-Course-on-Scaling-the-API-Layer</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-25T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Crash-Course-on-Scaling-the-Data-Layer</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-25T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Deep-Dive-into-HTTP--From-HTTP-1-to-HTTP-3</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-09T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Detailed-Guide-to-Content-Delivery-Networks</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-08-30T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Guide-to-Database-Replication--Key-Concepts-and-Strategies</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-14T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Guide-to-Database-Sharding--Key-Strategies</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-09T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Guide-to-Database-Transactions--From-ACID-to-Concurrency-Control</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-14T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Guide-to-Rate-Limiting-Strategies</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-09T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Guide-to-Top-Caching-Strategies</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-09T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/A-Pattern-Every-Modern-Developer-Should-Know--CQRS</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-15T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/API-Gateway-vs-Service-Mesh---Which-One-Do-You-Need</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-14T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/API-Gateway</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-15T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/API-Protocols-101--A-Guide-to-Choose-the-Right-One</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-15T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/API-Security-Best-Practices</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-25T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Apache-arvo,-Protobuf</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2024-11-14T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Best-Practices-in-API-Design</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-08-31T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/CAP,-PACELC,-ACID,-BASE---Essential-Concepts-for-an-Architect%E2%80%99s-Toolkit</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-15T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Clean-Architecture-101--Building-Software-That-Lasts</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-08-30T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Concurrency-is-NOT-Parallelism</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-08-30T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Consistency-and-Partition-Tolerance--Understanding-CAP-vs-PACELC</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-08-31T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Consistent-Hashing-101--How-Modern-Systems-Handle-Growth-and-Failure</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-14T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Coupling-and-Cohesion--The-Two-Principles-for-Effective-Architecture</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-09T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Dark-Side-of-Distributed-Systems--Latency-and-Partition-Tolerance</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-09T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Data-Replication--A-Key-Component-for-Building-Large-Scale-Distributed-Systems</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-25T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Data-Sharing-Between-Microservices</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-15T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Database-Index-Internals--Understanding-the-Data-Structures</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-09T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Database-Indexing-Demystified--Index-Types-and-Use-Cases</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-14T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Database-Performance-Demystified--Essential-Tips-and-Strategies</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-15T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Database-Schema-Design-Simplified--Normalization-vs-Denormalization</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-08-31T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Distributed-Caching--The-Secret-to-High-Performance-Applications</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-15T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Does-Serverless-Have-Servers</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-15T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Domain-Driven-Design-(DDD)-Demystified</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-08-30T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/EP176--How-Does-SSO-Work</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-08-31T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/EP177--The-Modern-Software-Stack</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-08-30T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Embracing-Chaos-to-Improve-System-Resilience--Chaos-Engineering</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-25T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Engineering-Trade-offs--Eventual-Consistency-in-Practice</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-09T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Error-Handling-Patterns</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-03-29T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Event-Driven-Architectural-Patterns</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-15T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/GraphQL-101--API-Approach-Beyond-REST</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-28T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/HTTP1-vs-HTTP2-vs-HTTP3---A-Deep-Dive</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-25T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/How-Atlassian-Migrated-4-Million-Jira-Databases-to-AWS-Aurora</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-08-31T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/How-Dropbox-Built-an-AI-Product-Dash-with-RAG-and-AI-Agents</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-09T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/How-Grab-Built-An-Authentication-System-for-180+-Million-Users</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-09T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/How-LinkedIn-Scaled-User-Restriction-System-to-5-Million-Queries-Per-Second</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-08-31T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/How-Reddit-Delivers-Notifications-to-Tens-of-Millions-of-Users</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-08-31T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/How-Slack-Supports-Billions-of-Daily-Messages</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-09T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/How-Tinder%E2%80%99s-API-Gateway-Handles-A-Billion-Swipes-Per-Day</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-09T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/How-Uber-Eats-Deduplicates-Hundreds-of-Millions-of-Product-Images</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-08-31T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/How-to-Choose-a-Replication-Strategy</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-25T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/How-to-avoid-crawling-duplicate-URLs-at-Google-scale</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-28T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Infrastructure-as-Code</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-25T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/JWT-vs-PASETO--The-Two-Players-of-Token-Based-Authentication</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-08-30T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Key-Steps-in-the-Database-Selection-Process</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-29T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Kubernetes-Made-Easy--A-Beginner%E2%80%99s-Roadmap-to-Container-Orchestration</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-15T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Mastering-Data-Consistency-Across-Microservices</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-09T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Mastering-Idempotency--Building-Reliable-APIs</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-08-30T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Mastering-Modern-Authentication--Cookies,-Sessions,-JWT,-and-PASETO</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-15T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Mastering-OOP-Fundamentals-with-SOLID-Principles</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2024-07-30T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Mastering-the-Art-of-API-Design</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-29T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Material-view</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2024-02-16T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Messaging-Patterns-Explained--Pub-Sub,-Queues,-and-Event-Streams</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-09T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Monolith-vs-Microservices-vs-Modular-Monoliths--What's-the-Right-Choice</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-09T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Non-Functional-Requirements--The-Backbone-of-Great-Software---Part-1</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-15T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Non-Functional-Requirements--The-Backbone-of-Great-Software---Part-2</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-15T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/OOP-Design-Patterns-and-Anti-Patterns--What-Works-and-What-Fails</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-09T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Oauth2</loc>
-    <lastmod>2026-05-25T13:11:54.000Z</lastmod>
+    <lastmod>2023-10-08T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/SOAP-vs-REST-vs-GraphQL-vs-RPC</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-28T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/SQL-Query-Optimization-%E2%80%94-From-Simple-to-Complex</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/SQL-vs-NoSQL--Choosing-the-Right-Database-for-An-Application</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-14T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Shopify-Tech-Stack</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-08-31T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Software-Architecture-Patterns</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-08-30T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Stateless-Architecture--The-Key-to-Building-Scalable-and-Resilient-Systems</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-15T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Synchronous-vs-Asynchronous-Communication--When-to-Use-What</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-09T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/The-Art-of-REST-API-Design--Idempotency,-Pagination,-and-Security</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-09T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/The-Payments-Ecosystem</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-08-31T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/The-Saga-Pattern</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-15T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/The-Sidecar-Pattern-Explained--Decoupling-Operational-Features</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-15T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Tidying-Code</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-25T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Top-Leader-Election-Algorithms-in-Distributed-Databases</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-08-30T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Top-Scalability-Strategies-for-Real-World-Load</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-08-31T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Top-Strategies-to-Improve-Reliability-in-Distributed-Systems</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-08-30T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Understanding-Database-Types</loc>
-    <lastmod>2026-05-25T13:11:54.000Z</lastmod>
+    <lastmod>2025-08-30T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Understanding-Load-Balancers--Traffic-Management-at-Scale</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-25T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Understanding-Message-Queues</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-15T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Unlocking-the-Power-of-SQL-Queries-for-Improved-Performance</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-25T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/What-are-the-differences-between-Virtualization-(VMware)-and-Containerization-(Docker)</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-28T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/What-is-the-SOLID-Principle</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-08-31T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Why-Executives-Seem-Out-of-Touch,-and-How-to-Reach-Them</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-25T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Notion-Knowledge/Note/Why-is-a-solid-state-drive-(SSD)-fast</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2025-09-28T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Performance-System-Programming/01-Database-Internals/01-Bitcask-Architecture</loc>
     <lastmod>2026-05-01T00:00:00.000Z</lastmod>
@@ -990,361 +999,367 @@
     <lastmod>2026-05-01T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/00-Roadmap</loc>
-    <lastmod>2026-05-16T17:39:23.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/01-Getting-Started-with-React</loc>
-    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
+    <lastmod>2026-05-08T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/02-State-Management-Basics</loc>
-    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
+    <lastmod>2026-05-08T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/03-Event-Handling-and-Lists</loc>
-    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
+    <lastmod>2026-05-08T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/04-Conditional-Rendering</loc>
-    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
+    <lastmod>2026-05-08T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/05-Hooks-Lifecycle-and-useEffect</loc>
-    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
+    <lastmod>2026-05-08T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/06-Forms-and-Validation</loc>
-    <lastmod>2026-05-16T17:39:23.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/07-React-Router-v6</loc>
-    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
+    <lastmod>2026-05-08T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/08-Advanced-Hooks</loc>
-    <lastmod>2026-05-16T17:39:23.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/09-Context-API-and-State-Sharing</loc>
-    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
+    <lastmod>2026-05-08T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/10-Data-Fetching-and-Error-Boundaries</loc>
-    <lastmod>2026-05-16T17:39:23.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/11-Performance-Optimization</loc>
-    <lastmod>2026-05-16T17:39:23.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/12-Concurrent-Features</loc>
-    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
+    <lastmod>2026-05-08T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/13-React-Server-Components-and-NextJS-Intro</loc>
-    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
+    <lastmod>2026-05-08T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/14-Testing-React</loc>
-    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
+    <lastmod>2026-05-08T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/15-Enterprise-Best-Practices</loc>
-    <lastmod>2026-05-08T18:11:43.000Z</lastmod>
+    <lastmod>2026-05-08T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/16-TypeScript-with-React</loc>
-    <lastmod>2026-05-16T17:39:23.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/17-Zustand-State-Management</loc>
-    <lastmod>2026-05-16T17:39:23.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/18-TanStack-Query-Server-State</loc>
-    <lastmod>2026-05-16T17:39:23.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/19-Authentication-Protected-Routes</loc>
-    <lastmod>2026-05-16T17:39:23.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/20-Advanced-Component-Patterns</loc>
-    <lastmod>2026-05-16T17:39:23.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/21-Multi-Step-Forms-Complex-Validation</loc>
-    <lastmod>2026-05-16T17:39:23.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/22-Portals-and-Modals</loc>
-    <lastmod>2026-05-16T17:39:23.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/23-Routing-Layout-SearchState</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-14T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/24-Multiple-Router-Outlets-Pattern</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-14T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/React-Latest-Series/25-vDOM-vs-SolidJS-Reactivity</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-15T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-1-Ownership-Mindset</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-04-10T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-10-Axum-Core</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-11-Axum-Middleware-Error</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-12-SQLx-Database</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-13-Serde-Reqwest-JWT</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-14-Kafka-rdkafka</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-15-Config-Tracing-Testing</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-16-Deployment</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-17-Zero-Cost-Performance</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-18-Type-System-Advanced</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-19-Unsafe-FFI</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-2-Borrowing-Multi-threading</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-04-10T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-20-Macro-System</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-21-Async-Internals-Pin</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-22-Advanced-Concurrency</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-23-Workspace-Architecture</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-24-Axum-Advanced</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-25-ActixWeb</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-26-SQLx-Advanced</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-27-Diesel</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-28-Tonic-GRPC</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-29-Leptos</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-05T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-3-Struct-Enum-Trait</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-04-10T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-30-Validation</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-31-Redis-Caching</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-32-Security</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-33-Background-Jobs</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-34-OpenTelemetry</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-35-Resilience</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-36-Dioxus-Core</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-05T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-37-Dioxus-Advanced</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-05T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-38-Dioxus-Desktop-Mobile</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-05T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-39-Security-Production</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-06T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-4-Error-Handling-Collections</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-04-10T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-40-Global-State</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-06T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-41-Auth-SSR</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-06T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-42-JS-Interop</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-06T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-43-Form-Validation</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-06T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-44-Styling-Pipeline</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-06T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-45-Background-Caching</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-06T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-46-Pointer-Mental-Model</loc>
-    <lastmod>2026-07-10T01:22:21.000Z</lastmod>
+    <lastmod>2026-07-10T00:00:00.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-47-Rust-Changelog-2026-Deep-Dive</loc>
+    <lastmod>2026-07-24T00:00:00.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-48-Rust-1.97-Technology-Update</loc>
+    <lastmod>2026-07-24T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-5-Lifetimes</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-6-Generics-Traits-Advanced</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-7-Closures-Iterators</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-8-Smart-Pointers-Error-Design</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-9-Async-Tokio</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-04-18T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-9b-Tokio-Advanced</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-04-18T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-9c-Tokio-Internals-Visual</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-04-18T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Curriculum-Full</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/L%E1%BB%99-tr%C3%ACnh-T%E1%BB%95ng-quan</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Performance-Pitfalls-Rust</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-03T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Plan-Framework-Mastery</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/SolidJS-Series/00-Roadmap</loc>
-    <lastmod>2026-05-08T16:07:46.000Z</lastmod>
+    <lastmod>2026-05-08T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/SolidJS-Series/01-Reactivity-Internals</loc>
-    <lastmod>2026-05-08T16:07:46.000Z</lastmod>
+    <lastmod>2026-05-08T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/SolidJS-Series/02-Components-and-Props</loc>
-    <lastmod>2026-05-08T16:07:46.000Z</lastmod>
+    <lastmod>2026-05-08T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/SolidJS-Series/03-Control-Flow</loc>
-    <lastmod>2026-05-08T16:07:46.000Z</lastmod>
+    <lastmod>2026-05-08T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/SolidJS-Series/04-Store-Management</loc>
-    <lastmod>2026-05-08T16:07:46.000Z</lastmod>
+    <lastmod>2026-05-08T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/SolidJS-Series/05-Async-and-Suspense</loc>
-    <lastmod>2026-05-08T16:07:46.000Z</lastmod>
+    <lastmod>2026-05-08T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/SolidJS-Series/06-Enterprise-Architecture</loc>
-    <lastmod>2026-05-08T16:07:46.000Z</lastmod>
+    <lastmod>2026-05-08T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-01-Reactivity-Internals</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-02-Signals-Deep-Dive</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-03-Effects-And-Lifecycle</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-04-JSX-Component-Model</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-08T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-05-Control-Flow-Primitives</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-06-Stores-Nested-State</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-07-Context-DI</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-08-Async-Resources</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-08T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-09-Routing</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-08T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-10-Complex-UI-Patterns</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-11-SolidStart-SSR</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-12-Performance-Testing</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-13-Routing-Layout-SearchState</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-14T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-14-Multiple-Outlets-Pattern</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-14T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-15-Reactivity-vs-React-vDOM</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-15T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-MOC</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-08T00:00:00.000Z</lastmod>
   </url><url>
-    <loc>https://dangthobach.github.io/knowledge/Welcome</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <loc>https://dangthobach.github.io/knowledge/_archive/Welcome</loc>
+    <lastmod>2026-04-09T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/_inbox/README</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/_moc/MOC-API-Design</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/_moc/MOC-Auth-Security</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/_moc/MOC-Case-Studies</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-04-14T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/_moc/MOC-Concurrency</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-01T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/_moc/MOC-Database-Internals</loc>
     <lastmod>2026-05-01T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/_moc/MOC-Database</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-06T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/_moc/MOC-Distributed-Systems</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
-  </url><url>
-    <loc>https://dangthobach.github.io/knowledge/_moc/MOC-JVM-Frameworks</loc>
     <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
+    <loc>https://dangthobach.github.io/knowledge/_moc/MOC-JVM-Frameworks</loc>
+    <lastmod>2026-04-13T00:00:00.000Z</lastmod>
+  </url><url>
     <loc>https://dangthobach.github.io/knowledge/_moc/MOC-Java</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-01T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/_moc/MOC-Memory-Model</loc>
-    <lastmod>2026-07-07T17:51:13.000Z</lastmod>
+    <lastmod>2026-07-06T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/_moc/MOC-Observability</loc>
     <lastmod>2026-04-14T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/_moc/MOC-PDMS</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-04-15T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/_moc/MOC-Reading-List</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/_moc/MOC-Rust</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/_moc/MOC-Scalability</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/_moc/MOC-System-Design</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/_moc/MOC-Wasm-Backend</loc>
     <lastmod>2026-05-01T00:00:00.000Z</lastmod>
@@ -1352,26 +1367,29 @@
     <loc>https://dangthobach.github.io/knowledge/_moc/VAULT-AUDIT-2026</loc>
     <lastmod>2026-05-02T00:00:00.000Z</lastmod>
   </url><url>
+    <loc>https://dangthobach.github.io/knowledge/_moc/VAULT-DASHBOARD</loc>
+    <lastmod>2026-07-24T00:00:00.000Z</lastmod>
+  </url><url>
     <loc>https://dangthobach.github.io/knowledge/concepts/Frontend-Project-Architecture-2026</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/concepts/README</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-04-13T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/concepts/React-Compiler-Internals-Memoization</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-15T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/concepts/Rust-Java-Build-Compile-Deploy-Memory-Timeline</loc>
     <lastmod>2026-07-06T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/concepts/SolidJS-vs-React-Reactivity-Model</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-15T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/concepts/adr-framework</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-05-02T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/concepts/api-security-patterns</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-05-02T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/concepts/backpressure-explained</loc>
     <lastmod>2026-04-13T00:00:00.000Z</lastmod>
@@ -1386,7 +1404,7 @@
     <lastmod>2026-04-13T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/concepts/connection-pooling-pgbouncer</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-05-02T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/concepts/consensus-raft-paxos</loc>
     <lastmod>2026-05-02T00:00:00.000Z</lastmod>
@@ -1395,10 +1413,10 @@
     <lastmod>2026-05-02T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/concepts/container-internals</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-05-02T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/concepts/data-binding-one-way-vs-two-way</loc>
-    <lastmod>2026-05-16T17:39:23.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/concepts/ddd-strategic</loc>
     <lastmod>2026-05-02T00:00:00.000Z</lastmod>
@@ -1415,20 +1433,32 @@
     <loc>https://dangthobach.github.io/knowledge/concepts/four-golden-signals</loc>
     <lastmod>2026-04-14T00:00:00.000Z</lastmod>
   </url><url>
+    <loc>https://dangthobach.github.io/knowledge/concepts/frontend-concept-map</loc>
+    <lastmod>2026-07-24T00:00:00.000Z</lastmod>
+  </url><url>
     <loc>https://dangthobach.github.io/knowledge/concepts/gc-llvm-runtime-cpu-memory-internals</loc>
-    <lastmod>2026-05-02T00:00:00.000Z</lastmod>
+    <lastmod>2026-07-08T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/concepts/grpc-protobuf-deep-dive</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-05-02T00:00:00.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/concepts/hibernate-cache-architecture</loc>
+    <lastmod>2026-07-24T00:00:00.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/concepts/hibernate-entity-state-and-merge</loc>
+    <lastmod>2026-07-24T00:00:00.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/concepts/hibernate-transaction-flush-clear</loc>
+    <lastmod>2026-07-24T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/concepts/io-models-deep-dive</loc>
     <lastmod>2026-05-02T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/concepts/java-virtual-threads-deep-dive</loc>
-    <lastmod>2026-05-01T00:00:00.000Z</lastmod>
+    <lastmod>2026-05-02T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/concepts/kubernetes-architecture</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-05-02T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/concepts/memory-hierarchy-cpu-cache</loc>
     <lastmod>2026-05-02T00:00:00.000Z</lastmod>
@@ -1446,47 +1476,47 @@
     <lastmod>2026-05-02T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/concepts/postgresql-index-internals</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-02T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/concepts/postgresql-performance-deep-dive</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-04-14T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/concepts/probabilistic-data-structures</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-02T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/concepts/project-loom-deep-dive</loc>
     <lastmod>2026-04-14T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/concepts/query-planner-optimizer</loc>
-    <lastmod>2026-05-25T13:56:44.000Z</lastmod>
+    <lastmod>2026-05-02T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/concepts/reactive-programming-fundamentals</loc>
     <lastmod>2026-04-13T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/concepts/rust-java-go-comparison</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-04-29T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/concepts/slo-sla-error-budget</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-05-02T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/concepts/solid-principles-deep-dive</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-05-02T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/concepts/ssr-vs-csr-deep-dive</loc>
-    <lastmod>2026-05-16T17:39:23.000Z</lastmod>
+    <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/concepts/testing-strategy-pyramid</loc>
     <lastmod>2026-05-02T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/concepts/zero-trust-architecture</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-05-02T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/gemini-scribe/AGENTS</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-04-13T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/gemini-scribe/Prompts/example-expert</loc>
-    <lastmod>2026-05-02T04:58:37.000Z</lastmod>
+    <lastmod>2026-04-10T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/</loc>
-    <lastmod>2026-05-02T05:07:51.000Z</lastmod>
+    <lastmod>2026-04-13T00:00:00.000Z</lastmod>
   </url></urlset>
