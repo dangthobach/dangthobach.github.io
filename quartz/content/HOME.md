@@ -100,7 +100,7 @@ RxJava    ░░░░░░░░░░░░░░░░░░░░  Chưa b�
 ### 🦀 Rust Zero to Hero
 **Bài 1 → 35 · Advanced phase**
 
-→ [[Lộ-trình-Tổng-quan|Lộ trình]] · [[MOC-Rust|MOC-Rust]]
+→ [[Rust-Zero-To-Hero/Lộ-trình-Tổng-quan|Lộ trình]] · [[_moc/MOC-Rust|MOC-Rust]]
 
 ---
 
