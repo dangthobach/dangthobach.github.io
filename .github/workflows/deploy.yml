@@ -5,6 +5,12 @@ on:
     branches:
       - main
 
+# Only the newest main build may publish. This prevents an older, slower Quartz
+# build from overwriting a newer deployment when several commits arrive quickly.
+concurrency:
+  group: github-pages-production
+  cancel-in-progress: true
+
 permissions:
   contents: write
 
