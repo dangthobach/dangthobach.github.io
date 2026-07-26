@@ -86,3 +86,15 @@ Người dùng sẽ thấy trang web hiện ra gần như ngay lập tức vì t
 4.  **SEO & Performance**: Là lý do chính để chuyển sang mô hình này.
 
 Hãy thử cài đặt một dự án Next.js trắng bằng lệnh `npx create-next-app@latest` để trải nghiệm nhé! ⚡
+
+---
+
+## 📢 Cập nhật 26/07/2026 — version và một lưu ý bảo mật quan trọng
+
+Khái niệm RSC/Server-Client Components ở bài này vẫn hoàn toàn chính xác và không đổi. Bổ sung:
+
+- **Next.js hiện tại: 16.2.11** (LTS đang được hỗ trợ; Next.js 14 đã EOL từ 10/2025, Next.js 15 sẽ EOL vào 21/10/2026). Turbopack giờ là bundler mặc định.
+- **Lưu ý bảo mật đáng chú ý cho PDMS** (banking, nên đặc biệt cẩn trọng): tháng 05/2026 Vercel phát hành bản vá phối hợp cho **13 advisory bảo mật** trên Next.js, gồm middleware/proxy bypass (ứng dụng dựa vào `middleware.js`/`proxy.js` để authorization bị ảnh hưởng), SSRF qua rewrites, cache poisoning, và một lỗ hổng RSC ngược dòng từ React (CVE-2026-23870). Nếu có service dùng Next.js middleware làm lớp authorization chính, đây là loại lỗ hổng nghiêm trọng — luôn cập nhật lên bản patch mới nhất, không chỉ dựa vào middleware cho authorization mà không có kiểm tra lại ở tầng route/server action.
+- Ngoài Next.js, **React Router v8** (xem [[07-React-Router-v6]]) giờ cũng hỗ trợ Server Components (unstable) — nếu PDMS không muốn phụ thuộc Vercel/Next.js, đây là một hướng thay thế đáng theo dõi cho phần "tương lai của React" mà bài này giới thiệu.
+
+*Nguồn: vercel.com/changelog/next-js-may-2026-security-release, eosl.date/eol/product/nextjs — truy cập 26/07/2026.*

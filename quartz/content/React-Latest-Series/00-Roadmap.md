@@ -152,3 +152,20 @@ React Testing Library + Vitest
 ## 🔗 Concept Graph
 
 - [[concepts/frontend-concept-map|Frontend Concept Map — React ↔ Angular ↔ SolidJS]]
+
+---
+
+## 📢 Cập nhật 26/07/2026 — đối chiếu Tech Stack với phiên bản thực tế
+
+Bảng Tech Stack ở trên ghi từ 05/2026, đã lệch vài chỗ so với version hiện tại:
+
+| Ghi trong bài | Thực tế 26/07/2026 | Chi tiết |
+|---|---|---|
+| React 19 | **React 19.2.7** (patch mới nhất, 01/06/2026) | Chưa có React 20. React chuyển sang **React Foundation độc lập** (Linux Foundation) từ 02/2026 — Meta giờ chỉ là 1 trong 8 thành viên sáng lập, không còn sở hữu React/React Native/JSX một mình. React Compiler đã **stable 1.0** từ 10/2025. |
+| React Router v6 | **React Router v8** (17/06/2026) | Xem chi tiết ở [[07-React-Router-v6]] — v6 đã EOL, không còn nhận security update. |
+| Zustand v4 | **Zustand v5.0.14** | Xem bug fix quan trọng ở [[17-Zustand-State-Management]] (API `shallow` làm tham số 2 đã bị xoá, cần `useShallow`). |
+| TanStack Query v5 | **v5.101.x** — vẫn đúng dòng v5, không có breaking change lớn | Không cần hành động. |
+
+**Xu hướng ecosystem 2026 đáng note cho phần State Management (Bài 17-18):** nhiều team production giờ chia state theo 4 nhóm — server state (TanStack Query / RSC cache), URL state (nuqs / router primitives), form state (`useActionState` hoặc React Hook Form), UI state (`useState` ở component cha gần nhất) — và chỉ dùng global store (Zustand/Jotai/Valtio) cho phần còn lại rất nhỏ sau khi đã phân loại. Đáng cân nhắc khi dạy Bài 17 để học viên không mặc định "mọi state đều vào Zustand".
+
+*Nguồn: react.dev/versions, scrimba.com (React 19 What's New), remix.run/blog/react-router-v8, npmjs.com/package/zustand, github.com/tanstack/query/releases — truy cập 26/07/2026.*

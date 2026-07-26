@@ -349,3 +349,33 @@ export interface ApiError {
 ---
 
 **Bài tiếp theo:** [[17-Zustand-State-Management|17. Zustand: Global State Management nhẹ nhàng]] 🐻
+
+---
+
+## 📢 Cập nhật 26/07/2026 — 1 bug thật trong ví dụ + version TypeScript
+
+### ⚠️ Bug trong mục 3 (useRef với kiểu)
+
+Dòng này trong bài:
+```tsx
+const timerRef = useRef<ReturnType<typeof setTimeout>>();
+```
+gọi `useRef` **không có argument** — chỉ truyền type parameter. Đây là pattern hợp lệ ở `@types/react` cho React 18, nhưng **React 19 đổi type signature của `useRef` để bắt buộc phải có argument** (mục tiêu: làm mọi ref đều mutable, giống `createContext`). Với `@types/react` cho React 19 (dự án đang dùng React 19.2.7 theo [[00-Roadmap]]), dòng trên sẽ báo lỗi biên dịch: `Expected 1 argument but saw none`.
+
+**Cách sửa:**
+```tsx
+// ✅ Truyền rõ giá trị khởi tạo — undefined nếu chưa có timer nào
+const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+```
+`useRef<T>(null)` (như `inputRef`, `tableRef` ở trên) và `useRef<T>(0)` (như `prevValueRef`) trong bài **vẫn đúng, không cần sửa** — chỉ dòng gọi không argument mới bị ảnh hưởng.
+
+**Một điểm liên quan khác (không có trong bài, không cần sửa gì, chỉ nên biết):** mục `useReducer` ở bài này không truyền type argument tường minh cho `useReducer` (`useReducer(loanFormReducer, {...})`) — đây **đúng là best-practice mới của React 19**, vì `useReducer` đổi cách suy luận kiểu và không còn khuyến khích truyền type argument tường minh nữa. Bài này đã viết đúng theo xu hướng mới mà không cần sửa.
+
+### Version TypeScript hiện tại
+
+- **Bản ổn định:** TypeScript **6.0.3** (16/04/2026) — đây là bản **cuối cùng viết bằng chính TypeScript/JavaScript**.
+- **Thay đổi lớn nhất đang diễn ra:** **TypeScript 7.0** đã ra **Release Candidate (18/06/2026)** — viết lại hoàn toàn bằng **Go** (dự án "Corsa"), công bố nhanh hơn TS 6.0 khoảng **10 lần** cho build và thao tác trong editor. Đây không phải bản vá nhỏ mà là thay đổi kiến trúc compiler lớn nhất trong lịch sử TypeScript.
+- TS 7.0 mang một số breaking change ở tầng cấu hình dự án (không ảnh hưởng cú pháp interface/generic/utility type đã học ở bài này): strict-mode trở thành mặc định, bỏ target ES5, gỡ bỏ AMD/UMD/SystemJS module output, gỡ bỏ classic Node module resolution.
+- **Không cần hành động ngay** — các framework lớn (React, Vue, Angular) thường ra bản tương thích TS mới trong vòng khoảng 1 tuần sau khi TS release; nên đợi bản ổn định 7.0 (chưa GA tại thời điểm 26/07/2026) và theo dõi thông báo tương thích của Vite/React trước khi nâng.
+
+*Nguồn: react.dev/blog/2024/04/25/react-19-upgrade-guide, devblogs.microsoft.com/typescript, en.wikipedia.org/wiki/TypeScript — truy cập 26/07/2026.*

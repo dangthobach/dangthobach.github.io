@@ -87,3 +87,16 @@ Trước đây, nếu bạn có một danh sách 10.000 dòng và muốn lọc d
 4.  **Trải nghiệm người dùng**: Ưu tiên phản hồi các thao tác trực tiếp của người dùng trước.
 
 Hãy thử áp dụng `useTransition` vào một thanh tìm kiếm xem sự khác biệt nhé! 🔍
+
+---
+
+## 📢 Cập nhật 26/07/2026 — bổ sung tính năng mới trong React 19.2
+
+Nội dung `useTransition`/`useDeferredValue` ở trên vẫn hoàn toàn đúng và không đổi. React 19.2 (10/2025, hiện tại là bản ổn định 19.2.7) bổ sung thêm 2 khái niệm liên quan tới "đa nhiệm thông minh" mà series có thể học tiếp sau bài này:
+
+- **`<Activity>`** — component mới cho phép "tạm ẩn" một phần UI (giữ nguyên state và DOM) thay vì unmount hoàn toàn, rồi "hiện lại" ngay lập tức khi cần — ví dụ giữ nguyên state của tab thứ 2 trong khi người dùng đang xem tab 1, không phải load lại từ đầu. Đây là cách tự nhiên để mở rộng ẩn dụ "nấu ăn - nghe điện thoại" ở mục 1 sang bài toán "chuyển tab không mất trạng thái".
+- **`useEffectEvent`** — tách phần "đọc giá trị mới nhất của props/state trong Effect" ra khỏi dependency array, giải quyết dứt điểm vấn đề closure cũ (stale closure) mà trước đây phải dùng `useRef` để né tránh.
+
+Hai tính năng này không thay thế `useTransition`/`useDeferredValue` — chúng giải quyết vấn đề khác (ẩn/hiện UI giữ state, và đọc giá trị mới nhất trong Effect) nhưng cùng nằm trong nhóm "React ngày càng thông minh hơn về thời điểm render/re-render" mà bài này giới thiệu.
+
+*Nguồn: react.dev, scrimba.com/articles/react-19-whats-new-for-developers — truy cập 26/07/2026.*

@@ -92,3 +92,38 @@ Trong React, **không bao giờ** dùng thẻ `<a>` để chuyển trang nội b
 4.  **useNavigate** dùng để chuyển trang bằng code.
 
 Hãy thử tạo một trang "Danh sách phim" và khi click vào một phim sẽ chuyển sang trang "Chi tiết phim" nhé! 🎬
+
+---
+
+## 📢 Cập nhật 26/07/2026 — React Router đã lên v8, v6 đã EOL
+
+Từ khi bài này viết (05/2026), React Router đã có **2 major version mới**:
+
+```
+v6 (dạy trong bài này) → v7 (11/2024, merge với Remix) → v8 (17/06/2026, hiện tại)
+```
+
+**Tin quan trọng nhất:** kể từ khi v8 ra mắt, **React Router v6 chính thức EOL — không còn nhận security update**. Nếu dự án PDMS hoặc bài tập đang dùng v6, nên lên kế hoạch nâng cấp.
+
+### Điều gì vẫn đúng trong bài này
+Tin tốt: **toàn bộ code mẫu ở trên vẫn hoạt động đúng về mặt khái niệm.** `BrowserRouter`, `Routes`, `Route`, `Link`, `useParams`, `useNavigate` vẫn là API cốt lõi ở chế độ "library mode" (dùng React Router như một thư viện định tuyến thuần, không cần framework). Ẩn dụ "tòa nhà - GPS - cửa" vẫn áp dụng được 100%.
+
+### Điều cần sửa ngay
+```jsx
+// ❌ Cách import trong bài (từ v8 trở đi: package này đã bị XOÁ)
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+
+// ✅ Cách import đúng cho v7/v8
+import { BrowserRouter, Routes, Route, Link } from 'react-router';
+```
+`react-router-dom` chỉ là một package "mirror" giúp chuyển từ v6 lên v7 dễ dàng hơn — sang v8, package này đã bị gỡ bỏ hoàn toàn. Dùng thẳng `react-router` (và `react-router/dom` cho các API riêng của DOM nếu cần).
+
+### Điều mới nên biết (không bắt buộc học ngay ở trình độ newbie)
+- **Framework Mode**: React Router giờ không chỉ là thư viện router — nó có thể đóng vai trò framework full-stack (kế thừa toàn bộ Remix), với type-safe Route Module API, code splitting thông minh, SSR/SSG, data loading/mutation tích hợp sẵn. Vẫn có thể dùng React Router "trần" như bài này dạy (Library Mode) khi chưa cần tới mức đó.
+- React Router giờ theo **lịch phát hành major hàng năm** và cam kết các bản major "boring" (ít breaking change) — v8 chỉ có vài breaking change nhỏ so với v7.
+- Baseline mới của v8: **Node 22.22+, React 19.2.7+, Vite 7+**, publish dạng ESM-only.
+- (Unstable) đã có hỗ trợ **React Server Components / Server Actions** — chưa nên dùng cho bài học newbie, nhưng đáng biết khi lên tới Bài 13 (Server Components).
+
+**Khuyến nghị cho series:** giữ nguyên nội dung bài học (đúng về khái niệm), chỉ cần đổi ví dụ import sang `react-router`, và cân nhắc đổi tiêu đề bài từ "React Router v6" thành "React Router" (bỏ số version) hoặc "React Router v7/v8" để không gây hiểu lầm.
+
+*Nguồn: remix.run/blog/react-router-v8, remix.run/blog/react-router-v7 — truy cập 26/07/2026.*

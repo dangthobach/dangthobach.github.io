@@ -325,3 +325,30 @@ export const useAuthStore = create<AuthState>()(
 ---
 
 **Bài tiếp theo:** [[18-TanStack-Query-Server-State|18. TanStack Query: Server State Management]] 📡
+
+## ⚠️ Cập nhật 26/07/2026 — bug thật trong ví dụ ở mục 3 (LoanDashboard)
+
+Dòng code ở mục 3:
+```tsx
+const stats = useLoanStore(selectLoanStats, shallow);
+```
+truyền `shallow` làm tham số thứ hai cho hook selector — đây là **API của Zustand v4** và đã **bị loại bỏ hoàn toàn trong v5**. Với `create` mặc định của v5 (không còn nhận equality function tuỳ chỉnh), cách viết này **không chỉ mất tối ưu mà sẽ throw runtime error** ("Maximum update depth exceeded") vì selector trả về object mới mỗi lần render và so sánh mặc định là `Object.is`.
+
+**Cách sửa đúng — chọn một:**
+
+```tsx
+// Cách 1 (khuyến nghị): bọc selector bằng useShallow
+import { useShallow } from 'zustand/react/shallow';
+
+const stats = useLoanStore(useShallow(selectLoanStats));
+```
+
+```tsx
+// Cách 2: nếu muốn giữ API kiểu cũ (equality function tuỳ ý)
+import { createWithEqualityFn as create } from 'zustand/traditional';
+// phần còn lại của store định nghĩa giữ nguyên như mục 2
+```
+
+**Xác nhận version:** Zustand hiện tại là **v5.0.14** (28/05/2026), vẫn là dòng v5 — mục Tech Stack ở [[00-Roadmap]] ghi "Zustand v4" đã lỗi thời, cần sửa thành v5.
+
+*Nguồn: zustand.docs.pmnd.rs/reference/hooks/use-shallow, github.com/pmndrs/zustand/blob/main/docs/migrations/migrating-to-v5.md — truy cập 26/07/2026.*
