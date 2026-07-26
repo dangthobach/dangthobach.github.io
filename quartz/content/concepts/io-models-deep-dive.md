@@ -379,8 +379,8 @@ PDMS hiện dùng Spring Boot + JDBC (blocking):
 - [[os-process-thread-scheduling]] — Context switch cost, why threads are expensive
 - [[java-virtual-threads-deep-dive]] — Virtual Threads = blocking code + epoll
 - [[backpressure-explained]] — Khi async pipeline bị overwhelmed
-- [[Bai-9-Async-Tokio]] — Tokio implementation
-- [[Bai-9c-Tokio-Internals-Visual]] — Tokio reactor visual
+- [[Rust-Zero-To-Hero/Bai-9-Async-Tokio]] — Tokio implementation
+- [[Rust-Zero-To-Hero/Bai-9c-Tokio-Internals-Visual]] — Tokio reactor visual
 
 ---
 

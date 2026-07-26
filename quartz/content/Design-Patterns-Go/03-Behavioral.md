@@ -906,7 +906,7 @@ func (it *SliceIterator[T]) Next() T {
 ---
 
 ## 🔗 Links
-- [[02-Structural|← 02 · Structural]]
-- [[05-Level1-Foundations|Level 1 · Foundations →]]
+- [[Design-Patterns-Go/02-Structural|← 02 · Structural]]
+- [[Design-Patterns-Go/05-Level1-Foundations|Level 1 · Foundations →]]
 
 *Tags: #go #design-patterns #behavioral #observer #state #strategy*

@@ -69,7 +69,7 @@ At a high level, a cell-based architecture has three main parts:
 
 Let’s compare cell-based architecture with other architectural patterns, such as monolithic and microservices.
 
-![[image 3.png|image 3.png]]
+![[/image 3.png|image 3.png]]
 
 ### **Monolithic Architecture**
 

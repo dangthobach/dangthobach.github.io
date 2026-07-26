@@ -1090,7 +1090,7 @@ pub async fn run_application(state: Arc<AppState>) {
 ---
 
 ## 🔗 Links
-- [[Bai-9-Async-Tokio|Bài 9: Tokio — channels, select]]
-- [[Bai-31-Redis-Caching|Bài 31: Redis → Job progress storage]]
-- [[Bai-24-Axum-Advanced|Bài 24: Axum SSE → Job progress streaming]]
-- [[Bai-34-OpenTelemetry|Bài 34: OpenTelemetry]] → tiếp theo
+- [[Rust-Zero-To-Hero/Bai-9-Async-Tokio|Bài 9: Tokio — channels, select]]
+- [[Rust-Zero-To-Hero/Bai-31-Redis-Caching|Bài 31: Redis → Job progress storage]]
+- [[Rust-Zero-To-Hero/Bai-24-Axum-Advanced|Bài 24: Axum SSE → Job progress streaming]]
+- [[Rust-Zero-To-Hero/Bai-34-OpenTelemetry|Bài 34: OpenTelemetry]] → tiếp theo

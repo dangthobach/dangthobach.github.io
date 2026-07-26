@@ -26,42 +26,42 @@ flowchart LR
 
 ## Reactivity
 
-- [[reactive-programming-fundamentals|Reactive programming fundamentals]]
-- [[data-binding-one-way-vs-two-way|One-way vs two-way data binding]]
-- [[SolidJS-vs-React-Reactivity-Model|SolidJS vs React reactivity]]
-- [[08-Signals-The-Modern-Reactivity|Angular Signals]]
-- [[25-vDOM-vs-SolidJS-Reactivity|React vDOM vs SolidJS]]
-- [[SolidJS-01-Reactivity-Internals|SolidJS reactivity internals]]
+- [[concepts/reactive-programming-fundamentals|Reactive programming fundamentals]]
+- [[concepts/data-binding-one-way-vs-two-way|One-way vs two-way data binding]]
+- [[concepts/SolidJS-vs-React-Reactivity-Model|SolidJS vs React reactivity]]
+- [[Angular-Latest-Series/08-Signals-The-Modern-Reactivity|Angular Signals]]
+- [[React-Latest-Series/25-vDOM-vs-SolidJS-Reactivity|React vDOM vs SolidJS]]
+- [[SolidJS-Series/SolidJS-01-Reactivity-Internals|SolidJS reactivity internals]]
 
 ## Routing và layout
 
-- [[22-Routing-Layout-SearchState|Angular routing, layout, search state]]
-- [[23-Routing-Layout-SearchState|React routing, layout, search state]]
-- [[SolidJS-13-Routing-Layout-SearchState|SolidJS routing, layout, search state]]
+- [[Angular-Latest-Series/22-Routing-Layout-SearchState|Angular routing, layout, search state]]
+- [[React-Latest-Series/23-Routing-Layout-SearchState|React routing, layout, search state]]
+- [[SolidJS-Series/SolidJS-13-Routing-Layout-SearchState|SolidJS routing, layout, search state]]
 
 ## Forms và validation
 
-- [[09-Reactive-Forms-Mastery|Angular reactive forms]]
-- [[21-Multi-Step-Forms-Complex-Validation|React complex forms]]
-- [[Bai-43-Form-Validation|Rust full-stack form validation]]
+- [[Angular-Latest-Series/09-Reactive-Forms-Mastery|Angular reactive forms]]
+- [[React-Latest-Series/21-Multi-Step-Forms-Complex-Validation|React complex forms]]
+- [[Rust-Zero-To-Hero/Bai-43-Form-Validation|Rust full-stack form validation]]
 
 ## State management
 
-- [[16-NgRx-State-Management|Angular NgRx]]
-- [[17-Zustand-State-Management|React Zustand]]
-- [[SolidJS-06-Stores-Nested-State|SolidJS stores]]
+- [[Angular-Latest-Series/16-NgRx-State-Management|Angular NgRx]]
+- [[React-Latest-Series/17-Zustand-State-Management|React Zustand]]
+- [[SolidJS-Series/SolidJS-06-Stores-Nested-State|SolidJS stores]]
 
 ## SSR, hydration và rendering
 
-- [[ssr-vs-csr-deep-dive|SSR vs CSR]]
-- [[20-Lazy-Loading-and-Code-Splitting|Angular lazy loading]]
-- [[13-React-Server-Components-and-NextJS-Intro|React Server Components]]
-- [[SolidJS-11-SolidStart-SSR|SolidStart SSR]]
+- [[concepts/ssr-vs-csr-deep-dive|SSR vs CSR]]
+- [[Angular-Latest-Series/20-Lazy-Loading-and-Code-Splitting|Angular lazy loading]]
+- [[React-Latest-Series/13-React-Server-Components-and-NextJS-Intro|React Server Components]]
+- [[SolidJS-Series/SolidJS-11-SolidStart-SSR|SolidStart SSR]]
 
 ## Performance
 
-- [[React-Compiler-Internals-Memoization|React Compiler internals]]
-- [[15-Change-Detection-and-OnPush|Angular change detection]]
-- [[11-Performance-Optimization|React performance]]
-- [[SolidJS-12-Performance-Testing|SolidJS performance testing]]
+- [[concepts/React-Compiler-Internals-Memoization|React Compiler internals]]
+- [[Angular-Latest-Series/15-Change-Detection-and-OnPush|Angular change detection]]
+- [[React-Latest-Series/11-Performance-Optimization|React performance]]
+- [[SolidJS-Series/SolidJS-12-Performance-Testing|SolidJS performance testing]]
 

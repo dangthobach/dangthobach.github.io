@@ -85,9 +85,9 @@ tags: []
 
 ## 🔗 Series Articles
 
-- [[05-Level1-Foundations|Level 1 · Foundations]]
-- [[06-Level2-Idiomatic|Level 2 · Idiomatic]]
-- [[07-Level3-Concurrency|Level 3 · Concurrency]]
-- [[08-Level4-Architecture|Level 4 · Architecture]]
+- [[Design-Patterns-Go/05-Level1-Foundations|Level 1 · Foundations]]
+- [[Design-Patterns-Go/06-Level2-Idiomatic|Level 2 · Idiomatic]]
+- [[Design-Patterns-Go/07-Level3-Concurrency|Level 3 · Concurrency]]
+- [[Design-Patterns-Go/08-Level4-Architecture|Level 4 · Architecture]]
 
 *Tags: #go #patterns #idiomatic #concurrency*

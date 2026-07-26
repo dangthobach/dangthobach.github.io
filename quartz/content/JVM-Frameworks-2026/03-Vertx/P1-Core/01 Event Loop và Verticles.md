@@ -188,7 +188,7 @@ VertxOptions options = new VertxOptions()
 
 ## 🔗 Liên quan
 - [[02 Event Bus]] — Event Bus patterns chi tiết
-- [[01 Mutiny - Uni và Multi]] — so sánh Uni vs Future
+- [[../../01-Quarkus/P3-Reactive/01 Mutiny - Uni và Multi]] — so sánh Uni vs Future
 
 ## 📖 Nguồn
 - https://vertx.io/docs/vertx-core/java/

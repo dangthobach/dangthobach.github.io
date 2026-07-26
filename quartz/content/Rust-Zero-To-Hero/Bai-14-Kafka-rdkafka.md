@@ -375,8 +375,8 @@ Rebalance recovery:
 ---
 
 ## 🔗 Links
-- [[Bai-9-Async-Tokio|Bài 9: tokio::spawn, select!]]
-- [[Bai-13-Serde-Reqwest-JWT|Bài 13: Serde cho message payload]]
+- [[Rust-Zero-To-Hero/Bai-9-Async-Tokio|Bài 9: tokio::spawn, select!]]
+- [[Rust-Zero-To-Hero/Bai-13-Serde-Reqwest-JWT|Bài 13: Serde cho message payload]]
 - [[MOC-Distributed-Systems]] — Outbox pattern, at-least-once
 - [[MOC-PDMS]] — applied context
 

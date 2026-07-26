@@ -961,6 +961,6 @@ Chọn ActixWeb khi: cần max throughput, team quen API style giống Express.j
 ---
 
 ## 🔗 Links
-- [[Bai-24-Axum-Advanced|Bài 24: Axum Advanced]] — prerequisite
-- [[Bai-28-Tonic-GRPC|Bài 28: Tonic/gRPC]] → tiếp theo
-- [[Bai-9-Async-Tokio|Bài 9: Tokio]] — runtime foundation
+- [[Rust-Zero-To-Hero/Bai-24-Axum-Advanced|Bài 24: Axum Advanced]] — prerequisite
+- [[Rust-Zero-To-Hero/Bai-28-Tonic-GRPC|Bài 28: Tonic/gRPC]] → tiếp theo
+- [[Rust-Zero-To-Hero/Bai-9-Async-Tokio|Bài 9: Tokio]] — runtime foundation

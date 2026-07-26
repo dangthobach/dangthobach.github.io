@@ -671,8 +671,8 @@ TIP 5 — Debug reactive graph (Leptos)
 ---
 
 ## 🔗 Links
-- [[Bai-39-Security-Production|Bài 39: Security]] ← trước đó
-- [[Bai-29-Leptos|Bài 29: Leptos]] — signal basics
-- [[Bai-36-Dioxus-Core|Bài 36: Dioxus Core]] — signal basics
-- [[Bai-37-Dioxus-Advanced|Bài 37: Dioxus Advanced]] — reducer pattern (mở rộng)
-- [[Bai-41-Auth-SSR|Bài 41: Auth Flow SSR]] → tiếp theo
+- [[Rust-Zero-To-Hero/Bai-39-Security-Production|Bài 39: Security]] ← trước đó
+- [[Rust-Zero-To-Hero/Bai-29-Leptos|Bài 29: Leptos]] — signal basics
+- [[Rust-Zero-To-Hero/Bai-36-Dioxus-Core|Bài 36: Dioxus Core]] — signal basics
+- [[Rust-Zero-To-Hero/Bai-37-Dioxus-Advanced|Bài 37: Dioxus Advanced]] — reducer pattern (mở rộng)
+- [[Rust-Zero-To-Hero/Bai-41-Auth-SSR|Bài 41: Auth Flow SSR]] → tiếp theo

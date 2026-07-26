@@ -1,7 +1,7 @@
 ---
 tags: [database, postgresql, sql, optimization, performance, query-planning]
 Created: 2026-04-12
-MOC: "[[MOC-Database]]"
+MOC: "[[_moc/MOC-Database]]"
 type: reference
 domain: reference-library
 status: active
@@ -712,7 +712,7 @@ Xem node type:
 
 ## 🔗 Liên kết
 
-- [[Database Index Internals- Understanding the Data Structures|Index Internals]] — B-tree, GIN, BRIN internals
-- [[Database Performance Demystified- Essential Tips and Strategies|Database Performance Demystified]] — Connection pooling, N+1, vacuum
-- [[A Guide to Database Transactions- From ACID to Concurrency Control|Transactions & ACID]] — Isolation levels, MVCC, locking
-- [[MOC-PDMS]] — Context stored procedures PDMS
+- [[Notion Knowledge/Note/Database Index Internals- Understanding the Data Structures|Index Internals]] — B-tree, GIN, BRIN internals
+- [[Notion Knowledge/Note/Database Performance Demystified- Essential Tips and Strategies|Database Performance Demystified]] — Connection pooling, N+1, vacuum
+- [[Notion Knowledge/Note/A Guide to Database Transactions- From ACID to Concurrency Control|Transactions & ACID]] — Isolation levels, MVCC, locking
+- [[_moc/MOC-PDMS]] — Context stored procedures PDMS

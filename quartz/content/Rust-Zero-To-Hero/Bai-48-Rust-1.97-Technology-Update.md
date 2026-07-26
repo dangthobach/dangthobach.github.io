@@ -101,10 +101,10 @@ flowchart LR
 
 ## Liên kết trong Vault
 
-- [[Bai-9-Async-Tokio|Async Tokio]]
-- [[Bai-10-Axum-Core|Axum Core]]
-- [[Bai-19-Unsafe-FFI|Unsafe và FFI]]
-- [[Performance-Pitfalls-Rust|Rust Performance Pitfalls]]
+- [[Rust-Zero-To-Hero/Bai-9-Async-Tokio|Async Tokio]]
+- [[Rust-Zero-To-Hero/Bai-10-Axum-Core|Axum Core]]
+- [[Rust-Zero-To-Hero/Bai-19-Unsafe-FFI|Unsafe và FFI]]
+- [[Rust-Zero-To-Hero/Performance-Pitfalls-Rust|Rust Performance Pitfalls]]
 
 ## Nguồn chính thức
 
@@ -113,3 +113,17 @@ flowchart LR
 - [Axum repository and releases](https://github.com/tokio-rs/axum)
 - [Tokio repository and releases](https://github.com/tokio-rs/tokio)
 
+
+## Cập nhật 26/07/2026 — đối chiếu danh sách dự kiến với thực tế
+
+Danh sách "Article nên bổ sung tiếp" ở trên đã lỗi thời — phần lớn đã được viết dưới tên khác trong series:
+
+- Symbol mangling & profiling → gộp vào [[Rust-Zero-To-Hero/Bai-49-Rust-Framework-Radar-2026]]
+- Cargo CI cache/warning policy → đã nằm trong mục 2 của chính bài này
+- Axum 0.8 production migration → [[Rust-Zero-To-Hero/Bai-51-Axum-0.8.9-Production-Update]]
+- Tokio scheduler/cancellation → [[Rust-Zero-To-Hero/Bai-50-Tokio-1.52-Runtime-Update]]
+- Leptos/Dioxus radar → [[Rust-Zero-To-Hero/Bai-55-Leptos-0.8-Migration]], [[Rust-Zero-To-Hero/Bai-56-Dioxus-0.7-to-0.8-Watchlist]]
+
+Gap còn thật, chưa có bài riêng (nên viết tiếp): **Tower middleware architecture** và **native linking/FFI diagnostics**.
+
+Xác nhận version tại 26/07/2026 (nguồn: blog.rust-lang.org): Rust stable vẫn là **1.97.1** (16/07/2026), chưa có point release mới hơn kể từ khi bài này được viết (24/07/2026).

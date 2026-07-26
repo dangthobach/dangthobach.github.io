@@ -93,10 +93,10 @@ Gin đã tiến tới dòng 1.12 và yêu cầu Go mới hơn; release notes nh�
 
 ## Liên kết trong Vault
 
-- [[Performance-Pitfalls-Go|Performance Pitfalls Go]]
-- [[Bai-8-Testing-Benchmarking|Testing và Benchmarking]]
-- [[Bai-11-Gin-Core|Gin Core]]
-- [[memory-hierarchy-cpu-cache|Memory hierarchy và CPU cache]]
+- [[Go-Zero-To-Hero/Performance-Pitfalls-Go|Performance Pitfalls Go]]
+- [[Go-Zero-To-Hero/Bai-8-Testing-Benchmarking|Testing và Benchmarking]]
+- [[Go-Zero-To-Hero/Bai-11-Gin-Core|Gin Core]]
+- [[concepts/memory-hierarchy-cpu-cache|Memory hierarchy và CPU cache]]
 
 ## Nguồn chính thức
 

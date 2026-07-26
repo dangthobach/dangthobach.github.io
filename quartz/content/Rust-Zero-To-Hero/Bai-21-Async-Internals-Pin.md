@@ -417,8 +417,8 @@ async fn good() {
 ---
 
 ## 🔗 Links
-- [[Bai-9-Async-Tokio|Bài 9: Tokio usage]] — prerequisite
-- [[Bai-22-Advanced-Concurrency|Bài 22: Advanced Concurrency]] → tiếp theo
+- [[Rust-Zero-To-Hero/Bai-9-Async-Tokio|Bài 9: Tokio usage]] — prerequisite
+- [[Rust-Zero-To-Hero/Bai-22-Advanced-Concurrency|Bài 22: Advanced Concurrency]] → tiếp theo
 - [[MOC-Concurrency]]
 
 ---

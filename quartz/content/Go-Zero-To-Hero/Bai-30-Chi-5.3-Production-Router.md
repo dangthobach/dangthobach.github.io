@@ -76,12 +76,27 @@ Viết integration test chứng minh:
 
 ## Liên kết
 
-- [[Bai-15-Chi-Clean-Architecture|Chi + Clean Architecture]]
-- [[Bai-9-Net-Http-Deep|net/http]]
-- [[clean-architecture-hexagonal|Clean Architecture]]
-- [[Bai-26-Go-Framework-Radar-2026|Framework Radar]]
+- [[Go-Zero-To-Hero/Bai-15-Chi-Clean-Architecture|Chi + Clean Architecture]]
+- [[Go-Zero-To-Hero/Bai-9-Net-Http-Deep|net/http]]
+- [[concepts/clean-architecture-hexagonal|Clean Architecture]]
+- [[Go-Zero-To-Hero/Bai-26-Go-Framework-Radar-2026|Framework Radar]]
 
 ## Nguồn
 
 - [Chi releases](https://github.com/go-chi/chi/releases)
 
+
+## Cập nhật 26/07/2026
+
+Xác nhận **v5.3.0 vẫn là bản mới nhất** (phát hành 22/05/2026, nguồn github.com/go-chi/chi/releases). Điểm quan trọng nhất trong 5.3.0 mà bài này nên phản ánh vào mục "Middleware order":
+
+- **`middleware.RealIP` cũ đã được thay bằng 4 hàm tường minh**, buộc bạn chọn đúng mô hình trust thay vì dùng một middleware "đoán":
+  ```go
+  middleware.ClientIPFromHeader(trustedHeader string)          // tin 1 header cụ thể (vd "CF-Connecting-IP")
+  middleware.ClientIPFromXFF(trustedIPPrefixes ...string)       // tin X-Forwarded-For, giới hạn theo IP prefix của proxy
+  middleware.ClientIPFromXFFTrustedProxies(numTrustedProxies int) // tin N hop cuối trong chain X-Forwarded-For
+  middleware.ClientIPFromRemoteAddr(h http.Handler) http.Handler  // không tin header nào, chỉ dùng RemoteAddr
+  ```
+  Đây là thay đổi tốt cho production: version cũ (`middleware.RealIP`) tin `X-Forwarded-For`/`X-Real-IP` mặc định mà không giới hạn số hop hay proxy nào được tin — rủi ro spoofing IP nếu client có thể tự set header. Với PDMS chạy sau ALB/ingress trên EKS, `ClientIPFromXFFTrustedProxies(1)` (hoặc số hop đúng theo topology) là lựa chọn an toàn hơn `ClientIPFromRemoteAddr` (sẽ luôn thấy IP của ALB) và an toàn hơn nhiều so với tin mù `X-Forwarded-For`.
+
+*Nguồn: github.com/go-chi/chi/releases/tag/v5.3.0 — truy cập 26/07/2026.*

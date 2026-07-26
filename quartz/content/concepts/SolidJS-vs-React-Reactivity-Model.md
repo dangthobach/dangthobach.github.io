@@ -352,10 +352,10 @@ React hoặc Angular phù hợp hơn vì:
 
 ## Related
 
-- [[24-Two-Way-Binding-Internals]]
-- [[08-Signals-The-Modern-Reactivity]]
-- [[15-Change-Detection-and-OnPush]]
-- [[SolidJS-01-Reactivity-Internals]]
-- [[SolidJS-02-Signals-Deep-Dive]]
-- [[11-Performance-Optimization]]
-- [[12-Concurrent-Features]]
+- [[Angular-Latest-Series/24-Two-Way-Binding-Internals]]
+- [[Angular-Latest-Series/08-Signals-The-Modern-Reactivity]]
+- [[Angular-Latest-Series/15-Change-Detection-and-OnPush]]
+- [[SolidJS-Series/SolidJS-01-Reactivity-Internals]]
+- [[SolidJS-Series/SolidJS-02-Signals-Deep-Dive]]
+- [[React-Latest-Series/11-Performance-Optimization]]
+- [[React-Latest-Series/12-Concurrent-Features]]

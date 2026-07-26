@@ -58,9 +58,9 @@ So sánh ergonomics, allocation, p99 và behavior khi client chậm.
 
 ## Liên kết
 
-- [[Bai-25-ActixWeb|Actix Web course]]
-- [[Bai-51-Axum-0.8.9-Production-Update|Axum 0.8.9]]
-- [[Performance-Pitfalls-Rust|Performance Pitfalls]]
+- [[Rust-Zero-To-Hero/Bai-25-ActixWeb|Actix Web course]]
+- [[Rust-Zero-To-Hero/Bai-51-Axum-0.8.9-Production-Update|Axum 0.8.9]]
+- [[Rust-Zero-To-Hero/Performance-Pitfalls-Rust|Performance Pitfalls]]
 
 ## Nguồn
 

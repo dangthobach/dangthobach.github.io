@@ -235,7 +235,7 @@ router.post("/api/users")
 ## 🔗 Liên quan
 - [[01 Event Loop và Verticles]]
 - [[02 WebClient]]
-- [[02 JAX-RS vs Spring MVC]]
+- [[../../01-Quarkus/P1-Foundation/02 JAX-RS vs Spring MVC]]
 
 ## 📖 Nguồn
 - https://vertx.io/docs/vertx-web/java/

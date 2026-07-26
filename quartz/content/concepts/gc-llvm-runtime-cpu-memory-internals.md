@@ -2,9 +2,9 @@
 title: "GC · LLVM · Native Code · Runtime Overhead — Bản Chất CPU & Memory"
 tags: [systems, rust, go, java, gc, llvm, runtime, memory, cpu, performance]
 related:
-  - "[[rust-java-go-comparison]]"
-  - "[[ownership-borrowing]]"
-  - "[[Rust-Java-Build-Compile-Deploy-Memory-Timeline]]"
+  - "[[concepts/rust-java-go-comparison]]"
+  - "[[Rust-Zero-To-Hero/ownership-borrowing]]"
+  - "[[concepts/Rust-Java-Build-Compile-Deploy-Memory-Timeline]]"
 created: 2026-05-02
 status: permanent
 type: concept
@@ -369,7 +369,7 @@ flowchart TB
     style F fill:#37474f,color:#fff
 ```
 
-Đây là lý do quan sát thực tế trên `htop`/Task Manager: **process Java ăn 2GB RAM và gần như không bao giờ nhả xuống** dù ứng dụng đang rảnh — JVM giữ RAM lại phòng hờ, hiếm khi gọi `munmap`. (G1/ZGC bản mới có tính năng trả bộ nhớ về OS, nhưng mặc định vẫn khá bảo thủ — liên quan trực tiếp đến hiện tượng "RSS creep" đã nói ở mục 2.4 của [[Rust-Java-Build-Compile-Deploy-Memory-Timeline]]).
+Đây là lý do quan sát thực tế trên `htop`/Task Manager: **process Java ăn 2GB RAM và gần như không bao giờ nhả xuống** dù ứng dụng đang rảnh — JVM giữ RAM lại phòng hờ, hiếm khi gọi `munmap`. (G1/ZGC bản mới có tính năng trả bộ nhớ về OS, nhưng mặc định vẫn khá bảo thủ — liên quan trực tiếp đến hiện tượng "RSS creep" đã nói ở mục 2.4 của [[concepts/Rust-Java-Build-Compile-Deploy-Memory-Timeline]]).
 
 #### 3.5.4 So sánh ẩn dụ
 
@@ -725,5 +725,5 @@ Nếu cả 4 đều "có" → Rust đáng đầu tư. Nếu thiếu 1-2 điều 
 - [Java ZGC](https://wiki.openjdk.org/display/zgc/Main)
 - [Rustonomicon — Memory layout](https://doc.rust-lang.org/nomicon/repr-rust.html)
 - [Write barriers in Go](https://go.googlesource.com/proposal/+/refs/heads/master/design/17503-eliminate-rescan.md)
-- `[[rust-java-go-comparison]]`
-- `[[Rust-Java-Build-Compile-Deploy-Memory-Timeline]]` — timeline build/compile/JIT + bộ nhớ khi deploy container/K8s
+- `[[concepts/rust-java-go-comparison]]`
+- `[[concepts/Rust-Java-Build-Compile-Deploy-Memory-Timeline]]` — timeline build/compile/JIT + bộ nhớ khi deploy container/K8s

@@ -478,10 +478,10 @@ CREATE TABLE pdms.muon_tra (
 
 ## 🔗 Links
 
-- [[01-Data-Consistency]] — consistency patterns tổng quan
-- [[Transactional-Outbox]] — đảm bảo reliable event publishing
-- [[Debezium-CDC-Deep-Dive]] — alternative: CDC thay vì outbox
-- [[CQRS-Materialized-View]] — pattern liên quan cho read models
-- [[PDMS-AuthZ-Fine-Grained-Design]] — áp dụng thực tế (kho_snapshot, authz_local)
-- [[PDMS-Architecture-Overview]] — toàn cảnh PDMS service responsibilities
-- [[ddd-strategic]] — Bounded Context: tại sao OK khi có "redundant" data
+- [[Microservices-Patterns/01-Data-Consistency]] — consistency patterns tổng quan
+- [[Microservices-Patterns/Transactional-Outbox]] — đảm bảo reliable event publishing
+- [[Microservices-Patterns/Debezium-CDC-Deep-Dive]] — alternative: CDC thay vì outbox
+- [[Microservices-Patterns/CQRS-Materialized-View]] — pattern liên quan cho read models
+- [[Microservices-Patterns/PDMS-AuthZ-Fine-Grained-Design]] — áp dụng thực tế (kho_snapshot, authz_local)
+- [[Microservices-Patterns/PDMS-Architecture-Overview]] — toàn cảnh PDMS service responsibilities
+- [[concepts/ddd-strategic]] — Bounded Context: tại sao OK khi có "redundant" data

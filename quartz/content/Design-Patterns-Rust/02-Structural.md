@@ -689,9 +689,9 @@ impl CustomerRepository for CachingCustomerProxy {
 ---
 
 ## 🔗 Links
-- [[00-Overview|Series Overview]]
-- [[01-Creational|← 01 · Creational Patterns]]
-- [[03-Behavioral|03 · Behavioral Patterns →]]
-- [[Bai-8-Smart-Pointers-Error-Design|Bài 8: Smart Pointers]]
+- [[Design-Patterns-Rust/00-Overview|Series Overview]]
+- [[Design-Patterns-Rust/01-Creational|← 01 · Creational Patterns]]
+- [[Design-Patterns-Rust/03-Behavioral|03 · Behavioral Patterns →]]
+- [[Rust-Zero-To-Hero/Bai-8-Smart-Pointers-Error-Design|Bài 8: Smart Pointers]]
 
 *Tags: #rust #design-patterns #structural #gof*

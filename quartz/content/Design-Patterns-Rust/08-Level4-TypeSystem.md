@@ -536,10 +536,10 @@ fn main() {
 ---
 
 ## 🔗 Links
-- [[07-Level3-Architecture|← Level 3 · Architecture]]
-- [[04-Rust-Idiomatic-Overview|Overview — All Levels]]
-- [[Bai-5-Lifetimes|Bài 5: Lifetimes]]
-- [[Bai-6-Generics-Traits-Advanced|Bài 6: Generics & Traits Advanced]]
-- [[Bai-18-Type-System-Advanced|Bài 18: Type System Advanced]]
+- [[Design-Patterns-Rust/07-Level3-Architecture|← Level 3 · Architecture]]
+- [[Design-Patterns-Rust/04-Rust-Idiomatic-Overview|Overview — All Levels]]
+- [[Rust-Zero-To-Hero/Bai-5-Lifetimes|Bài 5: Lifetimes]]
+- [[Rust-Zero-To-Hero/Bai-6-Generics-Traits-Advanced|Bài 6: Generics & Traits Advanced]]
+- [[Rust-Zero-To-Hero/Bai-18-Type-System-Advanced|Bài 18: Type System Advanced]]
 
 *Tags: #rust #patterns #level4 #gats #hrtb #const-generics #variance #typestate*

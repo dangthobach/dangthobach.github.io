@@ -212,7 +212,7 @@ Multi.combine().uniMerge([uniA, uniB])
 ## 🔗 Liên quan
 - [[02 RESTEasy Reactive]] — integrate Mutiny với REST
 - [[03 SmallRye Kafka]] — Mutiny trong Kafka consumer
-- [[00 RxJava Overview]] — so sánh với RxJava
+- [[../../04-RxJava/00 RxJava Overview]] — so sánh với RxJava
 
 ## 📖 Nguồn
 - https://smallrye.io/smallrye-mutiny/

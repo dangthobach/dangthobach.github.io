@@ -909,7 +909,7 @@ TIP 5 — Dynamic field array anti-pattern
 ---
 
 ## 🔗 Links
-- [[Bai-42-JS-Interop|Bài 42: JS Interop]] ← trước đó (FileReader, DnD)
-- [[Bai-39-Security-Production|Bài 39: Security]] — server-side validation
-- [[Bai-41-Auth-SSR|Bài 41: Auth]] — form auth context
-- [[Bai-44-Styling-Pipeline|Bài 44: Styling Pipeline]] → tiếp theo
+- [[Rust-Zero-To-Hero/Bai-42-JS-Interop|Bài 42: JS Interop]] ← trước đó (FileReader, DnD)
+- [[Rust-Zero-To-Hero/Bai-39-Security-Production|Bài 39: Security]] — server-side validation
+- [[Rust-Zero-To-Hero/Bai-41-Auth-SSR|Bài 41: Auth]] — form auth context
+- [[Rust-Zero-To-Hero/Bai-44-Styling-Pipeline|Bài 44: Styling Pipeline]] → tiếp theo

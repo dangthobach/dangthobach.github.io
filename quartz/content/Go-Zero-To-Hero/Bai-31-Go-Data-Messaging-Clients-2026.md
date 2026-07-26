@@ -90,11 +90,11 @@ Triển khai Outbox:
 
 ## Liên kết
 
-- [[Bai-10-GORM-PostgreSQL|GORM]]
-- [[Bai-17-Kafka-Sarama|Kafka/Sarama]]
-- [[Bai-18-gRPC|gRPC]]
-- [[Bai-20-Redis-Caching|Redis]]
-- [[Transactional-Outbox|Transactional Outbox]]
+- [[Go-Zero-To-Hero/Bai-10-GORM-PostgreSQL|GORM]]
+- [[Go-Zero-To-Hero/Bai-17-Kafka-Sarama|Kafka/Sarama]]
+- [[Go-Zero-To-Hero/Bai-18-gRPC|gRPC]]
+- [[Go-Zero-To-Hero/Bai-20-Redis-Caching|Redis]]
+- [[Microservices-Patterns/Transactional-Outbox|Transactional Outbox]]
 
 ## Nguồn
 

@@ -476,4 +476,4 @@ mod tests {
 - [Fory Rust crate](https://crates.io/crates/fory)
 - [rdkafka async consumer](https://docs.rs/rdkafka/latest/rdkafka/consumer/struct.StreamConsumer.html)
 - [[09-Fory-Go-Quickstart]]
-- [[]] series
+- [[Rust-Zero-To-Hero/]] series

@@ -696,7 +696,7 @@ Level 3:
 ---
 
 ## 🔗 Links
-- [[05-Level1-Foundations|← Level 1 · Foundations]]
-- [[08-Level4-Architecture|Level 4 · Architecture →]]
+- [[Design-Patterns-Go/05-Level1-Foundations|← Level 1 · Foundations]]
+- [[Design-Patterns-Go/08-Level4-Architecture|Level 4 · Architecture →]]
 
 *Tags: #go #patterns #level2 #level3 #embedding #context #worker-pool #pipeline*

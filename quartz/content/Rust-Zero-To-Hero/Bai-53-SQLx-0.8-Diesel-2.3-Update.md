@@ -75,13 +75,22 @@ Triển khai cùng use case bằng SQLx và Diesel:
 
 ## Liên kết
 
-- [[Bai-12-SQLx-Database|SQLx foundation]]
-- [[Bai-26-SQLx-Advanced|SQLx Advanced]]
-- [[Bai-27-Diesel|Diesel]]
-- [[connection-pooling-pgbouncer|Connection Pooling]]
+- [[Rust-Zero-To-Hero/Bai-12-SQLx-Database|SQLx foundation]]
+- [[Rust-Zero-To-Hero/Bai-26-SQLx-Advanced|SQLx Advanced]]
+- [[Rust-Zero-To-Hero/Bai-27-Diesel|Diesel]]
+- [[concepts/connection-pooling-pgbouncer|Connection Pooling]]
 
 ## Nguồn
 
 - [SQLx changelog](https://github.com/launchbadge/sqlx/blob/main/CHANGELOG.md)
 - [Diesel 2.3.7](https://github.com/diesel-rs/diesel/releases/tag/v2.3.7)
 
+
+## Cập nhật 26/07/2026 — thay đổi governance quan trọng
+
+- **SQLx đã lên v0.9.0** (phát hành 06/05/2026) — vượt qua phạm vi "SQLx 0.8" của tiêu đề bài này. Đáng chú ý hơn cả version: **repository đã chuyển từ `launchbadge/sqlx` sang `transact-rs/sqlx`**, vì SQLx thực tế không còn được LaunchBadge, LLC. duy trì từ vài năm nay — việc chuyển tổ chức chỉ chính thức hoá quyền sở hữu tập thể của các tác giả chính. Link cũ (`github.com/launchbadge/sqlx`) vẫn hoạt động (redirect) nhưng nên cập nhật bookmark/CI script trỏ sang `transact-rs/sqlx`. Về mặt kỹ thuật, 0.9.0 đáng chú ý: `Cargo.lock` không còn track trong git (CI luôn test với dependency mới nhất theo mặc định), và `cargo install --locked sqlx-cli` không còn hoạt động như cũ.
+- **Diesel đã lên 2.3.10** (bản `2.3.7` trong link nguồn của bài đã cũ hơn vài patch) — vẫn cùng dòng 2.3, không có breaking change, chỉ cần `cargo update -p diesel`.
+
+**Hành động đề xuất:** nếu PDMS có pipeline pin `launchbadge/sqlx` trực tiếp qua git dependency (thay vì crates.io), kiểm tra lại — nên chuyển sang dùng crates.io như bình thường để tự động theo tổ chức mới, tránh phụ thuộc vào một repo có thể ngừng cập nhật.
+
+*Nguồn: github.com/launchbadge/sqlx/discussions/4271, github.com/transact-rs/sqlx, crates.io/crates/diesel — truy cập 26/07/2026.*

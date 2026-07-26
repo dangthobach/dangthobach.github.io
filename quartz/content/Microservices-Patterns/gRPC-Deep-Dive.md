@@ -1,7 +1,7 @@
 ---
 tags: [microservices, grpc, protocol-buffers, http2, go, java, rust, performance]
-up: "[[01-Data-Consistency]]"
-related: "[[Cross-Service-Join-AuthZ-Fine-Grained-Filter]], [[Transactional-Outbox]]"
+up: "[[Microservices-Patterns/01-Data-Consistency]]"
+related: "[[Microservices-Patterns/Cross-Service-Join-AuthZ-Fine-Grained-Filter]], [[Microservices-Patterns/Transactional-Outbox]]"
 type: guide
 domain: architecture/microservices
 status: active
@@ -209,6 +209,6 @@ graph TD
 
 ---
 ## 🔗 Liên kết
-- [[HTTP2-Internals]]
-- [[Decomposition]]
-- [[Serialization-Protobuf-vs-JSON]]
+- [[concepts/HTTP2-Internals]]
+- [[Microservices-Patterns/Decomposition]]
+- [[concepts/Serialization-Protobuf-vs-JSON]]

@@ -950,10 +950,10 @@ let s = String::from("hello");          // tương đương, most explicit
 
 ## 🔗 Links
 
-- [[Bai-17-Zero-Cost-Performance|Bài 17: Zero-cost Abstractions cơ bản]]
-- [[Bai-21-Async-Internals-Pin|Bài 21: Async Internals & Pin]]
-- [[Bai-22-Advanced-Concurrency|Bài 22: Advanced Concurrency]]
-- [[Performance-Pitfalls-Go|Go: Performance Pitfalls (so sánh)]]
+- [[Rust-Zero-To-Hero/Bai-17-Zero-Cost-Performance|Bài 17: Zero-cost Abstractions cơ bản]]
+- [[Rust-Zero-To-Hero/Bai-21-Async-Internals-Pin|Bài 21: Async Internals & Pin]]
+- [[Rust-Zero-To-Hero/Bai-22-Advanced-Concurrency|Bài 22: Advanced Concurrency]]
+- [[Go-Zero-To-Hero/Performance-Pitfalls-Go|Go: Performance Pitfalls (so sánh)]]
 
 ---
 

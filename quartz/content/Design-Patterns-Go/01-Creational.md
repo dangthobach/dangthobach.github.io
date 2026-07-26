@@ -598,8 +598,8 @@ func main() {
 ---
 
 ## 🔗 Links
-- [[00-Overview|Series Overview]]
-- [[02-Structural|02 · Structural Patterns →]]
-- [[Bai-6-Interfaces-Generics|Bài 6: Interfaces & Generics]]
+- [[Design-Patterns-Go/00-Overview|Series Overview]]
+- [[Design-Patterns-Go/02-Structural|02 · Structural Patterns →]]
+- [[Go-Zero-To-Hero/Bai-6-Interfaces-Generics|Bài 6: Interfaces & Generics]]
 
 *Tags: #go #design-patterns #creational #functional-options #singleton*

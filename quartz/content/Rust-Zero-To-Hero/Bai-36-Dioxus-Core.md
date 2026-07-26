@@ -1124,6 +1124,6 @@ fn DocumentList() -> Element {
 ---
 
 ## 🔗 Links
-- [[Bai-29-Leptos|Bài 29: Leptos]] — so sánh trực tiếp
-- [[Bai-37-Dioxus-Advanced|Bài 37: Dioxus Advanced]] → tiếp theo
-- [[Bai-38-Dioxus-Desktop-Mobile|Bài 38: Dioxus Desktop & Mobile]] → cross-platform
+- [[Rust-Zero-To-Hero/Bai-29-Leptos|Bài 29: Leptos]] — so sánh trực tiếp
+- [[Rust-Zero-To-Hero/Bai-37-Dioxus-Advanced|Bài 37: Dioxus Advanced]] → tiếp theo
+- [[Rust-Zero-To-Hero/Bai-38-Dioxus-Desktop-Mobile|Bài 38: Dioxus Desktop & Mobile]] → cross-platform

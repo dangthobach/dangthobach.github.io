@@ -532,6 +532,6 @@ Security:
 ---
 
 ## 🔗 Links
-- [[Bai-15-Config-Tracing-Testing|Bài 15: Config & Tracing]]
-- [[Bai-9-Async-Tokio|Bài 9: CancellationToken, select!]]
+- [[Rust-Zero-To-Hero/Bai-15-Config-Tracing-Testing|Bài 15: Config & Tracing]]
+- [[Rust-Zero-To-Hero/Bai-9-Async-Tokio|Bài 9: CancellationToken, select!]]
 - [[MOC-PDMS]] — production deployment context

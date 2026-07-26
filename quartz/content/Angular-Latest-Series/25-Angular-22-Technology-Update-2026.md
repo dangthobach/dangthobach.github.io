@@ -99,10 +99,10 @@ Luôn nâng đến patch mới nhất trong major 22.
 
 ## Liên kết trong Vault
 
-- [[frontend-concept-map|Frontend Concept Map]]
-- [[08-Signals-The-Modern-Reactivity|Signals]]
-- [[15-Change-Detection-and-OnPush|Change Detection và OnPush]]
-- [[09-Reactive-Forms-Mastery|Reactive Forms]]
+- [[concepts/frontend-concept-map|Frontend Concept Map]]
+- [[Angular-Latest-Series/08-Signals-The-Modern-Reactivity|Signals]]
+- [[Angular-Latest-Series/15-Change-Detection-and-OnPush|Change Detection và OnPush]]
+- [[Angular-Latest-Series/09-Reactive-Forms-Mastery|Reactive Forms]]
 
 ## Nguồn chính thức
 

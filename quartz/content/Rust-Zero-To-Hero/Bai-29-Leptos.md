@@ -1026,9 +1026,9 @@ pub fn DocumentListPage() -> impl IntoView {
 ---
 
 ## 🔗 Links
-- [[Bai-24-Axum-Advanced|Bài 24: Axum Advanced]] — backend foundation
-- [[Bai-26-SQLx-Advanced|Bài 26: SQLx Advanced]] — DB integration
-- [[Plan-Framework-Mastery|Plan: Framework Mastery]] — tổng quan
+- [[Rust-Zero-To-Hero/Bai-24-Axum-Advanced|Bài 24: Axum Advanced]] — backend foundation
+- [[Rust-Zero-To-Hero/Bai-26-SQLx-Advanced|Bài 26: SQLx Advanced]] — DB integration
+- [[Rust-Zero-To-Hero/Plan-Framework-Mastery|Plan: Framework Mastery]] — tổng quan
 
 ---
 
@@ -1132,6 +1132,6 @@ PDMS là internal banking tool:
 ```
 
 ### 🔗 Tiếp theo — Dioxus Series
-- [[Bai-36-Dioxus-Core|Bài 36: Dioxus Core]] — components, signals, hooks, router
-- [[Bai-37-Dioxus-Advanced|Bài 37: Dioxus Advanced]] — global state, coroutines, performance
-- [[Bai-38-Dioxus-Desktop-Mobile|Bài 38: Dioxus Desktop & Mobile]] — cross-platform
+- [[Rust-Zero-To-Hero/Bai-36-Dioxus-Core|Bài 36: Dioxus Core]] — components, signals, hooks, router
+- [[Rust-Zero-To-Hero/Bai-37-Dioxus-Advanced|Bài 37: Dioxus Advanced]] — global state, coroutines, performance
+- [[Rust-Zero-To-Hero/Bai-38-Dioxus-Desktop-Mobile|Bài 38: Dioxus Desktop & Mobile]] — cross-platform

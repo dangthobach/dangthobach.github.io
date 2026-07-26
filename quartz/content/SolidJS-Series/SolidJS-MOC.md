@@ -21,28 +21,28 @@ tags: []
 
 | # | Bài | Nội dung cốt lõi |
 |---|---|---|
-| 01 | [[SolidJS-01-Reactivity-Internals\|Reactivity Internals]] | Reactive graph, tracking context, ownership tree |
-| 02 | [[SolidJS-02-Signals-Deep-Dive\|Signals Deep Dive]] | createSignal, createMemo, batch, untrack |
-| 03 | [[SolidJS-03-Effects-And-Lifecycle\|Effects & Lifecycle]] | createEffect, onMount, onCleanup, cleanup patterns |
-| 04 | [[SolidJS-04-JSX-Component-Model\|JSX & Component Model]] | Compile model, run-once, mergeProps, splitProps |
-| 05 | [[SolidJS-05-Control-Flow-Primitives\|Control Flow Primitives]] | Show, For, Index, Switch, Dynamic |
+| 01 | [[SolidJS-Series/SolidJS-01-Reactivity-Internals\|Reactivity Internals]] | Reactive graph, tracking context, ownership tree |
+| 02 | [[SolidJS-Series/SolidJS-02-Signals-Deep-Dive\|Signals Deep Dive]] | createSignal, createMemo, batch, untrack |
+| 03 | [[SolidJS-Series/SolidJS-03-Effects-And-Lifecycle\|Effects & Lifecycle]] | createEffect, onMount, onCleanup, cleanup patterns |
+| 04 | [[SolidJS-Series/SolidJS-04-JSX-Component-Model\|JSX & Component Model]] | Compile model, run-once, mergeProps, splitProps |
+| 05 | [[SolidJS-Series/SolidJS-05-Control-Flow-Primitives\|Control Flow Primitives]] | Show, For, Index, Switch, Dynamic |
 
 ### Phase 2 — State & Data ✅
 
 | # | Bài | Nội dung cốt lõi |
 |---|---|---|
-| 06 | [[SolidJS-06-Stores-Nested-State\|Stores & Nested State]] | createStore, produce, reconcile |
-| 07 | [[SolidJS-07-Context-DI\|Context & DI]] | createContext, Provider, service layer |
-| 08 | [[SolidJS-08-Async-Resources\|Async & Resources]] | createResource, Suspense, ErrorBoundary |
-| 09 | [[SolidJS-09-Routing\|Routing]] | @solidjs/router, nested routes, loaders |
+| 06 | [[SolidJS-Series/SolidJS-06-Stores-Nested-State\|Stores & Nested State]] | createStore, produce, reconcile |
+| 07 | [[SolidJS-Series/SolidJS-07-Context-DI\|Context & DI]] | createContext, Provider, service layer |
+| 08 | [[SolidJS-Series/SolidJS-08-Async-Resources\|Async & Resources]] | createResource, Suspense, ErrorBoundary |
+| 09 | [[SolidJS-Series/SolidJS-09-Routing\|Routing]] | @solidjs/router, nested routes, loaders |
 
 ### Phase 3 — Enterprise ✅
 
 | # | Bài | Nội dung cốt lõi |
 |---|---|---|
-| 10 | [[SolidJS-10-Complex-UI-Patterns\|Complex UI Patterns]] | Forms (Zod), data tables, virtual scroll |
-| 11 | [[SolidJS-11-SolidStart-SSR\|SolidStart & SSR]] | Server functions, streaming SSR, islands |
-| 12 | [[SolidJS-12-Performance-Testing\|Performance & Testing]] | Profiling, Vitest, Feature-Slice architecture |
+| 10 | [[SolidJS-Series/SolidJS-10-Complex-UI-Patterns\|Complex UI Patterns]] | Forms (Zod), data tables, virtual scroll |
+| 11 | [[SolidJS-Series/SolidJS-11-SolidStart-SSR\|SolidStart & SSR]] | Server functions, streaming SSR, islands |
+| 12 | [[SolidJS-Series/SolidJS-12-Performance-Testing\|Performance & Testing]] | Profiling, Vitest, Feature-Slice architecture |
 
 ---
 
@@ -124,4 +124,4 @@ SolidJS-Series/
 
 ## 🔗 Concept Graph
 
-- [[frontend-concept-map|Frontend Concept Map — SolidJS ↔ React ↔ Angular]]
+- [[concepts/frontend-concept-map|Frontend Concept Map — SolidJS ↔ React ↔ Angular]]

@@ -371,9 +371,9 @@ fn process_request(data: &[u8]) {
 ---
 
 ## 🔗 Links
-- [[Bai-9-Async-Tokio|Bài 9: Tokio channels]]
-- [[Bai-21-Async-Internals-Pin|Bài 21: Waker & scheduling]]
-- [[Bai-23-Workspace-Architecture|Bài 23: Workspace]] → tiếp theo
+- [[Rust-Zero-To-Hero/Bai-9-Async-Tokio|Bài 9: Tokio channels]]
+- [[Rust-Zero-To-Hero/Bai-21-Async-Internals-Pin|Bài 21: Waker & scheduling]]
+- [[Rust-Zero-To-Hero/Bai-23-Workspace-Architecture|Bài 23: Workspace]] → tiếp theo
 - [[MOC-Concurrency]]
 
 ---

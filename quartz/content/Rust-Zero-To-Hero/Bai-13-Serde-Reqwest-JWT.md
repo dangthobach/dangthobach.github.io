@@ -442,9 +442,9 @@ Memory per connection:
 ---
 
 ## 🔗 Links
-- [[Bai-10-Axum-Core|Bài 10: State & Extractors]]
-- [[Bai-11-Axum-Middleware-Error|Bài 11: Middleware]]
-- [[Bai-14-Kafka-rdkafka|Bài 14: Kafka]]
+- [[Rust-Zero-To-Hero/Bai-10-Axum-Core|Bài 10: State & Extractors]]
+- [[Rust-Zero-To-Hero/Bai-11-Axum-Middleware-Error|Bài 11: Middleware]]
+- [[Rust-Zero-To-Hero/Bai-14-Kafka-rdkafka|Bài 14: Kafka]]
 
 ---
 *Bài tập:*

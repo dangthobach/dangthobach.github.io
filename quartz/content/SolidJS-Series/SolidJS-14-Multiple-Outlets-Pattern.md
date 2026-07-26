@@ -14,7 +14,7 @@ tags: #solidjs #solid-router #routing #multiple-outlets #parallel
 ---
 
 > Bài này cover phần SolidJS của chủ đề Multiple Router Outlets.
-> Bài đầy đủ so sánh cả 3 framework: [[23-Multiple-Router-Outlets-Named-Auxiliary]]
+> Bài đầy đủ so sánh cả 3 framework: [[Angular-Latest-Series/23-Multiple-Router-Outlets-Named-Auxiliary]]
 
 ---
 
@@ -30,7 +30,7 @@ Solid's `createStore` là lựa chọn idiomatic nhất vì:
 - Fine-grained reactivity: `Show`/`Switch`/`Match` chỉ update phần DOM thay đổi
 - Không re-run component function — chỉ reactive signal được track
 
-Chi tiết code từng pattern: [[23-Multiple-Router-Outlets-Named-Auxiliary#4. SolidJS — Multiple Outlet Pattern]]
+Chi tiết code từng pattern: [[Angular-Latest-Series/23-Multiple-Router-Outlets-Named-Auxiliary#4. SolidJS — Multiple Outlet Pattern]]
 
 ---
 
@@ -45,7 +45,7 @@ Chi tiết code từng pattern: [[23-Multiple-Router-Outlets-Named-Auxiliary#4. 
 
 ## Related
 
-- [[23-Multiple-Router-Outlets-Named-Auxiliary]]
-- [[24-Multiple-Router-Outlets-Pattern]]
+- [[Angular-Latest-Series/23-Multiple-Router-Outlets-Named-Auxiliary]]
+- [[React-Latest-Series/24-Multiple-Router-Outlets-Pattern]]
 - [[SolidJS-09-Routing]]
 - [[SolidJS-06-Stores-Nested-State]]

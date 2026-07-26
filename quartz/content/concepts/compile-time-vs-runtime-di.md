@@ -202,10 +202,10 @@ QUARKUS / MICRONAUT (Compile-time):
 ---
 
 ## 🔗 Liên quan
-- [[01 CDI vs Spring IoC|Quarkus: CDI vs Spring IoC]] — implementation chi tiết
-- [[01 Compile-time DI vs Runtime DI|Micronaut: Compile-time DI]] — implementation chi tiết
+- [[JVM-Frameworks-2026/01-Quarkus/P1-Foundation/01 CDI vs Spring IoC|Quarkus: CDI vs Spring IoC]] — implementation chi tiết
+- [[JVM-Frameworks-2026/02-Micronaut/P1-Core/01 Compile-time DI vs Runtime DI|Micronaut: Compile-time DI]] — implementation chi tiết
 - [[native-image-aot-jit]] — tại sao compile-time DI quan trọng cho Native
-- [[MOC-Java|MOC-Java]] — Spring IoC context
+- [[_moc/MOC-Java|MOC-Java]] — Spring IoC context
 
 ## 📖 Nguồn
 - https://quarkus.io/guides/cdi — Quarkus CDI guide

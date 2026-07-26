@@ -4838,7 +4838,7 @@ Giả sử 1 `Order` có 10 `items` và 5 `discounts`:
 - Toàn bộ dữ liệu của Order bị lặp lại 50 lần. Dữ liệu của items lặp lại 5 lần.
 - Nếu collection lớn hơn (VD: 100 items × 50 discounts = 5,000 rows), database bandwidth sẽ bị bóp nghẹt chỉ để trả về lượng data trùng lặp khổng lồ, và Hibernate sẽ tốn cực kỳ nhiều CPU + Memory để phân tích lại (hydrate) 5,000 rows đó về Object graph ban đầu.
 
-![[cartesian_product_bags.png]]
+![[assets/cartesian_product_bags.png]]
 
 **Warning HHH90003004 ẩn lấp:**
 Đôi khi, nếu bạn fetch 1 `List` và 1 `Set`, Hibernate *cho phép* chạy, nhưng sẽ in ra warning:
@@ -4888,7 +4888,7 @@ public class Order {
 
 Thiết kế DB cho OOP Inheritance quyết định hoàn toàn hiệu năng query và khả năng mở rộng. Hibernate hỗ trợ 3 chiến lược chính.
 
-![[inheritance_strategy_sql.png]]
+![[assets/inheritance_strategy_sql.png]]
 
 #### A. SINGLE_TABLE (Mặc định & Nhanh nhất)
 Tất cả class trong cây kế thừa được lưu chung vào **một bảng duy nhất**. Phân biệt bằng một cột đặc biệt (Discriminator).
@@ -4945,7 +4945,7 @@ public class Employee {
 }
 ```
 
-![[secondary_table_join.png]]
+![[assets/secondary_table_join.png]]
 
 **Tại sao đây là sát thủ hiệu năng?**
 Mặc dù bạn dùng 2 bảng, nhưng ở tầng Entity, nó vẫn là 1 Object `Employee`.
@@ -4962,7 +4962,7 @@ Hãy tạo 2 Entity riêng biệt (VD: `Employee` và `EmployeeDetail`) liên k�
 
 Đây là hai công cụ cao cấp để giải quyết vấn đề N+1 bằng cách định nghĩa **Dynamic Fetching Plan** (kế hoạch lấy data động).
 
-![[entitygraph_vs_fetchprofile.png]]
+![[assets/entitygraph_vs_fetchprofile.png]]
 
 #### @EntityGraph (JPA Standard)
 Phổ biến nhất, tích hợp sâu vào Spring Data JPA. Nó ghi đè `FetchType.LAZY` thành `EAGER` ngay tại truy vấn đó.
@@ -5142,7 +5142,7 @@ em.persist(order)
 └─────────────────────────────────────────────────────┘
 ```
 
-![[cascade_event_listener_internal.png]]
+![[assets/cascade_event_listener_internal.png]]
 
 **Cascade là một bước trong EventListener, không phải annotation magic.**
 
@@ -5189,7 +5189,7 @@ class DefaultPersistEventListener {
 
 ### Các CascadeType — Ý Nghĩa Thực Sự
 
-![[cascade_mechanism_diagram.png]]
+![[assets/cascade_mechanism_diagram.png]]
 
 ```
 CascadeType.PERSIST  ←→  PersistEvent
@@ -5777,7 +5777,7 @@ public void demonstrateFlushVsCommit() {
 }
 ```
 
-![[flush_clear_transaction_flow.png]]
+![[assets/flush_clear_transaction_flow.png]]
 
 ---
 

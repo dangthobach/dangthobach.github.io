@@ -1033,6 +1033,6 @@ async fn fetch_documents_page(page: u32) -> Result<Vec<Document>, reqwest::Error
 ---
 
 ## 🔗 Links
-- [[Bai-36-Dioxus-Core|Bài 36: Dioxus Core]] ← prerequisite
-- [[Bai-38-Dioxus-Desktop-Mobile|Bài 38: Dioxus Desktop & Mobile]] → tiếp theo
-- [[Bai-29-Leptos|Bài 29: Leptos]] — so sánh
+- [[Rust-Zero-To-Hero/Bai-36-Dioxus-Core|Bài 36: Dioxus Core]] ← prerequisite
+- [[Rust-Zero-To-Hero/Bai-38-Dioxus-Desktop-Mobile|Bài 38: Dioxus Desktop & Mobile]] → tiếp theo
+- [[Rust-Zero-To-Hero/Bai-29-Leptos|Bài 29: Leptos]] — so sánh

@@ -556,13 +556,13 @@ const [data] = createResource(
 
 ## 🔗 Liên kết
 
-← [[SolidJS-07-Context-DI|07 · Context & DI]]
-→ [[SolidJS-09-Routing|09 · Routing]]
+← [[SolidJS-Series/SolidJS-07-Context-DI|07 · Context & DI]]
+→ [[SolidJS-Series/SolidJS-09-Routing|09 · Routing]]
 
 **Xem thêm:**
-- [[SolidJS-09-Routing|09 · Routing]] — Route data loaders (alternative to createResource)
-- [[SolidJS-11-SolidStart-SSR|11 · SolidStart]] — server-side resource với `"use server"`
+- [[SolidJS-Series/SolidJS-09-Routing|09 · Routing]] — Route data loaders (alternative to createResource)
+- [[SolidJS-Series/SolidJS-11-SolidStart-SSR|11 · SolidStart]] — server-side resource với `"use server"`
 
 ---
 
-*Series: [[SolidJS-MOC|SolidJS Master Index]]*
+*Series: [[SolidJS-Series/SolidJS-MOC|SolidJS Master Index]]*

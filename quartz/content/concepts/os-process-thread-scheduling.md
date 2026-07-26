@@ -381,6 +381,6 @@ Recommended upgrade path:
 - [[io-models-deep-dive]] — epoll underneath async runtimes
 - [[memory-hierarchy-cpu-cache]] — Cache cold start during context switch
 - [[java-virtual-threads-deep-dive]] — Java Loom deep dive
-- [[Bai-3-Goroutines-Channels]] — Go concurrency in practice
-- [[Bai-9-Async-Tokio]] — Tokio executor
-- [[Deep-Dive-VirtualThreads-vs-Goroutines-vs-RustAsync]] — Comparison
+- [[Go-Zero-To-Hero/Bai-3-Goroutines-Channels]] — Go concurrency in practice
+- [[Rust-Zero-To-Hero/Bai-9-Async-Tokio]] — Tokio executor
+- [[Go-Zero-To-Hero/Deep-Dive-VirtualThreads-vs-Goroutines-vs-RustAsync]] — Comparison

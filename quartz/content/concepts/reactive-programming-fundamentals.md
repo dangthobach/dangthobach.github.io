@@ -168,11 +168,11 @@ Processor<T,R> // both Publisher + Subscriber
 ---
 
 ## 🔗 Liên quan
-- [[01 Mutiny - Uni và Multi|Mutiny — Uni và Multi]] — Reactive trong Quarkus
-- [[01 Observable vs Flowable|Observable vs Flowable]] — RxJava types
+- [[JVM-Frameworks-2026/01-Quarkus/P3-Reactive/01 Mutiny - Uni và Multi|Mutiny — Uni và Multi]] — Reactive trong Quarkus
+- [[JVM-Frameworks-2026/04-RxJava/P1-Types/01 Observable vs Flowable|Observable vs Flowable]] — RxJava types
 - [[backpressure-explained]] — kiểm soát tốc độ trong reactive stream
 - [[event-loop-model]] — runtime model bên dưới reactive
-- [[MOC-Concurrency|MOC-Concurrency]] — threading context
+- [[_moc/MOC-Concurrency|MOC-Concurrency]] — threading context
 
 ## 📖 Nguồn
 - https://www.reactive-streams.org — JSR spec

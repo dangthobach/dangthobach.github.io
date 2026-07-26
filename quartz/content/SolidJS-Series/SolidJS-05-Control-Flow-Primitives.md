@@ -555,13 +555,13 @@ const [values, setValues] = createSignal([1, 2, 3]);
 
 ## 🔗 Liên kết
 
-← [[SolidJS-04-JSX-Component-Model|04 · JSX & Component Model]]
-→ [[SolidJS-06-Stores-Nested-State|06 · Stores & Nested State]]
+← [[SolidJS-Series/SolidJS-04-JSX-Component-Model|04 · JSX & Component Model]]
+→ [[SolidJS-Series/SolidJS-06-Stores-Nested-State|06 · Stores & Nested State]]
 
 **Xem thêm:**
-- [[SolidJS-08-Async-Resources|08 · Async & Resources]] — Suspense với control flow
-- [[SolidJS-10-Complex-UI-Patterns|10 · Complex UI]] — virtual list cho 100k+ rows
+- [[SolidJS-Series/SolidJS-08-Async-Resources|08 · Async & Resources]] — Suspense với control flow
+- [[SolidJS-Series/SolidJS-10-Complex-UI-Patterns|10 · Complex UI]] — virtual list cho 100k+ rows
 
 ---
 
-*Series: [[SolidJS-MOC|SolidJS Master Index]]*
+*Series: [[SolidJS-Series/SolidJS-MOC|SolidJS Master Index]]*

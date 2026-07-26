@@ -9,7 +9,7 @@ tags: []
 
 # Go Zero-to-Hero — Curriculum Full
 
-> Technology Update 2026: [[Bai-26-Go-Framework-Radar-2026|Framework Radar]] → [[Bai-27-Gin-1.12-Production-Update|Gin]] → [[Bai-28-Fiber-v3-Migration|Fiber]] → [[Bai-29-Echo-v5-Migration|Echo]] → [[Bai-30-Chi-5.3-Production-Router|Chi]] → [[Bai-31-Go-Data-Messaging-Clients-2026|Data & Messaging]]
+> Technology Update 2026: [[Go-Zero-To-Hero/Bai-26-Go-Framework-Radar-2026|Framework Radar]] → [[Go-Zero-To-Hero/Bai-27-Gin-1.12-Production-Update|Gin]] → [[Go-Zero-To-Hero/Bai-28-Fiber-v3-Migration|Fiber]] → [[Go-Zero-To-Hero/Bai-29-Echo-v5-Migration|Echo]] → [[Go-Zero-To-Hero/Bai-30-Chi-5.3-Production-Router|Chi]] → [[Go-Zero-To-Hero/Bai-31-Go-Data-Messaging-Clients-2026|Data & Messaging]]
 
 > Series hoàn chỉnh dành cho Java/Spring Boot developer muốn master Go trong môi trường production.
 
@@ -148,10 +148,10 @@ Tuần 11: Bài 21, 22
 
 ## Related Series trong Vault
 
-- [[|Rust Zero-to-Hero]] — Systems programming
-- [[|JVM Frameworks 2026]] — Quarkus, Micronaut, Vert.x
-- [[|Microservices Patterns]] — Architecture deep dive
-- [[|Concepts]] — Foundational CS concepts
+- [[Rust-Zero-To-Hero/|Rust Zero-to-Hero]] — Systems programming
+- [[JVM-Frameworks-2026/|JVM Frameworks 2026]] — Quarkus, Micronaut, Vert.x
+- [[Microservices-Patterns/|Microservices Patterns]] — Architecture deep dive
+- [[concepts/|Concepts]] — Foundational CS concepts
 
 ---
 *Tags: #go #zero-to-hero #curriculum #roadmap*

@@ -73,13 +73,23 @@ Tạo benchmark ba endpoint:
 
 ## Liên kết
 
-- [[Bai-13-Fiber|Fiber nền tảng]]
-- [[Bai-9-Net-Http-Deep|net/http]]
-- [[Performance-Pitfalls-Go|Performance Pitfalls]]
-- [[Bai-26-Go-Framework-Radar-2026|Framework Radar]]
+- [[Go-Zero-To-Hero/Bai-13-Fiber|Fiber nền tảng]]
+- [[Go-Zero-To-Hero/Bai-9-Net-Http-Deep|net/http]]
+- [[Go-Zero-To-Hero/Performance-Pitfalls-Go|Performance Pitfalls]]
+- [[Go-Zero-To-Hero/Bai-26-Go-Framework-Radar-2026|Framework Radar]]
 
 ## Nguồn
 
 - [Fiber v3 repository](https://github.com/gofiber/fiber)
 - [Fiber 3.4.0 release](https://github.com/gofiber/fiber/releases/tag/v3.4.0)
 
+
+## Cập nhật 26/07/2026
+
+Xác nhận **v3.4.0 vẫn là bản mới nhất** (nguồn: github.com/gofiber/fiber/releases). Ba điểm mới trong v3.4.0 chưa có ở bài này, đáng đưa vào lab tiếp theo:
+
+- **HTTP method `QUERY` (RFC 10008)** — `app.Query("/search", handler)`, dùng khi cần gửi query phức tạp trong body thay vì URL (idempotent như GET, nhưng payload không giới hạn độ dài URL). Middleware CSRF/idempotency/cache đã hỗ trợ sẵn.
+- **`SaveWithContext`/`DestroyWithContext`/... cho session** — cho phép truyền deadline/cancellation xuống tận storage backend khi ghi session, quan trọng nếu PDMS dùng Fiber session backed bởi Redis và cần timeout budget nhất quán.
+- **`SharedState` (prefork-safe)** — key/value store dùng chung giữa các process khi bật `prefork`, khác với `app.State()` (chỉ local từng process). Cân nhắc nếu scale Fiber bằng prefork trên EKS node nhiều core thay vì nhiều pod.
+
+*Nguồn: github.com/gofiber/fiber/releases/tag/v3.4.0 — truy cập 26/07/2026.*

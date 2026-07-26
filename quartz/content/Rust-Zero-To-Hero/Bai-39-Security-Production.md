@@ -690,7 +690,7 @@ TIP 5 — Fail open vs fail closed khi Redis lỗi
 ---
 
 ## 🔗 Links
-- [[Bai-24-Axum-Advanced|Bài 24: Axum Advanced]] — middleware foundation
-- [[Bai-29-Leptos|Bài 29: Leptos]] — server functions context
-- [[Bai-36-Dioxus-Core|Bài 36: Dioxus Core]] — form handling
-- [[Bai-40-Global-State|Bài 40: Global State Management]] → tiếp theo
+- [[Rust-Zero-To-Hero/Bai-24-Axum-Advanced|Bài 24: Axum Advanced]] — middleware foundation
+- [[Rust-Zero-To-Hero/Bai-29-Leptos|Bài 29: Leptos]] — server functions context
+- [[Rust-Zero-To-Hero/Bai-36-Dioxus-Core|Bài 36: Dioxus Core]] — form handling
+- [[Rust-Zero-To-Hero/Bai-40-Global-State|Bài 40: Global State Management]] → tiếp theo

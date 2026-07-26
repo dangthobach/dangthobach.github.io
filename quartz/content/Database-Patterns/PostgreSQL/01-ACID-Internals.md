@@ -481,8 +481,8 @@ WHERE branch_id = 'HN01' AND version = :expected_version;
 - [[02-MVCC-Concurrency]] — MVCC engine chi tiết: snapshot, visibility, xmin/xmax
 - [[03-Concurrency-Patterns]] — Bài toán thực tế: lost update, FOR UPDATE, SKIP LOCKED
 - [[04-Index-Internals]] — Index và WAL interaction
-- [[Transactional-Outbox]] — Tận dụng ACID cho distributed patterns
-- [[Debezium-CDC-Deep-Dive]] — WAL → CDC pipeline
+- [[Microservices-Patterns/Transactional-Outbox]] — Tận dụng ACID cho distributed patterns
+- [[Microservices-Patterns/Debezium-CDC-Deep-Dive]] — WAL → CDC pipeline
 
 ---
 

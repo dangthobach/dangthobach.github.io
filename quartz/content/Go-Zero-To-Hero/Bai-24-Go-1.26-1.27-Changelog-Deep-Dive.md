@@ -285,3 +285,40 @@ Compiler sinh ra các routine allocation chuyên biệt theo size cho object nh�
 
 ---
 *Tags: #go #changelog #gc #green-tea-gc #generics #escape-analysis #zero-to-hero*
+
+## 6. Cập nhật 26/07/2026 — đối chiếu với nguồn chính thức (go.dev, blog Go)
+
+Kiểm tra lại 2 ngày sau khi bài viết, không có thay đổi lớn nào lệch với nội dung trên — nhưng có vài điểm nên bổ sung:
+
+### 6.1 Trạng thái phiên bản mới nhất
+- **Go 1.26 (bản ổn định):** patch mới nhất là **1.26.5** (phát hành 07/07/2026) — vá 2 lỗi bảo mật (`crypto/tls`, `os`), không đổi hành vi Green Tea GC đã mô tả ở mục 1.
+- **Go 1.27:** đã lên **Release Candidate 2** (`go1.27rc2`, phát hành 07-08/07/2026) — RC2 chỉ chứa 2 fix bảo mật (`os.Root` symlink escape, `crypto/tls` ECH privacy leak), không có thay đổi tính năng so với RC1. Vẫn đúng lộ trình GA dự kiến 08/2026 như đã ghi ở mục 4.
+- Bài tập cuối bài (`go install golang.org/dl/go1.27rc2@latest`) đã đúng với RC hiện tại — không cần sửa.
+
+### 6.2 Ba thay đổi Go 1.27 khác nên biết thêm (ngoài generic methods và size-specialized allocation ở mục 3)
+
+Theo release notes chính thức (tip.golang.org/doc/go1.27, còn ở dạng draft):
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  encoding/json chuyển sang v2 làm mặc định                │
+│  → hành vi marshal/unmarshal một số edge case (duplicate  │
+│    key, số lớn, omitempty) có thể khác v1 — cần test kỹ   │
+│    trước khi upgrade service PDMS nào serialize JSON       │
+│    phức tạp (đặc biệt request/response document metadata) │
+│                                                            │
+│  stdlib có package `uuid` chính thức                       │
+│  → có thể bỏ dependency bên thứ 3 (google/uuid) cho code   │
+│    mới, nhưng KHÔNG cần migrate code cũ ngay                │
+│                                                            │
+│  Post-quantum signature hỗ trợ trong TLS                   │
+│  → tiếp nối post-quantum key exchange đã có ở Go 1.26      │
+│    (SecP256r1MLKEM768/SecP384r1MLKEM1024), giờ thêm chữ ký │
+│    hậu lượng tử — liên quan tới hạ tầng TLS termination ở  │
+│    EKS ingress, nên theo dõi khi GA                         │
+└─────────────────────────────────────────────────────────┘
+```
+
+**Lưu ý:** các điểm trên vẫn ở dạng *draft release notes* (go.dev tự ghi rõ "Go 1.27 is not yet released... Details can still change"), nên chỉ nên dùng để lên kế hoạch, chưa nên viết code phụ thuộc vào hành vi cụ thể trước khi GA.
+
+*Nguồn kiểm tra: go.dev/doc/go1.27 (draft), go.dev/doc/devel/release, groups.google.com/g/golang-announce — truy cập 26/07/2026.*

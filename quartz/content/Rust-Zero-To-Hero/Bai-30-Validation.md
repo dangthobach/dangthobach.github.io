@@ -923,6 +923,6 @@ mod validation_tests {
 ---
 
 ## 🔗 Links
-- [[Bai-10-Axum-Core|Bài 10: Axum — Extractors]]
-- [[Bai-13-Serde-Reqwest-JWT|Bài 13: Serde]]
-- [[Bai-31-Redis-Caching|Bài 31: Redis & Caching]] → tiếp theo
+- [[Rust-Zero-To-Hero/Bai-10-Axum-Core|Bài 10: Axum — Extractors]]
+- [[Rust-Zero-To-Hero/Bai-13-Serde-Reqwest-JWT|Bài 13: Serde]]
+- [[Rust-Zero-To-Hero/Bai-31-Redis-Caching|Bài 31: Redis & Caching]] → tiếp theo

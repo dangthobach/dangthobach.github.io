@@ -14,7 +14,7 @@ tags: [postgresql, database, performance, indexing, internals]
 created: 2026-05-02
 difficulty: advanced
 estimated-read: 25 min
-links: [[03-BTree-vs-LSM]], [[query-planner-optimizer]], [[connection-pooling-pgbouncer]]
+links: [[Performance-System-Programming/01-Database-Internals/03-BTree-vs-LSM]], [[query-planner-optimizer]], [[connection-pooling-pgbouncer]]
 
 ---
 
@@ -466,7 +466,7 @@ Execution Time: 23 ms  ← Từ 8423ms xuống 23ms (366x faster!)
 
 ## 🔗 Related Links
 
-- [[03-BTree-vs-LSM]] — B-Tree mechanics
+- [[Performance-System-Programming/01-Database-Internals/03-BTree-vs-LSM]] — B-Tree mechanics
 - [[query-planner-optimizer]] — Query planner chọn index như thế nào
 - [[connection-pooling-pgbouncer]] — Index tốt nhưng connection pool kém cũng chậm
 - [[postgresql-performance-deep-dive]] — Tổng quan performance tuning

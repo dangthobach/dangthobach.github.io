@@ -294,12 +294,12 @@ async fn validate_all_good(records: Vec<HopDong>) {
 ---
 
 ## 🔗 Links
-- [[Bai-1-Ownership-Mindset|Bài 1: Ownership]] — nền tảng của mọi luật pointer
-- [[Bai-2-Borrowing-Multi-threading|Bài 2: Borrowing]] — luật aliasing XOR mutability
-- [[Bai-5-Lifetimes|Bài 5: Lifetimes]] — cách compiler chứng minh reference luôn valid
-- [[Bai-8-Smart-Pointers-Error-Design|Bài 8: Smart Pointers]] — API chi tiết Box/Rc/Arc/RefCell
-- [[Bai-19-Unsafe-FFI|Bài 19: Unsafe & FFI]] — API chi tiết raw pointer, so sánh JNI
-- [[Bai-17-Zero-Cost-Performance|Bài 17: Zero-Cost Performance]] — static vs dynamic dispatch sâu hơn
+- [[Rust-Zero-To-Hero/Bai-1-Ownership-Mindset|Bài 1: Ownership]] — nền tảng của mọi luật pointer
+- [[Rust-Zero-To-Hero/Bai-2-Borrowing-Multi-threading|Bài 2: Borrowing]] — luật aliasing XOR mutability
+- [[Rust-Zero-To-Hero/Bai-5-Lifetimes|Bài 5: Lifetimes]] — cách compiler chứng minh reference luôn valid
+- [[Rust-Zero-To-Hero/Bai-8-Smart-Pointers-Error-Design|Bài 8: Smart Pointers]] — API chi tiết Box/Rc/Arc/RefCell
+- [[Rust-Zero-To-Hero/Bai-19-Unsafe-FFI|Bài 19: Unsafe & FFI]] — API chi tiết raw pointer, so sánh JNI
+- [[Rust-Zero-To-Hero/Bai-17-Zero-Cost-Performance|Bài 17: Zero-Cost Performance]] — static vs dynamic dispatch sâu hơn
 - [[MOC-Rust]]
 
 ---

@@ -38,41 +38,41 @@ interface                  →    Trait
 
 | Pattern | Rust Transformation | Difficulty |
 |---------|---------------------|------------|
-| [[01-Creational\|Singleton]] | `OnceLock<T>` / `LazyLock<T>` — không dùng static mut | ⭐⭐ |
-| [[01-Creational\|Factory Method]] | Trait với associated type, hoặc `fn() -> impl Trait` | ⭐⭐ |
-| [[01-Creational\|Abstract Factory]] | Trait returning trait objects / generic factory | ⭐⭐⭐ |
-| [[01-Creational\|Builder]] | **Idiomatic Rust** — typestate builder với compile-time validation | ⭐⭐⭐ |
-| [[01-Creational\|Prototype]] | `Clone` trait — built into language | ⭐ |
+| [[Design-Patterns-Rust/01-Creational\|Singleton]] | `OnceLock<T>` / `LazyLock<T>` — không dùng static mut | ⭐⭐ |
+| [[Design-Patterns-Rust/01-Creational\|Factory Method]] | Trait với associated type, hoặc `fn() -> impl Trait` | ⭐⭐ |
+| [[Design-Patterns-Rust/01-Creational\|Abstract Factory]] | Trait returning trait objects / generic factory | ⭐⭐⭐ |
+| [[Design-Patterns-Rust/01-Creational\|Builder]] | **Idiomatic Rust** — typestate builder với compile-time validation | ⭐⭐⭐ |
+| [[Design-Patterns-Rust/01-Creational\|Prototype]] | `Clone` trait — built into language | ⭐ |
 
 ### 🔧 Structural (7 patterns)
 → *Kết hợp objects/classes. Rust: composition over inheritance*
 
 | Pattern | Rust Transformation | Difficulty |
 |---------|---------------------|------------|
-| [[02-Structural\|Adapter]] | Newtype wrapper + trait impl | ⭐⭐ |
-| [[02-Structural\|Bridge]] | Generics + trait separation | ⭐⭐⭐ |
-| [[02-Structural\|Composite]] | Enum recursion hoặc `Box<dyn Trait>` tree | ⭐⭐⭐ |
-| [[02-Structural\|Decorator]] | Newtype wrapping trait — tự nhiên với ownership | ⭐⭐ |
-| [[02-Structural\|Facade]] | Module với re-exported public API | ⭐ |
-| [[02-Structural\|Flyweight]] | `Arc<T>` shared immutable data | ⭐⭐ |
-| [[02-Structural\|Proxy]] | `Deref` trait + wrapper struct | ⭐⭐⭐ |
+| [[Design-Patterns-Rust/02-Structural\|Adapter]] | Newtype wrapper + trait impl | ⭐⭐ |
+| [[Design-Patterns-Rust/02-Structural\|Bridge]] | Generics + trait separation | ⭐⭐⭐ |
+| [[Design-Patterns-Rust/02-Structural\|Composite]] | Enum recursion hoặc `Box<dyn Trait>` tree | ⭐⭐⭐ |
+| [[Design-Patterns-Rust/02-Structural\|Decorator]] | Newtype wrapping trait — tự nhiên với ownership | ⭐⭐ |
+| [[Design-Patterns-Rust/02-Structural\|Facade]] | Module với re-exported public API | ⭐ |
+| [[Design-Patterns-Rust/02-Structural\|Flyweight]] | `Arc<T>` shared immutable data | ⭐⭐ |
+| [[Design-Patterns-Rust/02-Structural\|Proxy]] | `Deref` trait + wrapper struct | ⭐⭐⭐ |
 
 ### 🎭 Behavioral (11 patterns)
 → *Communication giữa objects. Rust: ownership makes some patterns hard, some trivial*
 
 | Pattern | Rust Transformation | Difficulty |
 |---------|---------------------|------------|
-| [[03-Behavioral\|Chain of Responsibility]] | `Vec<Box<dyn Handler>>` hoặc function chaining | ⭐⭐ |
-| [[03-Behavioral\|Command]] | Closure hoặc trait object — Rust closures = first-class | ⭐⭐ |
-| [[03-Behavioral\|Iterator]] | **Built-in** `Iterator` trait — richest in any language | ⭐ |
-| [[03-Behavioral\|Mediator]] | Channel-based (Tokio mpsc) — async-native | ⭐⭐⭐ |
-| [[03-Behavioral\|Memento]] | Serialize/Clone state — serde integration | ⭐⭐ |
-| [[03-Behavioral\|Observer]] | Channel pub/sub hoặc callback Vec | ⭐⭐⭐ |
-| [[03-Behavioral\|State]] | **Typestate pattern** — state encoded in type system | ⭐⭐⭐⭐ |
-| [[03-Behavioral\|Strategy]] | Trait objects hoặc closures — ergonomic | ⭐⭐ |
-| [[03-Behavioral\|Template Method]] | Trait với default method hooks | ⭐⭐ |
-| [[03-Behavioral\|Visitor]] | Enum + match hoặc `trait Visitor` | ⭐⭐⭐ |
-| [[03-Behavioral\|Interpreter]] | Recursive enum AST + eval | ⭐⭐⭐ |
+| [[Design-Patterns-Rust/03-Behavioral\|Chain of Responsibility]] | `Vec<Box<dyn Handler>>` hoặc function chaining | ⭐⭐ |
+| [[Design-Patterns-Rust/03-Behavioral\|Command]] | Closure hoặc trait object — Rust closures = first-class | ⭐⭐ |
+| [[Design-Patterns-Rust/03-Behavioral\|Iterator]] | **Built-in** `Iterator` trait — richest in any language | ⭐ |
+| [[Design-Patterns-Rust/03-Behavioral\|Mediator]] | Channel-based (Tokio mpsc) — async-native | ⭐⭐⭐ |
+| [[Design-Patterns-Rust/03-Behavioral\|Memento]] | Serialize/Clone state — serde integration | ⭐⭐ |
+| [[Design-Patterns-Rust/03-Behavioral\|Observer]] | Channel pub/sub hoặc callback Vec | ⭐⭐⭐ |
+| [[Design-Patterns-Rust/03-Behavioral\|State]] | **Typestate pattern** — state encoded in type system | ⭐⭐⭐⭐ |
+| [[Design-Patterns-Rust/03-Behavioral\|Strategy]] | Trait objects hoặc closures — ergonomic | ⭐⭐ |
+| [[Design-Patterns-Rust/03-Behavioral\|Template Method]] | Trait với default method hooks | ⭐⭐ |
+| [[Design-Patterns-Rust/03-Behavioral\|Visitor]] | Enum + match hoặc `trait Visitor` | ⭐⭐⭐ |
+| [[Design-Patterns-Rust/03-Behavioral\|Interpreter]] | Recursive enum AST + eval | ⭐⭐⭐ |
 
 ---
 
@@ -123,9 +123,9 @@ Beginner → Intermediate → Advanced
 
 ## 🔗 Series Articles
 
-- [[01-Creational|01 · Creational Patterns]]
-- [[02-Structural|02 · Structural Patterns]]
-- [[03-Behavioral|03 · Behavioral Patterns]]
+- [[Design-Patterns-Rust/01-Creational|01 · Creational Patterns]]
+- [[Design-Patterns-Rust/02-Structural|02 · Structural Patterns]]
+- [[Design-Patterns-Rust/03-Behavioral|03 · Behavioral Patterns]]
 
 ---
 

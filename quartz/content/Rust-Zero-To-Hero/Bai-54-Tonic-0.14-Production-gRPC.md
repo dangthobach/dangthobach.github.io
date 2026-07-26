@@ -67,11 +67,22 @@ Xây upload stream:
 
 ## Liên kết
 
-- [[Bai-28-Tonic-GRPC|Tonic gRPC]]
-- [[grpc-protobuf-deep-dive|gRPC và Protobuf]]
-- [[Bai-51-Axum-0.8.9-Production-Update|Axum/Tower stack]]
+- [[Rust-Zero-To-Hero/Bai-28-Tonic-GRPC|Tonic gRPC]]
+- [[concepts/grpc-protobuf-deep-dive|gRPC và Protobuf]]
+- [[Rust-Zero-To-Hero/Bai-51-Axum-0.8.9-Production-Update|Axum/Tower stack]]
 
 ## Nguồn
 
 - [Tonic repository](https://github.com/hyperium/tonic)
 
+
+## Cập nhật 26/07/2026 — thay đổi governance quan trọng
+
+**Tonic đã gia nhập chính thức dự án gRPC thuộc CNCF.** Repository đang chuyển từ `hyperium/tonic` sang `grpc/grpc-rust`. Ý nghĩa thực tế cho PDMS:
+
+- Nhánh `master` hiện **không nhận feature mới** — chỉ nhận bug fix — vì đội ngũ đang chuẩn bị một crate `grpc` hoàn toàn mới (thiết kế lại API để kiểm soát allocation tốt hơn, upstream chính thức bởi Google/gRPC team).
+- **Bản ổn định để dùng ngay bây giờ vẫn là nhánh `0.14.x`** — đúng như bài đã ghi, không cần đổi gì trong code hiện tại.
+- Các link cũ tới `github.com/hyperium/tonic` (issue, commit) vẫn hoạt động bình thường sau khi chuyển tổ chức.
+- **Cần theo dõi dài hạn:** đây là tín hiệu roadmap, không phải thay đổi cần hành động ngay — nhưng nếu PDMS còn dùng Tonic 2-3 năm nữa, nên dành thời gian đọc thông báo migration sang crate `grpc` mới khi nó ổn định, thay vì tiếp tục đầu tư sâu vào API 0.14.x cũ.
+
+*Nguồn: grpc.io/blog/grpc-welcomes-tonic, luciofranco.com/blog/tonic-joins-grpc — truy cập 26/07/2026.*

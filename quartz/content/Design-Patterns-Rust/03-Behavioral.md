@@ -990,9 +990,9 @@ impl Editor {
 ---
 
 ## 🔗 Links
-- [[00-Overview|Series Overview]]
-- [[02-Structural|← 02 · Structural Patterns]]
-- [[Bai-9-Async-Tokio|Bài 9: Tokio Async]]
-- [[Bai-22-Advanced-Concurrency|Bài 22: Advanced Concurrency]]
+- [[Design-Patterns-Rust/00-Overview|Series Overview]]
+- [[Design-Patterns-Rust/02-Structural|← 02 · Structural Patterns]]
+- [[Rust-Zero-To-Hero/Bai-9-Async-Tokio|Bài 9: Tokio Async]]
+- [[Rust-Zero-To-Hero/Bai-22-Advanced-Concurrency|Bài 22: Advanced Concurrency]]
 
 *Tags: #rust #design-patterns #behavioral #gof #typestate*

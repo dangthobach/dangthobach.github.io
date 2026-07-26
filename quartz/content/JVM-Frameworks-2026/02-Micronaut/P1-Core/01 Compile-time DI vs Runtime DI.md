@@ -202,7 +202,7 @@ public class UserService {
 
 ## 🔗 Liên quan
 - [[02 Controller và HTTP Layer]]
-- [[01 CDI vs Spring IoC]]
+- [[../../01-Quarkus/P1-Foundation/01 CDI vs Spring IoC]]
 
 ## 📖 Nguồn
 - https://docs.micronaut.io/latest/guide/#ioc

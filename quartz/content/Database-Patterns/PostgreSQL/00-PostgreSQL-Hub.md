@@ -116,13 +116,13 @@ tags: []
 
 ## 🔗 Connections sang các cluster khác
 
-- [[Hibernate-Performance-Deep-Dive]] — ORM layer trên PostgreSQL
-- [[JDBC-vs-R2DBC-vs-VirtualThreads]] — Connection model
-- [[Transactional-Outbox]] — Pattern tận dụng PostgreSQL ACID
-- [[Debezium-CDC-Deep-Dive]] — PostgreSQL WAL → CDC
-- [[Cross-Service-Join-AuthZ-Fine-Grained-Filter]] — CDC + cache
-- [[MOC-Database]] — Database tổng quan (schema, sharding, replication)
-- [[MOC-Database-Internals]] — Storage engine level (LSM, B-Tree từ scratch)
+- [[Database-Patterns/Hibernate-Performance-Deep-Dive]] — ORM layer trên PostgreSQL
+- [[Database-Patterns/JDBC-vs-R2DBC-vs-VirtualThreads]] — Connection model
+- [[Microservices-Patterns/Transactional-Outbox]] — Pattern tận dụng PostgreSQL ACID
+- [[Microservices-Patterns/Debezium-CDC-Deep-Dive]] — PostgreSQL WAL → CDC
+- [[Microservices-Patterns/Cross-Service-Join-AuthZ-Fine-Grained-Filter]] — CDC + cache
+- [[_moc/MOC-Database]] — Database tổng quan (schema, sharding, replication)
+- [[_moc/MOC-Database-Internals]] — Storage engine level (LSM, B-Tree từ scratch)
 
 ---
 

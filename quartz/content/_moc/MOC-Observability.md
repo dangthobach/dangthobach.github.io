@@ -29,7 +29,7 @@ Observability
 ## 📊 Metrics
 
 ### Lý thuyết nền tảng
-- 📝 `[[four-golden-signals]]` *(cần viết)*
+- 📝 `[[concepts/four-golden-signals]]` *(cần viết)*
   → Latency, Traffic, Errors, Saturation. Bộ tứ của Google SRE Book — đây là **ngôn ngữ chung** khi nói về system health.
 - 📝 `red-method-use-method *(planned)*` *(cần viết)*
   → RED (Rate, Errors, Duration) cho services. USE (Utilization, Saturation, Errors) cho resources. Khi nào dùng cái nào.
@@ -122,11 +122,11 @@ Observability
 
 ## 🔗 Liên kết trong vault
 
-- [[MOC-Distributed-Systems]] — Context propagation, microservice communication
-- [[MOC-JVM-Frameworks]] — Framework-specific instrumentation (Quarkus, Spring)
-- [[MOC-Scalability]] — Performance monitoring liên quan đến scalability decisions
-- [[MOC-PDMS]] — Applied context: PDMS observability roadmap
-- [[MOC-Database]] — DB-level metrics: slow query, connection pool, replication lag
+- [[_moc/MOC-Distributed-Systems]] — Context propagation, microservice communication
+- [[_moc/MOC-JVM-Frameworks]] — Framework-specific instrumentation (Quarkus, Spring)
+- [[_moc/MOC-Scalability]] — Performance monitoring liên quan đến scalability decisions
+- [[_moc/MOC-PDMS]] — Applied context: PDMS observability roadmap
+- [[_moc/MOC-Database]] — DB-level metrics: slow query, connection pool, replication lag
 
 ---
 

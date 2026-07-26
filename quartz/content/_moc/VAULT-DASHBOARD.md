@@ -9,7 +9,7 @@ tags: [moc, dashboard, dataview, audit, knowledge-management]
 
 # Vault Dashboard
 
-> Dashboard sinh trực tiếp từ metadata. Đây là nguồn hiện trạng; [[VAULT-AUDIT-2026|VAULT-AUDIT-2026]] được giữ như historical audit và roadmap.
+> Dashboard sinh trực tiếp từ metadata. Đây là nguồn hiện trạng; [[_moc/VAULT-AUDIT-2026|VAULT-AUDIT-2026]] được giữ như historical audit và roadmap.
 
 ## Tổng số note theo vai trò
 

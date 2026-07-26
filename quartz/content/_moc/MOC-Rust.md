@@ -14,11 +14,11 @@ Map of Content cho toàn bộ Rust knowledge. Đây là entry point — không p
 ---
 
 ## 📖 Learning Series
-- [[Lộ-trình-Tổng-quan|Lộ trình tổng quan]] — Giai đoạn 1→5
-- [[Bai-1-Ownership-Mindset|Bài 1: Ownership Mindset]]
-- [[Bai-2-Borrowing-Multi-threading|Bài 2: Borrowing & Multi-threading]]
-- [[Bai-3-Struct-Enum-Trait|Bài 3: Struct, Enum & Trait]]
-- [[Bai-4-Error-Handling-Collections|Bài 4: Error Handling & Collections]]
+- [[Rust-Zero-To-Hero/Lộ-trình-Tổng-quan|Lộ trình tổng quan]] — Giai đoạn 1→5
+- [[Rust-Zero-To-Hero/Bai-1-Ownership-Mindset|Bài 1: Ownership Mindset]]
+- [[Rust-Zero-To-Hero/Bai-2-Borrowing-Multi-threading|Bài 2: Borrowing & Multi-threading]]
+- [[Rust-Zero-To-Hero/Bai-3-Struct-Enum-Trait|Bài 3: Struct, Enum & Trait]]
+- [[Rust-Zero-To-Hero/Bai-4-Error-Handling-Collections|Bài 4: Error Handling & Collections]]
 
 ---
 
@@ -75,12 +75,12 @@ Map of Content cho toàn bộ Rust knowledge. Đây là entry point — không p
 
 ## 🔄 Technology Updates
 
-- [[Bai-48-Rust-1.97-Technology-Update|Rust 1.97 — Technology Update]]
-- [[Bai-49-Rust-Framework-Radar-2026|Rust Framework Radar 2026]]
-- [[Bai-50-Tokio-1.52-Runtime-Update|Tokio 1.52 Runtime Update]]
-- [[Bai-51-Axum-0.8.9-Production-Update|Axum 0.8.9 Production Update]]
-- [[Bai-52-Actix-Web-2026-Update|Actix Web 2026 Update]]
-- [[Bai-53-SQLx-0.8-Diesel-2.3-Update|SQLx 0.8 & Diesel 2.3]]
-- [[Bai-54-Tonic-0.14-Production-gRPC|Tonic 0.14 Production gRPC]]
-- [[Bai-55-Leptos-0.8-Migration|Leptos 0.8 Migration]]
-- [[Bai-56-Dioxus-0.7-to-0.8-Watchlist|Dioxus 0.7/0.8 Watchlist]]
+- [[Rust-Zero-To-Hero/Bai-48-Rust-1.97-Technology-Update|Rust 1.97 — Technology Update]]
+- [[Rust-Zero-To-Hero/Bai-49-Rust-Framework-Radar-2026|Rust Framework Radar 2026]]
+- [[Rust-Zero-To-Hero/Bai-50-Tokio-1.52-Runtime-Update|Tokio 1.52 Runtime Update]]
+- [[Rust-Zero-To-Hero/Bai-51-Axum-0.8.9-Production-Update|Axum 0.8.9 Production Update]]
+- [[Rust-Zero-To-Hero/Bai-52-Actix-Web-2026-Update|Actix Web 2026 Update]]
+- [[Rust-Zero-To-Hero/Bai-53-SQLx-0.8-Diesel-2.3-Update|SQLx 0.8 & Diesel 2.3]]
+- [[Rust-Zero-To-Hero/Bai-54-Tonic-0.14-Production-gRPC|Tonic 0.14 Production gRPC]]
+- [[Rust-Zero-To-Hero/Bai-55-Leptos-0.8-Migration|Leptos 0.8 Migration]]
+- [[Rust-Zero-To-Hero/Bai-56-Dioxus-0.7-to-0.8-Watchlist|Dioxus 0.7/0.8 Watchlist]]

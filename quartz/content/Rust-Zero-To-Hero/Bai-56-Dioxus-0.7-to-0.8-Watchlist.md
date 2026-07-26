@@ -79,14 +79,25 @@ Xây document viewer chạy Web + Desktop:
 
 ## Liên kết
 
-- [[Bai-36-Dioxus-Core|Dioxus Core]]
-- [[Bai-37-Dioxus-Advanced|Dioxus Advanced]]
-- [[Bai-38-Dioxus-Desktop-Mobile|Desktop và Mobile]]
-- [[Bai-42-JS-Interop|JS Interop]]
-- [[frontend-concept-map|Frontend Concept Map]]
+- [[Rust-Zero-To-Hero/Bai-36-Dioxus-Core|Dioxus Core]]
+- [[Rust-Zero-To-Hero/Bai-37-Dioxus-Advanced|Dioxus Advanced]]
+- [[Rust-Zero-To-Hero/Bai-38-Dioxus-Desktop-Mobile|Desktop và Mobile]]
+- [[Rust-Zero-To-Hero/Bai-42-JS-Interop|JS Interop]]
+- [[concepts/frontend-concept-map|Frontend Concept Map]]
 
 ## Nguồn
 
 - [Dioxus 0.7.9 release](https://github.com/DioxusLabs/dioxus/releases/tag/v0.7.9)
 - [Dioxus releases](https://github.com/DioxusLabs/dioxus/releases)
 
+
+## Cập nhật 26/07/2026
+
+**Dioxus 0.8 đã bắt đầu chu kỳ alpha** (`v0.8.0-alpha.0`, nguồn github.com/DioxusLabs/dioxus/releases) — sớm hơn mức "chuẩn bị breaking changes" mà bài gốc mô tả. Theo roadmap chính thức (Discussion #5024):
+
+- Trọng tâm 0.8 là **Native APIs và cross-platform** (camera, location, storage, OAuth...) và **không có kế hoạch thay đổi lớn về state management hay fullstack** — tin tốt cho phần đã học ở Bài 36-45, kiến thức đó dự kiến vẫn áp dụng được sau khi 0.8 stable.
+- `dioxus-native`/Blitz renderer được nâng cấp đáng kể (incremental rendering, custom elements) — liên quan tới phần Desktop ở Bài 38.
+- CLI (`dx`) đang được tách ra thành dự án độc lập khỏi repo chính — nếu pin version CLI + crate như bài đã khuyến nghị, chú ý theo dõi repo CLI riêng khi việc tách hoàn tất.
+- **Chưa có timeline chính thức cho bản 0.8 stable** — giữ nguyên khuyến nghị "pin 0.7.x cho production" của bài này là đúng.
+
+*Nguồn: github.com/DioxusLabs/dioxus/releases, github.com/DioxusLabs/dioxus/discussions/5024 — truy cập 26/07/2026.*

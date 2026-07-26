@@ -25,12 +25,12 @@ RxJava    ░░░░░░░░░░░░░░░░░░░░  Chưa b�
 ```
 
 **Tuần này làm gì:**
-- [ ] [[01 CDI vs Spring IoC|CDI vs Spring IoC]] — scope, proxy, @ApplicationScoped
-- [ ] [[02 JAX-RS vs Spring MVC|JAX-RS vs Spring MVC]] — @Path, @GET, annotation mapping
-- [ ] [[03 Config & Dev Mode|Config & Dev Mode]] — @ConfigProperty, Dev Services, live reload
+- [ ] [[JVM-Frameworks-2026/01-Quarkus/P1-Foundation/01 CDI vs Spring IoC|CDI vs Spring IoC]] — scope, proxy, @ApplicationScoped
+- [ ] [[JVM-Frameworks-2026/01-Quarkus/P1-Foundation/02 JAX-RS vs Spring MVC|JAX-RS vs Spring MVC]] — @Path, @GET, annotation mapping
+- [ ] [[JVM-Frameworks-2026/01-Quarkus/P1-Foundation/03 Config & Dev Mode|Config & Dev Mode]] — @ConfigProperty, Dev Services, live reload
 - [ ] Mini project: tái implement 1 PDMS endpoint trong Quarkus
 
-**Log tuần này:** [[00 Weekly Study Log#Tuần 1|→ Weekly Log Tuần 1]]
+**Log tuần này:** [[JVM-Frameworks-2026/00 Weekly Study Log#Tuần 1|→ Weekly Log Tuần 1]]
 
 ---
 
@@ -39,39 +39,39 @@ RxJava    ░░░░░░░░░░░░░░░░░░░░  Chưa b�
 ### ☕ JVM & Backend
 | Series | Progress | Link |
 |--------|----------|------|
-| ⬡ JVM Frameworks 2026 | 🔄 Tuần 1/24 | [[MOC-JVM-Frameworks]] |
-| 🦀 Rust Zero to Hero | 🔄 Bài 1→35 active | [[MOC-Rust]] |
-| ☕ Java / Spring Boot | ✅ Foundation solid | [[MOC-Java]] |
-| ⚡ Concurrency | ✅ Java ↔ Rust mapped | [[MOC-Concurrency]] |
-| 🧠 Memory Model | ✅ GC vs Ownership | [[MOC-Memory-Model]] |
+| ⬡ JVM Frameworks 2026 | 🔄 Tuần 1/24 | [[_moc/MOC-JVM-Frameworks]] |
+| 🦀 Rust Zero to Hero | 🔄 Bài 1→35 active | [[_moc/MOC-Rust]] |
+| ☕ Java / Spring Boot | ✅ Foundation solid | [[_moc/MOC-Java]] |
+| ⚡ Concurrency | ✅ Java ↔ Rust mapped | [[_moc/MOC-Concurrency]] |
+| 🧠 Memory Model | ✅ GC vs Ownership | [[_moc/MOC-Memory-Model]] |
 
 ### 🏗️ Architecture & Systems
 | Domain | Link |
 |--------|------|
-| System Design | [[MOC-System-Design]] |
-| Distributed Systems | [[MOC-Distributed-Systems]] |
-| Scalability | [[MOC-Scalability]] |
-| Database | [[MOC-Database]] |
+| System Design | [[_moc/MOC-System-Design]] |
+| Distributed Systems | [[_moc/MOC-Distributed-Systems]] |
+| Scalability | [[_moc/MOC-Scalability]] |
+| Database | [[_moc/MOC-Database]] |
 
 ### 🔌 Integration & Security
 | Domain | Link |
 |--------|------|
-| API Design | [[MOC-API-Design]] |
-| Auth & Security | [[MOC-Auth-Security]] |
+| API Design | [[_moc/MOC-API-Design]] |
+| Auth & Security | [[_moc/MOC-Auth-Security]] |
 
 ### 🧪 Low-level & Performance
 | Domain | Link |
 |--------|------|
-| Database Internals | [[MOC-Database-Internals]] |
-| Wasm Server-side | [[MOC-Wasm-Backend]] |
-| Rust Performance | [[Performance-Pitfalls-Rust|Rust Performance Pitfalls]] |
+| Database Internals | [[_moc/MOC-Database-Internals]] |
+| Wasm Server-side | [[_moc/MOC-Wasm-Backend]] |
+| Rust Performance | [[Rust-Zero-To-Hero/Performance-Pitfalls-Rust|Rust Performance Pitfalls]] |
 
 ### 📁 Projects
 | Project | Link |
 |---------|------|
 | ViperKV (Custom DB) | Planned — project log chưa được tạo |
-| PDMS — VPBank | [[MOC-PDMS]] |
-| Case Studies | [[MOC-Case-Studies]] |
+| PDMS — VPBank | [[_moc/MOC-PDMS]] |
+| Case Studies | [[_moc/MOC-Case-Studies]] |
 
 ---
 
@@ -82,20 +82,20 @@ RxJava    ░░░░░░░░░░░░░░░░░░░░  Chưa b�
 
 | # | Topic | Tuần | Notes |
 |---|-------|------|-------|
-| 1 | 🗄️ DB Internals | 1-4 | [[01-Bitcask-Architecture|Bitcask]] · [[03-BTree-vs-LSM|B-Tree vs LSM-Tree]] |
-| 2 | ⚡ Wasm Server | 5-8 | [[01-Wasm-Fundamentals|Wasm Core]] · [[05-Spin-Framework|Spin Framework]] |
+| 1 | 🗄️ DB Internals | 1-4 | [[Performance-System-Programming/01-Database-Internals/01-Bitcask-Architecture|Bitcask]] · [[Performance-System-Programming/01-Database-Internals/03-BTree-vs-LSM|B-Tree vs LSM-Tree]] |
+| 2 | ⚡ Wasm Server | 5-8 | [[Performance-System-Programming/02-Wasm-Server-side/01-Wasm-Fundamentals|Wasm Core]] · [[Performance-System-Programming/02-Wasm-Server-side/05-Spin-Framework|Spin Framework]] |
 
 ### ⬡ JVM Modern Frameworks 2026
 **24 tuần · Bắt đầu 14/04/2026**
 
 | # | Framework | Tuần | Notes |
 |---|-----------|------|-------|
-| 1 | ⬡ Quarkus | 1–8 | [[00 Quarkus Overview\|Overview]] · [[01 CDI vs Spring IoC\|CDI]] · [[01 Mutiny - Uni và Multi\|Mutiny]] · [[01 GraalVM Native Image\|Native]] |
-| 2 | ◈ Micronaut | 9–14 | [[00 Micronaut Overview\|Overview]] · [[01 Compile-time DI vs Runtime DI\|Compile-time DI]] |
-| 3 | △ Vert.x | 15–20 | [[00 Vertx Overview\|Overview]] · [[01 Event Loop và Verticles\|Event Loop]] |
-| 4 | ◎ RxJava | 21–24 | [[00 RxJava Overview\|Overview]] · [[01 Core Operators\|Operators]] |
+| 1 | ⬡ Quarkus | 1–8 | [[JVM-Frameworks-2026/01-Quarkus/00 Quarkus Overview\|Overview]] · [[JVM-Frameworks-2026/01-Quarkus/P1-Foundation/01 CDI vs Spring IoC\|CDI]] · [[JVM-Frameworks-2026/01-Quarkus/P3-Reactive/01 Mutiny - Uni và Multi\|Mutiny]] · [[JVM-Frameworks-2026/01-Quarkus/P4-Native/01 GraalVM Native Image\|Native]] |
+| 2 | ◈ Micronaut | 9–14 | [[JVM-Frameworks-2026/02-Micronaut/00 Micronaut Overview\|Overview]] · [[JVM-Frameworks-2026/02-Micronaut/P1-Core/01 Compile-time DI vs Runtime DI\|Compile-time DI]] |
+| 3 | △ Vert.x | 15–20 | [[JVM-Frameworks-2026/03-Vertx/00 Vertx Overview\|Overview]] · [[JVM-Frameworks-2026/03-Vertx/P1-Core/01 Event Loop và Verticles\|Event Loop]] |
+| 4 | ◎ RxJava | 21–24 | [[JVM-Frameworks-2026/04-RxJava/00 RxJava Overview\|Overview]] · [[JVM-Frameworks-2026/04-RxJava/P2-Operators/01 Core Operators\|Operators]] |
 
-→ [[00 Weekly Study Log|📅 Weekly Study Log]] · [[MOC-JVM-Frameworks|🗺️ Master MOC]]
+→ [[JVM-Frameworks-2026/00 Weekly Study Log|📅 Weekly Study Log]] · [[_moc/MOC-JVM-Frameworks|🗺️ Master MOC]]
 
 ### 🦀 Rust Zero to Hero
 **Bài 1 → 35 · Advanced phase**
@@ -111,23 +111,23 @@ Insight mới  →  _inbox/  →  review cuối tuần  →  concepts/  →  lin
 ```
 
 **Templates nhanh:**
-- [[template-til|TIL]] — Today I Learned (5 phút)
-- [[template-concept|Concept]] — Atomic knowledge note
-- [[template-framework-concept|Framework Concept]] — So sánh Spring Boot → framework mới
-- [[template-pattern|Pattern]] — Architectural / design pattern
+- [[_templates/template-til|TIL]] — Today I Learned (5 phút)
+- [[_templates/template-concept|Concept]] — Atomic knowledge note
+- [[_templates/template-framework-concept|Framework Concept]] — So sánh Spring Boot → framework mới
+- [[_templates/template-pattern|Pattern]] — Architectural / design pattern
 
-**Microservices Patterns:** [[00-Hub-Microservices-Patterns|→ Hub]]
+**Microservices Patterns:** [[Microservices-Patterns/00-Hub-Microservices-Patterns|→ Hub]]
 
 ---
 
 ## 🛠️ Tools
-- [[AGENTS|Gemini Scribe Agents]]
-- [[VAULT-DASHBOARD|Vault Dashboard — metadata, audit và distillation queue]]
+- [[gemini-scribe/AGENTS|Gemini Scribe Agents]]
+- [[_moc/VAULT-DASHBOARD|Vault Dashboard — metadata, audit và distillation queue]]
 
 ## 🔄 Technology Updates
 
-- [[25-Angular-22-Technology-Update-2026|Angular 22]]
-- [[Bai-25-Go-1.26-Technology-Update|Go 1.26]]
-- [[Bai-48-Rust-1.97-Technology-Update|Rust 1.97]]
-- [[Bai-26-Go-Framework-Radar-2026|Go Framework Track 2026]]
-- [[Bai-49-Rust-Framework-Radar-2026|Rust Framework Track 2026]]
+- [[Angular-Latest-Series/25-Angular-22-Technology-Update-2026|Angular 22]]
+- [[Go-Zero-To-Hero/Bai-25-Go-1.26-Technology-Update|Go 1.26]]
+- [[Rust-Zero-To-Hero/Bai-48-Rust-1.97-Technology-Update|Rust 1.97]]
+- [[Go-Zero-To-Hero/Bai-26-Go-Framework-Radar-2026|Go Framework Track 2026]]
+- [[Rust-Zero-To-Hero/Bai-49-Rust-Framework-Radar-2026|Rust Framework Track 2026]]

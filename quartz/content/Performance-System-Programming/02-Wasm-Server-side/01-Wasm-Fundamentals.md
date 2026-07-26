@@ -64,5 +64,5 @@ graph LR
 
 ---
 ## 🔗 Liên kết
-- [[02-Wasm-vs-Docker|02. Wasm vs Docker]]
-- [[05-Spin-Framework|05. Spin Framework]]
+- [[Performance-System-Programming/02-Wasm-Server-side/02-Wasm-vs-Docker|02. Wasm vs Docker]]
+- [[Performance-System-Programming/02-Wasm-Server-side/05-Spin-Framework|05. Spin Framework]]

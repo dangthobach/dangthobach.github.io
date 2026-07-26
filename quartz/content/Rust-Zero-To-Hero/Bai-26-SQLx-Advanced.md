@@ -971,6 +971,6 @@ println!("Pending migrations: {}", pending.len());
 ---
 
 ## 🔗 Links
-- [[Bai-12-SQLx-Database|Bài 12: SQLx Basics]] — prerequisite
-- [[Bai-28-Tonic-GRPC|Bài 28: Tonic/gRPC]] — prerequisite
-- [[Bai-27-Diesel|Bài 27: Diesel]] → tiếp theo
+- [[Rust-Zero-To-Hero/Bai-12-SQLx-Database|Bài 12: SQLx Basics]] — prerequisite
+- [[Rust-Zero-To-Hero/Bai-28-Tonic-GRPC|Bài 28: Tonic/gRPC]] — prerequisite
+- [[Rust-Zero-To-Hero/Bai-27-Diesel|Bài 27: Diesel]] → tiếp theo

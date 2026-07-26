@@ -15,7 +15,7 @@ updated: 2026-05-01
 
 ## 🧠 Nền tảng khái niệm
 
-- [[Concurrency is NOT Parallelism|Concurrency ≠ Parallelism]]
+- [[Notion Knowledge/Note/Concurrency is NOT Parallelism|Concurrency ≠ Parallelism]]
   → Rob Pike's definition. Concurrency = cấu trúc chương trình. Parallelism = thực thi đồng thời. Goroutine model vs thread model.
 
 ---
@@ -27,7 +27,7 @@ updated: 2026-05-01
 |---|---|
 | Platform Thread | OS thread, 1:1 mapping, ~1MB stack, expensive context switch |
 | Virtual Thread (Loom) | Mounted lên carrier thread, unmount khi block, ~KB overhead |
-| Deep Dive Loom | [[java-virtual-threads-deep-dive\|Java Virtual Threads: Bản chất & Cơ chế]] |
+| Deep Dive Loom | [[concepts/java-virtual-threads-deep-dive\|Java Virtual Threads: Bản chất & Cơ chế]] |
 | `CompletableFuture` | Async composition, callback chain, không block thread |
 | `ExecutorService` | Thread pool management, `ForkJoinPool` work-stealing |
 
@@ -104,10 +104,10 @@ updated: 2026-05-01
 
 ## 📚 Reference Notes
 
-- [[Concurrency is NOT Parallelism|Concurrency ≠ Parallelism]] — conceptual foundation
-- [[Bai-2-Borrowing-Multi-threading|Bài 2: Borrowing & Multithreading]] — Rust basics
-- [[Bai-8-Smart-Pointers-Error-Design|Bài 8: Arc/Mutex patterns]] — Rust shared state
-- [[Bai-9-Async-Tokio|Bài 9: Tokio Runtime]] — Rust async deep dive
+- [[Notion Knowledge/Note/Concurrency is NOT Parallelism|Concurrency ≠ Parallelism]] — conceptual foundation
+- [[Rust-Zero-To-Hero/Bai-2-Borrowing-Multi-threading|Bài 2: Borrowing & Multithreading]] — Rust basics
+- [[Rust-Zero-To-Hero/Bai-8-Smart-Pointers-Error-Design|Bài 8: Arc/Mutex patterns]] — Rust shared state
+- [[Rust-Zero-To-Hero/Bai-9-Async-Tokio|Bài 9: Tokio Runtime]] — Rust async deep dive
 
 ---
 
@@ -121,9 +121,9 @@ updated: 2026-05-01
 ---
 
 ## ⚡ Reactive Concepts (Atomic Notes)
-- [[reactive-programming-fundamentals|Reactive Programming Fundamentals]]
-- [[event-loop-model|Event Loop Model]]
-- [[backpressure-explained|Backpressure Explained]]
+- [[concepts/reactive-programming-fundamentals|Reactive Programming Fundamentals]]
+- [[concepts/event-loop-model|Event Loop Model]]
+- [[concepts/backpressure-explained|Backpressure Explained]]
 
 ---
 
@@ -133,11 +133,11 @@ updated: 2026-05-01
 
 | Thứ tự | Bài | Nội dung | Liên quan tới section |
 |--------|-----|---------|----------------------|
-| 1 | [[Bai-2-Borrowing-Multi-threading\|Bài 2: Borrowing & Multi-threading]] | `Send`/`Sync` traits, data race prevention at **compile time** — điều Java không có | Shared State — Rust side |
-| 2 | [[Bai-8-Smart-Pointers-Error-Design\|Bài 8: Smart Pointers]] | `Arc<Mutex<T>>` pattern đầy đủ, khi nào `Rc` vs `Arc`, interior mutability | Cross-language Mapping Table |
-| 3 | [[Bai-9-Async-Tokio\|Bài 9: Async/Tokio]] | Runtime, `join!`, `select!`, tất cả channel types (`mpsc`, `broadcast`, `watch`, `oneshot`) | Async Model table — **đọc trước Bài 21** |
-| 4 | [[Bai-21-Async-Internals-Pin\|Bài 21: Async Internals & Pin]] | State machine compiler-generated, `Pin<P>` tại sao cần, Waker mechanism, `JoinSet` structured concurrency | Tại sao task chỉ ~8KB thay vì ~1MB |
-| 5 | [[Bai-22-Advanced-Concurrency\|Bài 22: Advanced Concurrency]] | `rayon` parallelism, lock-free `DashMap`, crossbeam channels, `AtomicUsize` | Beyond async — CPU-bound work |
+| 1 | [[Rust-Zero-To-Hero/Bai-2-Borrowing-Multi-threading\|Bài 2: Borrowing & Multi-threading]] | `Send`/`Sync` traits, data race prevention at **compile time** — điều Java không có | Shared State — Rust side |
+| 2 | [[Rust-Zero-To-Hero/Bai-8-Smart-Pointers-Error-Design\|Bài 8: Smart Pointers]] | `Arc<Mutex<T>>` pattern đầy đủ, khi nào `Rc` vs `Arc`, interior mutability | Cross-language Mapping Table |
+| 3 | [[Rust-Zero-To-Hero/Bai-9-Async-Tokio\|Bài 9: Async/Tokio]] | Runtime, `join!`, `select!`, tất cả channel types (`mpsc`, `broadcast`, `watch`, `oneshot`) | Async Model table — **đọc trước Bài 21** |
+| 4 | [[Rust-Zero-To-Hero/Bai-21-Async-Internals-Pin\|Bài 21: Async Internals & Pin]] | State machine compiler-generated, `Pin<P>` tại sao cần, Waker mechanism, `JoinSet` structured concurrency | Tại sao task chỉ ~8KB thay vì ~1MB |
+| 5 | [[Rust-Zero-To-Hero/Bai-22-Advanced-Concurrency\|Bài 22: Advanced Concurrency]] | `rayon` parallelism, lock-free `DashMap`, crossbeam channels, `AtomicUsize` | Beyond async — CPU-bound work |
 
 ---
 
@@ -147,8 +147,8 @@ updated: 2026-05-01
 
 | Thứ tự | Bài | Nội dung | Liên quan tới |
 |--------|-----|---------|--------------|
-| 1 | [[Bai-2-Borrowing-Multi-threading\|Bài 2: Borrowing & Multi-threading]] | `Send`/`Sync` traits, data race prevention at **compile time** | Shared State — Rust side |
-| 2 | [[Bai-8-Smart-Pointers-Error-Design\|Bài 8: Smart Pointers]] | `Arc<Mutex<T>>` pattern, `Rc` vs `Arc`, interior mutability | Cross-language Mapping Table |
-| 3 | [[Bai-9-Async-Tokio\|Bài 9: Async/Tokio]] | Runtime, `join!`, `select!`, tất cả channel types | Async Model table — **đọc trước Bài 21** |
-| 4 | [[Bai-21-Async-Internals-Pin\|Bài 21: Async Internals & Pin]] | State machine compiler-generated, `Pin<P>`, Waker, `JoinSet` | Tại sao Tokio task chỉ ~8KB vs ~1MB thread |
-| 5 | [[Bai-22-Advanced-Concurrency\|Bài 22: Advanced Concurrency]] | `rayon` parallelism, lock-free `DashMap`, crossbeam, `AtomicUsize` | CPU-bound work — beyond async |
+| 1 | [[Rust-Zero-To-Hero/Bai-2-Borrowing-Multi-threading\|Bài 2: Borrowing & Multi-threading]] | `Send`/`Sync` traits, data race prevention at **compile time** | Shared State — Rust side |
+| 2 | [[Rust-Zero-To-Hero/Bai-8-Smart-Pointers-Error-Design\|Bài 8: Smart Pointers]] | `Arc<Mutex<T>>` pattern, `Rc` vs `Arc`, interior mutability | Cross-language Mapping Table |
+| 3 | [[Rust-Zero-To-Hero/Bai-9-Async-Tokio\|Bài 9: Async/Tokio]] | Runtime, `join!`, `select!`, tất cả channel types | Async Model table — **đọc trước Bài 21** |
+| 4 | [[Rust-Zero-To-Hero/Bai-21-Async-Internals-Pin\|Bài 21: Async Internals & Pin]] | State machine compiler-generated, `Pin<P>`, Waker, `JoinSet` | Tại sao Tokio task chỉ ~8KB vs ~1MB thread |
+| 5 | [[Rust-Zero-To-Hero/Bai-22-Advanced-Concurrency\|Bài 22: Advanced Concurrency]] | `rayon` parallelism, lock-free `DashMap`, crossbeam, `AtomicUsize` | CPU-bound work — beyond async |

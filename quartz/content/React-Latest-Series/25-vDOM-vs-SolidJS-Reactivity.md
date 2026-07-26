@@ -13,7 +13,7 @@ tags: #react #solidjs #virtual-dom #performance #reconciler #fiber
 
 ---
 
-> Bài so sánh chi tiết: [[SolidJS-vs-React-Reactivity-Model]]
+> Bài so sánh chi tiết: [[concepts/SolidJS-vs-React-Reactivity-Model]]
 
 ---
 
@@ -40,6 +40,6 @@ SolidJS không có vDOM — component chỉ chạy một lần, signal thay đ�
 
 ## Related
 
-- [[SolidJS-vs-React-Reactivity-Model]]
-- [[11-Performance-Optimization]]
-- [[12-Concurrent-Features]]
+- [[concepts/SolidJS-vs-React-Reactivity-Model]]
+- [[React-Latest-Series/11-Performance-Optimization]]
+- [[React-Latest-Series/12-Concurrent-Features]]

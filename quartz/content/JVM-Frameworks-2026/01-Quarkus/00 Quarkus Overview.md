@@ -125,18 +125,18 @@ quarkus create app com.example:my-app \
 
 ```mermaid
 flowchart LR
-    A["[[01 CDI vs Spring IoC|P1: CDI & JAX-RS]]"] -->
-    B["[[01 Panache Active Record|P2: Panache & Data]]"] -->
-    C["[[01 Mutiny - Uni và Multi|P3: Mutiny Reactive]]"] -->
-    D["[[01 GraalVM Native Image|P4: Native & K8s]]"]
+    A["[[P1-Foundation/01 CDI vs Spring IoC|P1: CDI & JAX-RS]]"] -->
+    B["[[P2-Data/01 Panache Active Record|P2: Panache & Data]]"] -->
+    C["[[P3-Reactive/01 Mutiny - Uni và Multi|P3: Mutiny Reactive]]"] -->
+    D["[[P4-Native/01 GraalVM Native Image|P4: Native & K8s]]"]
 ```
 
 | Phase | Nội dung chính | Tuần |
 |-------|---------------|------|
-| [[01 CDI vs Spring IoC\|P1]] | CDI Scopes, JAX-RS, Config, Dev Mode | 1–2 |
-| [[01 Panache Active Record\|P2]] | Panache, Transactions, REST Client | 3–4 |
-| [[01 Mutiny - Uni và Multi\|P3]] | Mutiny, RESTEasy Reactive, Kafka | 5–6 |
-| [[01 GraalVM Native Image\|P4]] | Native Image, K8s, Observability | 7–8 |
+| [[P1-Foundation/01 CDI vs Spring IoC\|P1]] | CDI Scopes, JAX-RS, Config, Dev Mode | 1–2 |
+| [[P2-Data/01 Panache Active Record\|P2]] | Panache, Transactions, REST Client | 3–4 |
+| [[P3-Reactive/01 Mutiny - Uni và Multi\|P3]] | Mutiny, RESTEasy Reactive, Kafka | 5–6 |
+| [[P4-Native/01 GraalVM Native Image\|P4]] | Native Image, K8s, Observability | 7–8 |
 
 ---
 
@@ -153,7 +153,7 @@ flowchart LR
 
 ## 🔗 Liên quan
 - [[MOC-JVM-Frameworks]] — Master MOC
-- [[00 Micronaut Overview]] — framework tiếp theo
+- [[02-Micronaut/00 Micronaut Overview]] — framework tiếp theo
 - [[MOC-Java]] — Spring Boot foundation
 
 ## 📖 Nguồn

@@ -884,9 +884,9 @@ for {
 
 ## 🔗 Links
 
-- [[Bai-3-Goroutines-Channels|Bài 3: Goroutines & Channels]]
-- [[Bai-8-Testing-Benchmarking|Bài 8: Benchmarking với testing package]]
-- [[Performance-Pitfalls-Rust|Rust: Performance Pitfalls (so sánh)]]
+- [[Go-Zero-To-Hero/Bai-3-Goroutines-Channels|Bài 3: Goroutines & Channels]]
+- [[Go-Zero-To-Hero/Bai-8-Testing-Benchmarking|Bài 8: Benchmarking với testing package]]
+- [[Rust-Zero-To-Hero/Performance-Pitfalls-Rust|Rust: Performance Pitfalls (so sánh)]]
 
 ---
 

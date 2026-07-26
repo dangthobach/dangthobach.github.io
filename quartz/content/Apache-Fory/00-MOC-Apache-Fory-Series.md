@@ -97,7 +97,7 @@ Replace Kryo/JDK Ser?      → Fory SCHEMA_CONSISTENT
 - [[Debezium-CDC-Deep-Dive]]
 - [[gRPC-Deep-Dive]]
 - [[PDMS-Architecture-Overview]]
-- [[]] — Rust foundation cho bài 10
+- [[Rust-Zero-To-Hero/]] — Rust foundation cho bài 10
 
 ---
 

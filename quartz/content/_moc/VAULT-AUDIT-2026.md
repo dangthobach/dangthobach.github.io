@@ -11,7 +11,7 @@ updated: 2026-05-02
 > *Đánh giá toàn bộ knowledge đã có, gap analysis, và roadmap bổ sung cho mục tiêu: hiểu đúng bản chất của một hệ thống.*
 
 > [!important] Historical audit
-> Snapshot bên dưới được lập ngày 02/05/2026 và được giữ để theo dõi tiến trình. Hiện trạng tự động theo metadata nằm tại [[VAULT-DASHBOARD|Vault Dashboard]]; không dùng checklist cũ để kết luận một article còn thiếu.
+> Snapshot bên dưới được lập ngày 02/05/2026 và được giữ để theo dõi tiến trình. Hiện trạng tự động theo metadata nằm tại [[_moc/VAULT-DASHBOARD|Vault Dashboard]]; không dùng checklist cũ để kết luận một article còn thiếu.
 
 ---
 
@@ -239,5 +239,5 @@ Legend: ✅ Có bài riêng trong vault | ⚠️ Chỉ có Notion link / thiếu
 - [[MOC-Database]] — Data layer
 - [[MOC-Auth-Security]] — Security domain
 - [[MOC-Observability]] — SLO/SLA
-- [[00-Hub-Microservices-Patterns]] — Applied patterns
-- [[00-Hub-Database-Persistence]] — Applied DB knowledge
+- [[Microservices-Patterns/00-Hub-Microservices-Patterns]] — Applied patterns
+- [[Database-Patterns/00-Hub-Database-Persistence]] — Applied DB knowledge

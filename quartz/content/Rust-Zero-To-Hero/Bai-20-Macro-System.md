@@ -398,9 +398,9 @@ println!("{}", temp); // "I am caller's temp" — không bị override!
 ---
 
 ## 🔗 Links
-- [[Bai-6-Generics-Traits-Advanced|Bài 6: Traits — macros derive từ traits]]
-- [[Bai-13-Serde-Reqwest-JWT|Bài 13: Serde — proc-macro in action]]
-- [[Bai-21-Async-Internals-Pin|Bài 21: Async Internals]] → tiếp theo
+- [[Rust-Zero-To-Hero/Bai-6-Generics-Traits-Advanced|Bài 6: Traits — macros derive từ traits]]
+- [[Rust-Zero-To-Hero/Bai-13-Serde-Reqwest-JWT|Bài 13: Serde — proc-macro in action]]
+- [[Rust-Zero-To-Hero/Bai-21-Async-Internals-Pin|Bài 21: Async Internals]] → tiếp theo
 
 ---
 *Bài tập:*

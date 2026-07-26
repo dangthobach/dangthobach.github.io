@@ -525,7 +525,7 @@ for _, v := range slice { ... } // ignore index
 ---
 
 ## 🔗 Links
-- [[04-Go-Idiomatic-Overview|Overview]]
-- [[06-Level2-Idiomatic|Level 2 · Idiomatic →]]
+- [[Design-Patterns-Go/04-Go-Idiomatic-Overview|Overview]]
+- [[Design-Patterns-Go/06-Level2-Idiomatic|Level 2 · Idiomatic →]]
 
 *Tags: #go #patterns #level1 #functional-options #errors #testing*

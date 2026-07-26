@@ -84,9 +84,9 @@ src/main/
 
 | Phase | Nội dung | Tuần |
 |-------|---------|------|
-| [[01 Compile-time DI vs Runtime DI\|P1]] | Compile-time DI, @Controller, Config | 9–10 |
-| [[01 Micronaut Data JPA\|P2]] | Micronaut Data, @Client HTTP | 11–12 |
-| [[01 Micronaut Kafka\|P3]] | Kafka, AOP, Security, Tracing | 13–14 |
+| [[P1-Core/01 Compile-time DI vs Runtime DI\|P1]] | Compile-time DI, @Controller, Config | 9–10 |
+| [[P2-Data/01 Micronaut Data JPA\|P2]] | Micronaut Data, @Client HTTP | 11–12 |
+| [[P3-Reactive/01 Micronaut Kafka\|P3]] | Kafka, AOP, Security, Tracing | 13–14 |
 
 ---
 
@@ -105,8 +105,8 @@ src/main/
 
 ## 🔗 Liên quan
 - [[MOC-JVM-Frameworks]]
-- [[00 Quarkus Overview]] — framework trước đó
-- [[00 Vertx Overview]] — framework tiếp theo
+- [[01-Quarkus/00 Quarkus Overview]] — framework trước đó
+- [[03-Vertx/00 Vertx Overview]] — framework tiếp theo
 
 ## 📖 Nguồn
 - https://docs.micronaut.io/

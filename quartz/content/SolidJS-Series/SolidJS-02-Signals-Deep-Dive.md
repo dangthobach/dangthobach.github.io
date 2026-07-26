@@ -283,7 +283,7 @@ f.status = 'APPROVED'; // SolidJS KHÔNG detect thay đổi này
 setFilters(f);         // f === f → equals true → không notify
 ```
 
-> **Lưu ý:** Nếu cần reactive nested object, dùng [[SolidJS-06-Stores-Nested-State|createStore]] thay vì Signal.
+> **Lưu ý:** Nếu cần reactive nested object, dùng [[SolidJS-Series/SolidJS-06-Stores-Nested-State|createStore]] thay vì Signal.
 
 ---
 
@@ -414,13 +414,13 @@ if (status() === 'APPROVED') { ... }
 
 ## 🔗 Liên kết
 
-← [[SolidJS-01-Reactivity-Internals|01 · Reactivity Internals]]
-→ [[SolidJS-03-Effects-And-Lifecycle|03 · Effects & Lifecycle]]
+← [[SolidJS-Series/SolidJS-01-Reactivity-Internals|01 · Reactivity Internals]]
+→ [[SolidJS-Series/SolidJS-03-Effects-And-Lifecycle|03 · Effects & Lifecycle]]
 
 **Xem thêm:**
-- [[SolidJS-06-Stores-Nested-State|06 · Stores]] — khi signal không đủ cho nested state
-- [[SolidJS-10-Complex-UI-Patterns|10 · Complex UI]] — form patterns với signals
+- [[SolidJS-Series/SolidJS-06-Stores-Nested-State|06 · Stores]] — khi signal không đủ cho nested state
+- [[SolidJS-Series/SolidJS-10-Complex-UI-Patterns|10 · Complex UI]] — form patterns với signals
 
 ---
 
-*Series: [[SolidJS-MOC|SolidJS Master Index]]*
+*Series: [[SolidJS-Series/SolidJS-MOC|SolidJS Master Index]]*

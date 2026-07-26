@@ -939,6 +939,6 @@ async fn shutdown_signal() {
 ---
 
 ## 🔗 Links
-- [[Bai-15-Config-Tracing-Testing|Bài 15: Tracing cơ bản]]
-- [[Bai-28-Tonic-GRPC|Bài 28: Tonic — gRPC trace propagation]]
-- [[Bai-35-Resilience|Bài 35: Resilience]] → tiếp theo
+- [[Rust-Zero-To-Hero/Bai-15-Config-Tracing-Testing|Bài 15: Tracing cơ bản]]
+- [[Rust-Zero-To-Hero/Bai-28-Tonic-GRPC|Bài 28: Tonic — gRPC trace propagation]]
+- [[Rust-Zero-To-Hero/Bai-35-Resilience|Bài 35: Resilience]] → tiếp theo

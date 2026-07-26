@@ -232,10 +232,10 @@ GraalVM Native Image:
 ---
 
 ## 🔗 Liên quan
-- [[01 GraalVM Native Image|Quarkus: GraalVM Native Image]] — hướng dẫn thực hành
-- [[02 Kubernetes & Health Checks|Quarkus: Kubernetes]] — deploy native lên K8s
+- [[JVM-Frameworks-2026/01-Quarkus/P4-Native/01 GraalVM Native Image|Quarkus: GraalVM Native Image]] — hướng dẫn thực hành
+- [[JVM-Frameworks-2026/01-Quarkus/P4-Native/02 Kubernetes & Health Checks|Quarkus: Kubernetes]] — deploy native lên K8s
 - [[compile-time-vs-runtime-di]] — tại sao compile-time DI tương thích native tốt hơn
-- [[MOC-Java|MOC-Java]] — JVM internals context
+- [[_moc/MOC-Java|MOC-Java]] — JVM internals context
 
 ## 📖 Nguồn
 - https://quarkus.io/guides/building-native-image

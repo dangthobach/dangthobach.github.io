@@ -205,7 +205,7 @@ public class ReactiveDocumentRepo {
 ## 🔗 Liên quan
 - [[01 Event Loop và Verticles]]
 - [[02 Vertx với Quarkus]]
-- [[01 Panache Active Record]]
+- [[../../01-Quarkus/P2-Data/01 Panache Active Record]]
 
 ## 📖 Nguồn
 - https://vertx.io/docs/vertx-pg-client/java/

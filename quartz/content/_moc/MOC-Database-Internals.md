@@ -17,13 +17,13 @@ updated: 2026-05-01
 ## 🗺️ Lộ trình học tập (ViperKV Project)
 
 ### 🟢 Level 1: Log-Structured Storage (Bitcask)
-- [[01-Bitcask-Architecture|01. Kiến trúc Bitcask]] — Hash Table + Append-only Log.
-- [[02-Append-Only-Log-Rust|02. Triển khai Append-only Log với Rust]] — `std::fs` và Binary Encoding.
+- [[Performance-System-Programming/01-Database-Internals/01-Bitcask-Architecture|01. Kiến trúc Bitcask]] — Hash Table + Append-only Log.
+- [[Performance-System-Programming/01-Database-Internals/02-Append-Only-Log-Rust|02. Triển khai Append-only Log với Rust]] — `std::fs` và Binary Encoding.
 - 03. Cơ chế Merge & Compaction *(planned)* — Dọn dẹp đĩa hiệu quả.
 
 ### 🟡 Level 2: Sorted Storage (LSM-Tree)
-- [[04-SSTable-Format|04. Định dạng SSTable]] — Sorted String Table.
-- [[05-Memtable-SkipList|05. Memtable & SkipList]] — Cấu trúc dữ liệu trong bộ nhớ.
+- [[Performance-System-Programming/01-Database-Internals/04-SSTable-Format|04. Định dạng SSTable]] — Sorted String Table.
+- [[Performance-System-Programming/01-Database-Internals/05-Memtable-SkipList|05. Memtable & SkipList]] — Cấu trúc dữ liệu trong bộ nhớ.
 - 06. Bloom Filters *(planned)* — Tối ưu hóa I/O cho "Key not found".
 
 ### 🔴 Level 3: Advanced Topics
@@ -38,6 +38,6 @@ updated: 2026-05-01
 ---
 
 ## 🔗 Liên kết liên quan
-- [[MOC-Rust|MOC Rust]]
-- [[MOC-Database|MOC Database (Usage)]]
-- [[postgresql-performance-deep-dive|PostgreSQL Internals]]
+- [[_moc/MOC-Rust|MOC Rust]]
+- [[_moc/MOC-Database|MOC Database (Usage)]]
+- [[concepts/postgresql-performance-deep-dive|PostgreSQL Internals]]

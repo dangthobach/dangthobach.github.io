@@ -2,9 +2,9 @@
 title: "Rust vs Java — Build/Compile/Interpret Timeline & Bộ Nhớ Khi Deploy"
 tags: [rust, java, build, compile, jvm, jit, memory, deployment, kubernetes, docker, pdms]
 related:
-  - "[[rust-java-go-comparison]]"
-  - "[[gc-llvm-runtime-cpu-memory-internals]]"
-  - "[[MOC-Memory-Model]]"
+  - "[[concepts/rust-java-go-comparison]]"
+  - "[[concepts/gc-llvm-runtime-cpu-memory-internals]]"
+  - "[[_moc/MOC-Memory-Model]]"
 created: 2026-07-06
 status: permanent
 type: concept
@@ -14,7 +14,7 @@ updated: 2026-07-06
 
 # Rust vs Java — Build/Compile/Interpret Timeline & Bộ Nhớ Khi Deploy
 
-> **Vì sao cần article này riêng?** [[rust-java-go-comparison]] đã có bảng so sánh compilation model, và [[gc-llvm-runtime-cpu-memory-internals]] đã đi sâu cơ chế GC/LLVM ở mức CPU. Nhưng cả hai đều **chưa trả lời 2 câu hỏi thực dụng nhất khi vận hành PDMS trên EKS**:
+> **Vì sao cần article này riêng?** [[concepts/rust-java-go-comparison]] đã có bảng so sánh compilation model, và [[concepts/gc-llvm-runtime-cpu-memory-internals]] đã đi sâu cơ chế GC/LLVM ở mức CPU. Nhưng cả hai đều **chưa trả lời 2 câu hỏi thực dụng nhất khi vận hành PDMS trên EKS**:
 > 1. Build/compile/warm-up **tốn bao nhiêu giây thực tế**, theo từng bước?
 > 2. Khi container chạy production, **RAM đi đâu**, và tại sao pod bị `OOMKilled`?
 >
@@ -50,7 +50,7 @@ gantt
 | Incremental (1 file đổi) | 1-3s | 2-8s | 10-40s |
 | LTO (`lto = "fat"`, cho binary tối ưu nhất) | — | — | +30-120s |
 
-**Điểm quan trọng:** `--release` chậm hơn debug **5-10x** vì LLVM chạy đầy đủ optimization passes (inlining, vectorization, escape analysis — xem chi tiết ở [[gc-llvm-runtime-cpu-memory-internals]]). Đây là chi phí **trả một lần lúc build**, đổi lại **zero cost lúc runtime**.
+**Điểm quan trọng:** `--release` chậm hơn debug **5-10x** vì LLVM chạy đầy đủ optimization passes (inlining, vectorization, escape analysis — xem chi tiết ở [[concepts/gc-llvm-runtime-cpu-memory-internals]]). Đây là chi phí **trả một lần lúc build**, đổi lại **zero cost lúc runtime**.
 
 ### 1.2 Java — `mvn package` → JVM chạy → JIT warm-up
 
@@ -128,7 +128,7 @@ gantt
 
 ## 2. Bộ Nhớ Khi Deploy — Thực Tế Trên Container/K8s
 
-Phần [[gc-llvm-runtime-cpu-memory-internals]] mục 5.2 đã cho số liệu RSS baseline ("Hello World"). Ở đây đi sâu vào **cách RAM biến động theo thời gian trong container**, và **cách set resource limits đúng** — đây là chỗ hay gây sự cố production nhất.
+Phần [[concepts/gc-llvm-runtime-cpu-memory-internals]] mục 5.2 đã cho số liệu RSS baseline ("Hello World"). Ở đây đi sâu vào **cách RAM biến động theo thời gian trong container**, và **cách set resource limits đúng** — đây là chỗ hay gây sự cố production nhất.
 
 ### 2.1 Docker image size — ảnh hưởng cold-start & node bandwidth
 
@@ -291,9 +291,9 @@ Rust container memory profile:
 ---
 
 ## 5. References
-- `[[rust-java-go-comparison]]` — bảng so sánh tổng quan compilation model
-- `[[gc-llvm-runtime-cpu-memory-internals]]` — cơ chế GC/LLVM/native code ở mức CPU
-- `[[MOC-Memory-Model]]`
+- `[[concepts/rust-java-go-comparison]]` — bảng so sánh tổng quan compilation model
+- `[[concepts/gc-llvm-runtime-cpu-memory-internals]]` — cơ chế GC/LLVM/native code ở mức CPU
+- `[[_moc/MOC-Memory-Model]]`
 - [JEP 346: Container-Aware JVM](https://openjdk.org/jeps/346)
 - [Oracle Docs — JVM Container Support](https://docs.oracle.com/en/java/javase/21/gctuning/)
 - [Kubernetes — Resource Management for Pods](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/)

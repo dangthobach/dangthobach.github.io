@@ -37,7 +37,7 @@ tags: []
 
 ## 1. Communication Flow — Minh họa
 
-![[api-communication-flows.svg]]
+![[diagrams/api-communication-flows.svg]]
 
 **Câu hỏi quyết định:**
 1. **"Ai chủ động?"** → Client = REST/GraphQL/gRPC; Server = Webhook
@@ -49,7 +49,7 @@ tags: []
 
 ## 2. Scientific Decision Framework
 
-![[api-decision-tree.svg]]
+![[diagrams/api-decision-tree.svg]]
 
 ### Step 1 — Communication Direction
 
@@ -658,7 +658,7 @@ Caching:
 
 ## 12. gRPC vs RPC cũ — Tại sao gRPC thắng?
 
-![[rpc-evolution-timeline.svg]]
+![[diagrams/rpc-evolution-timeline.svg]]
 
 ### 12.1 Lịch sử vắn tắt — RPC không phải ý tưởng mới
 
@@ -691,7 +691,7 @@ Thế hệ 3 — gRPC (2015, Google open-source)
 
 ### 12.2 So sánh từng lớp kiến trúc
 
-![[grpc-vs-oldrpc-internals.svg]]
+![[diagrams/grpc-vs-oldrpc-internals.svg]]
 
 #### Lớp 1: Transport — HTTP/2 vs HTTP/1.1
 

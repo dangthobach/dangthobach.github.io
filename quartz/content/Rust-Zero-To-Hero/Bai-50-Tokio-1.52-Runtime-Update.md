@@ -62,10 +62,10 @@ Future bị drop khi `select!` chọn nhánh khác. Hãy hỏi:
 
 ## Liên kết
 
-- [[Bai-9-Async-Tokio|Tokio nền tảng]]
-- [[Bai-9b-Tokio-Advanced|Tokio Advanced]]
-- [[Bai-22-Advanced-Concurrency|Advanced Concurrency]]
-- [[backpressure-explained|Backpressure]]
+- [[Rust-Zero-To-Hero/Bai-9-Async-Tokio|Tokio nền tảng]]
+- [[Rust-Zero-To-Hero/Bai-9b-Tokio-Advanced|Tokio Advanced]]
+- [[Rust-Zero-To-Hero/Bai-22-Advanced-Concurrency|Advanced Concurrency]]
+- [[concepts/backpressure-explained|Backpressure]]
 
 ## Nguồn
 

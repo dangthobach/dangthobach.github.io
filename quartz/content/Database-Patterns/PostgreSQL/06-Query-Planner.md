@@ -14,7 +14,7 @@ tags: []
 
 ---
 
-> Xem nội dung đầy đủ tại: [[query-planner-optimizer]]
+> Xem nội dung đầy đủ tại: [[concepts/query-planner-optimizer]]
 
 ## Nội dung chính
 

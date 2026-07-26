@@ -11,7 +11,7 @@ tags: []
 
 > **Status:** 🟢 Active  
 > **Tags:** #frontend #architecture #react #angular #solidjs #FSD #scalability  
-> **Related:** [[15-Enterprise-Best-Practices]] · [[14-Enterprise-Architecture-and-Standalone]] · [[06-Enterprise-Architecture]] · [[]]
+> **Related:** [[React-Latest-Series/15-Enterprise-Best-Practices]] · [[Angular-Latest-Series/14-Enterprise-Architecture-and-Standalone]] · [[SolidJS-Series/06-Enterprise-Architecture]] · [[concepts/]]
 
 ---
 
@@ -476,7 +476,7 @@ Chỉ chuyển sang Micro-Frontends khi có **nhiều team độc lập cần de
 - [Feature-Sliced Design Official Docs](https://feature-sliced.design/)
 - [FSD Tutorial — Conduit App](https://feature-sliced.design/docs/get-started/tutorial)
 - [FSD with Angular — Medium](https://medium.com/@fed4wet/feature-sliced-design-modern-architectural-methodology-on-angular-d0ef705ef598)
-- [[15-Enterprise-Best-Practices]]
-- [[14-Enterprise-Architecture-and-Standalone]]
-- [[06-Enterprise-Architecture]]
-- [[]]
+- [[React-Latest-Series/15-Enterprise-Best-Practices]]
+- [[Angular-Latest-Series/14-Enterprise-Architecture-and-Standalone]]
+- [[SolidJS-Series/06-Enterprise-Architecture]]
+- [[concepts/]]

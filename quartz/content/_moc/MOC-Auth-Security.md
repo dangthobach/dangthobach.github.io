@@ -15,34 +15,34 @@ updated: 2026-04-12
 
 ## 🎫 Token-based Authentication
 
-- [[Mastering Modern Authentication- Cookies, Sessions, JWT, and PASETO|Modern Auth: Cookies → Sessions → JWT → PASETO]]
+- [[Notion Knowledge/Note/Mastering Modern Authentication- Cookies, Sessions, JWT, and PASETO|Modern Auth: Cookies → Sessions → JWT → PASETO]]
   → Evolution của auth. Stateful (session) vs Stateless (JWT). Refresh token rotation pattern. Khi nào dùng cái nào.
-- [[JWT vs PASETO- The Two Players of Token-Based Authentication|JWT vs PASETO]]
+- [[Notion Knowledge/Note/JWT vs PASETO- The Two Players of Token-Based Authentication|JWT vs PASETO]]
   → JWT pitfalls: `alg:none` attack, weak HMAC vs RSA confusion. PASETO: algorithm agility removed by design. Migration path.
 
 ---
 
 ## 🔑 OAuth2 & SSO
 
-- [[Oauth2|OAuth2 — Flows & Implementation]]
+- [[Notion Knowledge/Note/Oauth2|OAuth2 — Flows & Implementation]]
   → Authorization Code + PKCE (browser apps), Client Credentials (service-to-service), Device Flow (CLI). Token introspection. Revocation.
-- [[EP176- How Does SSO Work|How SSO Works]]
+- [[Notion Knowledge/Note/EP176- How Does SSO Work|How SSO Works]]
   → SAML 2.0 vs OIDC. SP-initiated vs IdP-initiated. Token exchange. Enterprise SSO (Okta, Keycloak). **Relevant nếu PDMS cần SSO với VPBank IAM.**
 
 ---
 
 ## 🛡️ API Security
 
-- [[API Security Best Practices|API Security Best Practices]]
+- [[Notion Knowledge/Note/API Security Best Practices|API Security Best Practices]]
   → Authentication (who are you?), Authorization (what can you do?), Input validation, Rate limiting, HTTPS, secrets rotation, OWASP API Top 10.
-- [[A Guide to Rate Limiting Strategies|Rate Limiting Strategies]]
+- [[Notion Knowledge/Note/A Guide to Rate Limiting Strategies|Rate Limiting Strategies]]
   → Fixed window (simple, burst problem), Sliding window (smoother), Token bucket (burst-friendly), Leaky bucket (smooth output). Redis implementation.
 
 ---
 
 ## 🔍 Fine-Grained Authorization & Cross-Service Filtering
 
-- [[Cross-Service-Join-AuthZ-Fine-Grained-Filter|Cross-Service Join — AuthZ & Fine-Grained Filter at Scale]]
+- [[Microservices-Patterns/Cross-Service-Join-AuthZ-Fine-Grained-Filter|Cross-Service Join — AuthZ & Fine-Grained Filter at Scale]]
   → Khi AuthZ service giữ permission tables nhưng nhiều services cần JOIN để filter data (row-level security). 5 pattern: **CDC Replication**, **Permission Token**, **Local Cache+Kafka invalidation**, **Batch API Composition**, **Shared Read Replica**. Decision framework + PDMS hybrid architecture.
 
 ---
@@ -73,5 +73,5 @@ updated: 2026-04-12
 - [[MOC-API-Design]] — Auth trong API design context
 - [[MOC-PDMS]] — jCasbin RBAC/ABAC implementation
 - [[MOC-Distributed-Systems]] — Cross-service authz propagation patterns
-- [[Bai-13-Serde-Reqwest-JWT|Bài 13: JWT trong Rust]]
-- [[Bai-11-Axum-Middleware-Error|Bài 11: Auth middleware Axum]]
+- [[Rust-Zero-To-Hero/Bai-13-Serde-Reqwest-JWT|Bài 13: JWT trong Rust]]
+- [[Rust-Zero-To-Hero/Bai-11-Axum-Middleware-Error|Bài 11: Auth middleware Axum]]

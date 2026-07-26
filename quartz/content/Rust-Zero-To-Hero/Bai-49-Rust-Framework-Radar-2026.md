@@ -27,12 +27,12 @@ flowchart TD
 
 | Layer | Bài |
 |---|---|
-| Runtime | [[Bai-50-Tokio-1.52-Runtime-Update]] |
-| HTTP | [[Bai-51-Axum-0.8.9-Production-Update]] |
-| Alternative server | [[Bai-52-Actix-Web-2026-Update]] |
-| Database | [[Bai-53-SQLx-0.8-Diesel-2.3-Update]] |
-| gRPC | [[Bai-54-Tonic-0.14-Production-gRPC]] |
-| Fullstack | [[Bai-55-Leptos-0.8-Migration]], [[Bai-56-Dioxus-0.7-to-0.8-Watchlist]] |
+| Runtime | [[Rust-Zero-To-Hero/Bai-50-Tokio-1.52-Runtime-Update]] |
+| HTTP | [[Rust-Zero-To-Hero/Bai-51-Axum-0.8.9-Production-Update]] |
+| Alternative server | [[Rust-Zero-To-Hero/Bai-52-Actix-Web-2026-Update]] |
+| Database | [[Rust-Zero-To-Hero/Bai-53-SQLx-0.8-Diesel-2.3-Update]] |
+| gRPC | [[Rust-Zero-To-Hero/Bai-54-Tonic-0.14-Production-gRPC]] |
+| Fullstack | [[Rust-Zero-To-Hero/Bai-55-Leptos-0.8-Migration]], [[Rust-Zero-To-Hero/Bai-56-Dioxus-0.7-to-0.8-Watchlist]] |
 
 ## Cách học
 

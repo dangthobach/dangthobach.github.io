@@ -151,4 +151,4 @@ React Testing Library + Vitest
 
 ## 🔗 Concept Graph
 
-- [[frontend-concept-map|Frontend Concept Map — React ↔ Angular ↔ SolidJS]]
+- [[concepts/frontend-concept-map|Frontend Concept Map — React ↔ Angular ↔ SolidJS]]

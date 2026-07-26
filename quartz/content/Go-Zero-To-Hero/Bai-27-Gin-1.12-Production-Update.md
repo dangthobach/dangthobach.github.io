@@ -79,10 +79,10 @@ Nâng một endpoint Gin cũ lên 1.12, thêm:
 
 ## Liên kết
 
-- [[Bai-11-Gin-Core|Gin Core]]
-- [[Bai-12-Gin-Advanced|Gin Advanced]]
-- [[Bai-7-Context-Cancellation|Context và Cancellation]]
-- [[Bai-26-Go-Framework-Radar-2026|Framework Radar]]
+- [[Go-Zero-To-Hero/Bai-11-Gin-Core|Gin Core]]
+- [[Go-Zero-To-Hero/Bai-12-Gin-Advanced|Gin Advanced]]
+- [[Go-Zero-To-Hero/Bai-7-Context-Cancellation|Context và Cancellation]]
+- [[Go-Zero-To-Hero/Bai-26-Go-Framework-Radar-2026|Framework Radar]]
 
 ## Nguồn
 

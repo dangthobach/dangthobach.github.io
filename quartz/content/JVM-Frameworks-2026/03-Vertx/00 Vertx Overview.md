@@ -126,16 +126,16 @@ userFuture
 
 | Phase | Nội dung | Tuần |
 |-------|---------|------|
-| [[01 Event Loop và Verticles\|P1]] | Verticles, Event Bus, Future/Promise | 15–16 |
-| [[01 Router và Route Handlers\|P2]] | HTTP Server, Router, WebClient | 17–18 |
-| [[01 Reactive SQL Client\|P3]] | Reactive SQL, Kafka, Vert.x+Quarkus | 19–20 |
+| [[P1-Core/01 Event Loop và Verticles\|P1]] | Verticles, Event Bus, Future/Promise | 15–16 |
+| [[P2-HTTP/01 Router và Route Handlers\|P2]] | HTTP Server, Router, WebClient | 17–18 |
+| [[P3-Data/01 Reactive SQL Client\|P3]] | Reactive SQL, Kafka, Vert.x+Quarkus | 19–20 |
 
 ---
 
 ## 🔗 Liên quan
 - [[MOC-JVM-Frameworks]]
-- [[00 Quarkus Overview]] — Quarkus builds on Vert.x
-- [[00 RxJava Overview]] — reactive concepts
+- [[01-Quarkus/00 Quarkus Overview]] — Quarkus builds on Vert.x
+- [[04-RxJava/00 RxJava Overview]] — reactive concepts
 
 ## 📖 Nguồn
 - https://vertx.io/docs/

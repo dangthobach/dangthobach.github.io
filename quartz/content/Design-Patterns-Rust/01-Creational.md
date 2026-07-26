@@ -575,9 +575,9 @@ struct DocumentTemplate {
 ---
 
 ## 🔗 Links
-- [[00-Overview|Series Overview]]
-- [[02-Structural|02 · Structural Patterns →]]
-- [[Bai-3-Struct-Enum-Trait|Bài 3: Struct, Enum, Trait cơ bản]]
-- [[Bai-6-Generics-Traits-Advanced|Bài 6: Generics & Traits nâng cao]]
+- [[Design-Patterns-Rust/00-Overview|Series Overview]]
+- [[Design-Patterns-Rust/02-Structural|02 · Structural Patterns →]]
+- [[Rust-Zero-To-Hero/Bai-3-Struct-Enum-Trait|Bài 3: Struct, Enum, Trait cơ bản]]
+- [[Rust-Zero-To-Hero/Bai-6-Generics-Traits-Advanced|Bài 6: Generics & Traits nâng cao]]
 
 *Tags: #rust #design-patterns #creational #gof*

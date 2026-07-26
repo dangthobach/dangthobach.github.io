@@ -355,13 +355,13 @@ function initService() {
 
 ## 🔗 Liên kết
 
-← [[SolidJS-00-Overview|00 · Overview & Setup]]
-→ [[SolidJS-02-Signals-Deep-Dive|02 · Signals Deep Dive]]
+← [[SolidJS-Series/SolidJS-00-Overview|00 · Overview & Setup]]
+→ [[SolidJS-Series/SolidJS-02-Signals-Deep-Dive|02 · Signals Deep Dive]]
 
 **Xem thêm:**
-- [[SolidJS-03-Effects-And-Lifecycle|03 · Effects & Lifecycle]] — tracking context chi tiết hơn
-- [[SolidJS-06-Stores-Nested-State|06 · Stores]] — reactive object phức tạp
+- [[SolidJS-Series/SolidJS-03-Effects-And-Lifecycle|03 · Effects & Lifecycle]] — tracking context chi tiết hơn
+- [[SolidJS-Series/SolidJS-06-Stores-Nested-State|06 · Stores]] — reactive object phức tạp
 
 ---
 
-*Series: [[SolidJS-MOC|SolidJS Master Index]]*
+*Series: [[SolidJS-Series/SolidJS-MOC|SolidJS Master Index]]*

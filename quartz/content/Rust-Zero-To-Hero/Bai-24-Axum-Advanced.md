@@ -985,6 +985,6 @@ async fn main() {
 ---
 
 ## 🔗 Links
-- [[Bai-10-Axum-Core|Bài 10: Axum Core]] — prerequisite
-- [[Bai-11-Axum-Middleware-Error|Bài 11: Middleware & Error]]
-- [[Bai-25-ActixWeb|Bài 25: ActixWeb]] → tiếp theo
+- [[Rust-Zero-To-Hero/Bai-10-Axum-Core|Bài 10: Axum Core]] — prerequisite
+- [[Rust-Zero-To-Hero/Bai-11-Axum-Middleware-Error|Bài 11: Middleware & Error]]
+- [[Rust-Zero-To-Hero/Bai-25-ActixWeb|Bài 25: ActixWeb]] → tiếp theo

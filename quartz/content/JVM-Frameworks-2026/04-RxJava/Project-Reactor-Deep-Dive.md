@@ -1016,7 +1016,7 @@ public Mono<Document> findWithCache(Long id) {
 - [[00 RxJava Overview]] — RxJava để so sánh operators
 - [[02 Schedulers - subscribeOn vs observeOn]] — RxJava schedulers (tương đương)
 - [[Project-Loom-Deep-Dive]] — Alternative: VT approach
-- [[01 Mutiny - Uni và Multi]] — Mutiny (Quarkus reactive)
+- [[01-Quarkus/P3-Reactive/01 Mutiny - Uni và Multi]] — Mutiny (Quarkus reactive)
 
 ## ✅ Practice Checklist
 

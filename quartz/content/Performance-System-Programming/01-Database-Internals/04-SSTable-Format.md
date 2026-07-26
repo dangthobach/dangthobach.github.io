@@ -64,5 +64,5 @@ graph LR
 
 ---
 ## 🔗 Liên kết
-- [[05-Memtable-SkipList|05. Memtable & SkipList]] — Nơi SSTable sinh ra.
-- [[06-Bloom-Filters|06. Bloom Filters]] — Tối ưu hóa tìm kiếm.
+- [[Performance-System-Programming/01-Database-Internals/05-Memtable-SkipList|05. Memtable & SkipList]] — Nơi SSTable sinh ra.
+- [[Performance-System-Programming/01-Database-Internals/06-Bloom-Filters|06. Bloom Filters]] — Tối ưu hóa tìm kiếm.

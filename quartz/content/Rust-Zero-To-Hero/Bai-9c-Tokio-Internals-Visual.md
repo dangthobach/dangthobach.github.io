@@ -10,7 +10,7 @@ tags: []
 # Bài 9c: Tokio — Cơ Chế Nội Tại (Mental Models & Diagrams)
 
 > Mục tiêu: thấy được cái gì đang xảy ra bên trong, không chỉ biết API.
-> Prerequisites: [[Bai-9-Async-Tokio|Bài 9]] + [[Bai-9b-Tokio-Advanced|Bài 9b]]
+> Prerequisites: [[Rust-Zero-To-Hero/Bai-9-Async-Tokio|Bài 9]] + [[Rust-Zero-To-Hero/Bai-9b-Tokio-Advanced|Bài 9b]]
 
 ---
 
@@ -370,6 +370,6 @@ Toàn bộ cơ chế này là **zero syscall** sau khi đã register. epoll wait
 ---
 
 ## 🔗 Links
-- [[Bai-9-Async-Tokio|Bài 9: Async cơ bản]]
-- [[Bai-9b-Tokio-Advanced|Bài 9b: Tokio Advanced — API & Patterns]]
-- [[Bai-10-Axum-Core|Bài 10: Axum — áp dụng thực tế]]
+- [[Rust-Zero-To-Hero/Bai-9-Async-Tokio|Bài 9: Async cơ bản]]
+- [[Rust-Zero-To-Hero/Bai-9b-Tokio-Advanced|Bài 9b: Tokio Advanced — API & Patterns]]
+- [[Rust-Zero-To-Hero/Bai-10-Axum-Core|Bài 10: Axum — áp dụng thực tế]]

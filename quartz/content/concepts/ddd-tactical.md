@@ -490,7 +490,7 @@ public record AuditInfo(
 
 - [[ddd-strategic]] — Bounded Context chứa các Aggregates này
 - [[clean-architecture-hexagonal]] — Domain layer = Entities + VOs + Aggregates
-- [[CQRS-Materialized-View]] — CQRS: separate read/write models
-- [[Event-Sourcing]] — Domain Events → event log
-- [[Saga-Pattern]] — Cross-aggregate consistency
-- [[Hibernate-Performance-Deep-Dive]] — ORM mapping của Aggregates
+- [[Microservices-Patterns/CQRS-Materialized-View]] — CQRS: separate read/write models
+- [[Microservices-Patterns/Event-Sourcing]] — Domain Events → event log
+- [[Microservices-Patterns/Saga-Pattern]] — Cross-aggregate consistency
+- [[Database-Patterns/Hibernate-Performance-Deep-Dive]] — ORM mapping của Aggregates

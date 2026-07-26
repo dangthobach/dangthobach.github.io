@@ -16,13 +16,13 @@ updated: 2026-05-01
 ## 🗺️ Lộ trình học tập
 
 ### 🔵 Level 1: Core Concepts
-- [[01-Wasm-Fundamentals|01. Wasm Fundamentals]] — Stack machine, Linear memory, và Security model.
+- [[Performance-System-Programming/02-Wasm-Server-side/01-Wasm-Fundamentals|01. Wasm Fundamentals]] — Stack machine, Linear memory, và Security model.
 - 02. Wasm vs Docker *(planned)* — Tại sao chúng ta cần cả hai?
 - 03. WASI (WebAssembly System Interface) *(planned)* — Cách Wasm giao tiếp với OS.
 
 ### 🟣 Level 2: Frameworks & Runtimes
 - 04. Wasmtime Deep-dive *(planned)* — Engine đứng sau Spin và Fastly.
-- [[05-Spin-Framework|05. Spin Framework]] — Xây dựng Microservices với Wasm.
+- [[Performance-System-Programming/02-Wasm-Server-side/05-Spin-Framework|05. Spin Framework]] — Xây dựng Microservices với Wasm.
 
 ### 🔴 Level 3: Advanced Integration
 - 06. The Component Model *(planned)* — Tương lai của việc kết hợp các ngôn ngữ.
@@ -31,5 +31,5 @@ updated: 2026-05-01
 ---
 
 ## 🔗 Liên kết
-- [[MOC-Rust|MOC Rust]]
-- [[MOC-Distributed-Systems|Hệ thống phân tán]]
+- [[_moc/MOC-Rust|MOC Rust]]
+- [[_moc/MOC-Distributed-Systems|Hệ thống phân tán]]

@@ -166,7 +166,7 @@ Jakarta EE là **specification**, không phải framework. Nó định nghĩa ch
 - Jakarta Data 1.1 ⭐ NEW
 - Jakarta NoSQL 1.1 ⭐ NEW
 
-→ Chi tiết: [[00-Overview]]
+→ Chi tiết: [[05-Jakarta-EE-12/00-Overview]]
 
 ---
 
@@ -246,4 +246,4 @@ OC ecosystem:        Micronaut ── CDI-compatible ──→ (partial Jakarta 
 ---
 
 *Track: JVM-Frameworks-2026 | Related: [[Java-2026-Trends]], [[Helidon-2026]], [[MicroProfile-2026-Status]]*
-*Xem series Jakarta EE 12: [[00-Overview]]*
+*Xem series Jakarta EE 12: [[05-Jakarta-EE-12/00-Overview]]*

@@ -622,13 +622,13 @@ function AppLayout() {
 
 ## 🔗 Liên kết
 
-← [[SolidJS-08-Async-Resources|08 · Async & Resources]]
-→ [[SolidJS-10-Complex-UI-Patterns|10 · Complex UI Patterns]]
+← [[SolidJS-Series/SolidJS-08-Async-Resources|08 · Async & Resources]]
+→ [[SolidJS-Series/SolidJS-10-Complex-UI-Patterns|10 · Complex UI Patterns]]
 
 **Xem thêm:**
-- [[SolidJS-07-Context-DI|07 · Context]] — Auth context trong navigation guards
-- [[SolidJS-11-SolidStart-SSR|11 · SolidStart]] — file-based routing với SolidStart
+- [[SolidJS-Series/SolidJS-07-Context-DI|07 · Context]] — Auth context trong navigation guards
+- [[SolidJS-Series/SolidJS-11-SolidStart-SSR|11 · SolidStart]] — file-based routing với SolidStart
 
 ---
 
-*Series: [[SolidJS-MOC|SolidJS Master Index]]*
+*Series: [[SolidJS-Series/SolidJS-MOC|SolidJS Master Index]]*

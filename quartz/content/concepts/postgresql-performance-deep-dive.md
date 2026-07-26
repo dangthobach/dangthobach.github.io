@@ -907,9 +907,9 @@ SELECT * FROM pg_statistic_ext WHERE stxname = 'stat_branch_status';
 
 ## Related Notes
 
-- [[Cross-Service-Join-AuthZ-Fine-Grained-Filter]] — Query patterns cho cross-service data
-- [[Transactional-Outbox]] — Write patterns tránh tạo bloat
-- [[project-loom-deep-dive]] — Virtual threads và connection pooling implications
+- [[Microservices-Patterns/Cross-Service-Join-AuthZ-Fine-Grained-Filter]] — Query patterns cho cross-service data
+- [[Microservices-Patterns/Transactional-Outbox]] — Write patterns tránh tạo bloat
+- [[concepts/project-loom-deep-dive]] — Virtual threads và connection pooling implications
 
 ---
 

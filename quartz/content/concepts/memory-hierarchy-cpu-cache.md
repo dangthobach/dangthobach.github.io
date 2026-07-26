@@ -376,4 +376,4 @@ entityManager.persist(entity); // per row
 - [[os-process-thread-scheduling]] — Context switch cost, cache flushing between threads
 - [[io-models-deep-dive]] — I/O buffers và memory copy
 - [[java-virtual-threads-deep-dive]] — Stack memory của virtual threads vs OS threads
-- [[05-Memtable-SkipList]] — Skip list cache behavior
+- [[Performance-System-Programming/01-Database-Internals/05-Memtable-SkipList]] — Skip list cache behavior

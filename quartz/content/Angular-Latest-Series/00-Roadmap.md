@@ -151,5 +151,5 @@ Angular DevTools (Chrome extension)
 
 ## 🔄 Technology Update
 
-- [[25-Angular-22-Technology-Update-2026|Angular 22 — Technology Update 2026]]
-- [[frontend-concept-map|Frontend Concept Map — Angular ↔ React ↔ SolidJS]]
+- [[Angular-Latest-Series/25-Angular-22-Technology-Update-2026|Angular 22 — Technology Update 2026]]
+- [[concepts/frontend-concept-map|Frontend Concept Map — Angular ↔ React ↔ SolidJS]]

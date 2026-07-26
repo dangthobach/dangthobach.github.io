@@ -385,9 +385,9 @@ RequestBuilder::new().url("...").body(vec![]).send(); // ✅ OK
 ---
 
 ## 🔗 Links
-- [[Bai-6-Generics-Traits-Advanced|Bài 6: Generics & Traits cơ bản]]
-- [[Bai-5-Lifetimes|Bài 5: Lifetimes]] — prerequisite cho HRTB
-- [[Bai-19-Unsafe-FFI|Bài 19: Unsafe & FFI]] → tiếp theo
+- [[Rust-Zero-To-Hero/Bai-6-Generics-Traits-Advanced|Bài 6: Generics & Traits cơ bản]]
+- [[Rust-Zero-To-Hero/Bai-5-Lifetimes|Bài 5: Lifetimes]] — prerequisite cho HRTB
+- [[Rust-Zero-To-Hero/Bai-19-Unsafe-FFI|Bài 19: Unsafe & FFI]] → tiếp theo
 
 ---
 *Bài tập:*

@@ -1173,6 +1173,6 @@ pub async fn cache_middleware(
 ---
 
 ## 🔗 Links
-- [[Bai-30-Validation|Bài 30: Validation]] ← prerequisite
-- [[Bai-32-Security|Bài 32: Security → Rate Limiting]] → tiếp theo
-- [[Bai-24-Axum-Advanced|Bài 24: Axum → SSE integration]]
+- [[Rust-Zero-To-Hero/Bai-30-Validation|Bài 30: Validation]] ← prerequisite
+- [[Rust-Zero-To-Hero/Bai-32-Security|Bài 32: Security → Rate Limiting]] → tiếp theo
+- [[Rust-Zero-To-Hero/Bai-24-Axum-Advanced|Bài 24: Axum → SSE integration]]

@@ -342,8 +342,8 @@ Vì Solid component chỉ chạy một lần, khi navigate về list:
 
 ## Related
 
-- [[22-Routing-Layout-SearchState]]
-- [[23-Routing-Layout-SearchState]]
+- [[Angular-Latest-Series/22-Routing-Layout-SearchState]]
+- [[React-Latest-Series/23-Routing-Layout-SearchState]]
 - [[SolidJS-09-Routing]]
 - [[SolidJS-06-Stores-Nested-State]]
 - [[SolidJS-08-Async-Resources]]

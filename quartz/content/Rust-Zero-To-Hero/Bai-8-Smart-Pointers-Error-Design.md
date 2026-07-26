@@ -301,9 +301,9 @@ Bạn đang viết...
 ---
 
 ## 🔗 Links
-- [[Bai-2-Borrowing-Multi-threading|Bài 2: Arc & Mutex cơ bản]]
-- [[Bai-9-Async-Tokio|Bài 9: Async & Tokio]] — dùng tokio::sync::Mutex
-- [[Bai-11-Axum-Middleware-Error|Bài 11: Axum Error Response]]
+- [[Rust-Zero-To-Hero/Bai-2-Borrowing-Multi-threading|Bài 2: Arc & Mutex cơ bản]]
+- [[Rust-Zero-To-Hero/Bai-9-Async-Tokio|Bài 9: Async & Tokio]] — dùng tokio::sync::Mutex
+- [[Rust-Zero-To-Hero/Bai-11-Axum-Middleware-Error|Bài 11: Axum Error Response]]
 - [[MOC-Concurrency]]
 
 ---

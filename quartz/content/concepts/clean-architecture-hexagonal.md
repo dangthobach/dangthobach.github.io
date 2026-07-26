@@ -448,5 +448,5 @@ With Hexagonal architecture:
 - [[ddd-strategic]] — Bounded Contexts kết hợp với Hexagonal per-service
 - [[ddd-tactical]] — Aggregate, Entity, Value Object = Domain layer building blocks
 - [[solid-principles-deep-dive]] — DIP (Dependency Inversion) là nền tảng của Hexagonal
-- [[05-Decomposition]] — Modular decomposition
+- [[Microservices-Patterns/05-Decomposition]] — Modular decomposition
 - [[MOC-System-Design]] — Architecture patterns overview

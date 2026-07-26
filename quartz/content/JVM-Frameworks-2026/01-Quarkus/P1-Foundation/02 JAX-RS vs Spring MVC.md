@@ -200,7 +200,7 @@ public List<User> search(
 ## 🔗 Liên quan
 - [[01 CDI vs Spring IoC]] — DI layer
 - [[03 Config & Dev Mode]] — tiếp theo
-- [[02 RESTEasy Reactive]] — reactive version
+- [[P3-Reactive/02 RESTEasy Reactive]] — reactive version
 
 ## 📖 Nguồn
 - https://quarkus.io/guides/rest

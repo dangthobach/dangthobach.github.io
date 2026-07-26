@@ -28,11 +28,11 @@ flowchart LR
 
 | Công nghệ | Dòng phiên bản | Loại thay đổi | Bài học |
 |---|---:|---|---|
-| Gin | 1.12 | Minor đáng chú ý | [[Bai-27-Gin-1.12-Production-Update]] |
-| Fiber | 3.4 | Major/breaking | [[Bai-28-Fiber-v3-Migration]] |
-| Echo | 5.3 | Major/breaking | [[Bai-29-Echo-v5-Migration]] |
-| Chi | 5.3 | Compatible evolution | [[Bai-30-Chi-5.3-Production-Router]] |
-| GORM, Sarama, gRPC-Go, go-redis | Current stable | Integration | [[Bai-31-Go-Data-Messaging-Clients-2026]] |
+| Gin | 1.12 | Minor đáng chú ý | [[Go-Zero-To-Hero/Bai-27-Gin-1.12-Production-Update]] |
+| Fiber | 3.4 | Major/breaking | [[Go-Zero-To-Hero/Bai-28-Fiber-v3-Migration]] |
+| Echo | 5.3 | Major/breaking | [[Go-Zero-To-Hero/Bai-29-Echo-v5-Migration]] |
+| Chi | 5.3 | Compatible evolution | [[Go-Zero-To-Hero/Bai-30-Chi-5.3-Production-Router]] |
+| GORM, Sarama, gRPC-Go, go-redis | Current stable | Integration | [[Go-Zero-To-Hero/Bai-31-Go-Data-Messaging-Clients-2026]] |
 
 ## Cách học hiệu quả
 

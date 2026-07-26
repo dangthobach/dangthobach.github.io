@@ -824,7 +824,7 @@ TIP 5 — Dioxus eval() built-in
 ---
 
 ## 🔗 Links
-- [[Bai-41-Auth-SSR|Bài 41: Auth SSR]] ← trước đó
-- [[Bai-29-Leptos|Bài 29: Leptos]] — NodeRef, lifecycle
-- [[Bai-36-Dioxus-Core|Bài 36: Dioxus Core]] — use_effect
-- [[Bai-43-Form-Validation|Bài 43: Form & Validation]] → tiếp theo
+- [[Rust-Zero-To-Hero/Bai-41-Auth-SSR|Bài 41: Auth SSR]] ← trước đó
+- [[Rust-Zero-To-Hero/Bai-29-Leptos|Bài 29: Leptos]] — NodeRef, lifecycle
+- [[Rust-Zero-To-Hero/Bai-36-Dioxus-Core|Bài 36: Dioxus Core]] — use_effect
+- [[Rust-Zero-To-Hero/Bai-43-Form-Validation|Bài 43: Form & Validation]] → tiếp theo

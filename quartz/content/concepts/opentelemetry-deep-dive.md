@@ -454,8 +454,8 @@ Key dashboards:
 
 ## 🔗 Liên kết
 
-- [[04-Observability]] — Observability patterns overview
-- [[Distributed-Tracing]] — Distributed tracing concepts
-- [[Metrics-and-Alerting]] — Prometheus + Grafana setup
-- [[four-golden-signals]] — Four Golden Signals detail
-- [[Bai-34-OpenTelemetry]] — OTel in Rust
+- [[Microservices-Patterns/04-Observability]] — Observability patterns overview
+- [[Microservices-Patterns/Distributed-Tracing]] — Distributed tracing concepts
+- [[Microservices-Patterns/Metrics-and-Alerting]] — Prometheus + Grafana setup
+- [[concepts/four-golden-signals]] — Four Golden Signals detail
+- [[Rust-Zero-To-Hero/Bai-34-OpenTelemetry]] — OTel in Rust

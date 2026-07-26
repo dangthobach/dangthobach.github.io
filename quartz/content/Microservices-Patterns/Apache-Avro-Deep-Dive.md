@@ -11,7 +11,7 @@ tags: []
 
 > **Tags:** #avro #kafka #schema-registry #serialization #microservices #data-engineering  
 > **Level:** Intermediate → Advanced  
-> **Related:** [[Kafka-Configuration-Deep-Dive]] | [[gRPC-Deep-Dive]] | [[03-Fory-vs-Avro-Protobuf-Positioning]] | [[Debezium-CDC-Deep-Dive]]
+> **Related:** [[Kafka-Configuration-Deep-Dive]] | [[gRPC-Deep-Dive]] | [[Apache-Fory/03-Fory-vs-Avro-Protobuf-Positioning]] | [[Debezium-CDC-Deep-Dive]]
 
 ---
 
@@ -876,7 +876,7 @@ Avro không hỗ trợ circular reference:
 │  PDMS recommendation:                                           │
 │  Kafka public topics    → Avro + Schema Registry               │
 │  Internal gRPC (nếu có) → Protobuf                             │
-│  Redis cache            → Fory (xem [[03]])        │
+│  Redis cache            → Fory (xem [[Apache-Fory/03]])        │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -902,7 +902,7 @@ Avro không hỗ trợ circular reference:
 - [[Kafka-Partition-and-Offset-Internals]] — Offset management, consumer group rebalance
 - [[Debezium-CDC-Deep-Dive]] — Avro format trong CDC events (Debezium + Schema Registry)
 - [[gRPC-Deep-Dive]] — Protobuf wire format so sánh trực tiếp với Avro
-- [[03-Fory-vs-Avro-Protobuf-Positioning]] — Decision framework đầy đủ
+- [[Apache-Fory/03-Fory-vs-Avro-Protobuf-Positioning]] — Decision framework đầy đủ
 
 ## 📖 Tham khảo
 

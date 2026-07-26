@@ -755,7 +755,7 @@ TIP 5 — Font loading tốt nhất
 ---
 
 ## 🔗 Links
-- [[Bai-43-Form-Validation|Bài 43: Form Validation]] ← trước đó
-- [[Bai-29-Leptos|Bài 29: Leptos]] — styling context
-- [[Bai-36-Dioxus-Core|Bài 36: Dioxus Core]] — rsx styling
-- [[Bai-45-Background-Caching|Bài 45: Background & Caching]] → tiếp theo
+- [[Rust-Zero-To-Hero/Bai-43-Form-Validation|Bài 43: Form Validation]] ← trước đó
+- [[Rust-Zero-To-Hero/Bai-29-Leptos|Bài 29: Leptos]] — styling context
+- [[Rust-Zero-To-Hero/Bai-36-Dioxus-Core|Bài 36: Dioxus Core]] — rsx styling
+- [[Rust-Zero-To-Hero/Bai-45-Background-Caching|Bài 45: Background & Caching]] → tiếp theo

@@ -329,6 +329,6 @@ async fn create_user(...) -> Result<Json<User>, AppError> {
 ---
 
 ## 🔗 Links
-- [[Bai-10-Axum-Core|Bài 10: Axum Core]]
-- [[Bai-12-SQLx-Database|Bài 12: SQLx]]
-- [[Bai-9-Async-Tokio|Bài 9: Graceful shutdown với select!]]
+- [[Rust-Zero-To-Hero/Bai-10-Axum-Core|Bài 10: Axum Core]]
+- [[Rust-Zero-To-Hero/Bai-12-SQLx-Database|Bài 12: SQLx]]
+- [[Rust-Zero-To-Hero/Bai-9-Async-Tokio|Bài 9: Graceful shutdown với select!]]

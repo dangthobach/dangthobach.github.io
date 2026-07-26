@@ -174,7 +174,7 @@ public class PaymentErrorDecoder implements HttpClientResponseExceptionDecoder {
 
 ## 🔗 Liên quan
 - [[01 Micronaut Data JPA]]
-- [[03 SmallRye Kafka]]
+- [[../../01-Quarkus/P3-Reactive/03 SmallRye Kafka]]
 
 ## 📖 Nguồn
 - https://docs.micronaut.io/latest/guide/#httpClient

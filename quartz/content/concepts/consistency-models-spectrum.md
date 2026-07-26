@@ -381,6 +381,6 @@ Rule: Strong consistency = cost (latency, availability)
 - [[consensus-raft-paxos]] — Raft cung cấp linearizability cho etcd
 - [[distributed-clocks-ordering]] — Ordering cần thiết cho linearizability
 - [[cap-pacelc-deep-dive]] — CAP trade-offs
-- [[01-Data-Consistency]] — Practical consistency patterns
-- [[00-Hub-Database-Persistence]] — Database consistency in practice
+- [[Microservices-Patterns/01-Data-Consistency]] — Practical consistency patterns
+- [[Database-Patterns/00-Hub-Database-Persistence]] — Database consistency in practice
 - [[MOC-Distributed-Systems]] — Distributed systems overview

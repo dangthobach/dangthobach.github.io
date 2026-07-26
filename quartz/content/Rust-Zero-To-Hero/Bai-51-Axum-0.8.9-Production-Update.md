@@ -67,10 +67,10 @@ Layer order trong Tower dễ gây nhầm vì cách wrap service. Viết test cho
 
 ## Liên kết
 
-- [[Bai-10-Axum-Core|Axum Core]]
-- [[Bai-11-Axum-Middleware-Error|Middleware và Error]]
-- [[Bai-24-Axum-Advanced|Axum Advanced]]
-- [[Bai-50-Tokio-1.52-Runtime-Update|Tokio 1.52]]
+- [[Rust-Zero-To-Hero/Bai-10-Axum-Core|Axum Core]]
+- [[Rust-Zero-To-Hero/Bai-11-Axum-Middleware-Error|Middleware và Error]]
+- [[Rust-Zero-To-Hero/Bai-24-Axum-Advanced|Axum Advanced]]
+- [[Rust-Zero-To-Hero/Bai-50-Tokio-1.52-Runtime-Update|Tokio 1.52]]
 
 ## Nguồn
 

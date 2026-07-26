@@ -209,8 +209,8 @@ this.searchForm.get('keyword')!.valueChanges.subscribe(val => {
 
 ## Related
 
-- [[08-Signals-The-Modern-Reactivity]]
-- [[09-Reactive-Forms-Mastery]]
-- [[10-Routing-and-Navigation]]
-- [[15-Change-Detection-and-OnPush]]
-- [[SolidJS-vs-React-Reactivity-Model]]
+- [[Angular-Latest-Series/08-Signals-The-Modern-Reactivity]]
+- [[Angular-Latest-Series/09-Reactive-Forms-Mastery]]
+- [[Angular-Latest-Series/10-Routing-and-Navigation]]
+- [[Angular-Latest-Series/15-Change-Detection-and-OnPush]]
+- [[concepts/SolidJS-vs-React-Reactivity-Model]]

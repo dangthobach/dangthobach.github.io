@@ -190,8 +190,8 @@ HOT Observable (subscriber nhận từ thời điểm subscribe):
 
 ## 🔗 Liên quan
 - [[02 Single, Maybe, Completable]]
-- [[01 Core Operators]]
-- [[01 Mutiny - Uni và Multi]]
+- [[../P2-Operators/01 Core Operators]]
+- [[../../01-Quarkus/P3-Reactive/01 Mutiny - Uni và Multi]]
 
 ## 📖 Nguồn
 - https://reactivex.io/documentation/observable.html

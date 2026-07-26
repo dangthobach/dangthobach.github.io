@@ -191,10 +191,10 @@ Xem [[Curriculum-Full]] để biết tất cả topics theo layer.
 
 ## 🔄 Technology Updates
 
-- [[Bai-25-Go-1.26-Technology-Update|Go 1.26 — Technology Update]]
-- [[Bai-26-Go-Framework-Radar-2026|Go Framework Radar 2026]]
-- [[Bai-27-Gin-1.12-Production-Update|Gin 1.12 Production Update]]
-- [[Bai-28-Fiber-v3-Migration|Fiber v3 Migration]]
-- [[Bai-29-Echo-v5-Migration|Echo v5 Migration]]
-- [[Bai-30-Chi-5.3-Production-Router|Chi 5.3 Production Router]]
-- [[Bai-31-Go-Data-Messaging-Clients-2026|Go Data & Messaging Clients 2026]]
+- [[Go-Zero-To-Hero/Bai-25-Go-1.26-Technology-Update|Go 1.26 — Technology Update]]
+- [[Go-Zero-To-Hero/Bai-26-Go-Framework-Radar-2026|Go Framework Radar 2026]]
+- [[Go-Zero-To-Hero/Bai-27-Gin-1.12-Production-Update|Gin 1.12 Production Update]]
+- [[Go-Zero-To-Hero/Bai-28-Fiber-v3-Migration|Fiber v3 Migration]]
+- [[Go-Zero-To-Hero/Bai-29-Echo-v5-Migration|Echo v5 Migration]]
+- [[Go-Zero-To-Hero/Bai-30-Chi-5.3-Production-Router|Chi 5.3 Production Router]]
+- [[Go-Zero-To-Hero/Bai-31-Go-Data-Messaging-Clients-2026|Go Data & Messaging Clients 2026]]
