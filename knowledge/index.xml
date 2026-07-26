@@ -6,65 +6,65 @@
       <description>Last 10 notes on Dang Tho Bach&#039;s Knowledge Base</description>
       <generator>Quartz -- quartz.jzhao.xyz</generator>
       <item>
-    <title>25-Angular-22-Technology-Update-2026</title>
-    <link>https://dangthobach.github.io/knowledge/Angular-Latest-Series/25-Angular-22-Technology-Update-2026</link>
-    <guid>https://dangthobach.github.io/knowledge/Angular-Latest-Series/25-Angular-22-Technology-Update-2026</guid>
-    <description><![CDATA[ Angular 22 — Technology Update 2026 Tóm tắt dễ nhớ Angular 22 phát hành ngày 03/06/2026. ]]></description>
-    <pubDate>Fri, 24 Jul 2026 00:00:00 GMT</pubDate>
+    <title>00-Series-Hub</title>
+    <link>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/00-Series-Hub</link>
+    <guid>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/00-Series-Hub</guid>
+    <description><![CDATA[ Go Microservices Mastery — từ Basic đến Production Kết quả cuối series Xây dựng GoCommerce, một hệ thống commerce/fulfillment chạy được trên máy cá nhân và có đường nâng cấp rõ ràng lên production. ]]></description>
+    <pubDate>Mon, 27 Jul 2026 00:00:00 GMT</pubDate>
   </item><item>
-    <title>Bai-24-Go-1.26-1.27-Changelog-Deep-Dive</title>
-    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-24-Go-1.26-1.27-Changelog-Deep-Dive</link>
-    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-24-Go-1.26-1.27-Changelog-Deep-Dive</guid>
-    <description><![CDATA[ Bài 24: Go 1.26 &amp; 1.27 Changelog Deep Dive — Green Tea GC, Generic Methods &amp; Escape Analysis Update Mục tiêu: Không chỉ liệt kê “có gì mới” — mà hiểu vì sao Go team đổi GC mặc định, đổi cách generic hoạt động, và những thay đổi này tác động gì tới code PDMS đang chạy production. ]]></description>
-    <pubDate>Fri, 24 Jul 2026 00:00:00 GMT</pubDate>
+    <title>01-Phuong-phap-hoc-va-Definition-of-Done</title>
+    <link>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/01-Phuong-phap-hoc-va-Definition-of-Done</link>
+    <guid>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/01-Phuong-phap-hoc-va-Definition-of-Done</guid>
+    <description><![CDATA[ Bài 01 — Học series thế nào để vào dự án nhanh? Sau bài này Bạn có một cách học đo được bằng sản phẩm chạy được, thay vì “đọc xong thấy hiểu”. ]]></description>
+    <pubDate>Mon, 27 Jul 2026 00:00:00 GMT</pubDate>
   </item><item>
-    <title>Bai-25-Go-1.26-Technology-Update</title>
-    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-25-Go-1.26-Technology-Update</link>
-    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-25-Go-1.26-Technology-Update</guid>
-    <description><![CDATA[ Go 1.26 — Technology Update Mental model Go 1.26 không thay đổi triết lý ngôn ngữ. ]]></description>
-    <pubDate>Fri, 24 Jul 2026 00:00:00 GMT</pubDate>
+    <title>02-Vi-sao-Go-cho-Microservices</title>
+    <link>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/02-Vi-sao-Go-cho-Microservices</link>
+    <guid>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/02-Vi-sao-Go-cho-Microservices</guid>
+    <description><![CDATA[ Bài 02 — Vì sao Go là lựa chọn mạnh cho Microservices? Kết luận trước Go không “tốt nhất” cho mọi hệ thống. ]]></description>
+    <pubDate>Mon, 27 Jul 2026 00:00:00 GMT</pubDate>
   </item><item>
-    <title>Bai-26-Go-Framework-Radar-2026</title>
-    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-26-Go-Framework-Radar-2026</link>
-    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-26-Go-Framework-Radar-2026</guid>
-    <description><![CDATA[ Bài 26 — Go Framework Radar 2026 Mục tiêu Học theo chuỗi runtime → HTTP abstraction → data/integration → production, không học framework như các API rời rạc. ]]></description>
-    <pubDate>Fri, 24 Jul 2026 00:00:00 GMT</pubDate>
+    <title>03-Kien-truc-GoCommerce</title>
+    <link>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/03-Kien-truc-GoCommerce</link>
+    <guid>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/03-Kien-truc-GoCommerce</guid>
+    <description><![CDATA[ Bài 03 — Kiến trúc hệ thống GoCommerce Sau bài này Bạn hiểu boundary, ownership dữ liệu, luồng checkout và lý do mỗi integration technology xuất hiện. ]]></description>
+    <pubDate>Mon, 27 Jul 2026 00:00:00 GMT</pubDate>
   </item><item>
-    <title>Bai-27-Gin-1.12-Production-Update</title>
-    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-27-Gin-1.12-Production-Update</link>
-    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-27-Gin-1.12-Production-Update</guid>
-    <description><![CDATA[ Bài 27 — Gin 1.12 Production Update Vì sao cần học Gin 1.12 không đổi major nhưng chạm vào các vùng production nhạy cảm: binding, proxy headers, streaming/hijacking, resource lifecycle và dependency security. ]]></description>
-    <pubDate>Fri, 24 Jul 2026 00:00:00 GMT</pubDate>
+    <title>04-Chuan-bi-moi-truong-va-Repository</title>
+    <link>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/04-Chuan-bi-moi-truong-va-Repository</link>
+    <guid>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/04-Chuan-bi-moi-truong-va-Repository</guid>
+    <description><![CDATA[ Bài 04 — Chuẩn bị môi trường và repository Deliverable Repository gocommerce build/test được, có convention rõ ràng và local infrastructure khởi động độc lập với ứng dụng. ]]></description>
+    <pubDate>Mon, 27 Jul 2026 00:00:00 GMT</pubDate>
   </item><item>
-    <title>Bai-28-Fiber-v3-Migration</title>
-    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-28-Fiber-v3-Migration</link>
-    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-28-Fiber-v3-Migration</guid>
-    <description><![CDATA[ Bài 28 — Fiber v3 Migration Mental model trước khi migrate Fiber v3 chạy trên fasthttp, nên lifecycle không giống hoàn toàn net/http. ]]></description>
-    <pubDate>Fri, 24 Jul 2026 00:00:00 GMT</pubDate>
+    <title>05-Product-Service-Vertical-Slice</title>
+    <link>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/05-Product-Service-Vertical-Slice</link>
+    <guid>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/05-Product-Service-Vertical-Slice</guid>
+    <description><![CDATA[ Bài 05 — Product Service: vertical slice đầu tiên Deliverable POST /v1/products và GET /v1/products/{id} chạy bằng net/http, business rule được test mà không cần HTTP. ]]></description>
+    <pubDate>Mon, 27 Jul 2026 00:00:00 GMT</pubDate>
   </item><item>
-    <title>Bai-29-Echo-v5-Migration</title>
-    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-29-Echo-v5-Migration</link>
-    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-29-Echo-v5-Migration</guid>
-    <description><![CDATA[ Bài 29 — Echo v5 Migration Điều thay đổi về tư duy Echo v5 là major mới. ]]></description>
-    <pubDate>Fri, 24 Jul 2026 00:00:00 GMT</pubDate>
+    <title>06-Chuan-Engineering-cho-moi-Service</title>
+    <link>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/06-Chuan-Engineering-cho-moi-Service</link>
+    <guid>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/06-Chuan-Engineering-cho-moi-Service</guid>
+    <description><![CDATA[ Bài 06 — Chuẩn Engineering cho mọi service Deliverable Product API có config validate lúc startup, structured logging, request ID, health endpoint và graceful shutdown. ]]></description>
+    <pubDate>Mon, 27 Jul 2026 00:00:00 GMT</pubDate>
   </item><item>
-    <title>Bai-30-Chi-5.3-Production-Router</title>
-    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-30-Chi-5.3-Production-Router</link>
-    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-30-Chi-5.3-Production-Router</guid>
-    <description><![CDATA[ Bài 30 — Chi 5.3 Production Router Vì sao Chi quan trọng Chi giữ nguyên net/http contract, nên giá trị lớn nhất là composability thay vì framework magic. ]]></description>
-    <pubDate>Fri, 24 Jul 2026 00:00:00 GMT</pubDate>
+    <title>07-API-Gateway-Full-Feature-Blueprint</title>
+    <link>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/07-API-Gateway-Full-Feature-Blueprint</link>
+    <guid>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/07-API-Gateway-Full-Feature-Blueprint</guid>
+    <description><![CDATA[ Bài 07 — Full-feature API Gateway Blueprint Kết quả Có blueprint để xây edge-gateway bằng Go theo từng increment, biết chức năng nào thuộc gateway và chức năng nào phải ở service. ]]></description>
+    <pubDate>Mon, 27 Jul 2026 00:00:00 GMT</pubDate>
   </item><item>
-    <title>Bai-31-Go-Data-Messaging-Clients-2026</title>
-    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-31-Go-Data-Messaging-Clients-2026</link>
-    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-31-Go-Data-Messaging-Clients-2026</guid>
-    <description><![CDATA[ Bài 31 — Go Data &amp; Messaging Clients 2026 Mục tiêu Hiểu client library như các resource manager có pool, retry, deadline và failure semantics riêng. ]]></description>
-    <pubDate>Fri, 24 Jul 2026 00:00:00 GMT</pubDate>
+    <title>08-Authentication-Authorization-va-Third-Party-Identity</title>
+    <link>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/08-Authentication-Authorization-va-Third-Party-Identity</link>
+    <guid>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/08-Authentication-Authorization-va-Third-Party-Identity</guid>
+    <description><![CDATA[ Bài 08 — Authentication, Authorization và Third-party Identity Kết quả Thiết kế được một identity boundary hỗ trợ user nội bộ, Google/Microsoft/enterprise IdP, machine client và partner mà không tự viết password/token server thiếu an toàn. ]]></description>
+    <pubDate>Mon, 27 Jul 2026 00:00:00 GMT</pubDate>
   </item><item>
-    <title>Bai-47-Rust-Changelog-2026-Deep-Dive</title>
-    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-47-Rust-Changelog-2026-Deep-Dive</link>
-    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-47-Rust-Changelog-2026-Deep-Dive</guid>
-    <description><![CDATA[ Bài 47: Rust Changelog 2026 Deep Dive — Symbol Mangling, Cargo Warnings &amp; Một Case Study LLVM Miscompilation Mục tiêu: Hiểu bản chất 3 thay đổi quan trọng nhất của Rust 1.97.0/1.97.1 (bản mới nhất, 09-16/07/2026) — không chỉ để biết “có gì mới” mà để hiểu compiler/toolchain hoạt động ở tầng nào ... ]]></description>
-    <pubDate>Fri, 24 Jul 2026 00:00:00 GMT</pubDate>
+    <title>09-Observability-Standard-Metrics-Prometheus-Logs</title>
+    <link>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/09-Observability-Standard-Metrics-Prometheus-Logs</link>
+    <guid>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/09-Observability-Standard-Metrics-Prometheus-Logs</guid>
+    <description><![CDATA[ Bài 09 — Observability Standard: Metrics, Prometheus và Distributed Logs Kết quả Mọi service phát telemetry cùng chuẩn; từ alert có thể đi tới dashboard → trace → log liên quan mà không grep thủ công từng máy. ]]></description>
+    <pubDate>Mon, 27 Jul 2026 00:00:00 GMT</pubDate>
   </item>
     </channel>
   </rss>
