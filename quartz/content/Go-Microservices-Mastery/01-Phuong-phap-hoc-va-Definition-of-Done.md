@@ -3,7 +3,7 @@ type: course
 domain: languages/go/microservices
 status: active
 created: 2026-07-27
-updated: 2026-07-27
+updated: 2026-07-29
 tags: [learning-path, hands-on, definition-of-done]
 ---
 
@@ -106,6 +106,73 @@ Sau mỗi đoạn code, hãy tự trả lời:
 5. Retry có thể tạo duplicate side effect không?
 
 Nếu chưa trả lời được, quay lại đoạn vừa code trước khi thêm thư viện tiếp theo.
+
+## 🔬 Đào sâu kỹ thuật — biến Definition of Done thành code, không phải checklist giấy
+
+Checklist markdown dễ bị bỏ qua khi deadline gấp. Cách khoa học hơn: viết một **DoD runner** bằng Go, chạy thật các điều kiện và fail build nếu vi phạm — đây cũng là bài kiểm tra Go đầu tiên trong repo `gocommerce`, được các bài sau tái sử dụng.
+
+`tools/dodcheck/main.go`:
+
+```go
+package main
+
+import (
+    "fmt"
+    "os"
+    "os/exec"
+)
+
+type check struct {
+    name string
+    args []string
+}
+
+func main() {
+    checks := []check{
+        {"go vet", []string{"vet", "./..."}},
+        {"go test", []string{"test", "./..."}},
+        {"go test -race", []string{"test", "-race", "./..."}},
+    }
+
+    failed := 0
+    for _, c := range checks {
+        fmt.Printf("== %s ==\n", c.name)
+        cmd := exec.Command("go", c.args...)
+        cmd.Stdout = os.Stdout
+        cmd.Stderr = os.Stderr
+        if err := cmd.Run(); err != nil {
+            fmt.Printf("FAIL: %s (%v)\n", c.name, err)
+            failed++
+            continue
+        }
+        fmt.Printf("PASS: %s\n", c.name)
+    }
+
+    if failed > 0 {
+        fmt.Printf("\n%d/%d check thất bại — chưa đạt Definition of Done.\n", failed, len(checks))
+        os.Exit(1)
+    }
+    fmt.Println("\nTất cả check đạt Definition of Done.")
+}
+```
+
+Chạy sau mỗi bài:
+
+```bash
+go run ./tools/dodcheck
+```
+
+Vì sao viết bằng Go thay vì chỉ dùng script bash: `dodcheck` sẽ được các bài sau (10, 12, 48…) mở rộng để tự động kiểm tra coverage tối thiểu, độ trễ benchmark, hoặc số goroutine leak sau test — logic đó cần cấu trúc dữ liệu (`[]check`, kết quả có typed error) chứ không chỉ nối lệnh shell.
+
+### Xâu chuỗi mã nguồn qua các bài
+
+Từ bài này, mỗi lần hoàn thành một bài trong repo `gocommerce`, đóng tag để bài sau tham chiếu chính xác:
+
+```bash
+go run ./tools/dodcheck && git add -A && git commit -m "Bài 01: dodcheck runner" && git tag v0.1.0
+```
+
+Bài 04 sẽ tạo repo thật và bài 05 là service đầu tiên chạy qua `dodcheck`; từ đó `tools/dodcheck` là một phần cố định của mọi bài, không phải ví dụ dùng một lần.
 
 ## Nhật ký tiến độ gợi ý
 

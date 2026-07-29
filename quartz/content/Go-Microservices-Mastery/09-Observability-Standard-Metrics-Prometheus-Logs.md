@@ -3,7 +3,7 @@ type: standard
 domain: languages/go/microservices
 status: active
 created: 2026-07-27
-updated: 2026-07-27
+updated: 2026-07-29
 tags: [observability, prometheus, logging, opentelemetry]
 ---
 
@@ -275,6 +275,80 @@ annotations: impact, dashboard_url, runbook_url
 
 Không alert trực tiếp cho mỗi log ERROR. Alert từ symptom/SLO; log là evidence để điều tra.
 
+## 🔬 Đào sâu kỹ thuật — đo chi phí thật của việc "quan sát", đừng instrument mù
+
+Một câu hỏi khoa học ít ai tự hỏi: **instrumentation tốn bao nhiêu?** Nếu mỗi request phải ghi log JSON + tăng counter + record histogram + tạo span, tổng overhead đó có đáng kể ở p99 không? Câu trả lời đúng là đo, không phải đoán.
+
+```mermaid
+flowchart LR
+    H["Handler xử lý xong"] --> L["slog JSON encode + write stdout"]
+    H --> M["prometheus CounterVec.Inc + HistogramVec.Observe"]
+    H --> T["otel span.End() + batch export"]
+    L --> P["Tổng overhead / request"]
+    M --> P
+    T --> P
+```
+
+### Benchmark instrumentation overhead
+
+`internal/platform/observability_bench_test.go`:
+
+```go
+package platform
+
+import (
+    "log/slog"
+    "os"
+    "testing"
+
+    "github.com/prometheus/client_golang/prometheus"
+)
+
+func handlerWithoutObservability() {
+    // no-op — mô phỏng business logic thuần túy
+}
+
+func BenchmarkHandler_Baseline(b *testing.B) {
+    for i := 0; i < b.N; i++ {
+        handlerWithoutObservability()
+    }
+}
+
+func BenchmarkHandler_WithStructuredLog(b *testing.B) {
+    logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+    b.ResetTimer()
+    for i := 0; i < b.N; i++ {
+        logger.Info("request completed",
+            "method", "GET", "route", "/v1/products/{id}", "status_code", 200)
+    }
+}
+
+func BenchmarkHandler_WithMetrics(b *testing.B) {
+    counter := prometheus.NewCounterVec(
+        prometheus.CounterOpts{Name: "bench_requests_total"},
+        []string{"method", "route", "status_code"},
+    )
+    b.ResetTimer()
+    for i := 0; i < b.N; i++ {
+        counter.WithLabelValues("GET", "/v1/products/{id}", "200").Inc()
+    }
+}
+```
+
+```bash
+go test -bench=Handler_ -benchmem ./internal/platform/ 2>/dev/null
+```
+
+Kết quả thực nghiệm (không phải con số cố định — tự đo trên máy của bạn, đó mới là điểm khoa học) thường cho thấy: `Inc()` trên counter rẻ hơn nhiều bậc so với ghi log JSON ra `os.Stdout` — vì log I/O chạm syscall write, còn counter chỉ là atomic increment trong bộ nhớ. Đây là lý do mục 10 khuyến nghị **sampling** cho log thành công tần suất cao, trong khi metric counter/histogram được giữ nguyên cho mọi request — chi phí của chúng không tỉ lệ đáng lo với volume.
+
+### Vì sao histogram bucket cũng có giá
+
+Mỗi `HistogramVec.Observe()` phải tìm đúng bucket bằng so sánh tuần tự (hoặc nhị phân tùy version client) qua mảng `Buckets`. Càng nhiều bucket, chi phí mỗi observe càng tăng nhẹ — đây là lý do mục 5 giới hạn danh sách bucket ở mức đủ dùng (10 giá trị) thay vì rải dày đặc "cho chắc".
+
+### Nối vào repo
+
+`internal/platform/observability_bench_test.go` dùng chung `internal/platform` với `dodcheck` (bài 01) và shutdown test (bài 06). Từ bài 44–48 (OpenTelemetry, Prometheus + Grafana, performance engineering), benchmark này được mở rộng thêm `otel.Tracer.Start/End` để so sánh overhead ba loại signal trên cùng một baseline, thay vì đánh giá riêng lẻ từng công cụ.
+
 ## Definition of Done
 
 - [ ] Mọi service dùng cùng resource attributes và JSON log schema.
@@ -284,6 +358,7 @@ Không alert trực tiếp cho mỗi log ERROR. Alert từ symptom/SLO; log là 
 - [ ] Có RED dashboard và ít nhất một SLO-based alert.
 - [ ] Log pipeline có redaction, buffer, retention và access control.
 - [ ] Từ dashboard exemplar/trace có thể tìm log liên quan.
+- [ ] Có benchmark đo overhead log/metric và kết quả được dùng để quyết định sampling.
 
 ## Nguồn chuẩn
 

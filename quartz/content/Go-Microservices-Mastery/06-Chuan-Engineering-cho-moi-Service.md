@@ -3,7 +3,7 @@ type: tutorial
 domain: languages/go/microservices
 status: active
 created: 2026-07-27
-updated: 2026-07-27
+updated: 2026-07-29
 tags: [production-readiness, config, logging, graceful-shutdown]
 ---
 
@@ -171,6 +171,90 @@ Nếu ingress timeout 2 giây, không đặt mỗi downstream 2 giây:
 
 Retry phải nằm trong tổng budget và chỉ áp dụng operation safe/idempotent. Ba layer cùng retry có thể tạo retry storm.
 
+## 🔬 Đào sâu kỹ thuật — chứng minh graceful shutdown bằng test, không phải bằng niềm tin
+
+"Tôi đã gọi `server.Shutdown()`" không phải bằng chứng nó hoạt động đúng. Cách khoa học là viết một test tái tạo đúng race condition: request đang chạy **đúng lúc** SIGTERM/`Shutdown()` được gọi.
+
+```mermaid
+sequenceDiagram
+    participant Test as Test goroutine
+    participant Srv as httptest.Server
+    participant H as Slow handler goroutine
+    Test->>Srv: start server với handler chậm (200ms)
+    Test->>H: gửi request (goroutine riêng)
+    Note over Test: đợi 20ms để chắc chắn request đã vào handler
+    Test->>Srv: gọi Shutdown(ctx)
+    H-->>Test: response 200 vẫn trả về đầy đủ
+    Srv-->>Test: Shutdown() return nil sau khi H xong
+```
+
+`internal/platform/shutdown_test.go`:
+
+```go
+package platform
+
+import (
+    "context"
+    "net/http"
+    "net/http/httptest"
+    "sync"
+    "testing"
+    "time"
+)
+
+func TestGracefulShutdown_WaitsForInFlightRequest(t *testing.T) {
+    handlerStarted := make(chan struct{})
+    mux := http.NewServeMux()
+    mux.HandleFunc("/slow", func(w http.ResponseWriter, r *http.Request) {
+        close(handlerStarted)
+        time.Sleep(200 * time.Millisecond) // giả lập việc đang xử lý dở
+        w.WriteHeader(http.StatusOK)
+    })
+
+    server := httptest.NewUnstartedServer(mux)
+    server.Config.ReadHeaderTimeout = 2 * time.Second
+    server.Start()
+    defer server.Close()
+
+    var wg sync.WaitGroup
+    wg.Add(1)
+    var statusCode int
+    go func() {
+        defer wg.Done()
+        resp, err := http.Get(server.URL + "/slow")
+        if err != nil {
+            t.Errorf("request failed: %v", err)
+            return
+        }
+        statusCode = resp.StatusCode
+        resp.Body.Close()
+    }()
+
+    <-handlerStarted // đảm bảo handler đã thật sự bắt đầu chạy
+
+    shutdownCtx, cancel := context.WithTimeout(context.Background(), time.Second)
+    defer cancel()
+    if err := server.Config.Shutdown(shutdownCtx); err != nil {
+        t.Fatalf("Shutdown() error = %v", err)
+    }
+
+    wg.Wait()
+    if statusCode != http.StatusOK {
+        t.Fatalf("expected in-flight request to complete with 200, got %d", statusCode)
+    }
+}
+```
+
+```bash
+go test -race -run TestGracefulShutdown ./internal/platform/
+```
+
+Điểm mấu chốt về khoa học thực nghiệm ở đây: nếu bỏ dòng `<-handlerStarted` (đợi tín hiệu handler đã bắt đầu), test sẽ **flaky** — đôi khi `Shutdown()` được gọi trước khi request kịp tới server, và test pass "giả" mà không chứng minh được điều ta muốn. Một continuity test tốt phải loại bỏ được yếu tố may rủi (race giữa hai goroutine) bằng channel đồng bộ tường minh, không phải `time.Sleep` phỏng đoán.
+
+### Nối vào repo
+
+Test này chạy trong `internal/platform`, cùng nơi với `dodcheck` (bài 01). Từ bài 27 (Retry topic/DLQ) và bài 39 (WebSocket), pattern "đợi tín hiệu bằng channel thay vì `time.Sleep`" sẽ được tái sử dụng để test shutdown của consumer Kafka và connection WebSocket.
+
 ## Production checklist
 
 - [ ] Config typed, validate trước khi listen.
@@ -181,6 +265,7 @@ Retry phải nằm trong tổng budget và chỉ áp dụng operation safe/idemp
 - [ ] SIGTERM ngừng nhận work mới và có deadline.
 - [ ] Background goroutine có owner/cancellation/wait.
 - [ ] Error response ổn định, không lộ internal detail.
+- [ ] Có test chứng minh in-flight request hoàn tất trước khi shutdown.
 
 ## Bài tập
 

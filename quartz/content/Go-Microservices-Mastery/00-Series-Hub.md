@@ -3,7 +3,7 @@ type: moc
 domain: languages/go/microservices
 status: active
 created: 2026-07-27
-updated: 2026-07-27
+updated: 2026-07-29
 tags: [go, microservices, hands-on, system-design]
 aliases: [Go Microservices Mastery, Go Microservices từ Basic đến Production]
 ---
@@ -41,6 +41,28 @@ flowchart LR
 
 > [!tip] Một dự án, không phải 48 demo rời rạc
 > Mỗi bài tạo một lát cắt có thể chạy và kiểm chứng. Commit/tag đề xuất ở cuối bài giúp quay lại bất kỳ trạng thái nào.
+
+## Chuẩn nội dung v2 — sâu hơn, nối mã nguồn liên tục
+
+> [!important] Ba thay đổi so với v1
+> 1. **Mỗi bài có mục "🔬 Đào sâu kỹ thuật"** — không dừng ở "gọi API thế nào" mà đi vào cơ chế runtime/OS bên dưới (scheduler, syscall, connection pool, memory layout), kèm benchmark (`testing.B`) hoặc `pprof` khi phù hợp.
+> 2. **Code xâu chuỗi (chained code)** — cùng một repo `gocommerce` phát triển liên tục qua các bài, không phải snippet rời rạc. Mỗi bài kết thúc bằng lệnh `git tag` để đánh dấu trạng thái repo tương ứng; bài sau luôn nêu rõ mình sửa/thêm file nào so với tag trước.
+> 3. **Minh họa nhiều lớp** — ngoài `flowchart`/`sequenceDiagram`, các bài có concurrency/timing sẽ thêm diagram dạng timeline (goroutine/thread) hoặc state machine để thấy "hình dạng" của hành vi runtime, không chỉ đọc mô tả.
+
+```mermaid
+gitGraph
+    commit id: "v0.4.0 — repo skeleton (Bài 04)"
+    commit id: "v0.5.0 — Product vertical slice (Bài 05)"
+    commit id: "v0.6.0 — engineering standard (Bài 06)"
+    branch gateway
+    commit id: "v0.7.0 — gateway blueprint (Bài 07)"
+    checkout main
+    merge gateway
+    commit id: "v0.8.0 — identity (Bài 08)"
+    commit id: "v0.9.0 — observability (Bài 09)"
+```
+
+Quy ước tag: `vMAJOR.LESSON.0`, ví dụ hoàn thành bài 07 thì `git tag v0.7.0 -m "Bài 07: API Gateway blueprint"`. Muốn xem code tại một mốc bất kỳ: `git checkout v0.6.0 -- .`
 
 ## Lộ trình 52 bài (00–51)
 

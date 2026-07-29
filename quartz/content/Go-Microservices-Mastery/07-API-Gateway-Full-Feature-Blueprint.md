@@ -3,7 +3,7 @@ type: architecture
 domain: languages/go/microservices
 status: active
 created: 2026-07-27
-updated: 2026-07-27
+updated: 2026-07-29
 tags: [api-gateway, reverse-proxy, security, resilience]
 ---
 
@@ -174,6 +174,110 @@ Không tin trực tiếp `X-Forwarded-For`; chỉ parse header từ proxy/load b
 | không connect upstream | 502/503 | breaker state |
 | gateway overloaded | 503 | load-shed counter |
 
+## 🔬 Đào sâu kỹ thuật — connection pool dưới lớp vỏ, và vì sao "tạo Client mới cho gọn" là một bug hiệu năng
+
+`http.Transport` không chỉ là struct cấu hình — nó là nơi giữ **connection pool** thật sự tới từng upstream (`host:port`). Nếu gateway tạo `http.Client{}` mới cho mỗi request (một lỗi rất phổ biến), mỗi request phải TCP handshake + TLS handshake lại từ đầu — vứt bỏ toàn bộ lợi ích của keep-alive.
+
+```mermaid
+sequenceDiagram
+    participant R1 as Request 1
+    participant R2 as Request 2 (100ms sau)
+    participant T as Shared http.Transport
+    participant U as Upstream service
+
+    R1->>T: cần connection tới upstream
+    T->>U: TCP + TLS handshake (tốn ~vài chục ms)
+    U-->>T: connection thiết lập
+    T-->>R1: dùng connection, request/response
+    T->>T: connection idle, giữ trong pool (IdleConnTimeout)
+    R2->>T: cần connection tới cùng upstream
+    T-->>R2: tái sử dụng connection sẵn có — không handshake lại
+```
+
+### Đo chênh lệch bằng benchmark thật, không chỉ đọc lý thuyết
+
+`internal/gateway/proxy_bench_test.go`:
+
+```go
+package gateway
+
+import (
+    "io"
+    "net/http"
+    "net/http/httptest"
+    "testing"
+)
+
+func upstreamServer() *httptest.Server {
+    return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        w.WriteHeader(http.StatusOK)
+    }))
+}
+
+func BenchmarkClient_NewPerRequest(b *testing.B) {
+    srv := upstreamServer()
+    defer srv.Close()
+
+    b.ResetTimer()
+    for i := 0; i < b.N; i++ {
+        client := &http.Client{} // ANTI-PATTERN: transport mới mỗi lần
+        resp, err := client.Get(srv.URL)
+        if err != nil {
+            b.Fatal(err)
+        }
+        io.Copy(io.Discard, resp.Body)
+        resp.Body.Close()
+    }
+}
+
+func BenchmarkClient_SharedTransport(b *testing.B) {
+    srv := upstreamServer()
+    defer srv.Close()
+
+    client := &http.Client{
+        Transport: &http.Transport{
+            MaxIdleConnsPerHost: 50,
+            IdleConnTimeout:     90 * 1e9,
+        },
+    }
+
+    b.ResetTimer()
+    for i := 0; i < b.N; i++ {
+        resp, err := client.Get(srv.URL)
+        if err != nil {
+            b.Fatal(err)
+        }
+        io.Copy(io.Discard, resp.Body)
+        resp.Body.Close()
+    }
+}
+```
+
+```bash
+go test -bench=Client_ -benchmem ./internal/gateway/
+```
+
+Trên máy local (không TLS, chỉ TCP loopback) chênh lệch đã rõ; với TLS handshake thật qua mạng, khoảng cách còn lớn hơn nhiều vì mỗi handshake tốn round-trip riêng. Đây là lý do mục 5 nhấn mạnh **dùng lại** một `http.Transport` cho toàn bộ route trỏ tới cùng upstream, thay vì tạo mới trong `NewProxy`.
+
+### Quan sát pool đang hoạt động thế nào
+
+Không có API public để liệt kê connection trong pool, nhưng có thể quan sát gián tiếp qua `httptrace`:
+
+```go
+trace := &httptrace.ClientTrace{
+    GotConn: func(info httptrace.GotConnInfo) {
+        logger.Debug("connection acquired", "reused", info.Reused, "was_idle", info.WasIdle)
+    },
+}
+req = req.WithContext(httptrace.WithClientTrace(req.Context(), trace))
+```
+
+`info.Reused == true` là bằng chứng trực tiếp connection pool đang hoạt động đúng — hữu ích khi debug tại sao gateway "chậm bất thường" dù CPU/memory bình thường: rất có thể mỗi request đang handshake lại.
+
+### Nối vào repo
+
+Benchmark này sống trong `internal/gateway`, service mới được tạo từ bài 16 (routing/reverse proxy thật); nhưng viết ngay ở bài blueprint này để khi implement bài 16–18, connection pool đã là quyết định có đo lường, không phải mặc định ngẫu nhiên.
+
 ## Track implementation
 
 - Bài 16: routing, proxy, discovery, gRPC/WebSocket.
@@ -188,6 +292,7 @@ Không tin trực tiếp `X-Forwarded-For`; chỉ parse header từ proxy/load b
 - [ ] Retry không áp dụng mù cho non-idempotent operation.
 - [ ] Access log/metric dùng route template, không dùng raw URL/ID.
 - [ ] Gateway shutdown drain connection và ngừng nhận request mới.
+- [ ] Benchmark chứng minh shared `http.Transport` nhanh hơn tạo `http.Client` mới mỗi request.
 
 ## Nguồn chuẩn
 

@@ -3,7 +3,7 @@ type: course
 domain: languages/go/microservices
 status: active
 created: 2026-07-27
-updated: 2026-07-27
+updated: 2026-07-29
 tags: [go, architecture-decision, concurrency, cloud-native]
 ---
 
@@ -159,12 +159,89 @@ Tạo `docs/adr/0001-service-language.md` và ghi:
 - so sánh Go với **một** phương án thực tế khác;
 - điều kiện xem lại quyết định sau 3–6 tháng.
 
+## 🔬 Đào sâu kỹ thuật — nhìn thấy scheduler G-M-P thay vì tin vào lời quảng cáo
+
+“Goroutine rẻ” không nên là niềm tin — hãy đo. Go runtime dùng mô hình **G-M-P**: **G**oroutine (đơn vị công việc), **M**achine (OS thread thật), **P**rocessor (context cho phép một M chạy Go code, số lượng mặc định = `GOMAXPROCS`). Khi một goroutine block ở syscall, runtime tách M khỏi P đó và gắn P vào M khác để goroutine sẵn sàng khác không bị đói CPU.
+
+```mermaid
+flowchart TB
+    subgraph Runtime scheduler
+        P1["P (context) #1"] --> M1["M (OS thread) #1"]
+        P2["P (context) #2"] --> M2["M (OS thread) #2"]
+    end
+    RQ1["run queue P1: G_http, G_kafka"] --> P1
+    RQ2["run queue P2: G_health, G_ws"] --> P2
+    M1 -. "G_http block ở syscall" .-> M3["M mới cho P1"]
+```
+
+### Đo trực tiếp bằng benchmark
+
+`internal/platform/scheduler_bench_test.go`:
+
+```go
+package platform
+
+import (
+    "sync"
+    "testing"
+)
+
+func spawnGoroutines(n int) {
+    var wg sync.WaitGroup
+    wg.Add(n)
+    for i := 0; i < n; i++ {
+        go func() {
+            defer wg.Done()
+        }()
+    }
+    wg.Wait()
+}
+
+func BenchmarkSpawn1k(b *testing.B) {
+    for i := 0; i < b.N; i++ {
+        spawnGoroutines(1000)
+    }
+}
+
+func BenchmarkSpawn10k(b *testing.B) {
+    for i := 0; i < b.N; i++ {
+        spawnGoroutines(10000)
+    }
+}
+```
+
+Chạy và đọc allocation/op — đây là chi phí thật, không phải ước lượng:
+
+```bash
+go test -bench=Spawn -benchmem ./internal/platform/
+```
+
+### Quan sát scheduler đang chạy thế nào
+
+```bash
+GODEBUG=schedtrace=1000,scheddetail=1 go run ./cmd/api
+```
+
+In ra theo chu kỳ số goroutine, số thread, số P đang idle/running — hữu ích khi nghi ngờ service bị đói CPU hay leak goroutine. Để xem dòng thời gian chi tiết hơn (khi nào G chuyển sang M nào):
+
+```bash
+go test -run=NONE -bench=Spawn10k -trace=trace.out ./internal/platform/
+go tool trace trace.out
+```
+
+`go tool trace` mở giao diện phân tích timeline goroutine/thread trong trình duyệt — cách trực quan nhất để thấy G-M-P hoạt động thay vì tưởng tượng qua văn bản.
+
+### Nối vào `gocommerce`
+
+`internal/platform/scheduler_bench_test.go` ở trên sẽ nằm trong repo từ bài 04 trở đi; bài 18 (resilience) và bài 48 (performance engineering) sẽ mở rộng benchmark này để so sánh trước/sau khi thêm connection pool và worker pool giới hạn.
+
 ## Definition of Done
 
 - [ ] Giải thích được goroutine khác OS thread ở mức vận hành.
 - [ ] Không dùng benchmark internet làm cam kết capacity.
 - [ ] Nêu được ít nhất ba lợi ích và ba trade-off của Go.
 - [ ] Có ADR dựa trên constraint của dự án, không dựa trên sở thích.
+- [ ] Chạy được `go test -bench` và đọc hiểu cột `B/op`, `allocs/op`.
 
 ## Nguồn chính thống
 

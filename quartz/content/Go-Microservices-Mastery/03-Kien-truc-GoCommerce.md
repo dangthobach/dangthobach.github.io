@@ -3,7 +3,7 @@ type: architecture
 domain: languages/go/microservices
 status: active
 created: 2026-07-27
-updated: 2026-07-27
+updated: 2026-07-29
 tags: [case-study, architecture, domain-driven-design]
 ---
 
@@ -149,6 +149,105 @@ gocommerce/
 
 Ban đầu các module chạy trong một process. Chỉ tách executable/service khi boundary và nhu cầu deploy độc lập đã rõ.
 
+## 🔬 Đào sâu kỹ thuật — mã hóa vòng đời Order thành type Go, không phải văn xuôi
+
+Sơ đồ sequence ở trên mô tả **một lần chạy** của checkout. Nhưng "vòng đời" thật của một Order có nhiều state hơn, và invariant quan trọng nhất là: **không có transition nào được phép xảy ra ngoài tập hợp hợp lệ**. Đây là chỗ Go's type system (không phải comment) nên gánh trách nhiệm.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Pending
+    Pending --> Reserved: inventory reserved
+    Reserved --> Authorized: payment authorized
+    Reserved --> Cancelled: reservation released
+    Authorized --> Placed: order + outbox committed
+    Authorized --> Cancelled: payment reversed
+    Placed --> Fulfilled: shipment confirmed
+    Placed --> Cancelled: cancel trước fulfillment
+    Cancelled --> [*]
+    Fulfilled --> [*]
+```
+
+`internal/order/status.go` — encode đúng transition table ở trên, để invalid transition là **compile-time-checked call, runtime-checked error**, không phải bug ẩn trong `if/else`:
+
+```go
+package order
+
+import "fmt"
+
+type Status string
+
+const (
+    StatusPending    Status = "PENDING"
+    StatusReserved   Status = "RESERVED"
+    StatusAuthorized Status = "AUTHORIZED"
+    StatusPlaced     Status = "PLACED"
+    StatusFulfilled  Status = "FULFILLED"
+    StatusCancelled  Status = "CANCELLED"
+)
+
+// allowedTransitions là single source of truth cho state machine.
+// Không service nào được set status trực tiếp mà không qua Transition().
+var allowedTransitions = map[Status][]Status{
+    StatusPending:    {StatusReserved, StatusCancelled},
+    StatusReserved:   {StatusAuthorized, StatusCancelled},
+    StatusAuthorized: {StatusPlaced, StatusCancelled},
+    StatusPlaced:     {StatusFulfilled, StatusCancelled},
+    StatusFulfilled:  {},
+    StatusCancelled:  {},
+}
+
+type InvalidTransitionError struct {
+    From Status
+    To   Status
+}
+
+func (e *InvalidTransitionError) Error() string {
+    return fmt.Sprintf("invalid order transition: %s -> %s", e.From, e.To)
+}
+
+func (s Status) Transition(to Status) (Status, error) {
+    for _, allowed := range allowedTransitions[s] {
+        if allowed == to {
+            return to, nil
+        }
+    }
+    return s, &InvalidTransitionError{From: s, To: to}
+}
+```
+
+Test tự sinh toàn bộ ma trận transition thay vì viết tay từng case — cách khoa học để chứng minh state machine không có "lỗ hổng":
+
+```go
+package order
+
+import "testing"
+
+func TestTransition_MatrixIsExhaustive(t *testing.T) {
+    all := []Status{StatusPending, StatusReserved, StatusAuthorized,
+        StatusPlaced, StatusFulfilled, StatusCancelled}
+
+    for _, from := range all {
+        for _, to := range all {
+            allowed := false
+            for _, a := range allowedTransitions[from] {
+                if a == to {
+                    allowed = true
+                }
+            }
+            _, err := from.Transition(to)
+            if allowed && err != nil {
+                t.Errorf("expected %s -> %s to succeed, got %v", from, to, err)
+            }
+            if !allowed && err == nil && from != to {
+                t.Errorf("expected %s -> %s to fail, but it succeeded", from, to)
+            }
+        }
+    }
+}
+```
+
+Vì sao đáng làm ngay ở bài kiến trúc: bài 05 sẽ dùng `order.Status` này cho `Order` domain model, và bài 29 (Saga) sẽ mở rộng chính transition table này thêm bước compensation — nối tiếp thay vì viết lại state machine từ đầu.
+
 ## Bài tập Architect
 
 Viết ba ADR:
@@ -164,6 +263,7 @@ Viết ba ADR:
 - [ ] Phân biệt domain event với task/command.
 - [ ] Nêu failure xảy ra giữa DB commit và publish event, cùng pattern xử lý.
 - [ ] Có ba ADR ngắn cho các quyết định trên.
+- [ ] `go test ./internal/order/...` chứng minh state machine không cho phép transition ngoài bảng.
 
 ---
 

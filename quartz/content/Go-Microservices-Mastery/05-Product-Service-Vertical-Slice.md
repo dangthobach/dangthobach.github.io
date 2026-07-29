@@ -3,7 +3,7 @@ type: tutorial
 domain: languages/go/microservices
 status: active
 created: 2026-07-27
-updated: 2026-07-27
+updated: 2026-07-29
 tags: [go, net-http, vertical-slice, clean-architecture]
 ---
 
@@ -351,6 +351,87 @@ go test ./...
 go test -race ./...
 ```
 
+## 🔬 Đào sâu kỹ thuật — vì sao `RWMutex` không phải "cứ khóa cho chắc", và chi phí thật của nó
+
+`MemoryRepository` ở mục 5 dùng `sync.RWMutex` — nhưng một mutex chỉ đúng nếu ta hiểu nó bảo vệ **cái gì**, và biết được cái giá phải trả khi contention tăng.
+
+### Điều `RWMutex` thực sự bảo vệ
+
+`RWMutex` không bảo vệ "map" — nó bảo vệ **invariant**: "không có write nào xảy ra đồng thời với read hoặc write khác". Map của Go **không** an toàn để đọc/ghi đồng thời kể cả khi chỉ một goroutine ghi — runtime sẽ panic với `fatal error: concurrent map read and map write` nếu thiếu mutex. Đây không phải "best practice", mà là bất biến bắt buộc của runtime.
+
+```mermaid
+sequenceDiagram
+    participant G1 as Goroutine đọc (RLock)
+    participant G2 as Goroutine đọc (RLock)
+    participant G3 as Goroutine ghi (Lock)
+    G1->>G1: RLock giữ được — nhiều reader song song
+    G2->>G2: RLock giữ được — cùng lúc với G1
+    G3->>G3: Lock phải chờ G1, G2 RUnlock xong
+    Note over G3: Writer độc quyền — không reader/writer nào khác chen vào
+```
+
+### Đo chi phí bằng benchmark thay vì đoán
+
+`internal/catalog/memory_repository_bench_test.go`:
+
+```go
+package catalog
+
+import (
+    "context"
+    "strconv"
+    "testing"
+)
+
+func BenchmarkMemoryRepository_ReadHeavy(b *testing.B) {
+    repo := NewMemoryRepository()
+    ctx := context.Background()
+    for i := 0; i < 1000; i++ {
+        p, _ := NewProduct(strconv.Itoa(i), "seed", 100)
+        _ = repo.Save(ctx, p)
+    }
+
+    b.RunParallel(func(pb *testing.PB) {
+        i := 0
+        for pb.Next() {
+            _, _ = repo.FindByID(ctx, strconv.Itoa(i%1000))
+            i++
+        }
+    })
+}
+
+func BenchmarkMemoryRepository_WriteHeavy(b *testing.B) {
+    repo := NewMemoryRepository()
+    ctx := context.Background()
+    b.RunParallel(func(pb *testing.PB) {
+        i := 0
+        for pb.Next() {
+            p, _ := NewProduct(strconv.Itoa(i), "product", 100)
+            _ = repo.Save(ctx, p)
+            i++
+        }
+    })
+}
+```
+
+```bash
+go test -bench=MemoryRepository -benchmem -cpu=1,2,4,8 ./internal/catalog/
+```
+
+Chạy với `-cpu=1,2,4,8` cho thấy read-heavy workload scale gần tuyến tính theo core (nhiều `RLock` chạy song song), trong khi write-heavy gần như không cải thiện — writer độc quyền là điểm nghẽn. Đây là bằng chứng cụ thể, không phải cảm tính, cho quyết định ở bài 11: chuyển sang PostgreSQL với connection pool khi write contention thật sự xuất hiện.
+
+### Xác nhận không có race bằng công cụ, không bằng mắt
+
+```bash
+go test -race -run=. ./internal/catalog/
+```
+
+Race detector mô phỏng lịch sử truy cập bộ nhớ (happens-before) và báo chính xác dòng code xung đột nếu có — hãy chạy lệnh này mỗi khi sửa `memory_repository.go`, không chỉ khi nghi ngờ có bug.
+
+### Nối vào repo
+
+Benchmark này commit cùng bài 05 và được bài 11 (PostgreSQL) chạy lại để so sánh trực tiếp: `BenchmarkMemoryRepository_WriteHeavy` so với benchmark tương đương trên `pgxpool` — một con số cụ thể thay cho nhận định "database sẽ nhanh hơn/chậm hơn".
+
 ## Failure checklist
 
 - Body lớn hơn 1 MiB bị từ chối.
@@ -367,6 +448,7 @@ go test -race ./...
 - [ ] Handler không truy cập map/database trực tiếp.
 - [ ] Error mapping phân biệt 400, 404, 422 và 500.
 - [ ] `go test -race ./...` thành công.
+- [ ] `go test -bench=MemoryRepository -benchmem` chạy được và đọc hiểu kết quả read vs write contention.
 
 ---
 
