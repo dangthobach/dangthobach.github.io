@@ -288,34 +288,40 @@
     <lastmod>2026-05-03T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/00-Series-Hub</loc>
-    <lastmod>2026-07-27T00:00:00.000Z</lastmod>
+    <lastmod>2026-07-29T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/01-Phuong-phap-hoc-va-Definition-of-Done</loc>
-    <lastmod>2026-07-27T00:00:00.000Z</lastmod>
+    <lastmod>2026-07-29T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/02-Vi-sao-Go-cho-Microservices</loc>
-    <lastmod>2026-07-27T00:00:00.000Z</lastmod>
+    <lastmod>2026-07-29T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/03-Kien-truc-GoCommerce</loc>
-    <lastmod>2026-07-27T00:00:00.000Z</lastmod>
+    <lastmod>2026-07-29T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/04-Chuan-bi-moi-truong-va-Repository</loc>
-    <lastmod>2026-07-27T00:00:00.000Z</lastmod>
+    <lastmod>2026-07-29T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/05-Product-Service-Vertical-Slice</loc>
-    <lastmod>2026-07-27T00:00:00.000Z</lastmod>
+    <lastmod>2026-07-29T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/06-Chuan-Engineering-cho-moi-Service</loc>
-    <lastmod>2026-07-27T00:00:00.000Z</lastmod>
+    <lastmod>2026-07-29T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/07-API-Gateway-Full-Feature-Blueprint</loc>
-    <lastmod>2026-07-27T00:00:00.000Z</lastmod>
+    <lastmod>2026-07-29T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/08-Authentication-Authorization-va-Third-Party-Identity</loc>
-    <lastmod>2026-07-27T00:00:00.000Z</lastmod>
+    <lastmod>2026-07-29T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/09-Observability-Standard-Metrics-Prometheus-Logs</loc>
-    <lastmod>2026-07-27T00:00:00.000Z</lastmod>
+    <lastmod>2026-07-29T00:00:00.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/10-Protobuf-gRPC-Full-Feature</loc>
+    <lastmod>2026-07-29T00:00:00.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/11-GraphQL-Full-Feature</loc>
+    <lastmod>2026-07-29T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-1-Go-Mindset</loc>
     <lastmod>2026-05-01T00:00:00.000Z</lastmod>

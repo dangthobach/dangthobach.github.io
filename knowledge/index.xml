@@ -10,61 +10,61 @@
     <link>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/00-Series-Hub</link>
     <guid>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/00-Series-Hub</guid>
     <description><![CDATA[ Go Microservices Mastery — từ Basic đến Production Kết quả cuối series Xây dựng GoCommerce, một hệ thống commerce/fulfillment chạy được trên máy cá nhân và có đường nâng cấp rõ ràng lên production. ]]></description>
-    <pubDate>Mon, 27 Jul 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 29 Jul 2026 00:00:00 GMT</pubDate>
   </item><item>
     <title>01-Phuong-phap-hoc-va-Definition-of-Done</title>
     <link>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/01-Phuong-phap-hoc-va-Definition-of-Done</link>
     <guid>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/01-Phuong-phap-hoc-va-Definition-of-Done</guid>
     <description><![CDATA[ Bài 01 — Học series thế nào để vào dự án nhanh? Sau bài này Bạn có một cách học đo được bằng sản phẩm chạy được, thay vì “đọc xong thấy hiểu”. ]]></description>
-    <pubDate>Mon, 27 Jul 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 29 Jul 2026 00:00:00 GMT</pubDate>
   </item><item>
     <title>02-Vi-sao-Go-cho-Microservices</title>
     <link>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/02-Vi-sao-Go-cho-Microservices</link>
     <guid>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/02-Vi-sao-Go-cho-Microservices</guid>
     <description><![CDATA[ Bài 02 — Vì sao Go là lựa chọn mạnh cho Microservices? Kết luận trước Go không “tốt nhất” cho mọi hệ thống. ]]></description>
-    <pubDate>Mon, 27 Jul 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 29 Jul 2026 00:00:00 GMT</pubDate>
   </item><item>
     <title>03-Kien-truc-GoCommerce</title>
     <link>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/03-Kien-truc-GoCommerce</link>
     <guid>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/03-Kien-truc-GoCommerce</guid>
     <description><![CDATA[ Bài 03 — Kiến trúc hệ thống GoCommerce Sau bài này Bạn hiểu boundary, ownership dữ liệu, luồng checkout và lý do mỗi integration technology xuất hiện. ]]></description>
-    <pubDate>Mon, 27 Jul 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 29 Jul 2026 00:00:00 GMT</pubDate>
   </item><item>
     <title>04-Chuan-bi-moi-truong-va-Repository</title>
     <link>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/04-Chuan-bi-moi-truong-va-Repository</link>
     <guid>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/04-Chuan-bi-moi-truong-va-Repository</guid>
     <description><![CDATA[ Bài 04 — Chuẩn bị môi trường và repository Deliverable Repository gocommerce build/test được, có convention rõ ràng và local infrastructure khởi động độc lập với ứng dụng. ]]></description>
-    <pubDate>Mon, 27 Jul 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 29 Jul 2026 00:00:00 GMT</pubDate>
   </item><item>
     <title>05-Product-Service-Vertical-Slice</title>
     <link>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/05-Product-Service-Vertical-Slice</link>
     <guid>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/05-Product-Service-Vertical-Slice</guid>
     <description><![CDATA[ Bài 05 — Product Service: vertical slice đầu tiên Deliverable POST /v1/products và GET /v1/products/{id} chạy bằng net/http, business rule được test mà không cần HTTP. ]]></description>
-    <pubDate>Mon, 27 Jul 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 29 Jul 2026 00:00:00 GMT</pubDate>
   </item><item>
     <title>06-Chuan-Engineering-cho-moi-Service</title>
     <link>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/06-Chuan-Engineering-cho-moi-Service</link>
     <guid>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/06-Chuan-Engineering-cho-moi-Service</guid>
     <description><![CDATA[ Bài 06 — Chuẩn Engineering cho mọi service Deliverable Product API có config validate lúc startup, structured logging, request ID, health endpoint và graceful shutdown. ]]></description>
-    <pubDate>Mon, 27 Jul 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 29 Jul 2026 00:00:00 GMT</pubDate>
   </item><item>
     <title>07-API-Gateway-Full-Feature-Blueprint</title>
     <link>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/07-API-Gateway-Full-Feature-Blueprint</link>
     <guid>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/07-API-Gateway-Full-Feature-Blueprint</guid>
     <description><![CDATA[ Bài 07 — Full-feature API Gateway Blueprint Kết quả Có blueprint để xây edge-gateway bằng Go theo từng increment, biết chức năng nào thuộc gateway và chức năng nào phải ở service. ]]></description>
-    <pubDate>Mon, 27 Jul 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 29 Jul 2026 00:00:00 GMT</pubDate>
   </item><item>
     <title>08-Authentication-Authorization-va-Third-Party-Identity</title>
     <link>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/08-Authentication-Authorization-va-Third-Party-Identity</link>
     <guid>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/08-Authentication-Authorization-va-Third-Party-Identity</guid>
     <description><![CDATA[ Bài 08 — Authentication, Authorization và Third-party Identity Kết quả Thiết kế được một identity boundary hỗ trợ user nội bộ, Google/Microsoft/enterprise IdP, machine client và partner mà không tự viết password/token server thiếu an toàn. ]]></description>
-    <pubDate>Mon, 27 Jul 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 29 Jul 2026 00:00:00 GMT</pubDate>
   </item><item>
     <title>09-Observability-Standard-Metrics-Prometheus-Logs</title>
     <link>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/09-Observability-Standard-Metrics-Prometheus-Logs</link>
     <guid>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/09-Observability-Standard-Metrics-Prometheus-Logs</guid>
     <description><![CDATA[ Bài 09 — Observability Standard: Metrics, Prometheus và Distributed Logs Kết quả Mọi service phát telemetry cùng chuẩn; từ alert có thể đi tới dashboard → trace → log liên quan mà không grep thủ công từng máy. ]]></description>
-    <pubDate>Mon, 27 Jul 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 29 Jul 2026 00:00:00 GMT</pubDate>
   </item>
     </channel>
   </rss>
