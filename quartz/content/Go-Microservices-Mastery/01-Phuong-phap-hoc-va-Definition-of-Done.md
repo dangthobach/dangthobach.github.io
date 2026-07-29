@@ -16,12 +16,12 @@ tags: [learning-path, hands-on, definition-of-done]
 
 ```mermaid
 flowchart LR
-    A["1. Đọc use case"] --> B["2. Vẽ boundary"]
-    B --> C["3. Code happy path"]
-    C --> D["4. Thêm failure path"]
-    D --> E["5. Test + quan sát"]
-    E --> F["6. Viết ADR ngắn"]
-    F --> G["7. Demo từ đầu"]
+    A["Đọc use case"] --> B["Vẽ boundary"]
+    B --> C["Code happy path"]
+    C --> D["Thêm failure path"]
+    D --> E["Test + quan sát"]
+    E --> F["Viết ADR ngắn"]
+    F --> G["Demo từ đầu"]
 ```
 
 ### 1. Đọc use case

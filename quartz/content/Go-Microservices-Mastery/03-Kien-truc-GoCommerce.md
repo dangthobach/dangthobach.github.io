@@ -3,7 +3,7 @@ type: architecture
 domain: languages/go/microservices
 status: active
 created: 2026-07-27
-updated: 2026-07-29
+updated: 2026-07-30
 tags: [case-study, architecture, domain-driven-design]
 ---
 
@@ -246,7 +246,7 @@ func TestTransition_MatrixIsExhaustive(t *testing.T) {
 }
 ```
 
-Vì sao đáng làm ngay ở bài kiến trúc: bài 05 sẽ dùng `order.Status` này cho `Order` domain model, và bài 29 (Saga) sẽ mở rộng chính transition table này thêm bước compensation — nối tiếp thay vì viết lại state machine từ đầu.
+Vì sao đáng làm ngay ở bài kiến trúc: bài 05 sẽ dùng `order.Status` này cho `Order` domain model, và bài 31 (Saga) sẽ mở rộng chính transition table này thêm bước compensation — nối tiếp thay vì viết lại state machine từ đầu.
 
 ## Bài tập Architect
 

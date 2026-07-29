@@ -3,7 +3,7 @@ type: architecture
 domain: languages/go/microservices
 status: active
 created: 2026-07-27
-updated: 2026-07-29
+updated: 2026-07-30
 tags: [api-gateway, reverse-proxy, security, resilience]
 ---
 
@@ -276,13 +276,13 @@ req = req.WithContext(httptrace.WithClientTrace(req.Context(), trace))
 
 ### Nối vào repo
 
-Benchmark này sống trong `internal/gateway`, service mới được tạo từ bài 16 (routing/reverse proxy thật); nhưng viết ngay ở bài blueprint này để khi implement bài 16–18, connection pool đã là quyết định có đo lường, không phải mặc định ngẫu nhiên.
+Benchmark này sống trong `internal/gateway`, service mới được tạo từ bài 18 (routing/reverse proxy thật); nhưng viết ngay ở bài blueprint này để khi implement bài 18–20, connection pool đã là quyết định có đo lường, không phải mặc định ngẫu nhiên.
 
 ## Track implementation
 
-- Bài 16: routing, proxy, discovery, gRPC/WebSocket.
-- Bài 17: TLS, CORS, JWT, quota và security pipeline.
-- Bài 18: timeout, retry budget, circuit breaker và load shedding.
+- Bài 18: routing, proxy, discovery, gRPC/WebSocket.
+- Bài 19: TLS, CORS, JWT, quota và security pipeline.
+- Bài 20: timeout, retry budget, circuit breaker và load shedding.
 
 ## Definition of Done
 

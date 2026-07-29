@@ -275,6 +275,240 @@ func (s *Server) WatchStock(req *pb.WatchStockRequest, stream pb.InventoryServic
 
 `stream.Context()` mang cancellation của client stream — nếu client đóng kết nối, `Done()` fire và server phải dừng gửi, không rò rỉ goroutine `SubscribeStock`.
 
+## 7. Case khó — lồng object phức tạp trong Protobuf
+
+Phần này là nơi phần lớn hướng dẫn Protobuf trên mạng dừng lại quá sớm: họ chỉ dạy message phẳng (flat). Thực tế production luôn có **nested message, danh sách message lồng nhau, polymorphism, cấu trúc tự tham chiếu (tree), và payload không biết trước schema**. Dưới đây là năm case khó, mỗi case có lý do vì sao nó khó và cách Go xử lý đúng.
+
+### 7.1 Nested message + repeated nested message — `Order` chứa danh sách `OrderItem` chứa `Product`
+
+Đây là case phổ biến nhất nhưng vẫn hay bị làm sai ở chỗ **ai sở hữu bản sao nào của dữ liệu**.
+
+```protobuf
+message Order {
+  string id = 1;
+  repeated OrderItem items = 2;
+  Money total = 3;
+}
+
+message OrderItem {
+  Product product = 1;   // nested message — không phải chỉ product_id
+  int32 quantity = 2;
+  Money line_total = 3;
+}
+
+message Product {
+  string id = 1;
+  string name = 2;
+  Money price = 3;
+}
+
+message Money {
+  string currency_code = 1;
+  int64 minor_units = 2; // giống bài 05 — không dùng float cho tiền
+}
+```
+
+Go codegen sinh nested message thành **pointer field**, không phải value:
+
+```go
+type OrderItem struct {
+    Product   *Product `protobuf:"bytes,1,opt,name=product,proto3"`
+    Quantity  int32    `protobuf:"varint,2,opt,name=quantity,proto3"`
+    LineTotal *Money   `protobuf:"bytes,3,opt,name=line_total,proto3"`
+}
+```
+
+> [!danger] Bẫy phổ biến nhất: quên nil-check nested pointer
+> `item.Product.Name` sẽ **panic** nếu `Product` chưa được set — vì proto3 message field luôn là con trỏ, `nil` là giá trị hợp lệ và phổ biến (ví dụ deserialize từ client cũ chưa có field này). Luôn dùng generated getter (`item.GetProduct().GetName()`), không truy cập field trực tiếp khi có khả năng nested message rỗng.
+
+```go
+func lineDescription(item *pb.OrderItem) string {
+    // ĐÚNG: getter tự trả zero-value nếu Product == nil, không panic
+    return fmt.Sprintf("%s x%d", item.GetProduct().GetName(), item.GetQuantity())
+}
+```
+
+### 7.2 `oneof` cho polymorphism — chiết khấu có thể là phần trăm hoặc số tiền cố định
+
+`oneof` là cách Protobuf biểu diễn "đúng một trong nhiều loại nested message" — tương đương sum type/tagged union.
+
+```protobuf
+message Discount {
+  oneof kind {
+    PercentageDiscount percentage = 1;
+    FixedAmountDiscount fixed_amount = 2;
+  }
+}
+
+message PercentageDiscount {
+  int32 basis_points = 1; // 1000 = 10.00%
+}
+
+message FixedAmountDiscount {
+  Money amount = 1;
+}
+```
+
+Codegen sinh một **interface riêng** cho oneof, mỗi variant là một struct implement interface đó — pattern gần nhất Protobuf có với sealed interface của Go:
+
+```go
+type Discount struct {
+    Kind isDiscount_Kind `protobuf:"..."`
+}
+
+type isDiscount_Kind interface{ isDiscount_Kind() }
+
+type Discount_Percentage struct{ Percentage *PercentageDiscount }
+type Discount_FixedAmount struct{ FixedAmount *FixedAmountDiscount }
+```
+
+Xử lý bằng type switch — chỗ nhiều người viết sai vì quên `default` khi thêm variant mới sau này:
+
+```go
+func applyDiscount(subtotal int64, discount *pb.Discount) (int64, error) {
+    switch kind := discount.GetKind().(type) {
+    case *pb.Discount_Percentage:
+        return subtotal - (subtotal * int64(kind.Percentage.GetBasisPoints()) / 10000), nil
+    case *pb.Discount_FixedAmount:
+        return subtotal - kind.FixedAmount.GetAmount().GetMinorUnits(), nil
+    case nil:
+        return subtotal, nil // chưa set discount — hợp lệ, không phải lỗi
+    default:
+        // BẮT BUỘC có nhánh này. Khi ai đó thêm variant thứ 3 vào .proto mà quên
+        // cập nhật hàm này, code phải fail rõ ràng thay vì âm thầm bỏ qua discount.
+        return 0, fmt.Errorf("unhandled discount kind: %T", kind)
+    }
+}
+```
+
+### 7.3 Cấu trúc tự tham chiếu (recursive message) — cây danh mục sản phẩm
+
+Category có thể có category con, sinh cấu trúc tree lồng nhau không giới hạn độ sâu — Protobuf hỗ trợ recursive message trực tiếp vì `repeated` field chỉ là con trỏ tới message khác, không nhúng giá trị.
+
+```protobuf
+message Category {
+  string id = 1;
+  string name = 2;
+  repeated Category children = 3; // tự tham chiếu — hợp lệ vì children là con trỏ
+}
+```
+
+Duyệt cây bằng đệ quy, có phòng thủ cycle nếu dữ liệu từ service khác bị lỗi:
+
+```go
+func flattenCategories(root *pb.Category, seen map[string]bool) []*pb.Category {
+    if root == nil || seen[root.GetId()] {
+        return nil // chặn vòng lặp vô hạn nếu dữ liệu có cycle bất thường
+    }
+    seen[root.GetId()] = true
+
+    result := []*pb.Category{root}
+    for _, child := range root.GetChildren() {
+        result = append(result, flattenCategories(child, seen)...)
+    }
+    return result
+}
+```
+
+> [!tip] Vì sao `seen map[string]bool` không phải phòng thủ thừa
+> Protobuf chỉ ngăn cycle ở compile time trong file `.proto`. Runtime data từ service khác hoàn toàn có thể có cycle do bug; đệ quy không phòng thủ sẽ stack-overflow production.
+
+### 7.4 `google.protobuf.Any` — envelope sự kiện domain chứa payload không đồng nhất
+
+```protobuf
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+
+message DomainEvent {
+  string event_id = 1;
+  string event_type = 2;
+  google.protobuf.Timestamp occurred_at = 3;
+  google.protobuf.Any payload = 4; // có thể là OrderPlaced, PaymentAuthorized, ...
+}
+```
+
+`Any` lưu payload dưới dạng `type_url + bytes` — Go phải "mở" nó bằng đúng type đích, và luôn xử lý trường hợp không khớp:
+
+```go
+func handleDomainEvent(event *pb.DomainEvent) error {
+    switch event.GetEventType() {
+    case "order.placed":
+        var placed pb.OrderPlaced
+        if err := event.GetPayload().UnmarshalTo(&placed); err != nil {
+            return fmt.Errorf("unmarshal OrderPlaced: %w", err)
+        }
+        return handleOrderPlaced(&placed)
+    case "payment.authorized":
+        var authorized pb.PaymentAuthorized
+        if err := event.GetPayload().UnmarshalTo(&authorized); err != nil {
+            return fmt.Errorf("unmarshal PaymentAuthorized: %w", err)
+        }
+        return handlePaymentAuthorized(&authorized)
+    default:
+        // Consumer cũ gặp event_type mới hơn nó biết — bỏ qua có log, KHÔNG crash.
+        // Ngược với case 7.2 (nội bộ 1 service, phải fail cứng): domain event là
+        // contract liên service, consumer cũ phải sống sót khi có type mới.
+        logger.Warn("unknown event type, skipping", "event_type", event.GetEventType())
+        return nil
+    }
+}
+```
+
+> [!important] So sánh 7.2 và 7.4 — cùng "case chưa biết", xử lý ngược nhau
+> `oneof` nội bộ service (7.2): variant mới bắt buộc sửa code, `default` phải fail cứng. `Any` giữa nhiều service độc lập deploy (7.4): consumer cũ phải sống sót khi có event type mới, `default` phải bỏ qua có log. Nhầm hai nguyên tắc này là lỗi kiến trúc phổ biến nhất khi mới dùng oneof/Any.
+
+### 7.5 `google.protobuf.Struct` — khi schema thật sự không biết trước
+
+```protobuf
+import "google/protobuf/struct.proto";
+
+message PartnerShipmentNotice {
+  string shipment_id = 1;
+  google.protobuf.Struct partner_metadata = 2; // đối tác tự quyết định field bên trong
+}
+```
+
+```go
+metadata := notice.GetPartnerMetadata().AsMap() // map[string]any
+if carrier, ok := metadata["carrier_code"].(string); ok {
+    // luôn qua type assertion có kiểm tra ok — Struct không có type safety như message thường
+}
+```
+
+> [!warning] `Struct` là lối thoát, không phải mặc định
+> Nếu field xuất hiện ổn định và có ý nghĩa nghiệp vụ rõ, đưa vào message thật (case 7.1) để có type safety và `buf breaking` bảo vệ. `Struct` chỉ dành cho phần dữ liệu thật sự không kiểm soát được schema từ phía mình.
+
+### Test chống nested-nil và cycle — bắt buộc, không phải optional
+
+```go
+func TestApplyDiscount_HandlesNilKind(t *testing.T) {
+    result, err := applyDiscount(10000, &pb.Discount{}) // Kind chưa set
+    if err != nil || result != 10000 {
+        t.Fatalf("expected no-op discount, got result=%d err=%v", result, err)
+    }
+}
+
+func TestFlattenCategories_HandlesCycle(t *testing.T) {
+    a := &pb.Category{Id: "a"}
+    b := &pb.Category{Id: "b", Children: []*pb.Category{a}}
+    a.Children = []*pb.Category{b} // cycle nhân tạo — mô phỏng dữ liệu lỗi từ service khác
+
+    done := make(chan []*pb.Category, 1)
+    go func() { done <- flattenCategories(a, map[string]bool{}) }()
+
+    select {
+    case result := <-done:
+        if len(result) != 2 {
+            t.Fatalf("expected 2 categories, got %d", len(result))
+        }
+    case <-time.After(time.Second):
+        t.Fatal("flattenCategories did not terminate — infinite recursion on cycle")
+    }
+}
+```
+
+`TestFlattenCategories_HandlesCycle` dùng goroutine + `time.After` để biến "có thể treo vô hạn" thành test xác định, có timeout — cách chuẩn để kiểm chứng một hàm đệ quy thiếu cycle-guard sẽ thật sự treo, thay vì hy vọng suông.
+
 ## 🔬 Đào sâu kỹ thuật — Protobuf nhanh hơn JSON bao nhiêu, và tại sao
 
 Tuyên bố "Protobuf nhỏ hơn/nhanh hơn JSON" cần bằng chứng đo được, không phải trích dẫn blog.
@@ -344,6 +578,10 @@ Test tình huống: đổi field number của `reservation_id` từ `1` thành `
 - [ ] `context.WithTimeout` ở client truyền đúng deadline còn lại qua gRPC.
 - [ ] Server-streaming dừng sạch khi `stream.Context().Done()`.
 - [ ] Benchmark Protobuf vs JSON chạy được và giải thích được vì sao có chênh lệch.
+- [ ] Nested pointer field luôn truy cập qua getter, không truy cập trực tiếp.
+- [ ] `oneof` xử lý có nhánh `default` fail cứng khi gặp variant chưa biết.
+- [ ] Đệ quy trên recursive message (category tree) có cycle-guard và test timeout.
+- [ ] `Any` envelope xử lý `event_type` lạ bằng bỏ qua có log, không crash consumer.
 
 ## Nguồn chuẩn
 

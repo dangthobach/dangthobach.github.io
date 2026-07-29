@@ -3,7 +3,7 @@ type: tutorial
 domain: languages/go/microservices
 status: active
 created: 2026-07-27
-updated: 2026-07-29
+updated: 2026-07-30
 tags: [production-readiness, config, logging, graceful-shutdown]
 ---
 
@@ -253,7 +253,7 @@ go test -race -run TestGracefulShutdown ./internal/platform/
 
 ### Nối vào repo
 
-Test này chạy trong `internal/platform`, cùng nơi với `dodcheck` (bài 01). Từ bài 27 (Retry topic/DLQ) và bài 39 (WebSocket), pattern "đợi tín hiệu bằng channel thay vì `time.Sleep`" sẽ được tái sử dụng để test shutdown của consumer Kafka và connection WebSocket.
+Test này chạy trong `internal/platform`, cùng nơi với `dodcheck` (bài 01). Từ bài 29 (Retry topic/DLQ) và bài 41 (WebSocket), pattern "đợi tín hiệu bằng channel thay vì `time.Sleep`" sẽ được tái sử dụng để test shutdown của consumer Kafka và connection WebSocket.
 
 ## Production checklist
 

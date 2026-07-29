@@ -3,7 +3,7 @@ type: architecture
 domain: languages/go/microservices
 status: active
 created: 2026-07-27
-updated: 2026-07-29
+updated: 2026-07-30
 tags: [authentication, authorization, oidc, oauth2, federation]
 ---
 
@@ -319,7 +319,7 @@ go test -race -run TestJWKSCache ./internal/auth/
 
 ### Nối vào repo
 
-`internal/auth/jwks_cache.go` sẽ được inject vào `TokenVerifier` (mục 5) và dùng lại nguyên vẹn ở bài 19 (OIDC login) và bài 20 (third-party federation) — không viết lại cache logic cho từng issuer.
+`internal/auth/jwks_cache.go` sẽ được inject vào `TokenVerifier` (mục 5) và dùng lại nguyên vẹn ở bài 21 (OIDC login) và bài 22 (third-party federation) — không viết lại cache logic cho từng issuer.
 
 ## Definition of Done
 

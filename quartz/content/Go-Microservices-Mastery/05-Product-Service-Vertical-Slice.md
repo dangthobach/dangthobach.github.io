@@ -3,7 +3,7 @@ type: tutorial
 domain: languages/go/microservices
 status: active
 created: 2026-07-27
-updated: 2026-07-29
+updated: 2026-07-30
 tags: [go, net-http, vertical-slice, clean-architecture]
 ---
 
@@ -418,7 +418,7 @@ func BenchmarkMemoryRepository_WriteHeavy(b *testing.B) {
 go test -bench=MemoryRepository -benchmem -cpu=1,2,4,8 ./internal/catalog/
 ```
 
-Chạy với `-cpu=1,2,4,8` cho thấy read-heavy workload scale gần tuyến tính theo core (nhiều `RLock` chạy song song), trong khi write-heavy gần như không cải thiện — writer độc quyền là điểm nghẽn. Đây là bằng chứng cụ thể, không phải cảm tính, cho quyết định ở bài 11: chuyển sang PostgreSQL với connection pool khi write contention thật sự xuất hiện.
+Chạy với `-cpu=1,2,4,8` cho thấy read-heavy workload scale gần tuyến tính theo core (nhiều `RLock` chạy song song), trong khi write-heavy gần như không cải thiện — writer độc quyền là điểm nghẽn. Đây là bằng chứng cụ thể, không phải cảm tính, cho quyết định ở bài 13: chuyển sang PostgreSQL với connection pool khi write contention thật sự xuất hiện.
 
 ### Xác nhận không có race bằng công cụ, không bằng mắt
 
@@ -430,7 +430,7 @@ Race detector mô phỏng lịch sử truy cập bộ nhớ (happens-before) và
 
 ### Nối vào repo
 
-Benchmark này commit cùng bài 05 và được bài 11 (PostgreSQL) chạy lại để so sánh trực tiếp: `BenchmarkMemoryRepository_WriteHeavy` so với benchmark tương đương trên `pgxpool` — một con số cụ thể thay cho nhận định "database sẽ nhanh hơn/chậm hơn".
+Benchmark này commit cùng bài 05 và được bài 13 (PostgreSQL) chạy lại để so sánh trực tiếp: `BenchmarkMemoryRepository_WriteHeavy` so với benchmark tương đương trên `pgxpool` — một con số cụ thể thay cho nhận định "database sẽ nhanh hơn/chậm hơn".
 
 ## Failure checklist
 

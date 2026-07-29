@@ -3,7 +3,7 @@ type: standard
 domain: languages/go/microservices
 status: active
 created: 2026-07-27
-updated: 2026-07-29
+updated: 2026-07-30
 tags: [observability, prometheus, logging, opentelemetry]
 ---
 
@@ -347,7 +347,7 @@ Mỗi `HistogramVec.Observe()` phải tìm đúng bucket bằng so sánh tuần 
 
 ### Nối vào repo
 
-`internal/platform/observability_bench_test.go` dùng chung `internal/platform` với `dodcheck` (bài 01) và shutdown test (bài 06). Từ bài 44–48 (OpenTelemetry, Prometheus + Grafana, performance engineering), benchmark này được mở rộng thêm `otel.Tracer.Start/End` để so sánh overhead ba loại signal trên cùng một baseline, thay vì đánh giá riêng lẻ từng công cụ.
+`internal/platform/observability_bench_test.go` dùng chung `internal/platform` với `dodcheck` (bài 01) và shutdown test (bài 06). Từ bài 46–50 (OpenTelemetry, Prometheus + Grafana, performance engineering), benchmark này được mở rộng thêm `otel.Tracer.Start/End` để so sánh overhead ba loại signal trên cùng một baseline, thay vì đánh giá riêng lẻ từng công cụ.
 
 ## Definition of Done
 
@@ -369,4 +369,4 @@ Mỗi `HistogramVec.Observe()` phải tìm đúng bucket bằng so sánh tuần 
 
 ---
 
-**Trước:** [[08-Authentication-Authorization-va-Third-Party-Identity]] · **Về Hub:** [[00-Series-Hub]]
+**Trước:** [[08-Authentication-Authorization-va-Third-Party-Identity]] · **Tiếp theo:** [[10-Protobuf-gRPC-Full-Feature]]

@@ -3,7 +3,7 @@ type: tutorial
 domain: languages/go/microservices
 status: active
 created: 2026-07-27
-updated: 2026-07-29
+updated: 2026-07-30
 tags: [go, setup, repository, docker]
 ---
 
@@ -206,7 +206,7 @@ go run ./tools/dodcheck && \
   git tag v0.4.0
 ```
 
-Từ bài 13 (Docker image), `-trimpath` và `-ldflags` ở trên sẽ được đưa thẳng vào multi-stage Dockerfile — không phải khái niệm mới, chỉ là di chuyển đúng lệnh đã quen vào build stage.
+Từ bài 15 (Docker image), `-trimpath` và `-ldflags` ở trên sẽ được đưa thẳng vào multi-stage Dockerfile — không phải khái niệm mới, chỉ là di chuyển đúng lệnh đã quen vào build stage.
 
 ## Lỗi thường gặp
 

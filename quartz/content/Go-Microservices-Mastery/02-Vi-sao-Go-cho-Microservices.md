@@ -3,7 +3,7 @@ type: course
 domain: languages/go/microservices
 status: active
 created: 2026-07-27
-updated: 2026-07-29
+updated: 2026-07-30
 tags: [go, architecture-decision, concurrency, cloud-native]
 ---
 
@@ -233,7 +233,7 @@ go tool trace trace.out
 
 ### Nối vào `gocommerce`
 
-`internal/platform/scheduler_bench_test.go` ở trên sẽ nằm trong repo từ bài 04 trở đi; bài 18 (resilience) và bài 48 (performance engineering) sẽ mở rộng benchmark này để so sánh trước/sau khi thêm connection pool và worker pool giới hạn.
+`internal/platform/scheduler_bench_test.go` ở trên sẽ nằm trong repo từ bài 04 trở đi; bài 20 (resilience) và bài 50 (performance engineering) sẽ mở rộng benchmark này để so sánh trước/sau khi thêm connection pool và worker pool giới hạn.
 
 ## Definition of Done
 
