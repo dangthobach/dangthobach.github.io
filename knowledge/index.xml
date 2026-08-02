@@ -6,6 +6,12 @@
       <description>Last 10 notes on Dang Tho Bach&#039;s Knowledge Base</description>
       <generator>Quartz -- quartz.jzhao.xyz</generator>
       <item>
+    <title>Bai-33-Dependency-Injection-Go</title>
+    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-33-Dependency-Injection-Go</link>
+    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-33-Dependency-Injection-Go</guid>
+    <description><![CDATA[ Bài 33: Dependency Injection trong Go — MVC vs Hexagonal, Pointer Semantics, Wire/Fx 2026 Mục tiêu: Hiểu DI trong Go ở tầng bản chất — composition root, hướng phụ thuộc khác nhau giữa MVC và Hexagonal, các quy tắc pointer/interface hay gây bug (typed-nil, method set), và tình trạng thực tế của Wire/... ]]></description>
+    <pubDate>Sun, 02 Aug 2026 00:00:00 GMT</pubDate>
+  </item><item>
     <title>Bai-32-Data-Structures-Algorithms</title>
     <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-32-Data-Structures-Algorithms</link>
     <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-32-Data-Structures-Algorithms</guid>
@@ -58,12 +64,6 @@
     <link>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/08-Authentication-Authorization-va-Third-Party-Identity</link>
     <guid>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/08-Authentication-Authorization-va-Third-Party-Identity</guid>
     <description><![CDATA[ Bài 08 — Authentication, Authorization và Third-party Identity Kết quả Thiết kế được một identity boundary hỗ trợ user nội bộ, Google/Microsoft/enterprise IdP, machine client và partner mà không tự viết password/token server thiếu an toàn. ]]></description>
-    <pubDate>Thu, 30 Jul 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>09-Observability-Standard-Metrics-Prometheus-Logs</title>
-    <link>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/09-Observability-Standard-Metrics-Prometheus-Logs</link>
-    <guid>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/09-Observability-Standard-Metrics-Prometheus-Logs</guid>
-    <description><![CDATA[ Bài 09 — Observability Standard: Metrics, Prometheus và Distributed Logs Kết quả Mọi service phát telemetry cùng chuẩn; từ alert có thể đi tới dashboard → trace → log liên quan mà không grep thủ công từng máy. ]]></description>
     <pubDate>Thu, 30 Jul 2026 00:00:00 GMT</pubDate>
   </item>
     </channel>
