@@ -6,6 +6,12 @@
       <description>Last 10 notes on Dang Tho Bach&#039;s Knowledge Base</description>
       <generator>Quartz -- quartz.jzhao.xyz</generator>
       <item>
+    <title>Bai-34-Constants-Control-Flow-Arrays</title>
+    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-34-Constants-Control-Flow-Arrays</link>
+    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-34-Constants-Control-Flow-Arrays</guid>
+    <description><![CDATA[ Bài 34: Constants, Control Flow &amp; Arrays — Nền Tảng Hay Bị Bỏ Qua Mục tiêu: Đây là nhóm khái niệm tưởng “quá cơ bản để viết riêng một bài”, nhưng chính vì bị coi nhẹ mà dev Java/Spring chuyển sang Go hay dính bug từ iota, từ switch không fallthrough (ngược hẳn Java!), và từ array copy-by-value. ]]></description>
+    <pubDate>Wed, 05 Aug 2026 00:00:00 GMT</pubDate>
+  </item><item>
     <title>Bai-33-Dependency-Injection-Go</title>
     <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-33-Dependency-Injection-Go</link>
     <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-33-Dependency-Injection-Go</guid>
@@ -58,12 +64,6 @@
     <link>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/07-API-Gateway-Full-Feature-Blueprint</link>
     <guid>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/07-API-Gateway-Full-Feature-Blueprint</guid>
     <description><![CDATA[ Bài 07 — Full-feature API Gateway Blueprint Kết quả Có blueprint để xây edge-gateway bằng Go theo từng increment, biết chức năng nào thuộc gateway và chức năng nào phải ở service. ]]></description>
-    <pubDate>Thu, 30 Jul 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>08-Authentication-Authorization-va-Third-Party-Identity</title>
-    <link>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/08-Authentication-Authorization-va-Third-Party-Identity</link>
-    <guid>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/08-Authentication-Authorization-va-Third-Party-Identity</guid>
-    <description><![CDATA[ Bài 08 — Authentication, Authorization và Third-party Identity Kết quả Thiết kế được một identity boundary hỗ trợ user nội bộ, Google/Microsoft/enterprise IdP, machine client và partner mà không tự viết password/token server thiếu an toàn. ]]></description>
     <pubDate>Thu, 30 Jul 2026 00:00:00 GMT</pubDate>
   </item>
     </channel>
