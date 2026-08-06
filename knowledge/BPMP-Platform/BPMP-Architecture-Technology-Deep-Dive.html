@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>BPMP-Architecture-Technology-Deep-Dive</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="Dang Tho Bach's Knowledge Base"/><meta property="og:title" content="BPMP-Architecture-Technology-Deep-Dive"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="BPMP-Architecture-Technology-Deep-Dive"/><meta name="twitter:description" content="BPMP Platform — Phân tích kiến trúc và công nghệ Mục tiêu tài liệu Tài liệu này diễn giải design.md thành một architecture deep dive có thể dùng cho review kỹ thuật, onboarding, quyết định đầu tư và chuẩn bị production."/><meta property="og:description" content="BPMP Platform — Phân tích kiến trúc và công nghệ Mục tiêu tài liệu Tài liệu này diễn giải design.md thành một architecture deep dive có thể dùng cho review kỹ thuật, onboarding, quyết định đầu tư và chuẩn bị production."/><meta property="og:image:alt" content="BPMP Platform — Phân tích kiến trúc và công nghệ Mục tiêu tài liệu Tài liệu này diễn giải design.md thành một architecture deep dive có thể dùng cho review kỹ thuật, onboarding, quyết định đầu tư và chuẩn bị production."/><meta property="twitter:domain" content="dangthobach.github.io/knowledge"/><meta property="og:url" content="https://dangthobach.github.io/knowledge/BPMP-Platform/BPMP-Architecture-Technology-Deep-Dive"/><meta property="twitter:url" content="https://dangthobach.github.io/knowledge/BPMP-Platform/BPMP-Architecture-Technology-Deep-Dive"/><link rel="icon" href="../static/icon.png"/><meta name="description" content="BPMP Platform — Phân tích kiến trúc và công nghệ Mục tiêu tài liệu Tài liệu này diễn giải design.md thành một architecture deep dive có thể dùng cho review kỹ thuật, onboarding, quyết định đầu tư và chuẩn bị production."/><meta name="generator" content="Quartz"/><link href="../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiL2hvbWUvcnVubmVyL3dvcmsvZGFuZ3Rob2JhY2guZ2l0aHViLmlvL2Rhbmd0aG9iYWNoLmdpdGh1Yi5pby9xdWFydHovcXVhcnR6L2NvbXBvbmVudHMvc3R5bGVzIiwic291cmNlcyI6WyJtZXJtYWlkLmlubGluZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFHRjtFQUNFOzs7QUFLRjtFQUNFO0VBQ0E7OztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTs7QUFJRjtFQUNFO0VBQ0E7RUFDQSIsInNvdXJjZXNDb250ZW50IjpbIi5leHBhbmQtYnV0dG9uIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbG9hdDogcmlnaHQ7XG4gIHBhZGRpbmc6IDAuNHJlbTtcbiAgbWFyZ2luOiAwLjNyZW07XG4gIHJpZ2h0OiAwOyAvLyBOT1RFOiByaWdodCB3aWxsIGJlIHNldCBpbiBtZXJtYWlkLmlubGluZS50c1xuICBjb2xvcjogdmFyKC0tZ3JheSk7XG4gIGJvcmRlci1jb2xvcjogdmFyKC0tZGFyayk7XG4gIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgYm9yZGVyOiAxcHggc29saWQ7XG4gIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgb3BhY2l0eTogMDtcbiAgdHJhbnNpdGlvbjogMC4ycztcblxuICAmID4gc3ZnIHtcbiAgICBmaWxsOiB2YXIoLS1saWdodCk7XG4gICAgZmlsdGVyOiBjb250cmFzdCgwLjMpO1xuICB9XG5cbiAgJjpob3ZlciB7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIGJvcmRlci1jb2xvcjogdmFyKC0tc2Vjb25kYXJ5KTtcbiAgfVxuXG4gICY6Zm9jdXMge1xuICAgIG91dGxpbmU6IDA7XG4gIH1cbn1cblxucHJlIHtcbiAgJjpob3ZlciA+IC5leHBhbmQtYnV0dG9uIHtcbiAgICBvcGFjaXR5OiAxO1xuICAgIHRyYW5zaXRpb246IDAuMnM7XG4gIH1cbn1cblxuI21lcm1haWQtY29udGFpbmVyIHtcbiAgcG9zaXRpb246IGZpeGVkO1xuICBjb250YWluOiBsYXlvdXQ7XG4gIHotaW5kZXg6IDk5OTtcbiAgbGVmdDogMDtcbiAgdG9wOiAwO1xuICB3aWR0aDogMTAwdnc7XG4gIGhlaWdodDogMTAwdmg7XG4gIG92ZXJmbG93OiBoaWRkZW47XG4gIGRpc3BsYXk6IG5vbmU7XG4gIGJhY2tkcm9wLWZpbHRlcjogYmx1cig0cHgpO1xuICBiYWNrZ3JvdW5kOiByZ2JhKDAsIDAsIDAsIDAuNSk7XG5cbiAgJi5hY3RpdmUge1xuICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgfVxuXG4gICYgPiAjbWVybWFpZC1zcGFjZSB7XG4gICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gICAgYm9yZGVyLXJhZGl1czogNXB4O1xuICAgIHBvc2l0aW9uOiBmaXhlZDtcbiAgICB0b3A6IDUwJTtcbiAgICBsZWZ0OiA1MCU7XG4gICAgdHJhbnNmb3JtOiB0cmFuc2xhdGUoLTUwJSwgLTUwJSk7XG4gICAgaGVpZ2h0OiA4MHZoO1xuICAgIHdpZHRoOiA4MHZ3O1xuICAgIG92ZXJmbG93OiBoaWRkZW47XG5cbiAgICAmID4gLm1lcm1haWQtY29udGVudCB7XG4gICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgICB0cmFuc2Zvcm0tb3JpZ2luOiAwIDA7XG4gICAgICB0cmFuc2l0aW9uOiB0cmFuc2Zvcm0gMC4xcyBlYXNlO1xuICAgICAgb3ZlcmZsb3c6IHZpc2libGU7XG4gICAgICBtaW4taGVpZ2h0OiAyMDBweDtcbiAgICAgIG1pbi13aWR0aDogMjAwcHg7XG5cbiAgICAgIHByZSB7XG4gICAgICAgIG1hcmdpbjogMDtcbiAgICAgICAgYm9yZGVyOiBub25lO1xuICAgICAgfVxuXG4gICAgICBzdmcge1xuICAgICAgICBtYXgtd2lkdGg6IG5vbmU7XG4gICAgICAgIGhlaWdodDogYXV0bztcbiAgICAgIH1cbiAgICB9XG5cbiAgICAmID4gLm1lcm1haWQtY29udHJvbHMge1xuICAgICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgICAgYm90dG9tOiAyMHB4O1xuICAgICAgcmlnaHQ6IDIwcHg7XG4gICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgZ2FwOiA4cHg7XG4gICAgICBwYWRkaW5nOiA4cHg7XG4gICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgYm9yZGVyLXJhZGl1czogNnB4O1xuICAgICAgYm94LXNoYWRvdzogMCAycHggNHB4IHJnYmEoMCwgMCwgMCwgMC4xKTtcbiAgICAgIHotaW5kZXg6IDI7XG5cbiAgICAgIC5tZXJtYWlkLWNvbnRyb2wtYnV0dG9uIHtcbiAgICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgIHdpZHRoOiAzMnB4O1xuICAgICAgICBoZWlnaHQ6IDMycHg7XG4gICAgICAgIHBhZGRpbmc6IDA7XG4gICAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgICAgY29sb3I6IHZhcigtLWRhcmspO1xuICAgICAgICBib3JkZXItcmFkaXVzOiA0cHg7XG4gICAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICAgICAgZm9udC1zaXplOiAxNnB4O1xuICAgICAgICBmb250LWZhbWlseTogdmFyKC0tYm9keUZvbnQpO1xuICAgICAgICB0cmFuc2l0aW9uOiBhbGwgMC4ycyBlYXNlO1xuXG4gICAgICAgICY6aG92ZXIge1xuICAgICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIH1cblxuICAgICAgICAmOmFjdGl2ZSB7XG4gICAgICAgICAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKDFweCk7XG4gICAgICAgIH1cblxuICAgICAgICAvLyBTdHlsZSB0aGUgcmVzZXQgYnV0dG9uIGRpZmZlcmVudGx5XG4gICAgICAgICY6bnRoLWNoaWxkKDIpIHtcbiAgICAgICAgICB3aWR0aDogYXV0bztcbiAgICAgICAgICBwYWRkaW5nOiAwIDEycHg7XG4gICAgICAgICAgZm9udC1zaXplOiAxNHB4O1xuICAgICAgICB9XG4gICAgICB9XG4gICAgfVxuICB9XG59XG4iXX0= */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://dangthobach.github.io/knowledge/index.xml"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image" content="https://dangthobach.github.io/knowledge/BPMP-Platform/BPMP-Architecture-Technology-Deep-Dive-og-image.webp"/><meta property="og:image:url" content="https://dangthobach.github.io/knowledge/BPMP-Platform/BPMP-Architecture-Technology-Deep-Dive-og-image.webp"/><meta name="twitter:image" content="https://dangthobach.github.io/knowledge/BPMP-Platform/BPMP-Architecture-Technology-Deep-Dive-og-image.webp"/><meta property="og:image:type" content="image/.webp"/></head><body data-slug="BPMP-Platform/BPMP-Architecture-Technology-Deep-Dive"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="..">Dang Tho Bach's Knowledge Base</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-136"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-136" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../BPMP-Platform/">BPMP Platform</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>BPMP Architecture Technology Deep Dive</a></div></nav><h1 class="article-title">BPMP-Architecture-Technology-Deep-Dive</h1><p show-comma="true" class="content-meta"><time datetime="2026-08-06T00:00:00.000Z">Aug 06, 2026</time><span>19 min read</span></p><ul class="tags"><li><a href="../tags/bpmp" class="internal tag-link">bpmp</a></li><li><a href="../tags/workflow-engine" class="internal tag-link">workflow-engine</a></li><li><a href="../tags/bpmn" class="internal tag-link">bpmn</a></li><li><a href="../tags/event-sourcing" class="internal tag-link">event-sourcing</a></li><li><a href="../tags/raft" class="internal tag-link">raft</a></li><li><a href="../tags/rust" class="internal tag-link">rust</a></li><li><a href="../tags/go" class="internal tag-link">go</a></li><li><a href="../tags/architecture" class="internal tag-link">architecture</a></li></ul></div></div><article class="popover-hint"><h1 id="bpmp-platform--phân-tích-kiến-trúc-và-công-nghệ">BPMP Platform — Phân tích kiến trúc và công nghệ<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#bpmp-platform--phân-tích-kiến-trúc-và-công-nghệ" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<blockquote class="callout abstract" data-callout="abstract">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Mục tiêu tài liệu </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>Tài liệu này diễn giải <code>design.md</code> thành một architecture deep dive có thể dùng cho review kỹ thuật, onboarding, quyết định đầu tư và chuẩn bị production. Nội dung phân biệt rõ <strong>kiến trúc mục tiêu</strong>, <strong>code đã có bằng chứng</strong>, và <strong>năng lực còn phải kiểm chứng</strong>. BPMP được so sánh với Camunda 8 và Temporal theo workload, không theo khẩu hiệu sản phẩm.</p>
+</div>
+</blockquote>
+<h2 id="1-kết-luận-điều-hành">1. Kết luận điều hành<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-kết-luận-điều-hành" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>BPMP là một workflow platform theo hướng <strong>BPMN-as-IR + deterministic durable execution</strong>:</p>
+<ol>
+<li>Business Analyst mô hình hóa bằng BPMN/DMN/CMMN.</li>
+<li>Compiler Rust biên dịch trước XML thành WIR đã type-check, normalize, version và ký số.</li>
+<li>Rust Engine là nơi duy nhất diễn giải WIR và quyết định transition.</li>
+<li>Mỗi command được xác thực lại, quyết định bằng hàm thuần, rồi commit qua Raft.</li>
+<li>Event, idempotency result, audit, outbox và governance/compensation liên quan được ghi atomically.</li>
+<li>Kafka chỉ phát committed integration event; PostgreSQL phục vụ bounded context và query model, không thay Engine làm nguồn sự thật.</li>
+</ol>
+<p>BPMP không đơn thuần là “Camunda viết lại bằng Rust” và cũng không phải “Temporal có BPMN UI”. Điểm khác biệt là đưa BPMN/DMN/CMMN qua một <strong>compiler boundary</strong> giống compiler ngôn ngữ lập trình, sau đó chạy một <strong>typed intermediate representation</strong> trong một deterministic event-sourced engine.</p>
+<blockquote class="callout warning" data-callout="warning">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Trạng thái tuyên bố </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>E2E hiện đã chứng minh topology Kafka/PostgreSQL/ba Engine process/Human Runtime/API Gateway/Cockpit, durable projection, governance và leader failover. Tuy nhiên, tài liệu compliance vẫn xác nhận Requirement 1 chưa phủ toàn bộ catalog BPMN/DMN/CMMN theo nghĩa tuyệt đối; Requirement 2 còn thiếu một số production-path evidence. Kiến trúc hiện tại cũng chưa đủ bằng chứng để tuyên bố 300k CCU nếu chưa có sharding nhiều Raft group, realtime fanout sharding và soak test production-like.</p>
+</div>
+</blockquote>
+<h2 id="2-các-lực-thiết-kế">2. Các lực thiết kế<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-các-lực-thiết-kế" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Lực thiết kế</th><th>Hệ quả kiến trúc</th></tr></thead><tbody><tr><td>Quy trình do BA sở hữu nhưng runtime phải type-safe</td><td>BPMN/DMN/CMMN được compile AOT sang WIR, không parse XML trên command path</td></tr><tr><td>Workflow kéo dài nhiều tháng/năm</td><td>Event sourcing, snapshot, deterministic replay, version pinning</td></tr><tr><td>Không được double effect khi retry/failover</td><td>Idempotency thuộc write side của Engine và commit cùng event</td></tr><tr><td>Security theo từng transition</td><td>Authz evaluator thuần nằm trong Engine; Gateway không phải authority cuối</td></tr><tr><td>Human task và machine task có workload khác nhau</td><td>Engine giữ authority; Human Runtime và workers là projection/execution adapters</td></tr><tr><td>Microservices nhưng cần atomic workflow correctness</td><td>Raft + RocksDB là authoritative boundary; Kafka chỉ tích hợp hậu commit</td></tr><tr><td>Không hardcode policy theo tenant</td><td>Configuration Profile versioned, resolve theo scope, install tại safe point</td></tr><tr><td>PII, retention, erasure, maker-checker</td><td>Encrypted payload, key scope, immutable audit, governance proof và compensation ledger</td></tr><tr><td>Tải lớn và sự cố downstream</td><td>Bounded queues, credit-based dispatch, bulkhead, backpressure, outbox</td></tr></tbody></table></div>
+<h2 id="3-system-context">3. System context<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-system-context" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    BA[\&quot;Business Analyst\&quot;] -->|\&quot;BPMN / DMN / CMMN\&quot;| MODEL[\&quot;Modeling and Compiler Toolchain\&quot;]\n    DEV[\&quot;Developer / Operator\&quot;] -->|\&quot;API, worker, policy, deployment\&quot;| PLATFORM[\&quot;BPMP Platform\&quot;]\n    MODEL -->|\&quot;Signed versioned WIR\&quot;| PLATFORM\n    USER[\&quot;End User\&quot;] -->|\&quot;Human task actions\&quot;| WEB[\&quot;Cockpit Web\&quot;]\n    CLIENT[\&quot;Third-party Client\&quot;] -->|\&quot;REST / OpenAPI\&quot;| EDGE[\&quot;API Gateway\&quot;]\n    WEB --> EDGE\n    EDGE --> PLATFORM\n    PLATFORM -->|\&quot;Remote task assignment\&quot;| WORKER[\&quot;Remote Workers\&quot;]\n    PLATFORM -->|\&quot;Committed integration events\&quot;| SYSTEMS[\&quot;Enterprise Systems / Analytics\&quot;]\n    IDP[\&quot;OIDC Identity Provider\&quot;] -->|\&quot;JWT / JWKS\&quot;| EDGE\n    IDP --> PLATFORM\n    KMS[\&quot;KMS / Vault / HSM\&quot;] &lt;--> PLATFORM&quot;">flowchart LR
+    BA[&quot;Business Analyst&quot;] -->|&quot;BPMN / DMN / CMMN&quot;| MODEL[&quot;Modeling and Compiler Toolchain&quot;]
+    DEV[&quot;Developer / Operator&quot;] -->|&quot;API, worker, policy, deployment&quot;| PLATFORM[&quot;BPMP Platform&quot;]
+    MODEL -->|&quot;Signed versioned WIR&quot;| PLATFORM
+    USER[&quot;End User&quot;] -->|&quot;Human task actions&quot;| WEB[&quot;Cockpit Web&quot;]
+    CLIENT[&quot;Third-party Client&quot;] -->|&quot;REST / OpenAPI&quot;| EDGE[&quot;API Gateway&quot;]
+    WEB --> EDGE
+    EDGE --> PLATFORM
+    PLATFORM -->|&quot;Remote task assignment&quot;| WORKER[&quot;Remote Workers&quot;]
+    PLATFORM -->|&quot;Committed integration events&quot;| SYSTEMS[&quot;Enterprise Systems / Analytics&quot;]
+    IDP[&quot;OIDC Identity Provider&quot;] -->|&quot;JWT / JWKS&quot;| EDGE
+    IDP --> PLATFORM
+    KMS[&quot;KMS / Vault / HSM&quot;] &lt;--> PLATFORM
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h3 id="ranh-giới-trách-nhiệm-quan-trọng">Ranh giới trách nhiệm quan trọng<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#ranh-giới-trách-nhiệm-quan-trọng" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Deployable</th><th>Sở hữu</th><th>Tuyệt đối không sở hữu</th></tr></thead><tbody><tr><td><code>bpmn-compiler</code></td><td>Parse/validate BPMN, DMN, CMMN; emit signed WIR</td><td>Runtime state</td></tr><tr><td><code>bpmp-engine</code></td><td>WIR interpretation, state, Raft, event log, final authz, idempotency, compensation atomicity</td><td>Human query UI, AI inference</td></tr><tr><td><code>human-runtime</code></td><td>Work-item projection, assignment, delegation, SLA/escalation</td><td>WIR interpretation, authoritative transition</td></tr><tr><td><code>api-gateway</code></td><td>Public API, coarse authn, rate limit, normalization</td><td>Final authz, write-side idempotency</td></tr><tr><td><code>projection-service</code></td><td>Rebuildable query models and checkpoints</td><td>Authoritative workflow state</td></tr><tr><td><code>governance-service</code></td><td>Approval workflow, barrier/shred orchestration, governance audit</td><td>Direct write vào RocksDB/Raft</td></tr><tr><td><code>authz-control-plane</code></td><td>Policy administration and signed bundle publication</td><td>Authoritative transition decision</td></tr><tr><td><code>configuration-service</code></td><td>Versioned config lifecycle, validation, audit, publication</td><td>Mid-command policy mutation</td></tr><tr><td><code>cockpit-gateway</code></td><td>Tenant-scoped realtime hints and bounded delivery</td><td>Durable workflow source of truth</td></tr><tr><td><code>cockpit-web</code></td><td>Operator/BA experience</td><td>Security authority or embedded policy</td></tr></tbody></table></div>
+<h2 id="4-design-time-architecture-bpmn-as-ir">4. Design-time architecture: BPMN-as-IR<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-design-time-architecture-bpmn-as-ir" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TB\n    SRC[\&quot;BPMN / DMN / CMMN XML\&quot;]\n    P1[\&quot;1. Bounded streaming parse\\nquick-xml + source spans\&quot;]\n    P2[\&quot;2. Two-pass symbol resolution\\nforward references\&quot;]\n    P3[\&quot;3. Semantic validation\\ngraph, gateway, SLA, data contracts\&quot;]\n    P4[\&quot;4. Normalize / desugar\\nsubprocess, boundary, multi-instance\&quot;]\n    P5[\&quot;5. Lower to typed WIR\\ndecision tables and sentries\&quot;]\n    P6[\&quot;6. Canonicalize and optimize\\nstable ordering and indexes\&quot;]\n    P7[\&quot;7. Protobuf serialize\\nhash + Ed25519 signature\&quot;]\n    REG[\&quot;Immutable WIR Registry\&quot;]\n    CI[\&quot;Buf lint / breaking\\nround-trip / corpus / property tests\&quot;]\n\n    SRC --> P1 --> P2 --> P3 --> P4 --> P5 --> P6 --> P7 --> REG\n    CI -.-> P1\n    CI -.-> P3\n    CI -.-> P7&quot;">flowchart TB
+    SRC[&quot;BPMN / DMN / CMMN XML&quot;]
+    P1[&quot;1. Bounded streaming parse\nquick-xml + source spans&quot;]
+    P2[&quot;2. Two-pass symbol resolution\nforward references&quot;]
+    P3[&quot;3. Semantic validation\ngraph, gateway, SLA, data contracts&quot;]
+    P4[&quot;4. Normalize / desugar\nsubprocess, boundary, multi-instance&quot;]
+    P5[&quot;5. Lower to typed WIR\ndecision tables and sentries&quot;]
+    P6[&quot;6. Canonicalize and optimize\nstable ordering and indexes&quot;]
+    P7[&quot;7. Protobuf serialize\nhash + Ed25519 signature&quot;]
+    REG[&quot;Immutable WIR Registry&quot;]
+    CI[&quot;Buf lint / breaking\nround-trip / corpus / property tests&quot;]
+
+    SRC --> P1 --> P2 --> P3 --> P4 --> P5 --> P6 --> P7 --> REG
+    CI -.-> P1
+    CI -.-> P3
+    CI -.-> P7
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h3 id="vì-sao-compile-aot-thay-vì-parse-bpmn-lúc-runtime">Vì sao compile AOT thay vì parse BPMN lúc runtime?<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#vì-sao-compile-aot-thay-vì-parse-bpmn-lúc-runtime" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li><strong>Fail sớm:</strong> unresolved reference, dead path, gateway không sound, data mismatch và unsupported element bị chặn ở CI/deploy.</li>
+<li><strong>Giảm runtime variability:</strong> command path không chạy XML parser, schema resolver hoặc ad-hoc expression parser.</li>
+<li><strong>Canonical artifact:</strong> cùng semantic input sinh ordering ổn định để hash, ký, diff và cache.</li>
+<li><strong>Security:</strong> runtime chỉ nhận artifact đã kiểm schema version, content hash, signature và bounds.</li>
+<li><strong>Hiệu năng:</strong> Engine dùng dispatch table/index đã dựng; không lặp graph construction cho mỗi instance.</li>
+<li><strong>Đa ngôn ngữ nhưng một semantics:</strong> Protobuf là durable contract; Go service coi WIR là opaque.</li>
+</ul>
+<h3 id="wir-là-gì">WIR là gì?<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#wir-là-gì" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>WIR không phải DTO sao chép BPMN XML. Nó là state-machine IR gồm node/transition đã resolve, typed guards, timer/correlation definition, retained scope, multi-instance metadata, DMN function và CMMN sentry. Mỗi WIR gắn <code>tenant_id</code>, workflow type/version, schema version, content hash và signature metadata.</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    XML[\&quot;Rich XML model\&quot;] -->|\&quot;compile\&quot;| WIR[\&quot;Minimal typed WIR\&quot;]\n    WIR --> TABLE[\&quot;O(1) transition lookup\&quot;]\n    WIR --> HASH[\&quot;Canonical hash\&quot;]\n    WIR --> SIGN[\&quot;Signature verification\&quot;]\n    WIR --> REPLAY[\&quot;Stable replay semantics\&quot;]\n    WIR --> CODEGEN[\&quot;Generated Rust state machine\&quot;]&quot;">flowchart LR
+    XML[&quot;Rich XML model&quot;] -->|&quot;compile&quot;| WIR[&quot;Minimal typed WIR&quot;]
+    WIR --> TABLE[&quot;O(1) transition lookup&quot;]
+    WIR --> HASH[&quot;Canonical hash&quot;]
+    WIR --> SIGN[&quot;Signature verification&quot;]
+    WIR --> REPLAY[&quot;Stable replay semantics&quot;]
+    WIR --> CODEGEN[&quot;Generated Rust state machine&quot;]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h2 id="5-runtime-deployment-architecture">5. Runtime deployment architecture<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5-runtime-deployment-architecture" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TB\n    subgraph Edge[\&quot;Edge and Experience\&quot;]\n        WEB[\&quot;Cockpit Web\\nReact 19 + Vite + Nginx\&quot;]\n        API[\&quot;API Gateway\\nGo REST / gRPC client\&quot;]\n        PUSH[\&quot;Cockpit Gateway\\nGo SSE / realtime\&quot;]\n        AUTHAPP[\&quot;Authz Administration API\\nRust\&quot;]\n    end\n\n    subgraph Control[\&quot;Control Plane\&quot;]\n        CFG[\&quot;Configuration Service\\nGo\&quot;]\n        AUTHSRV[\&quot;Authz Policy Server\\nRust + PostgreSQL\&quot;]\n        GOV[\&quot;Governance Service\\nGo/Rust bounded context\&quot;]\n        COMP[\&quot;BPMN Compiler\\nRust\&quot;]\n    end\n\n    subgraph Authority[\&quot;Authoritative Workflow Data Plane\&quot;]\n        E1[\&quot;Engine node 1\\nRust + RocksDB\&quot;]\n        E2[\&quot;Engine node 2\\nRust + RocksDB\&quot;]\n        E3[\&quot;Engine node 3\\nRust + RocksDB\&quot;]\n        E1 &lt;-->|\&quot;OpenRaft\&quot;| E2\n        E2 &lt;-->|\&quot;OpenRaft\&quot;| E3\n        E3 &lt;-->|\&quot;OpenRaft\&quot;| E1\n    end\n\n    subgraph Execution[\&quot;Execution and Query\&quot;]\n        HUMAN[\&quot;Human Runtime\\nGo + PostgreSQL\&quot;]\n        PROJ[\&quot;Projection Service\\nGo + PostgreSQL\&quot;]\n        WASM[\&quot;Local WASM Worker\\nWasmtime\&quot;]\n        REMOTE[\&quot;Remote Workers\\nbidirectional tonic gRPC\&quot;]\n    end\n\n    subgraph Platform[\&quot;Platform Services\&quot;]\n        KAFKA[\&quot;Kafka / Redpanda\\nIntegration Feed\&quot;]\n        REDIS[\&quot;Redis\\nDistributed rate limit / ephemeral cache\&quot;]\n        OTEL[\&quot;OpenTelemetry Collector\&quot;]\n        KMS[\&quot;KMS / Vault / HSM\&quot;]\n    end\n\n    WEB --> API\n    WEB --> PUSH\n    WEB --> AUTHAPP\n    API --> E2\n    API --> HUMAN\n    API --> REDIS\n    COMP -->|\&quot;Signed WIR\&quot;| E1\n    CFG -->|\&quot;Snapshot over mTLS\&quot;| API\n    CFG -->|\&quot;Snapshot over mTLS\&quot;| E1\n    CFG -->|\&quot;Invalidation\&quot;| KAFKA\n    AUTHAPP --> AUTHSRV\n    GOV -->|\&quot;Dual-control command\&quot;| E2\n    E1 --> WASM\n    E1 &lt;-->|\&quot;Credit protocol\&quot;| REMOTE\n    E1 -->|\&quot;Transactional outbox\&quot;| KAFKA\n    KAFKA --> HUMAN\n    KAFKA --> PROJ\n    KAFKA --> PUSH\n    E1 &lt;--> KMS\n    API --> OTEL\n    E1 --> OTEL\n    HUMAN --> OTEL&quot;">flowchart TB
+    subgraph Edge[&quot;Edge and Experience&quot;]
+        WEB[&quot;Cockpit Web\nReact 19 + Vite + Nginx&quot;]
+        API[&quot;API Gateway\nGo REST / gRPC client&quot;]
+        PUSH[&quot;Cockpit Gateway\nGo SSE / realtime&quot;]
+        AUTHAPP[&quot;Authz Administration API\nRust&quot;]
+    end
+
+    subgraph Control[&quot;Control Plane&quot;]
+        CFG[&quot;Configuration Service\nGo&quot;]
+        AUTHSRV[&quot;Authz Policy Server\nRust + PostgreSQL&quot;]
+        GOV[&quot;Governance Service\nGo/Rust bounded context&quot;]
+        COMP[&quot;BPMN Compiler\nRust&quot;]
+    end
+
+    subgraph Authority[&quot;Authoritative Workflow Data Plane&quot;]
+        E1[&quot;Engine node 1\nRust + RocksDB&quot;]
+        E2[&quot;Engine node 2\nRust + RocksDB&quot;]
+        E3[&quot;Engine node 3\nRust + RocksDB&quot;]
+        E1 &lt;-->|&quot;OpenRaft&quot;| E2
+        E2 &lt;-->|&quot;OpenRaft&quot;| E3
+        E3 &lt;-->|&quot;OpenRaft&quot;| E1
+    end
+
+    subgraph Execution[&quot;Execution and Query&quot;]
+        HUMAN[&quot;Human Runtime\nGo + PostgreSQL&quot;]
+        PROJ[&quot;Projection Service\nGo + PostgreSQL&quot;]
+        WASM[&quot;Local WASM Worker\nWasmtime&quot;]
+        REMOTE[&quot;Remote Workers\nbidirectional tonic gRPC&quot;]
+    end
+
+    subgraph Platform[&quot;Platform Services&quot;]
+        KAFKA[&quot;Kafka / Redpanda\nIntegration Feed&quot;]
+        REDIS[&quot;Redis\nDistributed rate limit / ephemeral cache&quot;]
+        OTEL[&quot;OpenTelemetry Collector&quot;]
+        KMS[&quot;KMS / Vault / HSM&quot;]
+    end
+
+    WEB --> API
+    WEB --> PUSH
+    WEB --> AUTHAPP
+    API --> E2
+    API --> HUMAN
+    API --> REDIS
+    COMP -->|&quot;Signed WIR&quot;| E1
+    CFG -->|&quot;Snapshot over mTLS&quot;| API
+    CFG -->|&quot;Snapshot over mTLS&quot;| E1
+    CFG -->|&quot;Invalidation&quot;| KAFKA
+    AUTHAPP --> AUTHSRV
+    GOV -->|&quot;Dual-control command&quot;| E2
+    E1 --> WASM
+    E1 &lt;-->|&quot;Credit protocol&quot;| REMOTE
+    E1 -->|&quot;Transactional outbox&quot;| KAFKA
+    KAFKA --> HUMAN
+    KAFKA --> PROJ
+    KAFKA --> PUSH
+    E1 &lt;--> KMS
+    API --> OTEL
+    E1 --> OTEL
+    HUMAN --> OTEL
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h2 id="6-authoritative-command-path">6. Authoritative command path<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#6-authoritative-command-path" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;sequenceDiagram\n    autonumber\n    participant C as Client\n    participant G as API Gateway\n    participant E as Engine Leader\n    participant A as Embedded Authz\n    participant D as Pure decide/evolve\n    participant R as Raft Quorum\n    participant S as RocksDB State Machine\n    participant K as Kafka Publisher\n\n    C->>G: Command + JWT + tenant + idempotency key\n    G->>G: Recovery, request ID, coarse authn, rate limit, validation\n    G->>E: gRPC command + original actor proof + workload proof\n    E->>A: Verify workload and actor; evaluate signed bundle\n    alt Denied or stale revoke epoch\n        A-->>C: Fail closed; no state mutation\n    else Allowed\n        E->>E: Check tenant-scoped idempotency\n        E->>D: decide(state, command, config snapshot, injected time)\n        D-->>E: Deterministic events\n        E->>R: client_write(authoritative command)\n        R->>R: Replicate and quorum commit\n        R->>S: Apply one atomic WriteBatch\n        Note over S: event + idempotency + audit + outbox&lt;br/>stream metadata + compensation/governance\n        S-->>E: Durable receipt\n        E-->>C: Command receipt\n        K->>S: Poll ordered outbox\n        K->>K: Publish and wait broker ACK\n        K->>S: Persist checkpoint after ACK\n    end&quot;">sequenceDiagram
+    autonumber
+    participant C as Client
+    participant G as API Gateway
+    participant E as Engine Leader
+    participant A as Embedded Authz
+    participant D as Pure decide/evolve
+    participant R as Raft Quorum
+    participant S as RocksDB State Machine
+    participant K as Kafka Publisher
+
+    C->>G: Command + JWT + tenant + idempotency key
+    G->>G: Recovery, request ID, coarse authn, rate limit, validation
+    G->>E: gRPC command + original actor proof + workload proof
+    E->>A: Verify workload and actor; evaluate signed bundle
+    alt Denied or stale revoke epoch
+        A-->>C: Fail closed; no state mutation
+    else Allowed
+        E->>E: Check tenant-scoped idempotency
+        E->>D: decide(state, command, config snapshot, injected time)
+        D-->>E: Deterministic events
+        E->>R: client_write(authoritative command)
+        R->>R: Replicate and quorum commit
+        R->>S: Apply one atomic WriteBatch
+        Note over S: event + idempotency + audit + outbox&lt;br/>stream metadata + compensation/governance
+        S-->>E: Durable receipt
+        E-->>C: Command receipt
+        K->>S: Poll ordered outbox
+        K->>K: Publish and wait broker ACK
+        K->>S: Persist checkpoint after ACK
+    end
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h3 id="invariant-cốt-lõi">Invariant cốt lõi<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#invariant-cốt-lõi" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>Committed command</span></span>
+<span data-line><span>  = Raft quorum commit</span></span>
+<span data-line><span>  + deterministic state-machine apply</span></span>
+<span data-line><span>  + one RocksDB WriteBatch containing all authoritative consequences</span></span></code></pre></figure>
+<p>Không có trạng thái hợp lệ trong đó workflow event đã commit nhưng idempotency result, security audit hoặc outbox bắt buộc lại thiếu. Kafka outage không rollback command: outbox giữ bản ghi và publisher retry theo thứ tự.</p>
+<h2 id="7-storage-và-consistency-model">7. Storage và consistency model<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#7-storage-và-consistency-model" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    CMD[\&quot;Authoritative Command\&quot;] --> RAFT[\&quot;Raft Log\\nstrong ordering per group\&quot;]\n    RAFT --> WB[\&quot;RocksDB WriteBatch\&quot;]\n    WB --> EV[\&quot;Encrypted Events\&quot;]\n    WB --> STATE[\&quot;Stream Metadata / Snapshot\&quot;]\n    WB --> IDEM[\&quot;Idempotency Result\&quot;]\n    WB --> AUDIT[\&quot;Authorization Audit\&quot;]\n    WB --> OUTBOX[\&quot;Ordered Outbox\&quot;]\n    WB --> LEDGER[\&quot;Compensation / Governance Ledger\&quot;]\n    OUTBOX -->|\&quot;ACK then checkpoint\&quot;| BUS[\&quot;Kafka Integration Feed\&quot;]\n    BUS --> HRDB[\&quot;Human Runtime PostgreSQL\&quot;]\n    BUS --> QDB[\&quot;Projection PostgreSQL\&quot;]\n    BUS --> RT[\&quot;Realtime Gateway\&quot;]&quot;">flowchart LR
+    CMD[&quot;Authoritative Command&quot;] --> RAFT[&quot;Raft Log\nstrong ordering per group&quot;]
+    RAFT --> WB[&quot;RocksDB WriteBatch&quot;]
+    WB --> EV[&quot;Encrypted Events&quot;]
+    WB --> STATE[&quot;Stream Metadata / Snapshot&quot;]
+    WB --> IDEM[&quot;Idempotency Result&quot;]
+    WB --> AUDIT[&quot;Authorization Audit&quot;]
+    WB --> OUTBOX[&quot;Ordered Outbox&quot;]
+    WB --> LEDGER[&quot;Compensation / Governance Ledger&quot;]
+    OUTBOX -->|&quot;ACK then checkpoint&quot;| BUS[&quot;Kafka Integration Feed&quot;]
+    BUS --> HRDB[&quot;Human Runtime PostgreSQL&quot;]
+    BUS --> QDB[&quot;Projection PostgreSQL&quot;]
+    BUS --> RT[&quot;Realtime Gateway&quot;]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Store</th><th>Vai trò</th><th>Consistency</th><th>Có thể rebuild?</th></tr></thead><tbody><tr><td>RocksDB + Raft</td><td>Authoritative workflow event/state</td><td>Strong per Raft group</td><td>Không được coi là disposable</td></tr><tr><td>Engine outbox</td><td>Bridge hậu commit sang Kafka</td><td>Atomic với event</td><td>Có thể retry, không bỏ qua</td></tr><tr><td>Kafka/Redpanda</td><td>Integration feed và broadcast invalidation</td><td>Ordered theo partition key</td><td>Không thay authoritative log</td></tr><tr><td>Human PostgreSQL</td><td>Work item, assignment, SLA, audit projection</td><td>Transactional trong Human context</td><td>Có thể rebuild một phần từ events</td></tr><tr><td>Projection PostgreSQL</td><td>Query/read model, inbox, checkpoint</td><td>Transactional consume</td><td>Có thể rebuild đầy đủ từ committed events</td></tr><tr><td>Authz PostgreSQL</td><td>Policy administration/control plane</td><td>Transactional + version/audit</td><td>Không quyết định transition trực tiếp</td></tr><tr><td>Redis</td><td>Rate limit/cache tạm</td><td>Ephemeral/distributed</td><td>Có</td></tr></tbody></table></div>
+<p>Liên hệ: <a href="../concepts/consensus-raft-paxos" class="internal" data-slug="concepts/consensus-raft-paxos">consensus-raft-paxos</a>, <a href="../concepts/consistency-models-spectrum" class="internal" data-slug="concepts/consistency-models-spectrum">consistency-models-spectrum</a>, <a href="../concepts/postgresql-index-internals" class="internal" data-slug="concepts/postgresql-index-internals">postgresql-index-internals</a>.</p>
+<h2 id="8-dynamic-configuration-và-safe-point">8. Dynamic configuration và safe point<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#8-dynamic-configuration-và-safe-point" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TB\n    ADMIN[\&quot;Admin / GitOps\&quot;] --> DRAFT[\&quot;Draft Configuration Profile\&quot;]\n    DRAFT --> VALIDATE[\&quot;Owner schema validation\&quot;]\n    VALIDATE --> PUBLISH[\&quot;Immutable published version\&quot;]\n    PUBLISH --> DB[\&quot;PostgreSQL + audit + transactional outbox\&quot;]\n    DB --> BUS[\&quot;Kafka invalidation\\npartitioned by tenant\&quot;]\n    BUS --> CACHE[\&quot;Per-process runtime cache\&quot;]\n    CACHE --> RESOLVE[\&quot;Resolve hierarchy\&quot;]\n    RESOLVE --> SNAP[\&quot;Immutable ResolvedConfigSnapshot\&quot;]\n    SNAP --> COMMAND[\&quot;Start of command\&quot;]\n    SNAP --> BATCH[\&quot;Start of batch\&quot;]\n    SNAP --> CHECKPOINT[\&quot;After durable checkpoint\&quot;]\n\n    PLATFORM[\&quot;Platform\&quot;] --> RESOLVE\n    ENV[\&quot;Environment\&quot;] --> RESOLVE\n    TENANT[\&quot;Tenant\&quot;] --> RESOLVE\n    TYPE[\&quot;Workflow type\&quot;] --> RESOLVE\n    VERSION[\&quot;Workflow version\&quot;] --> RESOLVE\n    INSTANCE[\&quot;Approved instance override\&quot;] --> RESOLVE&quot;">flowchart TB
+    ADMIN[&quot;Admin / GitOps&quot;] --> DRAFT[&quot;Draft Configuration Profile&quot;]
+    DRAFT --> VALIDATE[&quot;Owner schema validation&quot;]
+    VALIDATE --> PUBLISH[&quot;Immutable published version&quot;]
+    PUBLISH --> DB[&quot;PostgreSQL + audit + transactional outbox&quot;]
+    DB --> BUS[&quot;Kafka invalidation\npartitioned by tenant&quot;]
+    BUS --> CACHE[&quot;Per-process runtime cache&quot;]
+    CACHE --> RESOLVE[&quot;Resolve hierarchy&quot;]
+    RESOLVE --> SNAP[&quot;Immutable ResolvedConfigSnapshot&quot;]
+    SNAP --> COMMAND[&quot;Start of command&quot;]
+    SNAP --> BATCH[&quot;Start of batch&quot;]
+    SNAP --> CHECKPOINT[&quot;After durable checkpoint&quot;]
+
+    PLATFORM[&quot;Platform&quot;] --> RESOLVE
+    ENV[&quot;Environment&quot;] --> RESOLVE
+    TENANT[&quot;Tenant&quot;] --> RESOLVE
+    TYPE[&quot;Workflow type&quot;] --> RESOLVE
+    VERSION[&quot;Workflow version&quot;] --> RESOLVE
+    INSTANCE[&quot;Approved instance override&quot;] --> RESOLVE
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p>Policy không được đổi giữa transaction, WriteBatch hoặc Kafka acknowledgement sequence. Event/audit ghi <code>config_version</code> và <code>policy_version</code>, nhờ đó replay và điều tra biết quyết định lịch sử dùng policy nào.</p>
+<p>Các giá trị phải dynamic gồm rate limit, quota, timeout, retry/backoff, circuit breaker, bulkhead, worker routing, SLA/escalation, batch size, lease, retention, KMS policy, pagination và feature flag. Các constant giao thức như Protobuf field number, stable enum tag và WIR schema compatibility guard <strong>không</strong> phải runtime config.</p>
+<h2 id="9-security-architecture">9. Security architecture<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#9-security-architecture" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    ACTOR[\&quot;End-user JWT\\nactor identity\&quot;] --> GW[\&quot;Gateway coarse verification\&quot;]\n    WORKLOAD[\&quot;mTLS / signed workload context\&quot;] --> ENG[\&quot;Engine ingress\&quot;]\n    GW -->|\&quot;original actor proof preserved\&quot;| ENG\n    ENG --> VERIFY[\&quot;JWT/JWKS + workload verifier\&quot;]\n    BUNDLE[\&quot;Signed policy bundle\&quot;] --> VERIFY\n    REVOKE[\&quot;Monotonic revoke epoch\&quot;] --> VERIFY\n    VERIFY --> EVAL[\&quot;Pure authz evaluator\\nno DB/network/clock\&quot;]\n    EVAL -->|\&quot;ALLOW metadata\&quot;| ATOMIC[\&quot;Atomic audit + event commit\&quot;]\n    EVAL -->|\&quot;DENY\&quot;| REJECT[\&quot;No state change\&quot;]\n    KMS[\&quot;KMS / HSM\&quot;] --> CRYPTO[\&quot;DEK cache / payload crypto\&quot;]\n    CRYPTO --> ATOMIC&quot;">flowchart LR
+    ACTOR[&quot;End-user JWT\nactor identity&quot;] --> GW[&quot;Gateway coarse verification&quot;]
+    WORKLOAD[&quot;mTLS / signed workload context&quot;] --> ENG[&quot;Engine ingress&quot;]
+    GW -->|&quot;original actor proof preserved&quot;| ENG
+    ENG --> VERIFY[&quot;JWT/JWKS + workload verifier&quot;]
+    BUNDLE[&quot;Signed policy bundle&quot;] --> VERIFY
+    REVOKE[&quot;Monotonic revoke epoch&quot;] --> VERIFY
+    VERIFY --> EVAL[&quot;Pure authz evaluator\nno DB/network/clock&quot;]
+    EVAL -->|&quot;ALLOW metadata&quot;| ATOMIC[&quot;Atomic audit + event commit&quot;]
+    EVAL -->|&quot;DENY&quot;| REJECT[&quot;No state change&quot;]
+    KMS[&quot;KMS / HSM&quot;] --> CRYPTO[&quot;DEK cache / payload crypto&quot;]
+    CRYPTO --> ATOMIC
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h3 id="tại-sao-authz-phải-embedded">Tại sao authz phải embedded?<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#tại-sao-authz-phải-embedded" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>Một remote PDP trên command critical path thêm network latency và availability dependency.</li>
+<li>Cache remote dễ tạo cửa sổ policy stale.</li>
+<li>Workload identity không được phép đại diện end-user actor.</li>
+<li>Evaluator thuần nhận đầy đủ bundle, proof, epoch và evaluation timestamp đã inject, nên replay/test xác định.</li>
+<li>ALLOW audit được commit cùng transition, không tồn tại “transition thành công nhưng thiếu bằng chứng quyền”.</li>
+</ul>
+<h2 id="10-worker-model">10. Worker model<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#10-worker-model" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Loại worker</th><th>Công nghệ</th><th>Khi dùng</th><th>Cơ chế bảo vệ</th></tr></thead><tbody><tr><td>Local script/service task</td><td>Wasmtime</td><td>Logic nhỏ, deterministic-ish, cần latency thấp</td><td>Fuel, memory limiter, capability allowlist, pinned artifact</td></tr><tr><td>Remote worker</td><td>tonic bidirectional gRPC</td><td>Tích hợp hệ thống ngoài, SDK đa ngôn ngữ</td><td>Credit, bounded inflight, signed assignment token, lease, ACK</td></tr><tr><td>Human task</td><td>Human Runtime Go</td><td>Assignment, delegation, SLA, maker-checker</td><td>PostgreSQL version, durable intent, authoritative completion tại Engine</td></tr></tbody></table></div>
+<p>Credit-based dispatch giữ invariant <code>0 &lt;= inflight(worker) &lt;= credits_granted(worker)</code>. Engine không đẩy vô hạn vào worker chậm; assignment/lease được persisted để crash recovery không tạo double execution không kiểm soát.</p>
+<h2 id="11-cqrs-projection-và-realtime">11. CQRS, projection và realtime<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#11-cqrs-projection-và-realtime" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Engine không phục vụ dashboard bằng cách scan event log. Projection Service consume committed event, ghi inbox + read model + checkpoint trong một PostgreSQL transaction, sau đó mới ACK Kafka. Cockpit Gateway chỉ phát <strong>hint</strong> realtime; client phải resync query model khi mất cursor hoặc queue overflow.</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;sequenceDiagram\n    participant E as Engine Outbox\n    participant K as Kafka\n    participant P as Projection Service\n    participant DB as Read Model PostgreSQL\n    participant R as Cockpit Gateway\n    participant UI as Cockpit Web\n\n    E->>K: Publish committed event\n    K->>P: Poll bounded batch\n    P->>DB: BEGIN; inbox + projection + checkpoint; COMMIT\n    P->>K: Commit offset\n    K->>R: Committed event hint\n    R-->>UI: SSE signal with cursor\n    UI->>P: Query authoritative read model through API&quot;">sequenceDiagram
+    participant E as Engine Outbox
+    participant K as Kafka
+    participant P as Projection Service
+    participant DB as Read Model PostgreSQL
+    participant R as Cockpit Gateway
+    participant UI as Cockpit Web
+
+    E->>K: Publish committed event
+    K->>P: Poll bounded batch
+    P->>DB: BEGIN; inbox + projection + checkpoint; COMMIT
+    P->>K: Commit offset
+    K->>R: Committed event hint
+    R-->>UI: SSE signal with cursor
+    UI->>P: Query authoritative read model through API
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h2 id="12-vì-sao-chọn-từng-technology">12. Vì sao chọn từng technology<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#12-vì-sao-chọn-từng-technology" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Technology</th><th>Lý do chọn</th><th>Giá trị cụ thể</th><th>Trade-off phải quản trị</th></tr></thead><tbody><tr><td>Rust</td><td>Memory safety không GC, control layout/concurrency</td><td>Deterministic core, compiler, crypto, stateful Engine</td><td>Compile time và learning curve cao</td></tr><tr><td>Tokio</td><td>Async ecosystem chuẩn của Rust</td><td>Bounded network I/O, timers, streaming</td><td>Phải tách blocking RocksDB/native work khỏi async coordination</td></tr><tr><td>tonic + Protobuf</td><td>Typed streaming và đa ngôn ngữ</td><td>Rust-Go contract, worker credit stream, deadlines</td><td>Schema governance bắt buộc</td></tr><tr><td>Buf</td><td>Lint/breaking/codegen gate</td><td>Ngăn tái sử dụng field number và generated drift</td><td>CI cần baseline release rõ ràng</td></tr><tr><td>RocksDB</td><td>Mature LSM, WAL, column family, WriteBatch</td><td>Event/idempotency/audit/outbox atomic local apply</td><td>Native build nặng; compaction và lock cần vận hành đúng</td></tr><tr><td>OpenRaft</td><td>Rust-native Raft framework</td><td>Authoritative replication, membership, leader forwarding</td><td>Cần model checking, partition chaos và shard directory</td></tr><tr><td>Wasmtime 36.0.4</td><td>Mature sandbox với fuel/memory controls</td><td>Chạy local task mà không nạp native plugin vào Engine</td><td>Phải có upgrade/CVE qualification định kỳ</td></tr><tr><td>Go</td><td>Goroutine/network stack, simple deployment</td><td>Gateway, projection, human runtime, realtime fanout</td><td>GC/memory phải đo ở 300k connection</td></tr><tr><td>PostgreSQL + pgx/v5</td><td>Transaction, index, locking rõ ràng</td><td>Human/config/projection/governance bounded contexts</td><td>Pool budget và hot-tenant query plan phải dynamic</td></tr><tr><td>Kafka/Redpanda + franz-go</td><td>Durable integration stream, ecosystem tốt</td><td>Outbox publication, projection, cache invalidation</td><td>Không dùng làm workflow authority; quản trị lag/retention/ACL</td></tr><tr><td>Redis</td><td>Atomic distributed limiter/cache</td><td>Multi-replica edge controls</td><td>Thêm sync dependency vào request path</td></tr><tr><td>React 19 + Vite + Zod</td><td>Typed SPA, fast build, runtime validation</td><td>Cockpit và contract fail-fast</td><td>Cần error boundary, browser E2E, bundle budget</td></tr><tr><td>OpenTelemetry</td><td>Vendor-neutral traces/metrics/logs</td><td>Correlation xuyên Rust-Go-Kafka-gRPC</td><td>Cardinality/PII policy và sampling phải kiểm soát</td></tr><tr><td>Docker Compose / Kubernetes</td><td>Reproducible E2E và production orchestration</td><td>Health-based staged startup, StatefulSet/Deployment</td><td>Compose proof không thay thế multi-zone production test</td></tr></tbody></table></div>
+<h3 id="stack-thực-tế-đang-được-pin-trong-repo">Stack thực tế đang được pin trong repo<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#stack-thực-tế-đang-được-pin-trong-repo" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Layer</th><th>Version hiện tại</th></tr></thead><tbody><tr><td>Rust MSRV/toolchain</td><td>1.91 / 1.91.1</td></tr><tr><td>Tokio / tonic / prost</td><td>~1.51.4 / 0.14.6 / 0.14.4</td></tr><tr><td>OpenRaft / RocksDB / Wasmtime</td><td>0.9.24 / 0.24.0 / 36.0.4</td></tr><tr><td>Go / gRPC-Go / pgx / franz-go</td><td>1.25.12 / 1.82.1 / 5.9.2 / 1.21.0</td></tr><tr><td>React / Vite / TypeScript / Zod</td><td>19.2.8 / 8.1.5 / 7.0.2 / 4.4.3</td></tr><tr><td>Docker E2E data plane</td><td>PostgreSQL 17.5, Redis 7.4.2, Redpanda 24.3.18</td></tr><tr><td>Telemetry</td><td>OpenTelemetry Collector 0.130.1; Go OTel 1.44.0</td></tr></tbody></table></div>
+<p><code>design.md</code> có target baseline tương lai riêng. Nâng version phải qua security advisory, compatibility, replay golden, chaos và benchmark; không tự động thay toàn bộ stack bằng newest release.</p>
+<h2 id="13-build-và-deployment-flow">13. Build và deployment flow<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#13-build-và-deployment-flow" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TB\n    SOURCE[\&quot;Monorepo\\nRust + Go + React + Proto\&quot;]\n    CONTRACT[\&quot;Buf lint / breaking / generate\&quot;]\n    TEST[\&quot;fmt + clippy + cargo test\\ngo test/race/vet\\nVitest + typecheck + build\&quot;]\n    IMAGE[\&quot;BuildKit multi-stage images\\ncache Cargo/Go/npm\&quot;]\n    FIX[\&quot;Fixture generator\\nTLS, JWT, JWKS, WIR, policy, config, SQL\&quot;]\n    INFRA[\&quot;Phase 1 infrastructure\\nPostgreSQL, Redis, Redpanda, OTel\&quot;]\n    MIG[\&quot;One-shot migrations and topic init\&quot;]\n    APP[\&quot;Phase 2 applications\\nConfig -> Engine quorum -> projections -> edge\&quot;]\n    HEALTH[\&quot;livez / readyz / mTLS probes\&quot;]\n    E2E[\&quot;Broker-backed E2E\\nworkflow + human + projection + governance\&quot;]\n    FAIL[\&quot;Leader failover and crash recovery\&quot;]\n    PROMOTE[\&quot;Immutable image digest + GitOps promotion\&quot;]\n\n    SOURCE --> CONTRACT --> TEST --> IMAGE --> FIX --> INFRA --> MIG --> APP --> HEALTH --> E2E --> FAIL --> PROMOTE&quot;">flowchart TB
+    SOURCE[&quot;Monorepo\nRust + Go + React + Proto&quot;]
+    CONTRACT[&quot;Buf lint / breaking / generate&quot;]
+    TEST[&quot;fmt + clippy + cargo test\ngo test/race/vet\nVitest + typecheck + build&quot;]
+    IMAGE[&quot;BuildKit multi-stage images\ncache Cargo/Go/npm&quot;]
+    FIX[&quot;Fixture generator\nTLS, JWT, JWKS, WIR, policy, config, SQL&quot;]
+    INFRA[&quot;Phase 1 infrastructure\nPostgreSQL, Redis, Redpanda, OTel&quot;]
+    MIG[&quot;One-shot migrations and topic init&quot;]
+    APP[&quot;Phase 2 applications\nConfig -> Engine quorum -> projections -> edge&quot;]
+    HEALTH[&quot;livez / readyz / mTLS probes&quot;]
+    E2E[&quot;Broker-backed E2E\nworkflow + human + projection + governance&quot;]
+    FAIL[&quot;Leader failover and crash recovery&quot;]
+    PROMOTE[&quot;Immutable image digest + GitOps promotion&quot;]
+
+    SOURCE --> CONTRACT --> TEST --> IMAGE --> FIX --> INFRA --> MIG --> APP --> HEALTH --> E2E --> FAIL --> PROMOTE
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h3 id="production-order">Production order<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#production-order" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ol>
+<li>Publish immutable images, descriptors, signed WIR và policy bundles.</li>
+<li>Apply migration bằng credential của đúng bounded context.</li>
+<li>Provision Kafka topics/ACL/retention từ topology tập trung.</li>
+<li>Start Configuration Service và publish đủ mandatory owner policies.</li>
+<li>Chỉ ACTIVE tenant khi readiness không còn owner thiếu.</li>
+<li>Start 3/5 Engine member với volume riêng; bootstrap membership một lần.</li>
+<li>Start Projection, Governance, Human Runtime, API Gateway.</li>
+<li>Start Cockpit Gateway/Web; kiểm SSE drain/resync.</li>
+<li>Mở ingress sau acceptance transaction và consumer lag bằng 0.</li>
+</ol>
+<h2 id="14-bpmp-so-với-camunda-8-và-temporal">14. BPMP so với Camunda 8 và Temporal<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#14-bpmp-so-với-camunda-8-và-temporal" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="định-vị-đúng">Định vị đúng<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#định-vị-đúng" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li><strong>Camunda 8/Zeebe:</strong> BPMN-first platform trưởng thành, broker partitioned/replicated, hệ sinh thái Modeler/Operate/Tasklist và connectors mạnh.</li>
+<li><strong>Temporal:</strong> code-first durable execution, SDK developer experience mạnh, workflow code replay bằng event history, task queue/activity abstraction trưởng thành.</li>
+<li><strong>BPMP:</strong> standards-first nhưng compiler-oriented; cố gắng kết hợp BA model với typed WIR, deterministic Rust core, embedded transition authz và enterprise governance atomicity.</li>
+</ul>
+<h3 id="ma-trận-so-sánh">Ma trận so sánh<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#ma-trận-so-sánh" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Tiêu chí</th><th>BPMP</th><th>Camunda 8</th><th>Temporal</th></tr></thead><tbody><tr><td>Tác giả workflow</td><td>BA + engineer qua BPMN/DMN/CMMN</td><td>BA + engineer qua BPMN/DMN</td><td>Developer viết workflow code</td></tr><tr><td>Runtime definition</td><td>Signed typed WIR đã compile</td><td>BPMN deployment được broker thực thi</td><td>Workflow code trong SDK worker</td></tr><tr><td>XML trên runtime path</td><td>Không</td><td>Model được deploy cho engine</td><td>Không BPMN/XML</td></tr><tr><td>Compile-time graph/type analysis</td><td>Mục tiêu cốt lõi: reachability, gateway, SLA, data-flow</td><td>Modeler lint + engine validation; coverage theo Camunda profile</td><td>Type system của language, nhưng không có BPMN graph semantics</td></tr><tr><td>Authority</td><td>Rust Engine + RocksDB/Raft</td><td>Zeebe broker partition</td><td>Temporal Service history + workflow workers</td></tr><tr><td>Business logic execution</td><td>Local WASM hoặc remote gRPC worker</td><td>External job workers/connectors</td><td>Activities + workflow code workers</td></tr><tr><td>Human task</td><td>Bounded context riêng, authoritative completion quay về Engine</td><td>Tasklist/user tasks tích hợp</td><td>Pattern/SDK, không BPMN-native</td></tr><tr><td>DMN/CMMN</td><td>Typed IR; breadth còn đang mở rộng</td><td>DMN mạnh; BPMN coverage công bố rõ</td><td>Không native BPMN/DMN/CMMN</td></tr><tr><td>Authz transition</td><td>Embedded evaluator, signed bundle, revoke epoch, atomic audit</td><td>Thường dựa identity/authorization của platform và app integration</td><td>Namespace/API auth + application authorization pattern</td></tr><tr><td>Config replayability</td><td><code>config_version</code>/<code>policy_version</code> đi cùng event/audit</td><td>Có config/deployment mechanisms, không cùng BPMP model</td><td>Workflow code/versioning và search attributes; app config do ứng dụng quản trị</td></tr><tr><td>Governance atomicity</td><td>Compensation/governance consequences trong Engine commit</td><td>Cần mô hình hóa/integration theo use case</td><td>Saga/compensation viết bằng workflow code</td></tr><tr><td>Maturity/ecosystem</td><td>Đang xây dựng, rủi ro cao hơn</td><td>Production mature, ecosystem lớn</td><td>Production mature, SDK/ecosystem lớn</td></tr><tr><td>Lock-in</td><td>Open contracts và standards, nhưng custom engine</td><td>Camunda extensions/operations ecosystem</td><td>Temporal SDK/programming model</td></tr></tbody></table></div>
+<h3 id="bpmp-vượt-trội-ở-đâu-nếu-hoàn-thành-đúng-thiết-kế">BPMP vượt trội ở đâu, nếu hoàn thành đúng thiết kế?<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#bpmp-vượt-trội-ở-đâu-nếu-hoàn-thành-đúng-thiết-kế" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="141-so-với-camunda">14.1 So với Camunda<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#141-so-với-camunda" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<ol>
+<li><strong>Compiler boundary mạnh hơn runtime model ingestion:</strong> BPMP biến model thành canonical typed WIR và ký artifact. Điều này phù hợp tổ chức muốn model validation giống software compilation.</li>
+<li><strong>Không parse/resolve XML trong runtime:</strong> giảm attack surface và biến thiên latency tại Engine.</li>
+<li><strong>Data contract và symbolic gateway analysis:</strong> có thể phát hiện mismatch/coverage trước deploy sâu hơn một model lint thông thường.</li>
+<li><strong>Embedded transition authz:</strong> quyết định quyền không phụ thuộc remote PDP và audit ALLOW commit cùng event.</li>
+<li><strong>Atomic enterprise governance:</strong> idempotency, encrypted event, audit, outbox, compensation/governance nằm trong một authoritative commit.</li>
+<li><strong>Local sandboxed execution:</strong> Wasmtime cho task phù hợp có thể giảm network hop so với mọi service task đều là external job worker.</li>
+<li><strong>Config snapshot replayable:</strong> tenant/workflow policy được version hóa và gắn vào quyết định lịch sử.</li>
+</ol>
+<p>Camunda vẫn vượt BPMP rõ ràng ở maturity, BPMN tooling, connector ecosystem, vận hành cluster, documentation, support và bằng chứng scale. Camunda 8 cũng dùng partition + Raft replication và RocksDB; vì vậy “BPMP có Raft/RocksDB” tự nó <strong>không</strong> phải lợi thế cạnh tranh.</p>
+<h4 id="142-so-với-temporal">14.2 So với Temporal<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#142-so-với-temporal" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<ol>
+<li><strong>BA-first và standards-first:</strong> quy trình là BPMN/DMN/CMMN artifact có thể review với nghiệp vụ, không chỉ workflow source code.</li>
+<li><strong>Static process analysis:</strong> compiler hiểu gateway, reachability, boundary, SLA, data contract và decision table ở cấp mô hình.</li>
+<li><strong>Artifact governance:</strong> WIR immutable, signed, tenant/version scoped; deployment có canonical diff.</li>
+<li><strong>Human workflow là first-class bounded context:</strong> assignment/delegation/SLA/audit không phải tự dựng hoàn toàn từ SDK primitives.</li>
+<li><strong>Policy-aware replay:</strong> config/policy version là explicit decision input và audit metadata.</li>
+<li><strong>Transition-level security authority:</strong> actor/workload proof tách biệt, revoke epoch và signed bundle chạy trong core path.</li>
+</ol>
+<p>Temporal vẫn vượt BPMP ở developer productivity cho code-first orchestration, SDK breadth, durable timer/signal/activity primitives, workflow versioning practice, operational maturity và production evidence. Với workflow thuần kỹ thuật do developer sở hữu, Temporal thường là lựa chọn ít rủi ro hơn.</p>
+<h3 id="khi-nào-chọn-nền-tảng-nào">Khi nào chọn nền tảng nào?<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#khi-nào-chọn-nền-tảng-nào" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    START[\&quot;Bắt đầu lựa chọn\&quot;] --> BA{\&quot;BA cần sở hữu model chuẩn BPMN?\&quot;}\n    BA -->|\&quot;Không\&quot;| CODE{\&quot;Workflow chủ yếu là code orchestration?\&quot;}\n    CODE -->|\&quot;Có\&quot;| TEMP[\&quot;Ưu tiên Temporal\&quot;]\n    CODE -->|\&quot;Không\&quot;| REVIEW[\&quot;Xem xét engine đơn giản / state machine riêng\&quot;]\n    BA -->|\&quot;Có\&quot;| CUSTOM{\&quot;Cần signed AOT WIR, embedded authz, atomic governance đặc thù?\&quot;}\n    CUSTOM -->|\&quot;Không\&quot;| CAM[\&quot;Ưu tiên Camunda 8\&quot;]\n    CUSTOM -->|\&quot;Có\&quot;| RISK{\&quot;Chấp nhận đầu tư platform và maturity risk?\&quot;}\n    RISK -->|\&quot;Có\&quot;| BPMP[\&quot;BPMP phù hợp chiến lược\&quot;]\n    RISK -->|\&quot;Không\&quot;| CAM&quot;">flowchart TD
+    START[&quot;Bắt đầu lựa chọn&quot;] --> BA{&quot;BA cần sở hữu model chuẩn BPMN?&quot;}
+    BA -->|&quot;Không&quot;| CODE{&quot;Workflow chủ yếu là code orchestration?&quot;}
+    CODE -->|&quot;Có&quot;| TEMP[&quot;Ưu tiên Temporal&quot;]
+    CODE -->|&quot;Không&quot;| REVIEW[&quot;Xem xét engine đơn giản / state machine riêng&quot;]
+    BA -->|&quot;Có&quot;| CUSTOM{&quot;Cần signed AOT WIR, embedded authz, atomic governance đặc thù?&quot;}
+    CUSTOM -->|&quot;Không&quot;| CAM[&quot;Ưu tiên Camunda 8&quot;]
+    CUSTOM -->|&quot;Có&quot;| RISK{&quot;Chấp nhận đầu tư platform và maturity risk?&quot;}
+    RISK -->|&quot;Có&quot;| BPMP[&quot;BPMP phù hợp chiến lược&quot;]
+    RISK -->|&quot;Không&quot;| CAM
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h2 id="15-scale-path-và-bottleneck">15. Scale path và bottleneck<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#15-scale-path-và-bottleneck" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Một Raft group có một leader serialization point. Scale đúng không phải thêm vô hạn follower mà là nhiều group/shard theo <code>(tenant_id, stream_id)</code> với shard directory và rebalancing an toàn.</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    ROUTER[\&quot;Shard Directory\&quot;] --> G1[\&quot;Raft Group A\\n3 Engine nodes\&quot;]\n    ROUTER --> G2[\&quot;Raft Group B\\n3 Engine nodes\&quot;]\n    ROUTER --> G3[\&quot;Raft Group C\\n3 Engine nodes\&quot;]\n    T1[\&quot;Tenant/Stream set 1\&quot;] --> ROUTER\n    T2[\&quot;Tenant/Stream set 2\&quot;] --> ROUTER\n    T3[\&quot;Tenant/Stream set 3\&quot;] --> ROUTER&quot;">flowchart LR
+    ROUTER[&quot;Shard Directory&quot;] --> G1[&quot;Raft Group A\n3 Engine nodes&quot;]
+    ROUTER --> G2[&quot;Raft Group B\n3 Engine nodes&quot;]
+    ROUTER --> G3[&quot;Raft Group C\n3 Engine nodes&quot;]
+    T1[&quot;Tenant/Stream set 1&quot;] --> ROUTER
+    T2[&quot;Tenant/Stream set 2&quot;] --> ROUTER
+    T3[&quot;Tenant/Stream set 3&quot;] --> ROUTER
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p>Các blocker trước tuyên bố 300k CCU:</p>
+<ul>
+<li>Shard directory và nhiều Raft group chưa hoàn thiện production.</li>
+<li>RocksDB log/apply/snapshot còn contention quanh write coordination.</li>
+<li>Cockpit realtime fanout cần index shard theo tenant + signal, durable resume và byte quota.</li>
+<li>PostgreSQL pool budget/PgBouncer phải dynamic và có global capacity plan.</li>
+<li>Redis trên request path cần explicit outage policy.</li>
+<li>Cần 30 phút ramp + 2 giờ soak với 300k connected-idle, normal peak và stress profile.</li>
+</ul>
+<h2 id="16-risk-register-và-production-gates">16. Risk register và production gates<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#16-risk-register-và-production-gates" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Risk</th><th>Tác động</th><th>Gate bắt buộc</th></tr></thead><tbody><tr><td>BPMN/DMN/CMMN standards breadth chưa đủ</td><td>Model enterprise bị fail-closed hoặc semantic gap</td><td>Catalog tests, grammar PBT, generated-code equivalence</td></tr><tr><td>Raft/network partition bug</td><td>Mất availability hoặc consistency</td><td>Model checking + 3/5 node chaos + membership tests</td></tr><tr><td>RocksDB compaction/snapshot stall</td><td>Tail latency tăng</td><td>Linux NVMe benchmark, bounded batch, snapshot isolation</td></tr><tr><td>Wasmtime CVE/version drift</td><td>Sandbox risk</td><td>Scheduled LTS qualification, CVE scan, artifact allowlist</td></tr><tr><td>Kafka lag/outbox poison event</td><td>Projection stale</td><td>DLQ/replay runbook, lag SLO, crash-before/after-ACK tests</td></tr><tr><td>Authz bundle/revoke cache corruption</td><td>Unauthorized transition hoặc outage</td><td>Fail-closed install, monotonic epoch, key rotation chaos</td></tr><tr><td>Dynamic config partial install</td><td>Replica dùng policy khác nhau</td><td>Per-process broadcast group, safe point, zero-lag rollout gate</td></tr><tr><td>300k realtime connections</td><td>Memory/FD/fanout collapse</td><td>Sharded hub, slow-consumer policy, long soak test</td></tr><tr><td>Custom platform maturity</td><td>Delivery/operations cost</td><td>Phased rollout, synthetic data until PII gates pass</td></tr></tbody></table></div>
+<h2 id="17-architecture-principles-cần-bảo-vệ">17. Architecture principles cần bảo vệ<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#17-architecture-principles-cần-bảo-vệ" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<ol>
+<li>Chỉ Engine diễn giải WIR và sở hữu authoritative transition.</li>
+<li><code>decide()</code>/<code>evolve()</code> không đọc clock, network, DB, environment hoặc random.</li>
+<li>Kafka không bao giờ được nâng thành authoritative event store của workflow.</li>
+<li>Không service nào query database của service khác.</li>
+<li>Original actor proof và idempotency key không bị Gateway thay thế.</li>
+<li>Event, idempotency, audit và outbox bắt buộc phải atomic.</li>
+<li>Encrypted path fail-closed; không có plaintext fallback.</li>
+<li>Config chỉ đổi tại command/batch/checkpoint safe point.</li>
+<li>Published artifact/config/policy là immutable; rollback tạo version mới.</li>
+<li>Queue, retry, cache, batch, message, goroutine/task và connection đều bounded.</li>
+</ol>
+<h2 id="18-nguồn-và-traceability">18. Nguồn và traceability<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#18-nguồn-và-traceability" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="nguồn-nội-bộ">Nguồn nội bộ<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#nguồn-nội-bộ" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li><code>D:/project/bpmp-platform/design.md</code></li>
+<li><code>D:/project/bpmp-platform/requirements.md</code></li>
+<li><code>D:/project/bpmp-platform/microservices-architecture.md</code></li>
+<li><code>D:/project/bpmp-platform/docs/adr/ADR-001-rust-deterministic-core.md</code></li>
+<li><code>D:/project/bpmp-platform/docs/adr/ADR-003-protobuf-durable-contracts.md</code></li>
+<li><code>D:/project/bpmp-platform/docs/adr/ADR-007-dynamic-configuration.md</code></li>
+<li><code>D:/project/bpmp-platform/docs/adr/ADR-008-embedded-authoritative-authorization.md</code></li>
+<li><code>D:/project/bpmp-platform/docs/requirement-1-compliance.md</code></li>
+<li><code>D:/project/bpmp-platform/docs/requirement-2-compliance.md</code></li>
+<li><code>D:/project/bpmp-platform/docs/300k-ccu-readiness.md</code></li>
+<li><code>D:/project/bpmp-platform/docs/build-and-deploy.md</code></li>
+<li><code>D:/project/bpmp-platform/docs/kafka-topology.md</code></li>
+</ul>
+<h3 id="nguồn-chính-thức-đối-chiếu-sản-phẩm">Nguồn chính thức đối chiếu sản phẩm<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#nguồn-chính-thức-đối-chiếu-sản-phẩm" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li><a href="https://docs.camunda.io/docs/components/zeebe/technical-concepts/architecture/" class="external">Camunda 8 architecture<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><a href="https://docs.camunda.io/docs/components/zeebe/technical-concepts/partitions/" class="external">Camunda 8 partitions and replication<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><a href="https://docs.camunda.io/docs/components/modeler/bpmn/bpmn-coverage/" class="external">Camunda 8 BPMN coverage<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><a href="https://docs.camunda.io/docs/components/modeler/bpmn/tasks/" class="external">Camunda 8 BPMN tasks<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><a href="https://docs.camunda.io/docs/reference/public-api/" class="external">Camunda 8 public API stability<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><a href="https://docs.temporal.io/" class="external">Temporal official documentation<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><a href="https://temporal.io/" class="external">Temporal durable execution overview<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+</ul>
+<blockquote class="callout note" data-callout="note">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Cách đọc so sánh </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>Các đặc điểm Camunda/Temporal ở trên dựa trên tài liệu chính thức được kiểm tra ngày 2026-08-06. Điểm “BPMP vượt trội” là lợi thế <strong>theo thiết kế và workload mục tiêu</strong>, chỉ trở thành lợi thế production sau khi các gate correctness, chaos, scale và operations tương ứng có bằng chứng đo được.</p>
+</div>
+</blockquote></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-42" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#bpmp-platform--phân-tích-kiến-trúc-và-công-nghệ" data-for="bpmp-platform--phân-tích-kiến-trúc-và-công-nghệ">BPMP Platform — Phân tích kiến trúc và công nghệ</a></li><li class="depth-1"><a href="#1-kết-luận-điều-hành" data-for="1-kết-luận-điều-hành">1. Kết luận điều hành</a></li><li class="depth-1"><a href="#2-các-lực-thiết-kế" data-for="2-các-lực-thiết-kế">2. Các lực thiết kế</a></li><li class="depth-1"><a href="#3-system-context" data-for="3-system-context">3. System context</a></li><li class="depth-2"><a href="#ranh-giới-trách-nhiệm-quan-trọng" data-for="ranh-giới-trách-nhiệm-quan-trọng">Ranh giới trách nhiệm quan trọng</a></li><li class="depth-1"><a href="#4-design-time-architecture-bpmn-as-ir" data-for="4-design-time-architecture-bpmn-as-ir">4. Design-time architecture: BPMN-as-IR</a></li><li class="depth-2"><a href="#vì-sao-compile-aot-thay-vì-parse-bpmn-lúc-runtime" data-for="vì-sao-compile-aot-thay-vì-parse-bpmn-lúc-runtime">Vì sao compile AOT thay vì parse BPMN lúc runtime?</a></li><li class="depth-2"><a href="#wir-là-gì" data-for="wir-là-gì">WIR là gì?</a></li><li class="depth-1"><a href="#5-runtime-deployment-architecture" data-for="5-runtime-deployment-architecture">5. Runtime deployment architecture</a></li><li class="depth-1"><a href="#6-authoritative-command-path" data-for="6-authoritative-command-path">6. Authoritative command path</a></li><li class="depth-2"><a href="#invariant-cốt-lõi" data-for="invariant-cốt-lõi">Invariant cốt lõi</a></li><li class="depth-1"><a href="#7-storage-và-consistency-model" data-for="7-storage-và-consistency-model">7. Storage và consistency model</a></li><li class="depth-1"><a href="#8-dynamic-configuration-và-safe-point" data-for="8-dynamic-configuration-và-safe-point">8. Dynamic configuration và safe point</a></li><li class="depth-1"><a href="#9-security-architecture" data-for="9-security-architecture">9. Security architecture</a></li><li class="depth-2"><a href="#tại-sao-authz-phải-embedded" data-for="tại-sao-authz-phải-embedded">Tại sao authz phải embedded?</a></li><li class="depth-1"><a href="#10-worker-model" data-for="10-worker-model">10. Worker model</a></li><li class="depth-1"><a href="#11-cqrs-projection-và-realtime" data-for="11-cqrs-projection-và-realtime">11. CQRS, projection và realtime</a></li><li class="depth-1"><a href="#12-vì-sao-chọn-từng-technology" data-for="12-vì-sao-chọn-từng-technology">12. Vì sao chọn từng technology</a></li><li class="depth-2"><a href="#stack-thực-tế-đang-được-pin-trong-repo" data-for="stack-thực-tế-đang-được-pin-trong-repo">Stack thực tế đang được pin trong repo</a></li><li class="depth-1"><a href="#13-build-và-deployment-flow" data-for="13-build-và-deployment-flow">13. Build và deployment flow</a></li><li class="depth-2"><a href="#production-order" data-for="production-order">Production order</a></li><li class="depth-1"><a href="#14-bpmp-so-với-camunda-8-và-temporal" data-for="14-bpmp-so-với-camunda-8-và-temporal">14. BPMP so với Camunda 8 và Temporal</a></li><li class="depth-2"><a href="#định-vị-đúng" data-for="định-vị-đúng">Định vị đúng</a></li><li class="depth-2"><a href="#ma-trận-so-sánh" data-for="ma-trận-so-sánh">Ma trận so sánh</a></li><li class="depth-2"><a href="#bpmp-vượt-trội-ở-đâu-nếu-hoàn-thành-đúng-thiết-kế" data-for="bpmp-vượt-trội-ở-đâu-nếu-hoàn-thành-đúng-thiết-kế">BPMP vượt trội ở đâu, nếu hoàn thành đúng thiết kế?</a></li><li class="depth-2"><a href="#khi-nào-chọn-nền-tảng-nào" data-for="khi-nào-chọn-nền-tảng-nào">Khi nào chọn nền tảng nào?</a></li><li class="depth-1"><a href="#15-scale-path-và-bottleneck" data-for="15-scale-path-và-bottleneck">15. Scale path và bottleneck</a></li><li class="depth-1"><a href="#16-risk-register-và-production-gates" data-for="16-risk-register-và-production-gates">16. Risk register và production gates</a></li><li class="depth-1"><a href="#17-architecture-principles-cần-bảo-vệ" data-for="17-architecture-principles-cần-bảo-vệ">17. Architecture principles cần bảo vệ</a></li><li class="depth-1"><a href="#18-nguồn-và-traceability" data-for="18-nguồn-và-traceability">18. Nguồn và traceability</a></li><li class="depth-2"><a href="#nguồn-nội-bộ" data-for="nguồn-nội-bộ">Nguồn nội bộ</a></li><li class="depth-2"><a href="#nguồn-chính-thức-đối-chiếu-sản-phẩm" data-for="nguồn-chính-thức-đối-chiếu-sản-phẩm">Nguồn chính thức đối chiếu sản phẩm</a></li><li class="overflow-end"></li></ul></div><div class="backlinks"><h3>Backlinks</h3><ul id="list-2" class="overflow"><li><a href="../BPMP-Platform/BPMP-Architecture-Independent-Review" class="internal">BPMP-Architecture-Independent-Review</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://dangthobach.github.io/">Back to Portfolio</a></li><li><a href="https://github.com/dangthobach">GitHub</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../postscript.js" type="module" data-persist="true"></script></html>

@@ -6,6 +6,18 @@
       <description>Last 10 notes on Dang Tho Bach&#039;s Knowledge Base</description>
       <generator>Quartz -- quartz.jzhao.xyz</generator>
       <item>
+    <title>BPMP-Architecture-Independent-Review</title>
+    <link>https://dangthobach.github.io/knowledge/BPMP-Platform/BPMP-Architecture-Independent-Review</link>
+    <guid>https://dangthobach.github.io/knowledge/BPMP-Platform/BPMP-Architecture-Independent-Review</guid>
+    <description><![CDATA[ BPMP Platform — Đánh giá kiến trúc độc lập Vị trí tài liệu này [[BPMP-Architecture-Technology-Deep-Dive]] mô tả kiến trúc mục tiêu rất chi tiết, đã có sẵn ma trận so sánh Camunda/Temporal và risk register. ]]></description>
+    <pubDate>Thu, 06 Aug 2026 00:00:00 GMT</pubDate>
+  </item><item>
+    <title>BPMP-Architecture-Technology-Deep-Dive</title>
+    <link>https://dangthobach.github.io/knowledge/BPMP-Platform/BPMP-Architecture-Technology-Deep-Dive</link>
+    <guid>https://dangthobach.github.io/knowledge/BPMP-Platform/BPMP-Architecture-Technology-Deep-Dive</guid>
+    <description><![CDATA[ BPMP Platform — Phân tích kiến trúc và công nghệ Mục tiêu tài liệu Tài liệu này diễn giải design.md thành một architecture deep dive có thể dùng cho review kỹ thuật, onboarding, quyết định đầu tư và chuẩn bị production. ]]></description>
+    <pubDate>Thu, 06 Aug 2026 00:00:00 GMT</pubDate>
+  </item><item>
     <title>Bai-34-Constants-Control-Flow-Arrays</title>
     <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-34-Constants-Control-Flow-Arrays</link>
     <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-34-Constants-Control-Flow-Arrays</guid>
@@ -52,18 +64,6 @@
     <link>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/05-Product-Service-Vertical-Slice</link>
     <guid>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/05-Product-Service-Vertical-Slice</guid>
     <description><![CDATA[ Bài 05 — Product Service: vertical slice đầu tiên Deliverable POST /v1/products và GET /v1/products/{id} chạy bằng net/http, business rule được test mà không cần HTTP. ]]></description>
-    <pubDate>Thu, 30 Jul 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>06-Chuan-Engineering-cho-moi-Service</title>
-    <link>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/06-Chuan-Engineering-cho-moi-Service</link>
-    <guid>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/06-Chuan-Engineering-cho-moi-Service</guid>
-    <description><![CDATA[ Bài 06 — Chuẩn Engineering cho mọi service Deliverable Product API có config validate lúc startup, structured logging, request ID, health endpoint và graceful shutdown. ]]></description>
-    <pubDate>Thu, 30 Jul 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>07-API-Gateway-Full-Feature-Blueprint</title>
-    <link>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/07-API-Gateway-Full-Feature-Blueprint</link>
-    <guid>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/07-API-Gateway-Full-Feature-Blueprint</guid>
-    <description><![CDATA[ Bài 07 — Full-feature API Gateway Blueprint Kết quả Có blueprint để xây edge-gateway bằng Go theo từng increment, biết chức năng nào thuộc gateway và chức năng nào phải ở service. ]]></description>
     <pubDate>Thu, 30 Jul 2026 00:00:00 GMT</pubDate>
   </item>
     </channel>
