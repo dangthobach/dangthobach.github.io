@@ -3,7 +3,7 @@ type: architecture
 domain: bpmp-platform
 status: active
 created: 2026-08-06
-updated: 2026-08-07
+updated: 2026-08-08
 tags:
   - bpmp
   - workflow-engine
@@ -18,24 +18,12 @@ aliases:
   - BPMP Technology Architecture
 source-repository: D:/project/bpmp-platform
 source-baseline: design.md
-assessment-date: 2026-08-07
-assessment-commit: ac60f91b3f7057f32336e5371fd5720e5fbf0c14
-assessment-verdict: not-approved-for-regulated-production
 ---
 
 # BPMP Platform — Phân tích kiến trúc và công nghệ
 
 > [!abstract] Mục tiêu tài liệu
 > Tài liệu này diễn giải `design.md` thành một architecture deep dive có thể dùng cho review kỹ thuật, onboarding, quyết định đầu tư và chuẩn bị production. Nội dung phân biệt rõ **kiến trúc mục tiêu**, **code đã có bằng chứng**, và **năng lực còn phải kiểm chứng**. BPMP được so sánh với Camunda 8 và Temporal theo workload, không theo khẩu hiệu sản phẩm.
-
-> [!info] Quy ước mức bằng chứng
-> - **Implemented:** có code production path trong baseline repository.
-> - **Verified:** có test hoặc E2E chạy qua đúng production-shaped boundary liên quan.
-> - **Partial:** đã có implementation/evidence lõi nhưng thiếu một phần standards breadth, failure injection, scale hoặc operations.
-> - **Designed:** mới có requirement/design/ADR; chưa được coi là năng lực runtime.
-> - **Unproven:** có code hoặc topology nhưng chưa có workload/chaos/soak evidence đủ để đưa ra claim production.
->
-> Mọi claim không gắn evidence trong tài liệu này phải được hiểu là **target architecture**, không phải production capability.
 
 ## 1. Kết luận điều hành
 
@@ -48,7 +36,7 @@ BPMP là một workflow platform theo hướng **BPMN-as-IR + deterministic dura
 5. Event, idempotency result, audit, outbox và governance/compensation liên quan được ghi atomically.
 6. Kafka chỉ phát committed integration event; PostgreSQL phục vụ bounded context và query model, không thay Engine làm nguồn sự thật.
 
-BPMP không đơn thuần là “Camunda viết lại bằng Rust” và cũng không phải “Temporal có BPMN UI”. Điểm khác biệt là đưa BPMN/DMN/CMMN qua một **compiler boundary** giống compiler ngôn ngữ lập trình, sau đó chạy một **typed intermediate representation** trong một deterministic event-sourced engine.
+BPMP không đơn thuần là "Camunda viết lại bằng Rust" và cũng không phải "Temporal có BPMN UI". Điểm khác biệt là đưa BPMN/DMN/CMMN qua một **compiler boundary** giống compiler ngôn ngữ lập trình, sau đó chạy một **typed intermediate representation** trong một deterministic event-sourced engine.
 
 > [!warning] Trạng thái tuyên bố
 > E2E hiện đã chứng minh topology Kafka/PostgreSQL/ba Engine process/Human Runtime/API Gateway/Cockpit, durable projection, governance và leader failover. Tuy nhiên, tài liệu compliance vẫn xác nhận Requirement 1 chưa phủ toàn bộ catalog BPMN/DMN/CMMN theo nghĩa tuyệt đối; Requirement 2 còn thiếu một số production-path evidence. Kiến trúc hiện tại cũng chưa đủ bằng chứng để tuyên bố 300k CCU nếu chưa có sharding nhiều Raft group, realtime fanout sharding và soak test production-like.
@@ -85,8 +73,6 @@ flowchart LR
     KMS["KMS / Vault / HSM"] <--> PLATFORM
 ```
 
-*Loại hình: system-context view. `BPMP Platform` là một system boundary logic; sơ đồ này không thể hiện deployable, protocol nội bộ, cardinality hay network zone.*
-
 ### Ranh giới trách nhiệm quan trọng
 
 | Deployable | Sở hữu | Tuyệt đối không sở hữu |
@@ -107,23 +93,21 @@ flowchart LR
 ```mermaid
 flowchart TB
     SRC["BPMN / DMN / CMMN XML"]
-    P1["1. Bounded streaming parse\nquick-xml + source spans"]
-    P2["2. Two-pass symbol resolution\nforward references"]
-    P3["3. Semantic validation\ngraph, gateway, SLA, data contracts"]
-    P4["4. Normalize / desugar\nsubprocess, boundary, multi-instance"]
-    P5["5. Lower to typed WIR\ndecision tables and sentries"]
-    P6["6. Canonicalize and optimize\nstable ordering and indexes"]
-    P7["7. Protobuf serialize\nhash + Ed25519 signature"]
+    P1["1. Bounded streaming parse<br/>quick-xml + source spans"]
+    P2["2. Two-pass symbol resolution<br/>forward references"]
+    P3["3. Semantic validation<br/>graph, gateway, SLA, data contracts"]
+    P4["4. Normalize / desugar<br/>subprocess, boundary, multi-instance"]
+    P5["5. Lower to typed WIR<br/>decision tables and sentries"]
+    P6["6. Canonicalize and optimize<br/>stable ordering and indexes"]
+    P7["7. Protobuf serialize<br/>hash + Ed25519 signature"]
     REG["Immutable WIR Registry"]
-    CI["Buf lint / breaking\nround-trip / corpus / property tests"]
+    CI["Buf lint / breaking<br/>round-trip / corpus / property tests"]
 
     SRC --> P1 --> P2 --> P3 --> P4 --> P5 --> P6 --> P7 --> REG
     CI -.-> P1
     CI -.-> P3
     CI -.-> P7
 ```
-
-*Loại hình: compiler pipeline. Mũi tên liền là artifact transformation; mũi tên nét đứt là quality gate tác động vào nhiều pha, không phải runtime dependency.*
 
 ### Vì sao compile AOT thay vì parse BPMN lúc runtime?
 
@@ -141,37 +125,77 @@ WIR không phải DTO sao chép BPMN XML. Nó là state-machine IR gồm node/tr
 ```mermaid
 flowchart LR
     XML["Rich XML model"] -->|"compile"| WIR["Minimal typed WIR"]
-    WIR --> TABLE["O(1) candidate-row lookup\n+ bounded guard evaluation"]
-    WIR --> HASH["Canonical bytes + content hash"]
-    WIR --> SIGN["Signed artifact envelope"]
-    WIR --> VERSION["Version-pinned interpretation"]
-    WIR -.-> CODEGEN["Generated Rust\nbehavioral equivalence partial"]
+    WIR --> TABLE["O(1) transition lookup"]
+    WIR --> HASH["Canonical hash"]
+    WIR --> SIGN["Signature verification"]
+    WIR --> REPLAY["Stable replay semantics"]
+    WIR --> CODEGEN["Generated Rust state machine"]
 ```
-
-*Loại hình: property map, không phải execution flow. WIR góp phần ổn định replay nhưng replay correctness còn phụ thuộc version-pinned interpreter, event ordering, upcaster và injected nondeterministic inputs. Nét đứt đánh dấu generated-Rust path chưa có full behavioral-equivalence evidence.*
 
 ## 5. Runtime deployment architecture
 
 ```mermaid
-flowchart LR
-    EDGE["Edge and Experience\ncockpit-web • api-gateway • cockpit-gateway"]
-    CONTROL["Control Plane\ncompiler/registry • configuration\nauthz administration • governance"]
-    RG["Authoritative Engine Raft Group\n3 members, dynamic leader\nRust + per-member RocksDB"]
-    EXEC["Execution and Query\nhuman-runtime • projection-service\nlocal WASM • remote workers"]
-    BUS["Kafka / Redpanda\nintegration feed"]
-    OPS["Platform Dependencies\nRedis • KMS/HSM • OTel"]
+flowchart TB
+    subgraph Edge["Edge and Experience"]
+        WEB["Cockpit Web<br/>React 19 + Vite + Nginx"]
+        API["API Gateway<br/>Go REST / gRPC client"]
+        PUSH["Cockpit Gateway<br/>Go SSE / realtime"]
+        AUTHAPP["Authz Administration API<br/>Rust"]
+    end
 
-    EDGE -->|"commands; any member forwards to leader"| RG
-    CONTROL -->|"signed WIR/policy/proof + config snapshot"| RG
-    RG <-->|"actor-preserving completion\nassignment/result protocol"| EXEC
-    RG -->|"transactional outbox"| BUS
-    BUS -->|"committed integration events"| EXEC
-    BUS -->|"realtime hints"| EDGE
-    EDGE -.->|"rate limit + telemetry"| OPS
-    RG <-->|"crypto/key operations + telemetry"| OPS
+    subgraph Control["Control Plane"]
+        CFG["Configuration Service<br/>Go"]
+        AUTHSRV["Authz Policy Server<br/>Rust + PostgreSQL"]
+        GOV["Governance Service<br/>Go/Rust bounded context"]
+        COMP["BPMN Compiler<br/>Rust"]
+    end
+
+    subgraph Authority["Authoritative Workflow Data Plane"]
+        E1["Engine node 1<br/>Rust + RocksDB"]
+        E2["Engine node 2<br/>Rust + RocksDB"]
+        E3["Engine node 3<br/>Rust + RocksDB"]
+        E1 <-->|"OpenRaft"| E2
+        E2 <-->|"OpenRaft"| E3
+        E3 <-->|"OpenRaft"| E1
+    end
+
+    subgraph Execution["Execution and Query"]
+        HUMAN["Human Runtime<br/>Go + PostgreSQL"]
+        PROJ["Projection Service<br/>Go + PostgreSQL"]
+        WASM["Local WASM Worker<br/>Wasmtime"]
+        REMOTE["Remote Workers<br/>bidirectional tonic gRPC"]
+    end
+
+    subgraph Platform["Platform Services"]
+        KAFKA["Kafka / Redpanda<br/>Integration Feed"]
+        REDIS["Redis<br/>Distributed rate limit / ephemeral cache"]
+        OTEL["OpenTelemetry Collector"]
+        KMS["KMS / Vault / HSM"]
+    end
+
+    WEB --> API
+    WEB --> PUSH
+    WEB --> AUTHAPP
+    API --> E2
+    API --> HUMAN
+    API --> REDIS
+    COMP -->|"Signed WIR"| E1
+    CFG -->|"Snapshot over mTLS"| API
+    CFG -->|"Snapshot over mTLS"| E1
+    CFG -->|"Invalidation"| KAFKA
+    AUTHAPP --> AUTHSRV
+    GOV -->|"Dual-control command"| E2
+    E1 --> WASM
+    E1 <-->|"Credit protocol"| REMOTE
+    E1 -->|"Transactional outbox"| KAFKA
+    KAFKA --> HUMAN
+    KAFKA --> PROJ
+    KAFKA --> PUSH
+    E1 <--> KMS
+    API --> OTEL
+    E1 --> OTEL
+    HUMAN --> OTEL
 ```
-
-*Loại hình: summary logical deployment view. Các box aggregate nhiều deployable để giữ một nguồn authority ở trung tâm và tránh spaghetti; bảng ownership ngay dưới và các diagram command/config/security/CQRS cung cấp chi tiết. `Engine Raft Group` gộp ba process, không ngụ ý vai trò leader cố định. Sơ đồ không phải pod, network-zone hay protocol-completeness diagram.*
 
 ## 6. Authoritative command path
 
@@ -188,37 +212,26 @@ sequenceDiagram
     participant K as Kafka Publisher
 
     C->>G: Command + JWT + tenant + idempotency key
-    G->>G: Correlation/request ID, coarse authn, rate limit, validation
+    G->>G: Recovery, request ID, coarse authn, rate limit, validation
     G->>E: gRPC command + original actor proof + workload proof
-    E->>A: Verify workload and actor, then evaluate signed bundle
+    E->>A: Verify workload and actor; evaluate signed bundle
     alt Denied or stale revoke epoch
-        A-->>E: Denied
-        E-->>G: Typed authorization error, no mutation
-        G-->>C: Safe error response
+        A-->>C: Fail closed; no state mutation
     else Allowed
         E->>E: Check tenant-scoped idempotency
-        alt Duplicate with matching semantic digest
-            E-->>G: Return stored durable receipt
-            G-->>C: Same command result
-        else New command
-            E->>D: decide(state, command, config snapshot, injected time)
-            D-->>E: Deterministic events
-            E->>R: client_write(authoritative command)
-            R->>R: Replicate and quorum commit
-            R->>S: Apply committed entry as one WriteBatch
-            Note over S: event + idempotency + audit + outbox<br/>stream metadata + compensation/governance
-            S-->>E: Durable receipt
-            E-->>G: Command receipt
-            G-->>C: Command result
-            K->>S: Poll ordered outbox
-            K->>K: Publish and wait broker ACK
-            K->>S: Persist checkpoint after ACK
-            Note over K,S: Crash after ACK and before checkpoint may republish,<br/>event_id-based consumer dedup is mandatory
-        end
+        E->>D: decide(state, command, config snapshot, injected time)
+        D-->>E: Deterministic events
+        E->>R: client_write(authoritative command)
+        R->>R: Replicate and quorum commit
+        R->>S: Apply one atomic WriteBatch
+        Note over S: event + idempotency + audit + outbox<br/>stream metadata + compensation/governance
+        S-->>E: Durable receipt
+        E-->>C: Command receipt
+        K->>S: Poll ordered outbox
+        K->>K: Publish and wait broker ACK
+        K->>S: Persist checkpoint after ACK
     end
 ```
-
-*Loại hình: success/duplicate/deny sequence for one authoritative command. Gateway luôn nằm trên response path; Kafka publication xảy ra hậu commit và không quyết định command validity.*
 
 ### Invariant cốt lõi
 
@@ -235,23 +248,19 @@ Không có trạng thái hợp lệ trong đó workflow event đã commit nhưng
 
 ```mermaid
 flowchart LR
-    CMD["Authoritative Command"] --> RAFT["Raft Log\nstrong ordering per group"]
+    CMD["Authoritative Command"] --> RAFT["Raft Log<br/>strong ordering per group"]
     RAFT --> WB["RocksDB WriteBatch"]
     WB --> EV["Encrypted Events"]
-    WB --> STATE["Stream Metadata"]
+    WB --> STATE["Stream Metadata / Snapshot"]
     WB --> IDEM["Idempotency Result"]
     WB --> AUDIT["Authorization Audit"]
     WB --> OUTBOX["Ordered Outbox"]
     WB --> LEDGER["Compensation / Governance Ledger"]
-    EV -.->|"periodic, version-pinned"| SNAP["Encrypted Snapshot"]
-    OUTBOX -->|"publish"| BUS["Kafka Integration Feed"]
-    BUS -.->|"broker ACK"| CP["Durable Outbox Checkpoint"]
+    OUTBOX -->|"ACK then checkpoint"| BUS["Kafka Integration Feed"]
     BUS --> HRDB["Human Runtime PostgreSQL"]
     BUS --> QDB["Projection PostgreSQL"]
     BUS --> RT["Realtime Gateway"]
 ```
-
-*Loại hình: storage ownership and post-commit propagation. Các nhánh từ `WriteBatch` là cùng authoritative apply; snapshot là công việc định kỳ/version-pinned, không được hiểu là tạo ở mọi command. Broker ACK chỉ cho phép advance outbox checkpoint; nó không biến Kafka thành nguồn sự thật.*
 
 | Store | Vai trò | Consistency | Có thể rebuild? |
 |---|---|---|---|
@@ -273,26 +282,21 @@ flowchart TB
     DRAFT --> VALIDATE["Owner schema validation"]
     VALIDATE --> PUBLISH["Immutable published version"]
     PUBLISH --> DB["PostgreSQL + audit + transactional outbox"]
-    DB --> BUS["Kafka invalidation\npartitioned by tenant"]
-    BUS --> CONSUMER["Per-process stable consumer group"]
-    CONSUMER --> API["Resolve latest snapshot over mTLS"]
-    API --> INSTALL["Validate hash, version, owner completeness"]
-    INSTALL --> CACHE["Atomic per-process cache install"]
-    CACHE --> COMMAND["Next command safe point"]
-    CACHE --> BATCH["Next batch safe point"]
-    CACHE --> CHECKPOINT["After durable checkpoint"]
+    DB --> BUS["Kafka invalidation<br/>partitioned by tenant"]
+    BUS --> CACHE["Per-process runtime cache"]
+    CACHE --> RESOLVE["Resolve hierarchy"]
+    RESOLVE --> SNAP["Immutable ResolvedConfigSnapshot"]
+    SNAP --> COMMAND["Start of command"]
+    SNAP --> BATCH["Start of batch"]
+    SNAP --> CHECKPOINT["After durable checkpoint"]
 
-    DB --> RESOLVE["Resolve hierarchy"]
     PLATFORM["Platform"] --> RESOLVE
     ENV["Environment"] --> RESOLVE
     TENANT["Tenant"] --> RESOLVE
     TYPE["Workflow type"] --> RESOLVE
     VERSION["Workflow version"] --> RESOLVE
     INSTANCE["Approved instance override"] --> RESOLVE
-    RESOLVE --> API
 ```
-
-*Loại hình: configuration publication and installation sequence. Kafka message là invalidation signal, không mang authoritative snapshot; mỗi process dùng consumer group riêng để mọi replica đều cài version mới. Cache chỉ đổi tại safe point phù hợp với loại workload.*
 
 Policy không được đổi giữa transaction, WriteBatch hoặc Kafka acknowledgement sequence. Event/audit ghi `config_version` và `policy_version`, nhờ đó replay và điều tra biết quyết định lịch sử dùng policy nào.
 
@@ -302,22 +306,18 @@ Các giá trị phải dynamic gồm rate limit, quota, timeout, retry/backoff, 
 
 ```mermaid
 flowchart LR
-    ACTOR["End-user JWT\nactor identity"] --> GW["Gateway coarse verification"]
+    ACTOR["End-user JWT<br/>actor identity"] --> GW["Gateway coarse verification"]
     WORKLOAD["mTLS / signed workload context"] --> ENG["Engine ingress"]
     GW -->|"original actor proof preserved"| ENG
-    KEYS["Locally cached verification keys"] --> VERIFY["Verify actor + workload proof\ntenant, audience, command, time bounds"]
-    ENG --> VERIFY
-    VERIFY --> EVAL["Pure authz evaluator\nno DB/network/clock"]
-    BUNDLE["Verified signed policy bundle"] --> EVAL
-    REVOKE["Monotonic revoke floors"] --> EVAL
-    EVAL -->|"ALLOW metadata"| PREPARE["Prepare encrypted consequences"]
+    ENG --> VERIFY["JWT/JWKS + workload verifier"]
+    BUNDLE["Signed policy bundle"] --> VERIFY
+    REVOKE["Monotonic revoke epoch"] --> VERIFY
+    VERIFY --> EVAL["Pure authz evaluator<br/>no DB/network/clock"]
+    EVAL -->|"ALLOW metadata"| ATOMIC["Atomic audit + event commit"]
     EVAL -->|"DENY"| REJECT["No state change"]
-    KMS["KMS / HSM\ncache miss, rotate, shred"] --> CRYPTO["Bounded DEK cache + local crypto"]
-    CRYPTO --> PREPARE
-    PREPARE --> ATOMIC["Atomic audit + event commit"]
+    KMS["KMS / HSM"] --> CRYPTO["DEK cache / payload crypto"]
+    CRYPTO --> ATOMIC
 ```
-
-*Loại hình: trust-boundary data flow. Pure evaluator chỉ nhận verified local inputs; KMS/JWKS network I/O không được ngầm đặt trong evaluator. Nếu proof, bundle, revoke floor hoặc DEK không hợp lệ thì path fail closed trước state mutation.*
 
 ### Tại sao authz phải embedded?
 
@@ -325,13 +325,13 @@ flowchart LR
 - Cache remote dễ tạo cửa sổ policy stale.
 - Workload identity không được phép đại diện end-user actor.
 - Evaluator thuần nhận đầy đủ bundle, proof, epoch và evaluation timestamp đã inject, nên replay/test xác định.
-- ALLOW audit được commit cùng transition, không tồn tại “transition thành công nhưng thiếu bằng chứng quyền”.
+- ALLOW audit được commit cùng transition, không tồn tại "transition thành công nhưng thiếu bằng chứng quyền".
 
 ## 10. Worker model
 
 | Loại worker | Công nghệ | Khi dùng | Cơ chế bảo vệ |
 |---|---|---|---|
-| Local script/service task | Wasmtime | Logic nhỏ cần latency thấp; chạy ngoài pure `decide/evolve` dù cùng Engine process | Fuel, memory limiter, capability allowlist, pinned artifact, durable/idempotent completion |
+| Local script/service task | Wasmtime | Logic nhỏ, deterministic-ish, cần latency thấp | Fuel, memory limiter, capability allowlist, pinned artifact |
 | Remote worker | tonic bidirectional gRPC | Tích hợp hệ thống ngoài, SDK đa ngôn ngữ | Credit, bounded inflight, signed assignment token, lease, ACK |
 | Human task | Human Runtime Go | Assignment, delegation, SLA, maker-checker | PostgreSQL version, durable intent, authoritative completion tại Engine |
 
@@ -349,21 +349,15 @@ sequenceDiagram
     participant DB as Read Model PostgreSQL
     participant R as Cockpit Gateway
     participant UI as Cockpit Web
-    participant G as API Gateway
 
     E->>K: Publish committed event
     K->>P: Poll bounded batch
-    P->>DB: Transactionally write inbox + projection + checkpoint
+    P->>DB: BEGIN; inbox + projection + checkpoint; COMMIT
     P->>K: Commit offset
     K->>R: Committed event hint
     R-->>UI: SSE signal with cursor
-    UI->>G: Resync/query with tenant scope
-    G->>P: Query current read model
-    P-->>G: Page + projection checkpoint/staleness
-    G-->>UI: Current query result
+    UI->>P: Query authoritative read model through API
 ```
-
-*Loại hình: CQRS propagation and resync sequence. SSE là hint có thể mất/drop; UI correctness đến từ query lại read model. Projection vẫn eventual so với Engine authority, vì vậy checkpoint/staleness phải lộ ra khi quyết định người dùng phụ thuộc freshness.*
 
 ## 12. Vì sao chọn từng technology
 
@@ -402,24 +396,21 @@ sequenceDiagram
 
 ```mermaid
 flowchart TB
-    SOURCE["Monorepo\nRust + Go + React + Proto"]
+    SOURCE["Monorepo<br/>Rust + Go + React + Proto"]
     CONTRACT["Buf lint / breaking / generate"]
-    TEST["fmt + clippy + cargo test\ngo test/race/vet\nVitest + typecheck + build"]
-    IMAGE["BuildKit multi-stage images\ncache Cargo/Go/npm"]
-    FIX["Fixture generator\nTLS, JWT, JWKS, WIR, policy, config, SQL"]
-    INFRA["Phase 1 infrastructure\nPostgreSQL, Redis, Redpanda, OTel"]
+    TEST["fmt + clippy + cargo test<br/>go test/race/vet<br/>Vitest + typecheck + build"]
+    IMAGE["BuildKit multi-stage images<br/>cache Cargo/Go/npm"]
+    FIX["Fixture generator<br/>TLS, JWT, JWKS, WIR, policy, config, SQL"]
+    INFRA["Phase 1 infrastructure<br/>PostgreSQL, Redis, Redpanda, OTel"]
     MIG["One-shot migrations and topic init"]
-    APP["Phase 2 applications\nConfig -> Engine quorum -> projections -> edge"]
+    APP["Phase 2 applications<br/>Config -> Engine quorum -> projections -> edge"]
     HEALTH["livez / readyz / mTLS probes"]
-    E2E["Broker-backed E2E\nworkflow + human + projection + governance"]
-    FAIL["Functional leader-failover gate"]
-    PROD["Release gates\ncompatibility + security + chaos\ncapacity + DR/restore"]
+    E2E["Broker-backed E2E<br/>workflow + human + projection + governance"]
+    FAIL["Leader failover and crash recovery"]
     PROMOTE["Immutable image digest + GitOps promotion"]
 
-    SOURCE --> CONTRACT --> TEST --> IMAGE --> FIX --> INFRA --> MIG --> APP --> HEALTH --> E2E --> FAIL --> PROD --> PROMOTE
+    SOURCE --> CONTRACT --> TEST --> IMAGE --> FIX --> INFRA --> MIG --> APP --> HEALTH --> E2E --> FAIL --> PROMOTE
 ```
-
-*Loại hình: release-gate pipeline. Đây là dependency/order model, không phải thời lượng pipeline. Functional E2E và một leader-failover scenario không đủ để đi thẳng tới production promotion; compatibility, security, broader chaos, capacity và restore là gate độc lập.*
 
 ### Production order
 
@@ -452,8 +443,8 @@ flowchart TB
 | Authority | Rust Engine + RocksDB/Raft | Zeebe broker partition | Temporal Service history + workflow workers |
 | Business logic execution | Local WASM hoặc remote gRPC worker | External job workers/connectors | Activities + workflow code workers |
 | Human task | Bounded context riêng, authoritative completion quay về Engine | Tasklist/user tasks tích hợp | Pattern/SDK, không BPMN-native |
-| DMN/CMMN | Typed IR; hiện mới hỗ trợ profile giới hạn | DMN và BPMN profile; Zeebe không chạy CMMN | Không native BPMN/DMN/CMMN |
-| Authz transition | Embedded evaluator, signed bundle, revoke epoch, atomic ALLOW audit | Camunda 8.9 có Orchestration Cluster và user-task authorization; không cùng mô hình embedded ABAC/revoke-epoch/atomic audit của BPMP | Server/API authorization; quyền nghiệp vụ chi tiết thường nằm trong application/workflow design |
+| DMN/CMMN | Typed IR; breadth còn đang mở rộng | DMN mạnh; BPMN coverage công bố rõ | Không native BPMN/DMN/CMMN |
+| Authz transition | Embedded evaluator, signed bundle, revoke epoch, atomic audit | Thường dựa identity/authorization của platform và app integration | Namespace/API auth + application authorization pattern |
 | Config replayability | `config_version`/`policy_version` đi cùng event/audit | Có config/deployment mechanisms, không cùng BPMP model | Workflow code/versioning và search attributes; app config do ứng dụng quản trị |
 | Governance atomicity | Compensation/governance consequences trong Engine commit | Cần mô hình hóa/integration theo use case | Saga/compensation viết bằng workflow code |
 | Maturity/ecosystem | Đang xây dựng, rủi ro cao hơn | Production mature, ecosystem lớn | Production mature, SDK/ecosystem lớn |
@@ -471,7 +462,7 @@ flowchart TB
 6. **Local sandboxed execution:** Wasmtime cho task phù hợp có thể giảm network hop so với mọi service task đều là external job worker.
 7. **Config snapshot replayable:** tenant/workflow policy được version hóa và gắn vào quyết định lịch sử.
 
-Camunda vẫn vượt BPMP rõ ràng ở maturity, BPMN tooling, connector ecosystem, vận hành cluster, documentation, support và bằng chứng scale. Camunda 8 cũng dùng partition + Raft replication và RocksDB; vì vậy “BPMP có Raft/RocksDB” tự nó **không** phải lợi thế cạnh tranh.
+Camunda vẫn vượt BPMP rõ ràng ở maturity, BPMN tooling, connector ecosystem, vận hành cluster, documentation, support và bằng chứng scale. Camunda 8 cũng dùng partition + Raft replication và RocksDB; vì vậy "BPMP có Raft/RocksDB" tự nó **không** phải lợi thế cạnh tranh.
 
 #### 14.2 So với Temporal
 
@@ -488,22 +479,16 @@ Temporal vẫn vượt BPMP ở developer productivity cho code-first orchestrat
 
 ```mermaid
 flowchart TD
-    START["Bắt đầu lựa chọn"] --> BA{"BA phải sở hữu executable BPMN?"}
-    BA -->|"Không"| CODE{"Long-lived orchestration chủ yếu là code?"}
+    START["Bắt đầu lựa chọn"] --> BA{"BA cần sở hữu model chuẩn BPMN?"}
+    BA -->|"Không"| CODE{"Workflow chủ yếu là code orchestration?"}
     CODE -->|"Có"| TEMP["Ưu tiên Temporal"]
-    CODE -->|"Không"| REVIEW["Ưu tiên state machine/workflow đơn giản nhất đủ dùng"]
-    BA -->|"Có"| FIT{"Camunda profile/tooling đáp ứng invariant bắt buộc?"}
-    FIT -->|"Có"| MIX{"Có sub-workflow code-first độc lập?"}
-    MIX -->|"Không"| CAM["Ưu tiên Camunda 8"]
-    MIX -->|"Có"| HYBRID["Đánh giá Camunda + Temporal\nchỉ khi ownership/failure boundary rõ"]
-    FIT -->|"Không"| CUSTOM{"Khác biệt có đủ giá trị?\nsigned AOT WIR, embedded authz,\natomic governance"}
-    CUSTOM -->|"Không"| RESCOPE["Re-scope requirement hoặc dùng product + integration"]
-    CUSTOM -->|"Có"| RISK{"Có funding đa năm, operator ownership\nvà chấp nhận maturity gates?"}
-    RISK -->|"Có"| BPMP["BPMP là candidate\nchạy pilot và promotion gates"]
-    RISK -->|"Không"| RESCOPE
+    CODE -->|"Không"| REVIEW["Xem xét engine đơn giản / state machine riêng"]
+    BA -->|"Có"| CUSTOM{"Cần signed AOT WIR, embedded authz, atomic governance đặc thù?"}
+    CUSTOM -->|"Không"| CAM["Ưu tiên Camunda 8"]
+    CUSTOM -->|"Có"| RISK{"Chấp nhận đầu tư platform và maturity risk?"}
+    RISK -->|"Có"| BPMP["BPMP phù hợp chiến lược"]
+    RISK -->|"Không"| CAM
 ```
-
-*Loại hình: decision-support tree, không phải scoring algorithm. Kết quả là shortlist/candidate chứ không phải quyết định mua/xây tự động; TCO, licensing, data residency, team capability và measured workload vẫn phải đi qua ADR.*
 
 ## 15. Scale path và bottleneck
 
@@ -511,16 +496,13 @@ Một Raft group có một leader serialization point. Scale đúng không phả
 
 ```mermaid
 flowchart LR
-    CMD["Command\ntenant_id + stream_id"] --> ROUTER["Shard Directory Router"]
-    MAP["Versioned shard map\nowner group + routing epoch"] --> ROUTER
-    ROUTER -->|"group A"| G1["Raft Group A\nleader + 2 followers"]
-    ROUTER -->|"group B"| G2["Raft Group B\nleader + 2 followers"]
-    ROUTER -->|"group C"| G3["Raft Group C\nleader + 2 followers"]
-    REBAL["Rebalance protocol\nfence old owner -> transfer -> activate"] -.-> MAP
-    ROUTER -->|"stale/unknown epoch"| RETRY["Refresh map and retry\nsame idempotency key"]
+    ROUTER["Shard Directory"] --> G1["Raft Group A<br/>3 Engine nodes"]
+    ROUTER --> G2["Raft Group B<br/>3 Engine nodes"]
+    ROUTER --> G3["Raft Group C<br/>3 Engine nodes"]
+    T1["Tenant/Stream set 1"] --> ROUTER
+    T2["Tenant/Stream set 2"] --> ROUTER
+    T3["Tenant/Stream set 3"] --> ROUTER
 ```
-
-*Loại hình: target sharding model, hiện chưa phải implemented production topology. Một `(tenant_id, stream_id)` chỉ có đúng một authoritative owner group tại một routing epoch; rebalance phải fence owner cũ trước khi owner mới nhận write. Directory availability không được làm hai group cùng commit một stream.*
 
 Các blocker trước tuyên bố 300k CCU:
 
@@ -558,203 +540,7 @@ Các blocker trước tuyên bố 300k CCU:
 9. Published artifact/config/policy là immutable; rollback tạo version mới.
 10. Queue, retry, cache, batch, message, goroutine/task và connection đều bounded.
 
-## 18. Production assessment scope và baseline
-
-### Assessment verdict
-
-| Phạm vi sử dụng | Verdict tại baseline | Lý do |
-|---|---|---|
-| Local development / học tập / portfolio | **Ready** | Build topology, functional tests và bounded-context boundaries đã đủ rõ |
-| Functional MVP với synthetic data | **Conditionally ready** | Core command, Human Runtime, projection, governance và leader-failover path đã có evidence; phải giữ đúng pinned topology |
-| Internal pilot không chứa PII, tải giới hạn | **Conditionally ready after pilot gates** | Cần workload definition, error budget, restore drill và failure injection cho dependency thật |
-| Production có PII hoặc quyết định tài chính | **Not approved** | Standards breadth, production KMS/rotation, DR/restore, long soak, multi-zone chaos và operational ownership chưa đủ evidence |
-| Thay Camunda/Temporal ở workload mission-critical | **Not approved** | Chưa có maturity, compatibility window, scale history, upgrade/rollback history và operator runbook tương đương |
-
-Assessment này dùng repository `D:/project/bpmp-platform` tại commit `ac60f91b3f7057f32336e5371fd5720e5fbf0c14` ngày 2026-08-06. Một claim chỉ được nâng cấp sau baseline này khi evidence tương ứng được bổ sung và trace lại vào tài liệu.
-
-### Workload bắt buộc phải định nghĩa trước capacity claim
-
-Không dùng duy nhất từ “CCU”. Mọi benchmark hoặc SLO phải ghi ít nhất:
-
-| Dimension | Giá trị cần công bố |
-|---|---|
-| Connection shape | HTTP, SSE/WebSocket, remote-worker gRPC; connected-idle hay active |
-| Active ratio | Phần trăm connection phát request/task trong mỗi cửa sổ |
-| Command/read mix | Workflow command, task operation, query và realtime hint mỗi giây |
-| Payload | p50/p95/p99 bytes trước và sau serialization/encryption |
-| Workflow shape | Event count/instance, fan-out, multi-instance cardinality, timer density |
-| Tenant skew | Hot tenant, hot stream, dedicated/shared shard distribution |
-| Durability | Raft group size, zone layout, fsync policy, broker ACK policy |
-| Latency | p50/p95/p99 và timeout/error budget, không chỉ average |
-| Test duration | Ramp, steady-state soak, failure window và recovery window |
-
-## 19. Claim-to-evidence matrix
-
-| Claim | Status | Code/test evidence | Residual risk / điều kiện nâng cấp |
-|---|---|---|---|
-| Chỉ Rust Engine diễn giải WIR và quyết định authoritative transition | **Verified architectural boundary** | `ADR-001`; `crates/bpmp-domain-core`; Go services dùng generated contract | Cần dependency/architecture test trong CI để ngăn logic WIR bị copy sang service khác |
-| WIR là signed, versioned Protobuf artifact | **Verified core** | `ADR-003`; compiler acceptance AC10/AC12; compiler-to-engine loading | Chưa có schema v2 và old-version golden compatibility suite |
-| BPMN/DMN/CMMN compiler đáp ứng full standards catalog | **Partial** | Requirement 1 executable profile 12/12 | Literal requirement còn 5 partial; DMN mới chủ yếu FIRST/UNIQUE, CMMN chỉ subset |
-| `decide/evolve` deterministic và replay-safe | **Verified core, partial system** | Pure domain crate, property tests, snapshot/replay tests | Cần golden replay xuyên binary/toolchain version; instrumentation phải ở ngoài pure replay path |
-| Event + state + idempotency + ALLOW audit + outbox commit atomically | **Implemented and tested on Linux path** | `crates/bpmp-adapter-rocksdb/src/rocks.rs`, test `workflow_raft_batch_atomically_commits_encrypted_state_idempotency_audit_and_outbox` | Cần crash/power-loss matrix trên production filesystem/NVMe và restore verification |
-| Kafka outage không làm mất/rollback committed workflow command | **Verified functional path** | Ordered RocksDB outbox, ACK-before-checkpoint publisher, broker-backed E2E documentation | Crash sau broker ACK tạo duplicate hợp lệ; consumer dedup và poison-event runbook vẫn bắt buộc |
-| Human Runtime không tự finalize authoritative transition | **Verified core, partial production path** | Requirement 2 compliance, Go-to-Rust actor-preserving command path | Thiếu deployment-level Go→Rust test dùng RocksDB và identity/JWKS rotation chaos |
-| Projection effects + inbox/checkpoint atomically trong PostgreSQL | **Verified core** | Projection integration/E2E evidence và rebuild design | Không được gọi là end-to-end exactly-once; broker redelivery vẫn xảy ra, hiệu lực đạt qua dedup/idempotent apply |
-| Embedded authz chống workload-substitution và stale revoke | **Verified core, partial operations** | `ADR-008`, signed bundle/revoke tests, negative actor tests | Cần key rotation, JWKS outage, bundle corruption và policy rollout chaos ở multi-replica topology |
-| Governance abort-and-reconcile không shred trước atomic terminal/reconciliation commit | **Implemented core, partial production** | Governance domain, Engine WriteBatch path, E2E approval flow | KMS revocation-barrier race, crash-before/after-shred và legal-deadline operations chưa đủ evidence |
-| 3-node leader failover hoạt động | **Verified functional topology** | Broker-backed E2E dừng bootstrap leader và hoàn tất work item qua majority | Không thay thế partition, disk-loss, stale snapshot, membership-change và multi-zone chaos |
-| 300k CCU hoặc 100k worker connections | **Unproven** | Chỉ có protocol/boundedness direction và nhỏ-scale benchmarks | Phải hoàn thành shard directory, indexed fanout, pool budget và production-like soak |
-| DR/multi-region đạt banking-grade | **Designed gap** | Snapshot/backup được nhắc ở architecture; chưa có RPO/RTO evidence | Cần ADR, backup format, restore drill, cross-region policy và corruption recovery |
-
-## 20. Failure semantics và crash-point matrix
-
-| Failure point | Authoritative result | Recovery contract | Evidence status |
-|---|---|---|---|
-| Trước Raft propose | Không commit | Client retry cùng idempotency key | Core covered |
-| Sau propose nhưng trước quorum commit | Chưa được ACK; outcome có thể chưa biết với client | Retry; Engine lookup authoritative idempotency result sau authz | Core covered; cần partition chaos rộng hơn |
-| Sau quorum commit nhưng client mất response | Command đã commit | Retry trả durable receipt cũ, không chạy lại side effect | Core/E2E covered |
-| Sau commit trước Kafka publish | Workflow vẫn hợp lệ | Outbox publisher resume từ durable checkpoint | Functional covered |
-| Sau Kafka ACK trước outbox checkpoint | Có thể publish duplicate | Giữ nguyên `event_id`; consumer dedup trước effect | Covered by design/tests; production broker crash drill required |
-| Consumer crash trước PostgreSQL commit | Không projection effect | Kafka redelivery | Core covered |
-| Consumer crash sau DB commit trước offset commit | Projection đã có; message redeliver | Inbox/dedup hoặc stable upsert ngăn double effect | Core covered |
-| Worker mất kết nối sau external effect trước ACK | External outcome không chắc chắn | Stable operation/idempotency key; reconcile với target; không tuyên bố exactly-once network | Partial; adapter-specific evidence required |
-| KMS down trên DEK cache miss | Không append, không state transition | Fail closed; retry có deadline sau KMS recovery | Core covered; outage/expiry chaos required |
-| Key revoke đồng thời append | Node epoch cũ không được ghi/đọc tiếp | Fence scope, monotonic epoch, evict/lease barrier | Designed/partial |
-| Crash sau compliance commit trước key shred | Instance terminal/reconciliation state đã durable; dữ liệu còn đọc được tạm thời | Governance resume shred idempotently | Partial |
-| Crash sau key shred trước external checkpoint | Payload không còn đọc được | Rehydrate trả typed compliance error; reconciliation metadata sống bằng operational key | Partial; destructive KMS drill required |
-| Leader mất | Committed entries không được mất; minority không commit | Elect leader, restore service khi quorum còn | Functional failover covered; full chaos incomplete |
-| RocksDB volume mất/corrupt | Node có thể rebuild/catch up nếu quorum/snapshot tốt | Replace node, install verified snapshot/log | Unproven operationally |
-| Toàn region mất | Không có cam kết hiện tại | Phụ thuộc future backup/cross-region ADR | Open blocker |
-
-Không dùng cụm từ “exactly once” cho worker, Kafka hoặc network delivery. BPMP cung cấp **at-least-once delivery + durable idempotency/dedup để đạt exactly-once business effect trong phạm vi invariant đã kiểm soát**. External system không hỗ trợ idempotency/reconciliation vẫn là residual risk tường minh.
-
-## 21. Ordering, concurrency và backpressure assessment
-
-- **Per-stream order:** sequence và optimistic expected version bảo vệ thứ tự authoritative trên một stream.
-- **Cross-stream order:** không có global business order guarantee. Global outbox cursor chỉ phục vụ publication progress, không được dùng làm transaction order xuyên workflow.
-- **Raft-group order:** một group serialize log entry; scale phải bằng nhiều group, không bằng thêm follower vô hạn.
-- **Guard complexity:** dispatch-table lookup candidate row có thể O(1), nhưng decision cost còn phụ thuộc out-degree và độ phức tạp expression; không được quảng cáo toàn command path O(1).
-- **Worker delivery:** credit invariant giới hạn task in-flight theo worker; queue còn phải bounded theo cả item count và bytes.
-- **Human work item:** optimistic version bảo vệ concurrent claim/delegate/complete cục bộ; Engine event mới là nguồn finality.
-- **Configuration:** command lấy immutable resolved snapshot ở safe point; thay đổi giữa transaction/WriteBatch/ACK sequence bị cấm.
-- **Shutdown:** mọi service production phải stop nhận mới, drain bounded in-flight tới deadline, persist checkpoint/lease và đóng connection; hiện cần trace runbook/test cho từng deployable.
-
-## 22. Workflow, WIR và event evolution
-
-Ba loại versioning không được trộn:
-
-| Loại | Mục đích | Cơ chế | Status |
-|---|---|---|---|
-| Workflow business version | Instance cũ tiếp tục logic cũ | Pin `WorkflowVersion`, registry đa-version, safe-point migration | Core design/partial implementation |
-| WIR schema/wire version | Engine mới đọc artifact compiler cũ | Versioned Protobuf, reserved field, artifact hash/signature, interpreter compatibility | Schema v1 verified; compatibility window chưa được chứng minh |
-| Event/snapshot schema | Binary mới replay bytes lịch sử | Explicit pure upcaster chain + golden fixtures | Designed; chưa có real v2 fixture matrix |
-
-Temporal `GetVersion()`/patching là cơ chế bảo vệ replay khi **workflow source code** thay đổi; nó chỉ là analog ở cấp deployment discipline, không thay thế Protobuf compatibility hoặc event upcasting của BPMP.
-
-Gate trước khi phát hành schema v2:
-
-1. Buf lint/breaking và clean codegen trên Rust/Go.
-2. Golden WIR/event/snapshot bytes của mọi version được hỗ trợ.
-3. Engine mới load/replay artifact và history cũ trên clean process.
-4. Compiler mới không âm thầm thay semantic output của model cũ; canonical diff phải được review.
-5. Roll-forward/rollback binary được thử với instance pin nhiều version.
-6. Retire version chỉ khi không còn instance, snapshot, replay job hoặc retention hold tham chiếu.
-
-## 23. Security threat model và trust boundaries
-
-| Threat | Required control | Current assessment |
-|---|---|---|
-| Gateway/service giả actor | Original signed actor proof; audience bind tới workload; Engine re-verify | Core verified |
-| Replay actor proof/idempotency leak | Command/tenant/audience/expiry/revoke bind; authz trước lookup | Core verified |
-| Policy rollback/tamper | Canonical bytes, hash, Ed25519, monotonic bundle sequence/revoke epoch | Core verified; rotation chaos thiếu |
-| Cross-tenant ID/confused deputy | Tenant trong storage key/domain type; actor và resource cùng scope | Core tests có; hot-path audit cần duy trì |
-| Plaintext khi KMS lỗi | Encrypt trước WriteBatch; fail closed | Core verified; production KMS test thiếu |
-| Stale DEK sau revoke | Key epoch, fence/barrier, bounded zeroized cache | Partial |
-| Poison/oversized Protobuf/XML/WASM | Message/input/depth limits, DTD/XXE reject, fuel/memory quota | Compiler/WASM core covered; fuzz corpus phải chạy CI |
-| PII trong logs/metrics | Structured redaction, approved tenant/correlation fields, cardinality policy | Designed/partial evidence |
-| Unauthorized governance override | Dedicated capability, two actors, fresh auth, signed digest, commit-time recheck | Core verified; identity/KMS chaos thiếu |
-| Supply-chain compromise | Pinned lockfiles/images, SBOM, provenance/signing, CVE gate | Deployment design; release evidence chưa trace trong article |
-
-Camunda/Temporal comparison không được dùng để suy ra BPMP “an toàn hơn” một cách tổng quát. Claim hẹp có thể bảo vệ là: BPMP thiết kế transition authorization và ALLOW audit như một phần của authoritative commit; hiệu quả production còn phụ thuộc key management, policy distribution và operator discipline.
-
-## 24. Performance, capacity và operational readiness
-
-### Bottleneck đã xác nhận từ code review
-
-1. `proposal_lock` đang giữ qua prepare, quorum `client_write` và local apply: một proposal in-flight mỗi Engine group.
-2. RocksDB log/state/outbox/timer/correlation chia sẻ write coordination; snapshot có thể kéo dài critical section.
-3. Cockpit hub hiện scan toàn subscription set cho mỗi signal và clone payload theo subscriber.
-4. PostgreSQL pool chưa có global capacity budget theo tổng replica.
-5. Redis rate-limit là synchronous dependency trên public request path; outage policy chưa được chốt theo operation.
-
-### Evidence hiện có và giới hạn
-
-- Human Runtime có local benchmark ở concurrency 8 với latency rất thấp; không ngoại suy thành production p95 ở tenant skew hoặc multi-hop topology.
-- 3-node E2E chứng minh function/failover, không chứng minh sustained throughput, queue saturation hoặc memory stability.
-- Không có evidence cho 300k connection, 100k worker, 1M sleeping instance working-set hoặc multi-Raft-group rebalance.
-- Windows unit/build result không thay thế Linux RocksDB/NVMe benchmark vì production adapter được gate theo Linux.
-
-### SLO tối thiểu phải có trước pilot
-
-| SLI | Cần định nghĩa |
-|---|---|
-| Authoritative command | accepted throughput, p50/p95/p99, timeout, indeterminate outcome rate |
-| Raft | propose, quorum commit, apply lag, leader changes, snapshot/install duration |
-| Outbox/Kafka | oldest-record age, publish retry, duplicate rate, poison record |
-| Projection/Human | consumer lag, checkpoint age, DB pool wait, transaction retry/conflict |
-| Worker | queue bytes/age, credits, lease expiry, redelivery, unresolved external effect |
-| Realtime | active connections, outbound queue bytes, dropped hints, resync-required rate |
-| KMS/governance | cache hit, resolve latency, fence duration, shred/reconciliation deadline |
-| Storage | WAL/fsync, compaction stall, disk headroom, snapshot/restore success |
-
-## 25. Production promotion gates
-
-| Gate | Pass condition | Baseline status |
-|---|---|---|
-| Standards profile | Supported BPMN/DMN/CMMN catalog versioned; unsupported construct fail-closed; business owners accept scope | **Partial** |
-| Durable compatibility | Golden replay/load cho mọi WIR/event/snapshot version được support | **Partial** |
-| Consensus safety | Model checking + minority/partition/crash/membership/snapshot chaos | **Partial** |
-| Atomic command | Crash/power-loss tests chứng minh event/state/idempotency/audit/outbox không tách | **Core pass; production media pending** |
-| External effect safety | Adapter-by-adapter idempotency/reconciliation contract và crash matrix | **Partial** |
-| Identity/authz | JWKS/key rotation, revoke race, bundle rollback/corruption, workload substitution | **Core pass; chaos pending** |
-| Encryption/governance | Production KMS, cache expiry/revoke race, crash around commit/shred, reconciliation SLA | **Partial** |
-| Tenant isolation | Negative tests mọi ingress/storage/query + noisy-neighbor workload | **Functional pass; physical isolation pending** |
-| Capacity | Defined profiles, 30-minute ramp, 2-hour soak, overload/recovery, p99/error budget | **Fail / no evidence** |
-| DR | RPO/RTO approved; encrypted backup; restore/corruption/region-loss drill | **Fail / open blocker** |
-| Operations | Runbook, alert, dashboard, on-call owner, rollback/roll-forward, capacity headroom | **Partial** |
-| Supply chain | SBOM, signed provenance/image, pinned dependency, advisory and rollback evidence | **Partial** |
-
-> [!danger] Production decision
-> Baseline hiện tại **không được phê duyệt cho production chứa PII, quyết định tín dụng hoặc side-effect tài chính không thể hoàn tác**. Quyết định này không phủ nhận chất lượng thiết kế; nó phản ánh thiếu evidence ở standards breadth, compatibility, capacity, KMS/governance chaos, DR và operational ownership. Chỉ đổi verdict khi từng gate có artifact kiểm chứng và người chịu trách nhiệm ký nhận residual risk.
-
-## 26. Diagram và model quality assessment
-
-### Visual grammar
-
-- Mũi tên liền: control/data/artifact flow thực sự trong view đang xét.
-- Mũi tên nét đứt: quality gate, telemetry, periodic derivation hoặc target relationship không nằm trên critical path.
-- Hộp bo trong flowchart: component/artifact/state; hình thoi: decision condition.
-- Từ **logical**, **target**, **sequence** và **property map** trong caption xác định loại model; không được đọc một logical view như network/deployment topology vật lý.
-- Diagram không mang status mặc định. Caption phải nói rõ implemented, partial hay target khi hình chứa năng lực chưa được chứng minh.
-
-| Diagram/model | Mục đích | Độ đúng semantic sau audit | Cognitive load | Giới hạn cần nhớ |
-|---|---|---|---|---|
-| System context | Actor/external-system boundary | **Good** | Low | Không thể hiện deployable/network zone |
-| Compiler pipeline | Artifact transformation + quality gates | **Good** | Medium | Không đồng nghĩa full standards coverage |
-| WIR property map | Giá trị của typed/canonical artifact | **Good with partial marker** | Low | Replay còn phụ thuộc interpreter/event/upcaster |
-| Runtime deployment | Bounded-context/deployable interaction | **Good** | Low-medium | Các deployable được aggregate; không phải pod/network diagram |
-| Authoritative command sequence | Deny/duplicate/new command semantics | **Good** | Medium | Chỉ một command; không mô tả concurrent interleaving |
-| Storage/consistency | Atomic authority và post-commit propagation | **Good** | Medium | Snapshot periodic; Kafka vẫn at-least-once |
-| Dynamic configuration | Publish/invalidate/resolve/install/safe-point | **Good** | Medium | Mỗi process phải có broadcast-style group riêng |
-| Security trust flow | Proof verification, pure evaluation, encryption | **Good** | Medium | Không thay full threat/data-flow diagram theo network zone |
-| CQRS/realtime | Projection transaction, hint và resync | **Good** | Low | Read model eventual; checkpoint/staleness phải được expose |
-| Build/release gates | Dependency order tới promotion | **Good** | Low | Không thể hiện duration/parallel jobs; gate chưa pass vẫn chặn |
-| Platform decision tree | Build/buy/hybrid shortlist | **Good as heuristic** | Medium | Không thay weighted ADR/TCO analysis |
-| Shard-directory model | Single owner per stream/epoch | **Target-only, semantically sound** | Low | Rebalance/fencing chưa có production evidence |
-
-Không có raster image, benchmark chart hoặc quantitative plot trong baseline article. Mermaid phù hợp vì các quan hệ cần diễn giải là boundary, sequence, ownership và decision—not pixel-accurate UI. Khi bổ sung benchmark, nên dùng chart có axis/unit/confidence interval; không dùng Mermaid để trình bày số liệu latency/throughput.
-
-## 27. Nguồn và traceability
+## 18. Nguồn và traceability
 
 ### Nguồn nội bộ
 
@@ -770,10 +556,6 @@ Không có raster image, benchmark chart hoặc quantitative plot trong baseline
 - `D:/project/bpmp-platform/docs/300k-ccu-readiness.md`
 - `D:/project/bpmp-platform/docs/build-and-deploy.md`
 - `D:/project/bpmp-platform/docs/kafka-topology.md`
-- `D:/project/bpmp-platform/docs/production-deployment-process.md`
-- `D:/project/bpmp-platform/crates/bpmp-adapter-rocksdb/src/rocks.rs`
-- `D:/project/bpmp-platform/apps/rust/bpmp-engine-server/src/raft_runtime.rs`
-- `D:/project/bpmp-platform/apps/go/cockpit-gateway/subscription/hub.go`
 
 ### Nguồn chính thức đối chiếu sản phẩm
 
@@ -782,10 +564,11 @@ Không có raster image, benchmark chart hoặc quantitative plot trong baseline
 - [Camunda 8 BPMN coverage](https://docs.camunda.io/docs/components/modeler/bpmn/bpmn-coverage/)
 - [Camunda 8 BPMN tasks](https://docs.camunda.io/docs/components/modeler/bpmn/tasks/)
 - [Camunda 8 public API stability](https://docs.camunda.io/docs/reference/public-api/)
-- [Camunda 8 Orchestration Cluster authorization](https://docs.camunda.io/docs/components/concepts/access-control/authorizations/)
 - [Temporal official documentation](https://docs.temporal.io/)
 - [Temporal durable execution overview](https://temporal.io/)
-- [Temporal Go SDK `GetVersion`](https://github.com/temporalio/sdk-go/blob/master/workflow/workflow.go)
 
 > [!note] Cách đọc so sánh
-> Các đặc điểm Camunda/Temporal ở trên dựa trên tài liệu chính thức được kiểm tra lại ngày 2026-08-07. Điểm “BPMP vượt trội” là lợi thế **theo thiết kế và workload mục tiêu**, chỉ trở thành lợi thế production sau khi các gate correctness, chaos, scale và operations tương ứng có bằng chứng đo được.
+> Các đặc điểm Camunda/Temporal ở trên dựa trên tài liệu chính thức được kiểm tra ngày 2026-08-06. Điểm "BPMP vượt trội" là lợi thế **theo thiết kế và workload mục tiêu**, chỉ trở thành lợi thế production sau khi các gate correctness, chaos, scale và operations tương ứng có bằng chứng đo được.
+
+> [!info] Ghi chú định dạng (2026-08-08)
+> Toàn bộ diagram Mermaid trong tài liệu này đã chuẩn hóa line-break trong node label sang `<br/>` thay vì `\n` để render ổn định trên Obsidian. Xem thêm đánh giá độc lập tại [[BPMP-Architecture-Independent-Review]].
