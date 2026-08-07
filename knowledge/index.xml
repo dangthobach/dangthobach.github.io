@@ -9,14 +9,14 @@
     <title>BPMP-Architecture-Independent-Review</title>
     <link>https://dangthobach.github.io/knowledge/BPMP-Platform/BPMP-Architecture-Independent-Review</link>
     <guid>https://dangthobach.github.io/knowledge/BPMP-Platform/BPMP-Architecture-Independent-Review</guid>
-    <description><![CDATA[ BPMP Platform — Đánh giá kiến trúc độc lập Vị trí tài liệu này [[BPMP-Architecture-Technology-Deep-Dive]] mô tả kiến trúc mục tiêu rất chi tiết, đã có sẵn ma trận so sánh Camunda/Temporal và risk register. ]]></description>
-    <pubDate>Thu, 06 Aug 2026 00:00:00 GMT</pubDate>
+    <description><![CDATA[ BPMP Platform — Đánh giá kỹ thuật độc lập Nhiệm vụ assessment Tài liệu này đánh giá khả năng đưa BPMP vào production, không chỉ chất lượng của target architecture. ]]></description>
+    <pubDate>Fri, 07 Aug 2026 00:00:00 GMT</pubDate>
   </item><item>
     <title>BPMP-Architecture-Technology-Deep-Dive</title>
     <link>https://dangthobach.github.io/knowledge/BPMP-Platform/BPMP-Architecture-Technology-Deep-Dive</link>
     <guid>https://dangthobach.github.io/knowledge/BPMP-Platform/BPMP-Architecture-Technology-Deep-Dive</guid>
     <description><![CDATA[ BPMP Platform — Phân tích kiến trúc và công nghệ Mục tiêu tài liệu Tài liệu này diễn giải design.md thành một architecture deep dive có thể dùng cho review kỹ thuật, onboarding, quyết định đầu tư và chuẩn bị production. ]]></description>
-    <pubDate>Thu, 06 Aug 2026 00:00:00 GMT</pubDate>
+    <pubDate>Fri, 07 Aug 2026 00:00:00 GMT</pubDate>
   </item><item>
     <title>Bai-34-Constants-Control-Flow-Arrays</title>
     <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-34-Constants-Control-Flow-Arrays</link>
