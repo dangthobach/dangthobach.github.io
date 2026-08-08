@@ -18,6 +18,12 @@
     <description><![CDATA[ BPMP Platform — Phân tích kiến trúc và công nghệ Mục tiêu tài liệu Tài liệu này diễn giải design.md thành một architecture deep dive có thể dùng cho review kỹ thuật, onboarding, quyết định đầu tư và chuẩn bị production. ]]></description>
     <pubDate>Sat, 08 Aug 2026 00:00:00 GMT</pubDate>
   </item><item>
+    <title>BPMP-Shadow-Verification-Simulation-Architecture</title>
+    <link>https://dangthobach.github.io/knowledge/BPMP-Platform/BPMP-Shadow-Verification-Simulation-Architecture</link>
+    <guid>https://dangthobach.github.io/knowledge/BPMP-Platform/BPMP-Shadow-Verification-Simulation-Architecture</guid>
+    <description><![CDATA[ BPMP Platform — Kiến trúc đề xuất: Shadow / Verification / Simulation Platform Vị trí tài liệu này Đây là bài thứ ba trong bộ ba tài liệu BPMP. ]]></description>
+    <pubDate>Sat, 08 Aug 2026 00:00:00 GMT</pubDate>
+  </item><item>
     <title>Bai-34-Constants-Control-Flow-Arrays</title>
     <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-34-Constants-Control-Flow-Arrays</link>
     <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-34-Constants-Control-Flow-Arrays</guid>
@@ -58,12 +64,6 @@
     <link>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/04-Chuan-bi-moi-truong-va-Repository</link>
     <guid>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/04-Chuan-bi-moi-truong-va-Repository</guid>
     <description><![CDATA[ Bài 04 — Chuẩn bị môi trường và repository Deliverable Repository gocommerce build/test được, có convention rõ ràng và local infrastructure khởi động độc lập với ứng dụng. ]]></description>
-    <pubDate>Thu, 30 Jul 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>05-Product-Service-Vertical-Slice</title>
-    <link>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/05-Product-Service-Vertical-Slice</link>
-    <guid>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/05-Product-Service-Vertical-Slice</guid>
-    <description><![CDATA[ Bài 05 — Product Service: vertical slice đầu tiên Deliverable POST /v1/products và GET /v1/products/{id} chạy bằng net/http, business rule được test mà không cần HTTP. ]]></description>
     <pubDate>Thu, 30 Jul 2026 00:00:00 GMT</pubDate>
   </item>
     </channel>
