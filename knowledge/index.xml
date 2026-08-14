@@ -6,6 +6,12 @@
       <description>Last 10 notes on Dang Tho Bach&#039;s Knowledge Base</description>
       <generator>Quartz -- quartz.jzhao.xyz</generator>
       <item>
+    <title>Deep Dive: Virtual Threads vs Goroutines vs Rust Async (Tokio)</title>
+    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Deep-Dive-VirtualThreads-vs-Goroutines-vs-RustAsync</link>
+    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Deep-Dive-VirtualThreads-vs-Goroutines-vs-RustAsync</guid>
+    <description><![CDATA[ Virtual Thread vs Goroutine vs Tokio: So Sánh Khoa Học Từ Scheduler Đến Tail Latency Ghi chú cập nhật — 15/08/2026 Bản nâng cấp lớn so với bản gốc (01/05/2026). ]]></description>
+    <pubDate>Sat, 15 Aug 2026 00:00:00 GMT</pubDate>
+  </item><item>
     <title>BPMP-Architecture-Independent-Review</title>
     <link>https://dangthobach.github.io/knowledge/BPMP-Platform/BPMP-Architecture-Independent-Review</link>
     <guid>https://dangthobach.github.io/knowledge/BPMP-Platform/BPMP-Architecture-Independent-Review</guid>
@@ -58,12 +64,6 @@
     <link>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/03-Kien-truc-GoCommerce</link>
     <guid>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/03-Kien-truc-GoCommerce</guid>
     <description><![CDATA[ Bài 03 — Kiến trúc hệ thống GoCommerce Sau bài này Bạn hiểu boundary, ownership dữ liệu, luồng checkout và lý do mỗi integration technology xuất hiện. ]]></description>
-    <pubDate>Thu, 30 Jul 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>04-Chuan-bi-moi-truong-va-Repository</title>
-    <link>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/04-Chuan-bi-moi-truong-va-Repository</link>
-    <guid>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/04-Chuan-bi-moi-truong-va-Repository</guid>
-    <description><![CDATA[ Bài 04 — Chuẩn bị môi trường và repository Deliverable Repository gocommerce build/test được, có convention rõ ràng và local infrastructure khởi động độc lập với ứng dụng. ]]></description>
     <pubDate>Thu, 30 Jul 2026 00:00:00 GMT</pubDate>
   </item>
     </channel>
