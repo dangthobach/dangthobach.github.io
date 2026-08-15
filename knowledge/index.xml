@@ -12,6 +12,18 @@
     <description><![CDATA[ Virtual Thread vs Goroutine vs Tokio: So Sánh Khoa Học Từ Scheduler Đến Tail Latency Ghi chú cập nhật — 15/08/2026 Bản nâng cấp lớn so với bản gốc (01/05/2026). ]]></description>
     <pubDate>Sat, 15 Aug 2026 00:00:00 GMT</pubDate>
   </item><item>
+    <title>01-Calamine-Cross-Language-Benchmark</title>
+    <link>https://dangthobach.github.io/knowledge/Performance-System-Programming/03-Data-Format-Parsing/01-Calamine-Cross-Language-Benchmark</link>
+    <guid>https://dangthobach.github.io/knowledge/Performance-System-Programming/03-Data-Format-Parsing/01-Calamine-Cross-Language-Benchmark</guid>
+    <description><![CDATA[ 🦀 Calamine (Rust) vs Excelize / ClosedXML / openpyxl — Mổ xẻ Benchmark 1M×41 và Bài học Kiến trúc Mục tiêu: Hiểu chính xác benchmark 1.000.001×41 trong README của Calamine chứng minh gì, không chứng minh gì — và rút ra nguyên tắc kiến trúc áp dụng được cho file-etl (Rust decoder đang thay thế Java ... ]]></description>
+    <pubDate>Sat, 15 Aug 2026 00:00:00 GMT</pubDate>
+  </item><item>
+    <title>02-Read-Write-Separation-Type-Conversion</title>
+    <link>https://dangthobach.github.io/knowledge/Performance-System-Programming/03-Data-Format-Parsing/02-Read-Write-Separation-Type-Conversion</link>
+    <guid>https://dangthobach.github.io/knowledge/Performance-System-Programming/03-Data-Format-Parsing/02-Read-Write-Separation-Type-Conversion</guid>
+    <description><![CDATA[ 🔀 Tách Read/Write Engine — Kiến trúc Type Conversion Tổng quát cho Spreadsheet/CSV ETL Tiếp nối: 01-Calamine-Cross-Language-Benchmark. ]]></description>
+    <pubDate>Sat, 15 Aug 2026 00:00:00 GMT</pubDate>
+  </item><item>
     <title>BPMP-Architecture-Independent-Review</title>
     <link>https://dangthobach.github.io/knowledge/BPMP-Platform/BPMP-Architecture-Independent-Review</link>
     <guid>https://dangthobach.github.io/knowledge/BPMP-Platform/BPMP-Architecture-Independent-Review</guid>
@@ -52,18 +64,6 @@
     <link>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/00-Series-Hub</link>
     <guid>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/00-Series-Hub</guid>
     <description><![CDATA[ Go Microservices Mastery — từ Basic đến Production Kết quả cuối series Xây dựng GoCommerce, một hệ thống commerce/fulfillment chạy được trên máy cá nhân và có đường nâng cấp rõ ràng lên production. ]]></description>
-    <pubDate>Thu, 30 Jul 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>02-Vi-sao-Go-cho-Microservices</title>
-    <link>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/02-Vi-sao-Go-cho-Microservices</link>
-    <guid>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/02-Vi-sao-Go-cho-Microservices</guid>
-    <description><![CDATA[ Bài 02 — Vì sao Go là lựa chọn mạnh cho Microservices? Kết luận trước Go không “tốt nhất” cho mọi hệ thống. ]]></description>
-    <pubDate>Thu, 30 Jul 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>03-Kien-truc-GoCommerce</title>
-    <link>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/03-Kien-truc-GoCommerce</link>
-    <guid>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/03-Kien-truc-GoCommerce</guid>
-    <description><![CDATA[ Bài 03 — Kiến trúc hệ thống GoCommerce Sau bài này Bạn hiểu boundary, ownership dữ liệu, luồng checkout và lý do mỗi integration technology xuất hiện. ]]></description>
     <pubDate>Thu, 30 Jul 2026 00:00:00 GMT</pubDate>
   </item>
     </channel>

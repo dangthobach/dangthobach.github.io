@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>01-Calamine-Cross-Language-Benchmark</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="Dang Tho Bach's Knowledge Base"/><meta property="og:title" content="01-Calamine-Cross-Language-Benchmark"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="01-Calamine-Cross-Language-Benchmark"/><meta name="twitter:description" content="🦀 Calamine (Rust) vs Excelize / ClosedXML / openpyxl — Mổ xẻ Benchmark 1M×41 và Bài học Kiến trúc Mục tiêu: Hiểu chính xác benchmark 1.000.001×41 trong README của Calamine chứng minh gì, không chứng minh gì — và rút ra nguyên tắc kiến trúc áp dụng được cho file-etl (Rust decoder đang thay thế Java ..."/><meta property="og:description" content="🦀 Calamine (Rust) vs Excelize / ClosedXML / openpyxl — Mổ xẻ Benchmark 1M×41 và Bài học Kiến trúc Mục tiêu: Hiểu chính xác benchmark 1.000.001×41 trong README của Calamine chứng minh gì, không chứng minh gì — và rút ra nguyên tắc kiến trúc áp dụng được cho file-etl (Rust decoder đang thay thế Java ..."/><meta property="og:image:alt" content="🦀 Calamine (Rust) vs Excelize / ClosedXML / openpyxl — Mổ xẻ Benchmark 1M×41 và Bài học Kiến trúc Mục tiêu: Hiểu chính xác benchmark 1.000.001×41 trong README của Calamine chứng minh gì, không chứng minh gì — và rút ra nguyên tắc kiến trúc áp dụng được cho file-etl (Rust decoder đang thay thế Java ..."/><meta property="twitter:domain" content="dangthobach.github.io/knowledge"/><meta property="og:url" content="https://dangthobach.github.io/knowledge/Performance-System-Programming/03-Data-Format-Parsing/01-Calamine-Cross-Language-Benchmark"/><meta property="twitter:url" content="https://dangthobach.github.io/knowledge/Performance-System-Programming/03-Data-Format-Parsing/01-Calamine-Cross-Language-Benchmark"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="🦀 Calamine (Rust) vs Excelize / ClosedXML / openpyxl — Mổ xẻ Benchmark 1M×41 và Bài học Kiến trúc Mục tiêu: Hiểu chính xác benchmark 1.000.001×41 trong README của Calamine chứng minh gì, không chứng minh gì — và rút ra nguyên tắc kiến trúc áp dụng được cho file-etl (Rust decoder đang thay thế Java ..."/><meta name="generator" content="Quartz"/><link href="../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiL2hvbWUvcnVubmVyL3dvcmsvZGFuZ3Rob2JhY2guZ2l0aHViLmlvL2Rhbmd0aG9iYWNoLmdpdGh1Yi5pby9xdWFydHovcXVhcnR6L2NvbXBvbmVudHMvc3R5bGVzIiwic291cmNlcyI6WyJtZXJtYWlkLmlubGluZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFHRjtFQUNFOzs7QUFLRjtFQUNFO0VBQ0E7OztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTs7QUFJRjtFQUNFO0VBQ0E7RUFDQSIsInNvdXJjZXNDb250ZW50IjpbIi5leHBhbmQtYnV0dG9uIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbG9hdDogcmlnaHQ7XG4gIHBhZGRpbmc6IDAuNHJlbTtcbiAgbWFyZ2luOiAwLjNyZW07XG4gIHJpZ2h0OiAwOyAvLyBOT1RFOiByaWdodCB3aWxsIGJlIHNldCBpbiBtZXJtYWlkLmlubGluZS50c1xuICBjb2xvcjogdmFyKC0tZ3JheSk7XG4gIGJvcmRlci1jb2xvcjogdmFyKC0tZGFyayk7XG4gIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgYm9yZGVyOiAxcHggc29saWQ7XG4gIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgb3BhY2l0eTogMDtcbiAgdHJhbnNpdGlvbjogMC4ycztcblxuICAmID4gc3ZnIHtcbiAgICBmaWxsOiB2YXIoLS1saWdodCk7XG4gICAgZmlsdGVyOiBjb250cmFzdCgwLjMpO1xuICB9XG5cbiAgJjpob3ZlciB7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIGJvcmRlci1jb2xvcjogdmFyKC0tc2Vjb25kYXJ5KTtcbiAgfVxuXG4gICY6Zm9jdXMge1xuICAgIG91dGxpbmU6IDA7XG4gIH1cbn1cblxucHJlIHtcbiAgJjpob3ZlciA+IC5leHBhbmQtYnV0dG9uIHtcbiAgICBvcGFjaXR5OiAxO1xuICAgIHRyYW5zaXRpb246IDAuMnM7XG4gIH1cbn1cblxuI21lcm1haWQtY29udGFpbmVyIHtcbiAgcG9zaXRpb246IGZpeGVkO1xuICBjb250YWluOiBsYXlvdXQ7XG4gIHotaW5kZXg6IDk5OTtcbiAgbGVmdDogMDtcbiAgdG9wOiAwO1xuICB3aWR0aDogMTAwdnc7XG4gIGhlaWdodDogMTAwdmg7XG4gIG92ZXJmbG93OiBoaWRkZW47XG4gIGRpc3BsYXk6IG5vbmU7XG4gIGJhY2tkcm9wLWZpbHRlcjogYmx1cig0cHgpO1xuICBiYWNrZ3JvdW5kOiByZ2JhKDAsIDAsIDAsIDAuNSk7XG5cbiAgJi5hY3RpdmUge1xuICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgfVxuXG4gICYgPiAjbWVybWFpZC1zcGFjZSB7XG4gICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gICAgYm9yZGVyLXJhZGl1czogNXB4O1xuICAgIHBvc2l0aW9uOiBmaXhlZDtcbiAgICB0b3A6IDUwJTtcbiAgICBsZWZ0OiA1MCU7XG4gICAgdHJhbnNmb3JtOiB0cmFuc2xhdGUoLTUwJSwgLTUwJSk7XG4gICAgaGVpZ2h0OiA4MHZoO1xuICAgIHdpZHRoOiA4MHZ3O1xuICAgIG92ZXJmbG93OiBoaWRkZW47XG5cbiAgICAmID4gLm1lcm1haWQtY29udGVudCB7XG4gICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgICB0cmFuc2Zvcm0tb3JpZ2luOiAwIDA7XG4gICAgICB0cmFuc2l0aW9uOiB0cmFuc2Zvcm0gMC4xcyBlYXNlO1xuICAgICAgb3ZlcmZsb3c6IHZpc2libGU7XG4gICAgICBtaW4taGVpZ2h0OiAyMDBweDtcbiAgICAgIG1pbi13aWR0aDogMjAwcHg7XG5cbiAgICAgIHByZSB7XG4gICAgICAgIG1hcmdpbjogMDtcbiAgICAgICAgYm9yZGVyOiBub25lO1xuICAgICAgfVxuXG4gICAgICBzdmcge1xuICAgICAgICBtYXgtd2lkdGg6IG5vbmU7XG4gICAgICAgIGhlaWdodDogYXV0bztcbiAgICAgIH1cbiAgICB9XG5cbiAgICAmID4gLm1lcm1haWQtY29udHJvbHMge1xuICAgICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgICAgYm90dG9tOiAyMHB4O1xuICAgICAgcmlnaHQ6IDIwcHg7XG4gICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgZ2FwOiA4cHg7XG4gICAgICBwYWRkaW5nOiA4cHg7XG4gICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgYm9yZGVyLXJhZGl1czogNnB4O1xuICAgICAgYm94LXNoYWRvdzogMCAycHggNHB4IHJnYmEoMCwgMCwgMCwgMC4xKTtcbiAgICAgIHotaW5kZXg6IDI7XG5cbiAgICAgIC5tZXJtYWlkLWNvbnRyb2wtYnV0dG9uIHtcbiAgICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgIHdpZHRoOiAzMnB4O1xuICAgICAgICBoZWlnaHQ6IDMycHg7XG4gICAgICAgIHBhZGRpbmc6IDA7XG4gICAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgICAgY29sb3I6IHZhcigtLWRhcmspO1xuICAgICAgICBib3JkZXItcmFkaXVzOiA0cHg7XG4gICAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICAgICAgZm9udC1zaXplOiAxNnB4O1xuICAgICAgICBmb250LWZhbWlseTogdmFyKC0tYm9keUZvbnQpO1xuICAgICAgICB0cmFuc2l0aW9uOiBhbGwgMC4ycyBlYXNlO1xuXG4gICAgICAgICY6aG92ZXIge1xuICAgICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIH1cblxuICAgICAgICAmOmFjdGl2ZSB7XG4gICAgICAgICAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKDFweCk7XG4gICAgICAgIH1cblxuICAgICAgICAvLyBTdHlsZSB0aGUgcmVzZXQgYnV0dG9uIGRpZmZlcmVudGx5XG4gICAgICAgICY6bnRoLWNoaWxkKDIpIHtcbiAgICAgICAgICB3aWR0aDogYXV0bztcbiAgICAgICAgICBwYWRkaW5nOiAwIDEycHg7XG4gICAgICAgICAgZm9udC1zaXplOiAxNHB4O1xuICAgICAgICB9XG4gICAgICB9XG4gICAgfVxuICB9XG59XG4iXX0= */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://dangthobach.github.io/knowledge/index.xml"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image" content="https://dangthobach.github.io/knowledge/Performance-System-Programming/03-Data-Format-Parsing/01-Calamine-Cross-Language-Benchmark-og-image.webp"/><meta property="og:image:url" content="https://dangthobach.github.io/knowledge/Performance-System-Programming/03-Data-Format-Parsing/01-Calamine-Cross-Language-Benchmark-og-image.webp"/><meta name="twitter:image" content="https://dangthobach.github.io/knowledge/Performance-System-Programming/03-Data-Format-Parsing/01-Calamine-Cross-Language-Benchmark-og-image.webp"/><meta property="og:image:type" content="image/.webp"/></head><body data-slug="Performance-System-Programming/03-Data-Format-Parsing/01-Calamine-Cross-Language-Benchmark"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../..">Dang Tho Bach's Knowledge Base</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-777"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-777" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Performance-System-Programming/">Performance System Programming</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Performance-System-Programming/03-Data-Format-Parsing/">03 Data Format Parsing</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>01 Calamine Cross Language Benchmark</a></div></nav><h1 class="article-title">01-Calamine-Cross-Language-Benchmark</h1><p show-comma="true" class="content-meta"><time datetime="2026-08-15T00:00:00.000Z">Aug 15, 2026</time><span>23 min read</span></p><ul class="tags"><li><a href="../../tags/concepts" class="internal tag-link">concepts</a></li><li><a href="../../tags/rust" class="internal tag-link">rust</a></li><li><a href="../../tags/performance" class="internal tag-link">performance</a></li><li><a href="../../tags/xlsx" class="internal tag-link">xlsx</a></li><li><a href="../../tags/parsing" class="internal tag-link">parsing</a></li><li><a href="../../tags/benchmark" class="internal tag-link">benchmark</a></li><li><a href="../../tags/cross-language" class="internal tag-link">cross-language</a></li><li><a href="../../tags/gc" class="internal tag-link">gc</a></li><li><a href="../../tags/zero-copy" class="internal tag-link">zero-copy</a></li><li><a href="../../tags/evergreen" class="internal tag-link">evergreen</a></li></ul></div></div><article class="popover-hint"><h1 id="-calamine-rust-vs-excelize--closedxml--openpyxl--mổ-xẻ-benchmark-1m41-và-bài-học-kiến-trúc">🦀 Calamine (Rust) vs Excelize / ClosedXML / openpyxl — Mổ xẻ Benchmark 1M×41 và Bài học Kiến trúc<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-calamine-rust-vs-excelize--closedxml--openpyxl--mổ-xẻ-benchmark-1m41-và-bài-học-kiến-trúc" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<blockquote>
+<p><strong>Mục tiêu:</strong> Hiểu <strong>chính xác</strong> benchmark 1.000.001×41 trong README của Calamine chứng minh gì, không chứng minh gì — và rút ra nguyên tắc kiến trúc áp dụng được cho <a href="../../file-etl" class="internal" data-slug="file-etl">file-etl</a> (Rust decoder đang thay thế Java + Apache POI SAX của <a href="../../pdms" class="internal" data-slug="pdms">pdms</a>).</p>
+</blockquote>
+<hr/>
+<h2 id="-tldr--executive-summary">🎯 TL;DR — Executive Summary<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-tldr--executive-summary" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<blockquote class="callout question" data-callout="question">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Câu hỏi ban đầu </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>“Calamine tối ưu nhất về hiệu năng so với các lib ngôn ngữ khác” — đúng hay không?</p>
+</div>
+</blockquote>
+<blockquote class="callout success" data-callout="success">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Kết luận đúng (có bằng chứng) </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>Calamine là <strong>thư viện nhanh nhất trong benchmark lịch sử này</strong> (README, version 0.22.1, một file cụ thể, một máy cụ thể).</p>
+</div>
+</blockquote>
+<blockquote class="callout failure" data-callout="failure">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Kết luận SAI (quá rộng, không có bằng chứng) </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>Calamine là “<strong>thư viện Excel tối ưu hiệu năng nhất nói chung</strong>” — không có benchmark nào cô lập được yếu tố ngôn ngữ (Rust) khỏi yếu tố API/scope/implementation để chứng minh điều này.</p>
+</div>
+</blockquote>
+<p>Số liệu gốc trên file XLSX 186 MB, <strong>1.000.001 hàng × 41 cột = 41.000.041 ô, 28.056.975 ô có giá trị</strong>, đo bằng <code>hyperfine --warmup 3</code>, 10 lần chạy, trên AMD Ryzen 9 5900X @ 4.0GHz / Windows 11:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Library</th><th style="text-align:right;">Mean wall-time</th><th style="text-align:right;">Chậm hơn Calamine</th></tr></thead><tbody><tr><td><strong>Calamine 0.22.1</strong></td><td style="text-align:right;">25.278 s</td><td style="text-align:right;">1.00×</td></tr><tr><td>Excelize 2.8.0 (Go)</td><td style="text-align:right;">44.254 s</td><td style="text-align:right;"><strong>1.75×</strong></td></tr><tr><td>ClosedXML 0.102.1 (.NET)</td><td style="text-align:right;">178.343 s</td><td style="text-align:right;"><strong>7.05×</strong></td></tr><tr><td>openpyxl 3.0.10 (Python)</td><td style="text-align:right;">238.554 s</td><td style="text-align:right;"><strong>9.43×</strong></td></tr><tr><td>Apache POI (Java)</td><td style="text-align:right;"><em>không có trong benchmark</em></td><td style="text-align:right;"><em>không xác định</em></td></tr></tbody></table></div>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;xychart-beta\n    title \&quot;Benchmark Calamine README — Wall time đọc/duyệt XLSX 186MB (1M×41)\&quot;\n    x-axis [\&quot;Calamine 0.22.1\&quot;, \&quot;Excelize 2.8.0\&quot;, \&quot;ClosedXML 0.102.1\&quot;, \&quot;openpyxl 3.0.10\&quot;]\n    y-axis \&quot;Wall time (giây)\&quot; 0 --> 250\n    bar [25.278, 44.254, 178.343, 238.554]&quot;">xychart-beta
+    title &quot;Benchmark Calamine README — Wall time đọc/duyệt XLSX 186MB (1M×41)&quot;
+    x-axis [&quot;Calamine 0.22.1&quot;, &quot;Excelize 2.8.0&quot;, &quot;ClosedXML 0.102.1&quot;, &quot;openpyxl 3.0.10&quot;]
+    y-axis &quot;Wall time (giây)&quot; 0 --> 250
+    bar [25.278, 44.254, 178.343, 238.554]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p><strong>Điểm mấu chốt bị bỏ qua khi người ta trích dẫn benchmark này:</strong> README <strong>không</strong> buộc 4 thư viện làm cùng một khối lượng công việc. Calamine đã materialize toàn bộ <code>Range&lt;Data></code>; Excelize trong benchmark <strong>chỉ gọi <code>Next()</code></strong> (tìm ranh giới <code>&lt;row></code>) mà <strong>không gọi <code>Columns()</code></strong> (bước thực sự parse giá trị ô). Nghĩa là 44.254s của Excelize là một phép đo “nhẹ hơn” về mặt công việc so với 25.278s của Calamine — vậy mà Excelize vẫn thua. Đây vừa là điểm yếu về fairness, vừa là bằng chứng gián tiếp <strong>rất mạnh</strong> cho core read-path của Calamine.</p>
+<hr/>
+<h2 id="-thiết-lập-benchmark-gốc--đọc-kỹ-trước-khi-trích-dẫn">📊 Thiết lập benchmark gốc — Đọc kỹ trước khi trích dẫn<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-thiết-lập-benchmark-gốc--đọc-kỹ-trước-khi-trích-dẫn" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Thuộc tính</th><th>Giá trị công bố</th></tr></thead><tbody><tr><td>Dataset</td><td><code>NYC_311_SR_2010-2020-sample-1M.xlsx</code> (chuyển từ CSV gốc)</td></tr><tr><td>Format benchmark</td><td><strong>XLSX only</strong> — không có benchmark CSV tương ứng</td></tr><tr><td>Kích thước file</td><td>186 MB</td></tr><tr><td>Range</td><td>1.000.001 × 41 = 41.000.041 ô</td></tr><tr><td>Ô có giá trị</td><td>28.056.975</td></tr><tr><td>CPU / OS</td><td>AMD Ryzen 9 5900X @ 4.0GHz / Windows 11</td></tr><tr><td>Runner</td><td><code>hyperfine --warmup 3</code>, 10 runs</td></tr><tr><td>Build</td><td>Calamine &amp; ClosedXML: <strong>release build</strong></td></tr><tr><td>Số thread</td><td>❌ không công bố</td></tr><tr><td>RAM hệ thống</td><td>❌ không công bố</td></tr><tr><td>Peak RSS (số cụ thể)</td><td>❌ không công bố</td></tr><tr><td>Python version</td><td>❌ không công bố</td></tr></tbody></table></div>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    A[\&quot;Mở workbook\&quot;] --> B[\&quot;Lấy worksheet\&quot;] --> C[\&quot;Lặp qua row\&quot;]&quot;">flowchart LR
+    A[&quot;Mở workbook&quot;] --> B[&quot;Lấy worksheet&quot;] --> C[&quot;Lặp qua row&quot;]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p>Tất cả 4 harness đều theo mô hình tuần tự này — <strong>không có harness nào chủ động song song hóa</strong> việc đọc worksheet. Nhưng điều đó <em>không</em> có nghĩa toàn bộ process chỉ chạy 1 OS thread: Go/.NET/JVM đều có GC/runtime threads chạy nền mà README không pin hay báo cáo. Mô tả chính xác nhất: <strong>single-worker/sequential application benchmark, với runtime-internal threading không kiểm soát.</strong></p>
+<h3 id="io--điểm-bất-ngờ-nhất-của-benchmark">I/O — điểm bất ngờ nhất của benchmark<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#io--điểm-bất-ngờ-nhất-của-benchmark" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Library</th><th style="text-align:right;">Disk read</th></tr></thead><tbody><tr><td>Calamine</td><td style="text-align:right;">~186 MB (≈ đúng kích thước file nén)</td></tr><tr><td>ClosedXML</td><td style="text-align:right;">~208 MB</td></tr><tr><td>openpyxl</td><td style="text-align:right;">~192 MB</td></tr><tr><td><strong>Excelize</strong></td><td style="text-align:right;"><strong>~1.5 GB</strong></td></tr></tbody></table></div>
+<p>Excelize đọc gấp <strong>8×</strong> dung lượng file gốc! Nguyên nhân: <code>UnzipXMLSizeLimit</code> mặc định = 16 MB. Khi XML giải nén (worksheet/sharedStrings) vượt ngưỡng này, Excelize <strong>chủ động ghi XML ra temporary file trên disk</strong> để tránh RAM tăng cao — một trade-off có chủ đích: đổi RAM thấp lấy I/O cao hơn. Đây <strong>không phải</strong> “Go chậm hơn Rust” — đây là một cấu hình mặc định thận trọng về bộ nhớ mà chính benchmark vô tình phơi bày cái giá của nó.</p>
+<hr/>
+<h2 id="️-kiến-trúc-xử-lý-xlsx--đường-đi-chung-5-cách-triển-khai-khác-nhau">🏗️ Kiến trúc xử lý XLSX — Đường đi chung, 5 cách triển khai khác nhau<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#️-kiến-trúc-xử-lý-xlsx--đường-đi-chung-5-cách-triển-khai-khác-nhau" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>XLSX về bản chất là <strong>ZIP chứa nhiều XML part</strong>. Hot path khi đọc bảng lớn luôn gồm:</p>
+<pre><code>mở ZIP → giải nén sharedStrings.xml + styles/workbook metadata + worksheet.xml
+       → tokenize/parse XML
+       → resolve shared strings / type / style
+       → tạo representation trong ngôn ngữ đích
+       → trả values cho application
+</code></pre>
+<p>5 thư viện triển khai đúng 5 triết lý khác nhau cho từng bước:</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    A[(\&quot;📦 XLSX file&lt;br/>ZIP container\&quot;)] --> B[\&quot;Giải nén XML parts\&quot;]\n\n    B --> C1[\&quot;🦀 Calamine\&quot;]\n    C1 --> D1[\&quot;quick-xml pull parser&lt;br/>almost zero-copy, buffer reuse\&quot;]\n    D1 --> E1[\&quot;Data values\&quot;]\n    E1 --> F1[\&quot;Range&amp;lt;Data&amp;gt; in memory\&quot;]\n    F1 --> G1[\&quot;sheet.rows() — iterate\&quot;]\n\n    B --> C2[\&quot;🐹 Excelize\&quot;]\n    C2 --> D2[\&quot;encoding/xml streaming decoder\&quot;]\n    D2 --> E2{\&quot;XML giải nén >&lt;br/>16MB threshold?\&quot;}\n    E2 -->|\&quot;Có\&quot;| F2[\&quot;⚠️ Spill ra temp file (disk)\&quot;]\n    E2 -->|\&quot;Không\&quot;| G2[\&quot;Giữ trong memory\&quot;]\n    F2 --> H2[\&quot;Rows().Next() / .Columns()\&quot;]\n    G2 --> H2\n\n    B --> C3[\&quot;🔷 ClosedXML\&quot;]\n    C3 --> D3[\&quot;Open XML layer\&quot;]\n    D3 --> E3[\&quot;XLWorkbook&lt;br/>full object model read/edit/write\&quot;]\n    E3 --> F3[\&quot;Rows / Cells\&quot;]\n\n    B --> C4[\&quot;🐍 openpyxl\&quot;]\n    C4 --> D4[\&quot;ElementTree.iterparse&lt;br/>read_only=True\&quot;]\n    D4 --> E4[\&quot;ReadOnlyCell / values\&quot;]\n    E4 --> F4[\&quot;row tuples\&quot;]\n\n    B --> C5[\&quot;☕ Apache POI\&quot;]\n    C5 --> D5{\&quot;API nào được chọn?\&quot;}\n    D5 -->|\&quot;XSSFWorkbook\&quot;| E5[\&quot;High-level object model&lt;br/>OOXML/XMLBeans-based\&quot;]\n    D5 -->|\&quot;XSSFReader\&quot;| F5[\&quot;SAX / EventUserModel&lt;br/>low-memory streaming\&quot;]&quot;">flowchart TD
+    A[(&quot;📦 XLSX file&lt;br/>ZIP container&quot;)] --> B[&quot;Giải nén XML parts&quot;]
+
+    B --> C1[&quot;🦀 Calamine&quot;]
+    C1 --> D1[&quot;quick-xml pull parser&lt;br/>almost zero-copy, buffer reuse&quot;]
+    D1 --> E1[&quot;Data values&quot;]
+    E1 --> F1[&quot;Range&amp;lt;Data&amp;gt; in memory&quot;]
+    F1 --> G1[&quot;sheet.rows() — iterate&quot;]
+
+    B --> C2[&quot;🐹 Excelize&quot;]
+    C2 --> D2[&quot;encoding/xml streaming decoder&quot;]
+    D2 --> E2{&quot;XML giải nén >&lt;br/>16MB threshold?&quot;}
+    E2 -->|&quot;Có&quot;| F2[&quot;⚠️ Spill ra temp file (disk)&quot;]
+    E2 -->|&quot;Không&quot;| G2[&quot;Giữ trong memory&quot;]
+    F2 --> H2[&quot;Rows().Next() / .Columns()&quot;]
+    G2 --> H2
+
+    B --> C3[&quot;🔷 ClosedXML&quot;]
+    C3 --> D3[&quot;Open XML layer&quot;]
+    D3 --> E3[&quot;XLWorkbook&lt;br/>full object model read/edit/write&quot;]
+    E3 --> F3[&quot;Rows / Cells&quot;]
+
+    B --> C4[&quot;🐍 openpyxl&quot;]
+    C4 --> D4[&quot;ElementTree.iterparse&lt;br/>read_only=True&quot;]
+    D4 --> E4[&quot;ReadOnlyCell / values&quot;]
+    E4 --> F4[&quot;row tuples&quot;]
+
+    B --> C5[&quot;☕ Apache POI&quot;]
+    C5 --> D5{&quot;API nào được chọn?&quot;}
+    D5 -->|&quot;XSSFWorkbook&quot;| E5[&quot;High-level object model&lt;br/>OOXML/XMLBeans-based&quot;]
+    D5 -->|&quot;XSSFReader&quot;| F5[&quot;SAX / EventUserModel&lt;br/>low-memory streaming&quot;]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<blockquote class="callout tip" data-callout="tip">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Vì sao đây là biểu đồ quan trọng nhất bài viết </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>Mỗi nhánh trong sơ đồ trên là một <strong>quyết định kiến trúc</strong>, không phải một “đặc tính ngôn ngữ”. Calamine chọn nhánh hẹp nhất (chỉ đọc giá trị); ClosedXML/openpyxl/POI-XSSFWorkbook chọn nhánh rộng nhất (full object model để đọc+sửa+ghi). Chênh lệch tốc độ phần lớn nằm ở <strong>độ rộng của nhánh được chọn</strong>, không chỉ ở ngôn ngữ implement nhánh đó.</p>
+</div>
+</blockquote>
+<hr/>
+<h2 id="-5-nguyên-nhân-có-bằng-chứng-tốt-nhất-cho-lợi-thế-của-calamine">🔬 5 nguyên nhân có bằng chứng tốt nhất cho lợi thế của Calamine<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-5-nguyên-nhân-có-bằng-chứng-tốt-nhất-cho-lợi-thế-của-calamine" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="1-quick-xml--pull-parser-gần-zero-copy-tái-sử-dụng-buffer">1. <code>quick-xml</code> — pull parser gần zero-copy, tái sử dụng buffer<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-quick-xml--pull-parser-gần-zero-copy-tái-sử-dụng-buffer" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="rust" data-theme="github-light github-dark"><code data-language="rust" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// Calamine — pattern thực tế được benchmark dùng</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">use</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> calamine</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">{open_workbook, </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">Reader</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">Xlsx</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">Data</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">};</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">let</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> mut</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> workbook</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">:</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> Xlsx</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">&lt;_> </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> open_workbook</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;NYC_311_SR_2010-2020-sample-1M.xlsx&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">?</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">let</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> range </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> workbook</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">worksheet_range</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;Sheet1&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">?</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;   </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// ⬅ materialize Range&lt;Data> tại đây</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">for</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> row </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">in</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> range</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">rows</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">() {                           </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// ⬅ benchmark chỉ đo phần này</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    for</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> cell </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">in</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> row {</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        match</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> cell {</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">            Data</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">String</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(s) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=></span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> { </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">/* ... */</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> }</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">            Data</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">Float</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(f)  </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=></span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> { </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">/* ... */</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            _ </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=></span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {}</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></figure>
+<p><code>quick-xml</code> tự mô tả là <strong>high-performance pull reader</strong>, dùng <code>Cow</code> để “almost zero-copy” khi khả thi, và thiết kế API cho phép <strong>reuse buffer</strong> giữa các lần đọc token — giảm mạnh allocation churn trên workload hàng chục triệu XML element.</p>
+<blockquote class="callout warning" data-callout="warning">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Cảnh báo chính xác hoá </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>Calamine <strong>không</strong> zero-copy end-to-end. <code>worksheet_range()</code> trả về <code>Range&lt;Data></code> — nghĩa là parser <strong>vẫn phải</strong> tạo representation sở hữu (owned) cho toàn bộ worksheet. “Almost zero-copy” là thuộc tính của <strong>lớp tokenization trong quick-xml</strong>, không có nghĩa 28 triệu cell là borrowed slice trỏ thẳng vào ZIP buffer.</p>
+</div>
+</blockquote>
+<h3 id="2-lazy-sheet-loading-format-specific-không-phải-universal">2. Lazy sheet loading (format-specific, không phải universal)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-lazy-sheet-loading-format-specific-không-phải-universal" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Mở workbook <strong>không</strong> mặc nhiên materialize mọi sheet — sheet chỉ được đọc khi <code>worksheet_range()</code> được gọi. Điều này tránh chi phí không cần thiết khi ứng dụng chỉ cần 1 trong N sheet.</p>
+<blockquote>
+<p>⚠️ README ghi rõ: hành vi này là <strong>của XLSX/XLSB</strong>. Format XLS/ODS trong Calamine mặc định load sheet sớm hơn — đây là lợi thế <strong>format-specific</strong>, không phải thuộc tính chung của mọi format mà Calamine hỗ trợ.</p>
+</blockquote>
+<h3 id="3-không-có-tracing-gc-rust-ownership">3. Không có tracing GC (Rust ownership)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-không-có-tracing-gc-rust-ownership" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>Rust:    ownership + borrow checker tại compile-time
+         → không cần tracing GC walk graph runtime
+         → nhưng VẪN có: allocation, deallocation, copy, UTF-8 construction, branch misprediction
+
+Go:      native compiled, NHƯNG có GC
+         → GC cost = fixed cost/cycle + cost tỷ lệ với live heap
+         → allocation rate cao → cycle chạy thường xuyên hơn → throughput giảm
+
+.NET:    managed heap + generational GC + tiered JIT
+         → object construction cho XLWorkbook = nhiều managed allocation
+         → GC có &quot;live graph&quot; lớn hơn khi giữ triệu cell/row/style dưới dạng object
+
+Python:  refcount + cyclic GC + GIL
+         → mọi ReadOnlyCell, tuple, list là Python object thực sự
+         → C-code bên dưới ElementTree không cứu được toàn bộ chi phí object layer
+
+Java:    JVM GC (nhiều loại: G1, ZGC, Parallel...) + JIT warm-up
+         → XSSFWorkbook (XMLBeans-based) rất nặng object graph
+         → XSSFReader (SAX) tránh được phần lớn chi phí này
+</code></pre>
+<blockquote class="callout tip" data-callout="tip">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>&quot;Không GC&quot; ≠ &quot;không có chi phí memory-management&quot; </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>Đây là điểm dễ hiểu lầm nhất. Lợi thế thật của Calamine là tổ hợp <strong>Rust + parser/data-layout tốt + phạm vi chức năng hẹp</strong> — không thể quy toàn bộ 1.75×–9.43× cho một mình “ownership model”.</p>
+</div>
+</blockquote>
+<h3 id="4-representation-gọn-rangedata-thay-vì-object-graph-giàu-tính-năng">4. Representation gọn: <code>Range&lt;Data></code> thay vì object graph giàu tính năng<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-representation-gọn-rangedata-thay-vì-object-graph-giàu-tính-năng" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Sau <code>worksheet_range()</code>, benchmark chỉ đi qua <code>sheet.rows()</code> — một cấu trúc dữ liệu phẳng, cache-friendly hơn nhiều so với object model nơi mỗi workbook/worksheet/row/cell/style là managed object riêng với con trỏ indirection riêng. (README xác nhận dùng <code>Vec</code> tăng capacity theo bậc thang — nhưng <strong>không có</strong> con số “cache-miss thấp hơn X%” nào được đo bằng hardware counter.)</p>
+<h3 id="5-scope-hẹp-reader-thuần-túy-không-hỗ-trợ-ghi">5. Scope hẹp: reader thuần túy, không hỗ trợ ghi<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5-scope-hẹp-reader-thuần-túy-không-hỗ-trợ-ghi" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Calamine 0.22.1 tập trung vào <strong>đọc cell values + VBA</strong>, không có writing, không có nhiều loại formatting/extra content. Một reader nhiệm vụ hẹp có thể <strong>bỏ qua hẳn</strong> nhiều layer mà một thư viện round-trip (đọc+sửa+ghi) như ClosedXML/openpyxl/POI-XSSFWorkbook buộc phải có.</p>
+<blockquote class="callout note" data-callout="note">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Đây là lựa chọn product scope, không phải &quot;compiler magic&quot; </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>Một phần đáng kể tốc độ của Calamine đến từ việc <strong>nó làm ít việc hơn</strong> theo thiết kế — không chỉ từ việc Rust compile nhanh hơn.</p>
+</div>
+</blockquote>
+<hr/>
+<h2 id="️-điểm-mù-quan-trọng-nhất-benchmark-không-cân-bằng-công-việc">⚖️ Điểm mù quan trọng nhất: benchmark không cân bằng công việc<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#️-điểm-mù-quan-trọng-nhất-benchmark-không-cân-bằng-công-việc" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="trường-hợp-excelize--api-khác-nhau-cho-kết-quả-khác-nhau-tới-45">Trường hợp Excelize — API khác nhau cho kết quả khác nhau tới 4.5×<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#trường-hợp-excelize--api-khác-nhau-cho-kết-quả-khác-nhau-tới-45" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;sequenceDiagram\n    participant App as Go application\n    participant Dec as XML Decoder\n    participant Row as \&quot;&amp;lt;row&amp;gt; boundary\&quot;\n    participant Cell as \&quot;&amp;lt;c&amp;gt; cell elements\&quot;\n\n    App->>Dec: rows.Next()\n    Dec->>Row: Di chuyển decoder đến &amp;lt;row&amp;gt; tiếp theo\n    Row-->>App: true\n    Note over App,Row: 🔴 README benchmark DỪNG Ở ĐÂY — 44.254s&lt;br/>Giá trị ô CHƯA được đọc!\n\n    opt Chỉ khi gọi thêm\n        App->>Dec: rows.Columns()\n        Dec->>Cell: Parse &amp;lt;c&amp;gt;, resolve shared string\n        Cell-->>App: []string — giá trị thật\n        Note over App,Cell: ✅ Đây mới là \&quot;đọc toàn bộ 28M giá trị\&quot;\n    end&quot;">sequenceDiagram
+    participant App as Go application
+    participant Dec as XML Decoder
+    participant Row as &quot;&amp;lt;row&amp;gt; boundary&quot;
+    participant Cell as &quot;&amp;lt;c&amp;gt; cell elements&quot;
+
+    App->>Dec: rows.Next()
+    Dec->>Row: Di chuyển decoder đến &amp;lt;row&amp;gt; tiếp theo
+    Row-->>App: true
+    Note over App,Row: 🔴 README benchmark DỪNG Ở ĐÂY — 44.254s&lt;br/>Giá trị ô CHƯA được đọc!
+
+    opt Chỉ khi gọi thêm
+        App->>Dec: rows.Columns()
+        Dec->>Cell: Parse &amp;lt;c&amp;gt;, resolve shared string
+        Cell-->>App: []string — giá trị thật
+        Note over App,Cell: ✅ Đây mới là &quot;đọc toàn bộ 28M giá trị&quot;
+    end
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="go" data-theme="github-light github-dark"><code data-language="go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// README benchmark — CHỈ đo phần này</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">for</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> rows.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">Next</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">() {</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">    // không gọi rows.Columns() → không lấy giá trị ô!</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// Phiên bản &quot;đọc thật&quot; — cần cho benchmark công bằng với Calamine</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">for</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> rows.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">Next</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">() {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    cols, _ </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">:=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> rows.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">Columns</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">()   </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// ⬅ bước resolve shared string thực sự nằm ở đây</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    _ </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> cols</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></figure>
+<p>Bằng chứng cho thấy lựa chọn API quan trọng hơn cả ngôn ngữ: cùng Excelize, cùng máy, <code>GetRows()</code> (materialize <code>[][]string</code>) cho <strong>199.709 giây</strong> — chậm hơn Calamine <strong>7.9×</strong>. Đổi sang iterator <code>Rows()</code> (không gọi <code>Columns()</code>), thời gian giảm còn 44.254 giây — chậm hơn Calamine chỉ <strong>1.75×</strong>. Chênh lệch API <strong>trong cùng một thư viện</strong> đã lớn hơn 4.5×.</p>
+<blockquote class="callout danger" data-callout="danger">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Bài học phương pháp luận </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>“Go chậm hơn Rust 7.9×” (rút ra từ <code>GetRows()</code>) và “Go chậm hơn Rust 1.75×” (rút ra từ <code>Rows()</code> không gọi <code>Columns()</code>) đều là kết luận <strong>sai về nguyên nhân</strong> — cả hai đang đo chi phí <em>data-structure/API choice</em>, không phải chi phí <em>language runtime</em>.</p>
+</div>
+</blockquote>
+<h3 id="bảng-ai-làm-bao-nhiêu-việc-trong-benchmark-gốc">Bảng “ai làm bao nhiêu việc” trong benchmark gốc<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#bảng-ai-làm-bao-nhiêu-việc-trong-benchmark-gốc" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Library</th><th>Công việc thực tế đã hoàn thành khi tính giờ dừng</th></tr></thead><tbody><tr><td><strong>Calamine</strong></td><td>Đã materialize toàn bộ <code>Range&lt;Data></code> — <strong>nặng nhất</strong></td></tr><tr><td>ClosedXML</td><td>Đã dựng <code>XLWorkbook</code> đầy đủ</td></tr><tr><td>openpyxl</td><td>Parse cell <strong>trong lúc</strong> duyệt (<code>read_only=True</code>, streaming thật)</td></tr><tr><td><strong>Excelize</strong></td><td>Chỉ tìm ranh giới <code>&lt;row></code> — <strong>KHÔNG</strong> resolve giá trị ô</td></tr></tbody></table></div>
+<p>→ Calamine thắng dù đang làm khối lượng công việc <strong>nhiều nhất</strong> trong 4 thư viện. Đây là <strong>tín hiệu kiến trúc rất mạnh</strong>, dù benchmark tổng thể vẫn thiếu fairness.</p>
+<hr/>
+<h2 id="-ảnh-hưởng-ngôn-ngữ--runtime--chi-tiết-từng-thư-viện">🌐 Ảnh hưởng ngôn ngữ &amp; runtime — chi tiết từng thư viện<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-ảnh-hưởng-ngôn-ngữ--runtime--chi-tiết-từng-thư-viện" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="-excelize-go--native-compile-nhưng-gc-vẫn-tính-phí">🐹 Excelize (Go) — native compile nhưng GC vẫn tính phí<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-excelize-go--native-compile-nhưng-gc-vẫn-tính-phí" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Go tạo native executable nên Excelize không có interpreter overhead kiểu Python. Nhưng Go GC có chi phí CPU tỷ lệ với allocation rate và live heap. Excelize chủ động giảm áp lực này bằng cách <strong>spill XML lớn ra temp disk</strong> (ngưỡng <code>UnzipXMLSizeLimit</code> 16 MB) — đổi RAM/GC lấy I/O. Đây chính là nguồn gốc con số 1.5 GB disk read đã nói ở trên.</p>
+<p>Goroutine cũng <strong>không phải “tăng tốc miễn phí”</strong>: API được ghi “concurrency-safe” chỉ nghĩa là <em>có thể</em> dùng an toàn trong pattern concurrency — vòng <code>for rows.Next()</code> đơn lẻ trong benchmark không tự động song song hoá gì cả.</p>
+<h3 id="-closedxml-net--abstraction-cao-object-graph-phong-phú">🔷 ClosedXML (.NET) — abstraction cao, object graph phong phú<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-closedxml-net--abstraction-cao-object-graph-phong-phú" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p><code>new XLWorkbook(...)</code> phục vụ đọc <strong>+ chỉnh sửa + ghi</strong> — nhiều khả năng hơn hẳn một value-only reader. Benchmark riêng của ClosedXML (BenchmarkDotNet, Ryzen 5 5500U, .NET 7.0.11 RyuJIT/AVX2): workload 1.000.000×10 text-only load trong <strong>49.046 giây, dùng 801 MiB</strong>. (⚠️ Không thể đặt cạnh 25.278s của Calamine để suy tỷ lệ — khác cột, khác file, khác phần cứng, khác version.)</p>
+<p>Chênh 7.05× với Calamine <strong>không nên</strong> hiểu đơn giản là “C# JIT chậm hơn Rust 7 lần” — phần lớn nhiều khả năng đến từ khối lượng object construction + validation/metadata + managed allocation mà <code>XLWorkbook</code> phải làm.</p>
+<h3 id="-openpyxl-python--streaming-thật-nhưng-vẫn-trả-giá-ở-lớp-python">🐍 openpyxl (Python) — streaming thật nhưng vẫn trả giá ở lớp Python<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-openpyxl-python--streaming-thật-nhưng-vẫn-trả-giá-ở-lớp-python" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p><code>read_only=True</code> là streaming/lazy thiết kế <strong>thật sự</strong>, được chính dự án khuyến nghị cho file lớn. Nhưng streaming không đồng nghĩa nhanh: mỗi row/cell vẫn đi qua logic package Python, type conversion, Python object.</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="python" data-theme="github-light github-dark"><code data-language="python" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Pattern README dùng — tạo row tuples / ReadOnlyCell representation</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">wb </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> openpyxl.load_workbook(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;NYC_311...&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">read_only</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">True</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">ws </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> wb[</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;Sheet1&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">]</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">for</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> row </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">in</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> ws.rows:          </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># ⬅ vẫn tạo ReadOnlyCell object mỗi cell</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    for</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> cell </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">in</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> row:</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        _ </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> cell.value</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Path &quot;trần&quot; hơn — nên đo song song để tách chi phí object layer</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">for</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> row </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">in</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> ws.iter_rows(</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">values_only</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">True</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">):   </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># ⬅ bỏ qua ReadOnlyCell wrapper</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    _ </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> row</span></span></code></pre></figure>
+<p><strong>Điểm bị bỏ sót nghiêm trọng nhất trong benchmark:</strong> README <strong>không ghi Python version</strong>. Benchmark riêng của chính openpyxl cho thấy chỉ đổi Python 3.6.9 → 3.8.0 đã giảm read-only workload từ <strong>~65.6s xuống ~54.9s</strong> — runtime version một mình đã tạo chênh lệch ~17%.</p>
+<p>CPython còn có GIL — tài liệu chính thức của openpyxl vì thế khuyến nghị dùng <strong>nhiều process/workbook instance</strong> để khai thác nhiều CPU, thay vì kỳ vọng một stream tự scale bằng thread.</p>
+<h3 id="-apache-poi-java--vắng-mặt-trong-benchmark-nhưng-chính-là-baseline-quan-trọng-nhất-với-file-etl">☕ Apache POI (Java) — vắng mặt trong benchmark, nhưng chính là baseline quan trọng nhất với <a href="../../file-etl" class="internal" data-slug="file-etl">file-etl</a><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-apache-poi-java--vắng-mặt-trong-benchmark-nhưng-chính-là-baseline-quan-trọng-nhất-với-file-etl" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<blockquote class="callout tip" data-callout="tip">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Trả lời trực tiếp câu hỏi ban đầu </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p><strong>Không có Apache POI trong benchmark README.</strong> Không tìm thấy benchmark chính thức nào của POI trên đúng file NYC 1M×41, và FAQ của POI cũng không công bố wall-time cho case này. <strong>Mọi con số “POI = X giây” trong các bài so sánh trên mạng đều là số bịa hoặc extrapolation cross-hardware không đáng tin.</strong></p>
+</div>
+</blockquote>
+<p>POI có <strong>hai mô hình rất khác nhau</strong> — và khoảng cách giữa 2 mô hình này của <em>cùng một thư viện</em> có thể còn lớn hơn khoảng cách “Java vs Rust”:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>API</th><th>Đặc điểm</th><th>Dùng khi nào</th></tr></thead><tbody><tr><td><code>XSSFWorkbook</code></td><td>High-level, xây trên OOXML/XMLBeans</td><td>Cần đọc + sửa + ghi, tiện lợi</td></tr><tr><td><code>XSSFReader</code> + <code>XSSFSheetXMLHandler</code> (SAX/EventUserModel)</td><td>Low-memory streaming, lấy sheet dưới dạng <code>InputStream</code></td><td><strong>Benchmark công bằng với Calamine phải dùng API này</strong></td></tr></tbody></table></div>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="java" data-theme="github-light github-dark"><code data-language="java" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// ❌ Baseline SAI cho benchmark hiệu năng — nặng, full object model</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">XSSFWorkbook workbook </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> new</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> XSSFWorkbook</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">new</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> File</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;NYC_311...xlsx&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">));</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">Sheet sheet </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> workbook.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">getSheetAt</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">for</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (Row row </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">:</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> sheet) { </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">for</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (Cell cell </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">:</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> row) { </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">/* ... */</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> } }</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// ✅ Baseline ĐÚNG — SAX streaming, tương đương triết lý với Calamine</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">OPCPackage pkg </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> OPCPackage.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">open</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;NYC_311...xlsx&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">XSSFReader reader </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> new</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> XSSFReader</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(pkg);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">SharedStringsTable sst </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> reader.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">getSharedStringsTable</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">();</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">XMLReader parser </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> XMLReaderFactory.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">createXMLReader</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">();</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">parser.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">setContentHandler</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">new</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> XSSFSheetXMLHandler</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(reader.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">getStylesTable</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(), sst, mySheetContentsHandler, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">false</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">));</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">parser.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">parse</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">new</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> InputSource</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(reader.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">getSheetsData</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">().</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">next</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">()));</span></span></code></pre></figure>
+<blockquote class="callout danger" data-callout="danger">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Bẫy phương pháp luận giống hệt Excelize <code>GetRows()</code></p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>Chỉ benchmark <code>XSSFWorkbook</code> rồi tuyên bố “Java/POI chậm” sẽ lặp lại đúng sai lầm mà Excelize <code>GetRows()</code> (199.7s) đã mắc phải so với <code>Rows()</code> (44.254s). POI FAQ chính thức cũng chỉ dẫn dùng <code>XLSX2CSV</code> (dùng SAX) khi điều tra read performance — <strong>không phải</strong> <code>XSSFWorkbook</code>.</p>
+</div>
+</blockquote>
+<hr/>
+<h2 id="-bảng-tổng-hợp-yếu-tố-triển-khai-5-thư-viện">📐 Bảng tổng hợp yếu tố triển khai (5 thư viện)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-bảng-tổng-hợp-yếu-tố-triển-khai-5-thư-viện" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Yếu tố</th><th>Calamine</th><th>Excelize</th><th>ClosedXML</th><th>openpyxl</th><th>Apache POI</th></tr></thead><tbody><tr><td>XML model</td><td><code>quick-xml</code> pull parser</td><td><code>encoding/xml</code> streaming</td><td>OpenXML-backed + object model</td><td><code>ElementTree.iterparse</code></td><td>SAX EventUserModel hoặc XSSF high-level</td></tr><tr><td>Sheet lazy/stream</td><td>Lazy-load, sau đó <code>Range</code> materialized</td><td><code>Rows()</code> streaming</td><td>Workbook model materialized</td><td><code>read_only=True</code> streaming</td><td><code>XSSFReader</code> SAX streaming</td></tr><tr><td>Parser-level zero-copy</td><td><strong>Có</strong> (quick-xml, “almost”)</td><td>Không có claim tương đương</td><td>Không có claim</td><td>Không có claim</td><td>Không có claim</td></tr><tr><td>End-to-end zero-copy</td><td>❌ Không</td><td>❌ Không</td><td>❌ Không</td><td>❌ Không</td><td>❌ Không</td></tr><tr><td>GC</td><td><strong>Không tracing GC</strong></td><td>Go GC</td><td>.NET GC</td><td>Python refcount + cyclic GC</td><td>JVM GC</td></tr><tr><td>Temp disk mặc định cho XML lớn</td><td>Không thấy trong benchmark</td><td><strong>Có</strong> (theo threshold)</td><td>Không thấy</td><td>Không thấy</td><td>Tùy API</td></tr><tr><td>SIMD chứng minh trong benchmark lịch sử</td><td>Không đủ bằng chứng</td><td>Không đủ bằng chứng</td><td>Không đủ bằng chứng</td><td>Không</td><td>Không đủ bằng chứng</td></tr><tr><td>Scope</td><td>Reader thiên về values</td><td>Read/write, nhiều tính năng</td><td>Full read/edit/write</td><td>Full Python read/write</td><td>Full stack + event API</td></tr></tbody></table></div>
+<hr/>
+<h2 id="-bảng-độ-tin-cậy--mức-độ-có-thể-tin-từng-khẳng-định">🧭 Bảng độ tin cậy — mức độ có thể tin từng khẳng định<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-bảng-độ-tin-cậy--mức-độ-có-thể-tin-từng-khẳng-định" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Khẳng định</th><th>Số liệu</th><th>Độ tin cậy cho <strong>benchmark lịch sử</strong></th><th>Độ tin cậy cho <strong>khẳng định tổng quát</strong></th></tr></thead><tbody><tr><td>Calamine nhanh nhất trong README</td><td>25.278s</td><td>🟢 Cao</td><td>🟡 Trung bình</td></tr><tr><td>Excelize chậm hơn 1.75×</td><td>44.254s</td><td>🟢 Cao (wall-time)</td><td>🟠 Trung bình-thấp (semantic fairness — thiếu <code>Columns()</code>)</td></tr><tr><td>Excelize <code>GetRows()</code> chậm hơn 7.9×</td><td>199.709s</td><td>🟢 Cao (reproduction)</td><td>🔴 Không nên dùng làm đại diện</td></tr><tr><td>ClosedXML chậm hơn 7.05×</td><td>178.343s</td><td>🟢 Cao</td><td>🟡 Trung bình (attribution)</td></tr><tr><td>openpyxl chậm hơn 9.43×</td><td>238.554s</td><td>🟢 Cao</td><td>🟡 Trung bình</td></tr><tr><td><strong>”Rust là nguyên nhân duy nhất Calamine nhanh”</strong></td><td>—</td><td>—</td><td>🔴 <strong>Thấp — không có dữ liệu hỗ trợ</strong></td></tr><tr><td><strong>”SIMD/parallel decompression giải thích 25s”</strong></td><td>—</td><td>—</td><td>🔴 <strong>Thấp — không được benchmark công bố</strong></td></tr><tr><td><strong>Xếp hạng Apache POI so với Calamine</strong></td><td>—</td><td>—</td><td>⚪ <strong>Không xác định — không có phép đo cùng file</strong></td></tr></tbody></table></div>
+<blockquote class="callout quote" data-callout="quote">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Kết luận cân bằng nhất có thể rút ra </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>Khoảng cách với Excelize chỉ 1.75×, trong khi với ClosedXML/openpyxl là 7–9×. Mẫu này khớp với giả thuyết <strong>“Calamine và Excelize đều có data path tương đối low-level; ClosedXML/openpyxl trả nhiều chi phí abstraction/object-runtime hơn”</strong> — chứ <em>không</em> khớp với lý thuyết đơn giản “Rust nhanh, mọi ngôn ngữ khác chậm”.</p>
+</div>
+</blockquote>
+<hr/>
+<h2 id="-thiết-kế-một-benchmark-công-bằng-hơn-nếu-bạn-muốn-tự-tái-lập">🧪 Thiết kế một benchmark công bằng hơn (nếu bạn muốn tự tái lập)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-thiết-kế-một-benchmark-công-bằng-hơn-nếu-bạn-muốn-tự-tái-lập" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Cần tách <strong>2 mục tiêu riêng biệt</strong> — trộn chung sẽ mất khả năng so sánh với README gốc:</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    A[\&quot;Suite Lịch sử\&quot;] --> A1[\&quot;Giữ nguyên source README&lt;br/>Trả lời: số liệu cũ còn tái lập được không?\&quot;]\n    B[\&quot;Suite Value-Equivalent\&quot;] --> B1[\&quot;Buộc mọi library tạo CÙNG kết quả logic&lt;br/>checksum + non_empty_count bắt buộc khớp\&quot;]&quot;">flowchart LR
+    A[&quot;Suite Lịch sử&quot;] --> A1[&quot;Giữ nguyên source README&lt;br/>Trả lời: số liệu cũ còn tái lập được không?&quot;]
+    B[&quot;Suite Value-Equivalent&quot;] --> B1[&quot;Buộc mọi library tạo CÙNG kết quả logic&lt;br/>checksum + non_empty_count bắt buộc khớp&quot;]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h3 id="cấu-hình-path-nên-đo-cho-suite-value-equivalent">Cấu hình path nên đo cho suite value-equivalent<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#cấu-hình-path-nên-đo-cho-suite-value-equivalent" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Library</th><th>Path bắt buộc</th></tr></thead><tbody><tr><td>Calamine</td><td><code>worksheet_range()</code> → iterate mọi <code>Data</code> → checksum</td></tr><tr><td>Excelize</td><td><code>Rows()</code> → <strong><code>Columns()</code> mỗi row</strong> → checksum (thêm <code>RawCellValue</code> nếu muốn tránh formatting)</td></tr><tr><td>ClosedXML</td><td><code>XLWorkbook</code> → iterate cell/value thực → checksum</td></tr><tr><td>openpyxl</td><td><code>read_only=True</code> → <code>iter_rows(values_only=True)</code> → checksum (+ 1 run <code>ReadOnlyCell</code> riêng)</td></tr><tr><td>POI</td><td><code>XSSFReader</code> + SAX handler → checksum (+ <code>XSSFWorkbook</code> baseline riêng)</td></tr></tbody></table></div>
+<h3 id="metrics-bắt-buộc-thu-thập-mỗi-lần-chạy">Metrics bắt buộc thu thập mỗi lần chạy<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#metrics-bắt-buộc-thu-thập-mỗi-lần-chạy" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>wall-clock: mean / median / p95
+CPU: user time, system time, process CPU%
+Memory: peak RSS / private working set, page faults
+I/O: bytes read/write, bytes ghi/đọc temp directory, file-cache state
+GC runtimes: total allocated bytes, GC cycle count, total GC CPU, max/total pause, heap high-water mark
+Hardware counters: cycles, instructions, IPC, branch misses, cache misses
+</code></pre>
+<h3 id="kiểm-soát-fairness">Kiểm soát fairness<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#kiểm-soát-fairness" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>Cùng máy / SSD / OS build / power profile, pin CPU affinity</li>
+<li>Không chạy cloud sync/antivirus trong lúc benchmark</li>
+<li>Khóa version compiler/runtime/library, ghi rõ <code>rustc</code>/Go/.NET SDK/Python/JVM version + build flags</li>
+<li>Thống nhất semantics: có resolve shared strings? apply number format? date → native datetime? formula: expression hay cached value? empty cell có tạo object không?</li>
+<li>Chạy <strong>single-worker trước</strong>, suite parallel riêng sau (XML event stream vốn tuần tự — song song hợp lý hơn ở cấp nhiều sheet/nhiều file)</li>
+<li>Tách riêng <strong>cold-cache</strong> và <strong>warm-cache</strong> thay vì gộp chung</li>
+</ul>
+<hr/>
+<h2 id="-5-giới-hạn-của-benchmark-gốc--phải-biết-trước-khi-trích-dẫn-số-liệu">🚧 5 giới hạn của benchmark gốc — phải biết trước khi trích dẫn số liệu<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-5-giới-hạn-của-benchmark-gốc--phải-biết-trước-khi-trích-dẫn-số-liệu" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<ol>
+<li><strong>Version drift</strong> — Calamine 0.22.1 (hiện đã 0.36.1+ với nhiều cải tiến buffer reuse), Excelize 2.8.0, ClosedXML 0.102.1, openpyxl 3.0.10. Số liệu 1.75×/7.05×/9.43× là <strong>ảnh chụp lịch sử</strong>, không phải “latest vs latest”.</li>
+<li><strong>Work equivalence</strong> — như đã phân tích ở trên, mỗi thư viện làm một lượng công việc semantic khác nhau dù cùng pattern code “iterate rows”.</li>
+<li><strong>Thông số không công bố đầy đủ</strong> — RAM vật lý máy, peak RSS bằng số, Python version, .NET GC mode, thread count, CPU affinity, compression level khi CSV→XLSX, trạng thái OS file cache đều thiếu.</li>
+<li><strong>Một loại file duy nhất</strong> — 1M×41, một phân bố dữ liệu, một tỷ lệ string/number/date. XLSX thực tế biến thiên rất nhiều (inline vs shared strings, formula density, styles, sparse cells, merged cells…). Vì Calamine tập trung vào cell-value reading, benchmark này thiên về đúng use-case mạnh nhất của nó.</li>
+<li><strong>Apache POI hoàn toàn vắng mặt</strong> — không có cơ sở để xếp hạng POI so với Calamine.</li>
+</ol>
+<hr/>
+<h2 id="-kết-nối-với-file-etl--pdms--vì-sao-bài-này-quan-trọng-với-công-việc-thực-tế">🔗 Kết nối với <code>file-etl</code> / PDMS — vì sao bài này quan trọng với công việc thực tế<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-kết-nối-với-file-etl--pdms--vì-sao-bài-này-quan-trọng-với-công-việc-thực-tế" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<blockquote class="callout info" data-callout="info">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Bối cảnh </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p><a href="../../file-etl" class="internal" data-slug="file-etl">file-etl</a> đang được thiết kế như Rust-native Data Migration &amp; Validation Runtime để <strong>thay thế/shadow-cutover pipeline Java + Apache POI SAX validator hiện có của <a href="../../pdms" class="internal" data-slug="pdms">pdms</a></strong>, target 10M+ record files (XLSX/CSV).</p>
+</div>
+</blockquote>
+<h3 id="-bài-học-1--đừng-benchmark-poi-bằng-xssfworkbook-để-biện-minh-cho-việc-chuyển-sang-rust">🎯 Bài học 1 — Đừng benchmark POI bằng <code>XSSFWorkbook</code> để biện minh cho việc chuyển sang Rust<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-bài-học-1--đừng-benchmark-poi-bằng-xssfworkbook-để-biện-minh-cho-việc-chuyển-sang-rust" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Pipeline hiện tại của PDMS <strong>đã dùng POI SAX validator</strong> — tức đã ở đúng nhánh “low-memory streaming” trong sơ đồ kiến trúc phía trên, không phải nhánh <code>XSSFWorkbook</code> nặng nề. Nghĩa là:</p>
+<ul>
+<li>Bất kỳ benchmark nào so sánh <strong>calamine crate</strong> với <strong>POI hiện tại của PDMS</strong> phải đối chiếu với <code>XSSFReader</code>/SAX, <strong>không phải</strong> <code>XSSFWorkbook</code> — nếu không sẽ mắc đúng lỗi phương pháp luận mà Excelize <code>GetRows()</code> đã mắc.</li>
+<li>README của Calamine hoàn toàn không cho biết Calamine sẽ nhanh hơn POI-SAX bao nhiêu — con số đó <strong>phải tự đo trên file đại diện cho PDMS</strong>, không được suy ra từ benchmark NYC 311.</li>
+</ul>
+<h3 id="-bài-học-2--semanticstreamdigest-của-file-etl-chính-là-value-equivalent-suite-mà-báo-cáo-đề-xuất">🎯 Bài học 2 — <code>SemanticStreamDigest</code> của file-etl chính là “value-equivalent suite” mà báo cáo đề xuất<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-bài-học-2--semanticstreamdigest-của-file-etl-chính-là-value-equivalent-suite-mà-báo-cáo-đề-xuất" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Report khuyến nghị: mỗi library phải đọc mọi row, chuyển mỗi non-empty cell thành representation quy định, feed vào <strong>checksum/count accumulator</strong>, rồi so khớp <code>non_empty_count</code> + checksum giữa các library để đảm bảo benchmark không “ăn gian” bằng cách bỏ sót công việc.</p>
+<p>Đây <strong>chính xác</strong> là nguyên lý đằng sau <code>SemanticStreamDigest</code> + per-chunk checkpoint đã có trong thiết kế <code>file-etl</code> (điều được ghi nhận là gap G07 — thiếu durable per-chunk checkpoint). Khi benchmark decoder XLSX mới (dựa trên calamine hoặc quick-xml trực tiếp) so với POI SAX hiện tại, nên tái sử dụng chính cơ chế digest này làm <strong>fairness checksum</strong> — vừa validate tính đúng đắn của decoder mới, vừa đo hiệu năng công bằng trong cùng một lần chạy.</p>
+<h3 id="-bài-học-3--lazy-per-sheet-loading-khớp-tự-nhiên-với-nguyên-tắc-bounded-memory-qua-chunked-pipeline">🎯 Bài học 3 — “Lazy per-sheet loading” khớp tự nhiên với nguyên tắc “bounded memory qua chunked pipeline”<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-bài-học-3--lazy-per-sheet-loading-khớp-tự-nhiên-với-nguyên-tắc-bounded-memory-qua-chunked-pipeline" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p><code>file-etl</code> đã đặt nguyên tắc <strong>bounded memory via chunked pipeline</strong> làm core design principle. Lợi thế lazy-sheet-loading của Calamine (chỉ đọc sheet khi <code>worksheet_range()</code> được gọi) và “reader hẹp, value-oriented <code>Range</code>” là mô hình rất tương thích với một pipeline chunk-hoá — miễn là tầng đọc file của <code>file-etl</code> <strong>tự quản lý windowing/chunking phía trên</strong> thay vì phụ thuộc Calamine tự động lazy-load ở granularity sheet (Calamine lazy theo <em>sheet</em>, không lazy theo <em>row-range</em> — nếu cần bounded memory trong một sheet 10M dòng, <code>file-etl</code> vẫn cần tự thiết kế streaming ở tầng ứng dụng, không thể “mượn” lazy-loading của Calamine cho việc đó).</p>
+<h3 id="-bài-học-4--câu-hỏi-cần-trả-lời-trước-khi-đưa-số-liệu-vào-design-review">🎯 Bài học 4 — Câu hỏi cần trả lời trước khi đưa số liệu vào design review<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-bài-học-4--câu-hỏi-cần-trả-lời-trước-khi-đưa-số-liệu-vào-design-review" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Câu hỏi</th><th>Vì sao quan trọng cho file-etl</th></tr></thead><tbody><tr><td>Đã benchmark calamine crate với <strong>chính API tương đương SAX</strong> của POI chưa, hay đang so với <code>XSSFWorkbook</code>?</td><td>Tránh lặp lại lỗi Excelize <code>GetRows()</code></td></tr><tr><td>Fixture benchmark có đại diện shape dữ liệu PDMS thật (số cột, tỷ lệ string/number/date, sparse cells) hay chỉ NYC 311?</td><td>Report giới hạn #4 — 1M×41 NYC không đại diện mọi workload</td></tr><tr><td>Có đo GC/allocation của JVM (G1/ZGC, heap size) khi benchmark baseline Java hiện tại không?</td><td>Nếu không, không thể tách “JVM chậm” khỏi “code Java chậm”</td></tr><tr><td>Checksum/<code>non_empty_count</code> giữa decoder cũ và mới có khớp không?</td><td>Đảm bảo decoder mới <strong>đúng</strong>, không chỉ <strong>nhanh</strong></td></tr></tbody></table></div>
+<hr/>
+<h2 id="-tips--tricks">💡 Tips &amp; Tricks<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-tips--tricks" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<blockquote>
+<p><strong>Tip 1 — Muốn benchmark Excelize đúng cách, luôn gọi <code>Columns()</code></strong></p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="go" data-theme="github-light github-dark"><code data-language="go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">for</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> rows.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">Next</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">() {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    cols, err </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">:=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> rows.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">Columns</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">()   </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// bắt buộc, nếu không chỉ đo row-boundary scan</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> err </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">!=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> nil</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> { </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">break</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    _ </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> cols</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></figure>
+</blockquote>
+<blockquote>
+<p><strong>Tip 2 — openpyxl: dùng <code>values_only=True</code> để loại bỏ chi phí object wrapper</strong></p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="python" data-theme="github-light github-dark"><code data-language="python" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">for</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> row </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">in</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> ws.iter_rows(</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">values_only</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">True</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">):</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    _ </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> row   </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># tuple giá trị thô, không tạo ReadOnlyCell</span></span></code></pre></figure>
+</blockquote>
+<blockquote>
+<p><strong>Tip 3 — POI: chọn đúng API theo nhu cầu, đừng mặc định <code>XSSFWorkbook</code></strong></p>
+<pre><code>Cần đọc + sửa + ghi, file nhỏ/vừa   → XSSFWorkbook (tiện, chậm hơn, tốn RAM hơn)
+Cần đọc file lớn, chỉ lấy giá trị    → XSSFReader + SAX (nhanh, low-memory, code phức tạp hơn)
+</code></pre>
+</blockquote>
+<blockquote>
+<p><strong>Tip 4 — Khi so sánh cross-language, luôn hỏi 3 câu trước khi tin số liệu</strong></p>
+<pre><code>1. Hai bên có làm CÙNG một lượng công việc semantic không? (materialize vs scan-only)
+2. Version của mỗi library/runtime là bao nhiêu — có phải bản mới nhất?
+3. Cấu hình GC/heap/thread có được công bố và kiểm soát không?
+</code></pre>
+</blockquote>
+<hr/>
+<h2 id="-key-takeaways">📝 Key Takeaways<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-key-takeaways" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<ol>
+<li>Calamine là thư viện <strong>nhanh nhất trong benchmark README 1M×41</strong> — kết luận này có bằng chứng mạnh (🟢 Cao).</li>
+<li>Calamine là thư viện <strong>Excel tối ưu hiệu năng nhất nói chung</strong> — kết luận này <strong>quá rộng</strong>, không có bằng chứng cô lập yếu tố ngôn ngữ.</li>
+<li>Benchmark <strong>không cân bằng công việc</strong>: Excelize trong README chỉ <code>Next()</code>, không <code>Columns()</code> — vẫn thua Calamine dù đang làm ít việc hơn.</li>
+<li><strong>Lựa chọn API trong cùng một thư viện</strong> có thể thay đổi kết quả hơn 4× (Excelize <code>GetRows()</code> 199.7s vs <code>Rows()</code> 44.25s).</li>
+<li>“Không tracing GC” là lợi thế thật của Rust, nhưng <strong>không đồng nghĩa “không có chi phí memory-management”</strong>.</li>
+<li>Excelize đánh đổi RAM thấp lấy I/O cao (1.5GB disk read do <code>UnzipXMLSizeLimit</code> 16MB) — một quyết định thiết kế, không phải “Go chậm”.</li>
+<li>openpyxl version ảnh hưởng đáng kể (Python 3.6.9→3.8.0 giảm ~17% thời gian) — README không ghi version dùng, là một thiếu sót.</li>
+<li><strong>Apache POI hoàn toàn vắng mặt</strong> trong benchmark — mọi con số “POI = X giây” trôi nổi trên mạng đều không đáng tin.</li>
+<li>POI có 2 API rất khác nhau (<code>XSSFWorkbook</code> vs <code>XSSFReader</code> SAX) — benchmark công bằng với Calamine bắt buộc dùng SAX.</li>
+<li>Với <code>file-etl</code>: benchmark quyết định chuyển từ POI SAX sang Rust decoder phải tự đo trên fixture đại diện PDMS, dùng đúng API SAX của POI làm baseline, và tận dụng cơ chế <code>SemanticStreamDigest</code> sẵn có làm checksum fairness.</li>
+</ol>
+<hr/>
+<h2 id="-liên-kết">🔗 Liên kết<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-liên-kết" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<ul>
+<li><a href="../../file-etl" class="internal" data-slug="file-etl">file-etl</a> — Rust-native Data Migration &amp; Validation Runtime, mục tiêu thay thế decoder Java/POI SAX này</li>
+<li><a href="../../pdms" class="internal" data-slug="pdms">pdms</a> — Hệ thống PDMS hiện đang chạy Java + Apache POI SAX validator</li>
+<li><a href="../../Rust-Zero-To-Hero/Bai-17-Zero-Cost-Performance" class="internal" data-slug="Rust-Zero-To-Hero/Bai-17-Zero-Cost-Performance">Bai-17-Zero-Cost-Performance</a> — nền tảng zero-cost abstraction/ownership liên quan đến lý do Calamine không cần tracing GC</li>
+<li><a href="../../Rust-Zero-To-Hero/Performance-Pitfalls-Rust" class="internal" data-slug="Rust-Zero-To-Hero/Performance-Pitfalls-Rust">Performance-Pitfalls-Rust</a> — các bẫy hiệu năng Rust cần tránh khi tự viết decoder</li>
+<li><a href="../../Performance-System-Programming/01-Database-Internals/03-BTree-vs-LSM" class="internal" data-slug="Performance-System-Programming/01-Database-Internals/03-BTree-vs-LSM">03-BTree-vs-LSM</a> — một case study khác về trade-off kiến trúc quyết định hiệu năng nhiều hơn “ngôn ngữ nhanh hơn”</li>
+</ul>
+<blockquote>
+<p><strong>Nguồn gốc bài viết:</strong> Tổng hợp và tái cấu trúc từ deep research report cá nhân (2026-08), đối chiếu README chính thức của <a href="https://github.com/tafia/calamine" class="external">tafia/calamine<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>, issue #1695 của qax-os/excelize, README performance của ClosedXML, tài liệu performance chính thức của openpyxl, và FAQ Apache POI.</p>
+</blockquote></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-343" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#-calamine-rust-vs-excelize--closedxml--openpyxl--mổ-xẻ-benchmark-1m41-và-bài-học-kiến-trúc" data-for="-calamine-rust-vs-excelize--closedxml--openpyxl--mổ-xẻ-benchmark-1m41-và-bài-học-kiến-trúc">🦀 Calamine (Rust) vs Excelize / ClosedXML / openpyxl — Mổ xẻ Benchmark 1M×41 và Bài học Kiến trúc</a></li><li class="depth-1"><a href="#-tldr--executive-summary" data-for="-tldr--executive-summary">🎯 TL;DR — Executive Summary</a></li><li class="depth-1"><a href="#-thiết-lập-benchmark-gốc--đọc-kỹ-trước-khi-trích-dẫn" data-for="-thiết-lập-benchmark-gốc--đọc-kỹ-trước-khi-trích-dẫn">📊 Thiết lập benchmark gốc — Đọc kỹ trước khi trích dẫn</a></li><li class="depth-2"><a href="#io--điểm-bất-ngờ-nhất-của-benchmark" data-for="io--điểm-bất-ngờ-nhất-của-benchmark">I/O — điểm bất ngờ nhất của benchmark</a></li><li class="depth-1"><a href="#️-kiến-trúc-xử-lý-xlsx--đường-đi-chung-5-cách-triển-khai-khác-nhau" data-for="️-kiến-trúc-xử-lý-xlsx--đường-đi-chung-5-cách-triển-khai-khác-nhau">🏗️ Kiến trúc xử lý XLSX — Đường đi chung, 5 cách triển khai khác nhau</a></li><li class="depth-1"><a href="#-5-nguyên-nhân-có-bằng-chứng-tốt-nhất-cho-lợi-thế-của-calamine" data-for="-5-nguyên-nhân-có-bằng-chứng-tốt-nhất-cho-lợi-thế-của-calamine">🔬 5 nguyên nhân có bằng chứng tốt nhất cho lợi thế của Calamine</a></li><li class="depth-2"><a href="#1-quick-xml--pull-parser-gần-zero-copy-tái-sử-dụng-buffer" data-for="1-quick-xml--pull-parser-gần-zero-copy-tái-sử-dụng-buffer">1. quick-xml — pull parser gần zero-copy, tái sử dụng buffer</a></li><li class="depth-2"><a href="#2-lazy-sheet-loading-format-specific-không-phải-universal" data-for="2-lazy-sheet-loading-format-specific-không-phải-universal">2. Lazy sheet loading (format-specific, không phải universal)</a></li><li class="depth-2"><a href="#3-không-có-tracing-gc-rust-ownership" data-for="3-không-có-tracing-gc-rust-ownership">3. Không có tracing GC (Rust ownership)</a></li><li class="depth-2"><a href="#4-representation-gọn-rangedata-thay-vì-object-graph-giàu-tính-năng" data-for="4-representation-gọn-rangedata-thay-vì-object-graph-giàu-tính-năng">4. Representation gọn: Range&lt;Data> thay vì object graph giàu tính năng</a></li><li class="depth-2"><a href="#5-scope-hẹp-reader-thuần-túy-không-hỗ-trợ-ghi" data-for="5-scope-hẹp-reader-thuần-túy-không-hỗ-trợ-ghi">5. Scope hẹp: reader thuần túy, không hỗ trợ ghi</a></li><li class="depth-1"><a href="#️-điểm-mù-quan-trọng-nhất-benchmark-không-cân-bằng-công-việc" data-for="️-điểm-mù-quan-trọng-nhất-benchmark-không-cân-bằng-công-việc">⚖️ Điểm mù quan trọng nhất: benchmark không cân bằng công việc</a></li><li class="depth-2"><a href="#trường-hợp-excelize--api-khác-nhau-cho-kết-quả-khác-nhau-tới-45" data-for="trường-hợp-excelize--api-khác-nhau-cho-kết-quả-khác-nhau-tới-45">Trường hợp Excelize — API khác nhau cho kết quả khác nhau tới 4.5×</a></li><li class="depth-2"><a href="#bảng-ai-làm-bao-nhiêu-việc-trong-benchmark-gốc" data-for="bảng-ai-làm-bao-nhiêu-việc-trong-benchmark-gốc">Bảng “ai làm bao nhiêu việc” trong benchmark gốc</a></li><li class="depth-1"><a href="#-ảnh-hưởng-ngôn-ngữ--runtime--chi-tiết-từng-thư-viện" data-for="-ảnh-hưởng-ngôn-ngữ--runtime--chi-tiết-từng-thư-viện">🌐 Ảnh hưởng ngôn ngữ &amp; runtime — chi tiết từng thư viện</a></li><li class="depth-2"><a href="#-excelize-go--native-compile-nhưng-gc-vẫn-tính-phí" data-for="-excelize-go--native-compile-nhưng-gc-vẫn-tính-phí">🐹 Excelize (Go) — native compile nhưng GC vẫn tính phí</a></li><li class="depth-2"><a href="#-closedxml-net--abstraction-cao-object-graph-phong-phú" data-for="-closedxml-net--abstraction-cao-object-graph-phong-phú">🔷 ClosedXML (.NET) — abstraction cao, object graph phong phú</a></li><li class="depth-2"><a href="#-openpyxl-python--streaming-thật-nhưng-vẫn-trả-giá-ở-lớp-python" data-for="-openpyxl-python--streaming-thật-nhưng-vẫn-trả-giá-ở-lớp-python">🐍 openpyxl (Python) — streaming thật nhưng vẫn trả giá ở lớp Python</a></li><li class="depth-2"><a href="#-apache-poi-java--vắng-mặt-trong-benchmark-nhưng-chính-là-baseline-quan-trọng-nhất-với-file-etl" data-for="-apache-poi-java--vắng-mặt-trong-benchmark-nhưng-chính-là-baseline-quan-trọng-nhất-với-file-etl">☕ Apache POI (Java) — vắng mặt trong benchmark, nhưng chính là baseline quan trọng nhất với file-etl</a></li><li class="depth-1"><a href="#-bảng-tổng-hợp-yếu-tố-triển-khai-5-thư-viện" data-for="-bảng-tổng-hợp-yếu-tố-triển-khai-5-thư-viện">📐 Bảng tổng hợp yếu tố triển khai (5 thư viện)</a></li><li class="depth-1"><a href="#-bảng-độ-tin-cậy--mức-độ-có-thể-tin-từng-khẳng-định" data-for="-bảng-độ-tin-cậy--mức-độ-có-thể-tin-từng-khẳng-định">🧭 Bảng độ tin cậy — mức độ có thể tin từng khẳng định</a></li><li class="depth-1"><a href="#-thiết-kế-một-benchmark-công-bằng-hơn-nếu-bạn-muốn-tự-tái-lập" data-for="-thiết-kế-một-benchmark-công-bằng-hơn-nếu-bạn-muốn-tự-tái-lập">🧪 Thiết kế một benchmark công bằng hơn (nếu bạn muốn tự tái lập)</a></li><li class="depth-2"><a href="#cấu-hình-path-nên-đo-cho-suite-value-equivalent" data-for="cấu-hình-path-nên-đo-cho-suite-value-equivalent">Cấu hình path nên đo cho suite value-equivalent</a></li><li class="depth-2"><a href="#metrics-bắt-buộc-thu-thập-mỗi-lần-chạy" data-for="metrics-bắt-buộc-thu-thập-mỗi-lần-chạy">Metrics bắt buộc thu thập mỗi lần chạy</a></li><li class="depth-2"><a href="#kiểm-soát-fairness" data-for="kiểm-soát-fairness">Kiểm soát fairness</a></li><li class="depth-1"><a href="#-5-giới-hạn-của-benchmark-gốc--phải-biết-trước-khi-trích-dẫn-số-liệu" data-for="-5-giới-hạn-của-benchmark-gốc--phải-biết-trước-khi-trích-dẫn-số-liệu">🚧 5 giới hạn của benchmark gốc — phải biết trước khi trích dẫn số liệu</a></li><li class="depth-1"><a href="#-kết-nối-với-file-etl--pdms--vì-sao-bài-này-quan-trọng-với-công-việc-thực-tế" data-for="-kết-nối-với-file-etl--pdms--vì-sao-bài-này-quan-trọng-với-công-việc-thực-tế">🔗 Kết nối với file-etl / PDMS — vì sao bài này quan trọng với công việc thực tế</a></li><li class="depth-2"><a href="#-bài-học-1--đừng-benchmark-poi-bằng-xssfworkbook-để-biện-minh-cho-việc-chuyển-sang-rust" data-for="-bài-học-1--đừng-benchmark-poi-bằng-xssfworkbook-để-biện-minh-cho-việc-chuyển-sang-rust">🎯 Bài học 1 — Đừng benchmark POI bằng XSSFWorkbook để biện minh cho việc chuyển sang Rust</a></li><li class="depth-2"><a href="#-bài-học-2--semanticstreamdigest-của-file-etl-chính-là-value-equivalent-suite-mà-báo-cáo-đề-xuất" data-for="-bài-học-2--semanticstreamdigest-của-file-etl-chính-là-value-equivalent-suite-mà-báo-cáo-đề-xuất">🎯 Bài học 2 — SemanticStreamDigest của file-etl chính là “value-equivalent suite” mà báo cáo đề xuất</a></li><li class="depth-2"><a href="#-bài-học-3--lazy-per-sheet-loading-khớp-tự-nhiên-với-nguyên-tắc-bounded-memory-qua-chunked-pipeline" data-for="-bài-học-3--lazy-per-sheet-loading-khớp-tự-nhiên-với-nguyên-tắc-bounded-memory-qua-chunked-pipeline">🎯 Bài học 3 — “Lazy per-sheet loading” khớp tự nhiên với nguyên tắc “bounded memory qua chunked pipeline”</a></li><li class="depth-2"><a href="#-bài-học-4--câu-hỏi-cần-trả-lời-trước-khi-đưa-số-liệu-vào-design-review" data-for="-bài-học-4--câu-hỏi-cần-trả-lời-trước-khi-đưa-số-liệu-vào-design-review">🎯 Bài học 4 — Câu hỏi cần trả lời trước khi đưa số liệu vào design review</a></li><li class="depth-1"><a href="#-tips--tricks" data-for="-tips--tricks">💡 Tips &amp; Tricks</a></li><li class="depth-1"><a href="#-key-takeaways" data-for="-key-takeaways">📝 Key Takeaways</a></li><li class="depth-1"><a href="#-liên-kết" data-for="-liên-kết">🔗 Liên kết</a></li><li class="overflow-end"></li></ul></div><div class="backlinks"><h3>Backlinks</h3><ul id="list-2" class="overflow"><li><a href="../../Performance-System-Programming/03-Data-Format-Parsing/02-Read-Write-Separation-Type-Conversion" class="internal">02-Read-Write-Separation-Type-Conversion</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://dangthobach.github.io/">Back to Portfolio</a></li><li><a href="https://github.com/dangthobach">GitHub</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../postscript.js" type="module" data-persist="true"></script></html>
