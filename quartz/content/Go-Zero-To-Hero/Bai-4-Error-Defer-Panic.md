@@ -391,3 +391,93 @@ func (h *Handler) GetDocument(c *gin.Context) {
 
 ---
 *Tags: #go #error-handling #defer #panic #recover #zero-to-hero*
+# 8. Tips & Tricks
+
+
+## 8.5 Bổ sung (17/08/2026): `errors.Join`, Re-panic & Defer-trong-loop
+
+> Rà soát lại Nhóm 2 (Error handling) so với gobyexample.com: Errors/Custom Errors/Panic/Defer/Recover đã cover đủ ở trên. 3 điểm sau là bổ sung cho case thực chiến hay gặp mà bài gốc chưa nói tới.
+
+### 8.5.1 `errors.Join` (Go 1.20+) — gom nhiều lỗi, đừng fail-fast khi validate batch
+
+```go
+// Trường hợp PDMS rất thật: validate batch upload 50 document — nếu chỉ
+// return lỗi ĐẦU TIÊN, user phải sửa từng lỗi một, submit lại 50 lần
+func validateBatch(docs []Document) error {
+    var errs []error
+    for _, d := range docs {
+        if d.ID == "" {
+            errs = append(errs, fmt.Errorf("document at index missing ID"))
+        }
+        if d.Amount < 0 {
+            errs = append(errs, fmt.Errorf("document %s: amount negative", d.ID))
+        }
+    }
+    return errors.Join(errs...) // nil nếu errs rỗng — an toàn gọi cả khi không có lỗi
+}
+
+err := validateBatch(docs)
+if err != nil {
+    fmt.Println(err) // in TẤT CẢ lỗi, mỗi lỗi 1 dòng
+}
+// errors.Is / errors.As vẫn hoạt động ĐÚNG trên error đã Join — tự động
+// duyệt qua từng lỗi con trong cây lỗi gộp
+if errors.Is(err, ErrValidation) { ... }
+```
+
+### 8.5.2 Re-panic — recover() không có nghĩa là "nuốt mọi panic"
+
+```go
+func safeHandler() {
+    defer func() {
+        if r := recover(); r != nil {
+            if _, ok := r.(net.Error); ok {
+                log.Printf("recovered network panic: %v", r) // panic ĐÃ BIẾT, xử lý được
+                return
+            }
+            panic(r) // panic KHÔNG rõ nguyên nhân — re-panic, đừng âm thầm nuốt lỗi lạ
+        }
+    }()
+    doWork()
+}
+```
+
+⚠ Recover "nuốt" mọi panic không phân biệt loại là anti-pattern nguy hiểm — nó biến lỗi nghiêm trọng (nil pointer do bug thật) thành im lặng bỏ qua, khó phát hiện trong production. Chỉ recover những gì bạn THỰC SỰ hiểu và xử lý được, còn lại re-panic để crash sớm, lộ bug ngay thay vì ẩn đi.
+
+### 8.5.3 Trap: `defer` trong vòng lặp không chạy cho tới khi CẢ FUNCTION return
+
+```go
+// ❌ Mở 1000 file, tất cả defer f.Close() dồn lại tới cuối processAll()
+// mới chạy — có thể chạm giới hạn file descriptor của OS trước khi xong
+func processAll(paths []string) error {
+    for _, p := range paths {
+        f, err := os.Open(p)
+        if err != nil {
+            return err
+        }
+        defer f.Close() // ⚠ KHÔNG đóng ngay sau mỗi vòng lặp!
+        process(f)
+    }
+    return nil // Close() của TẤT CẢ 1000 file chỉ chạy TỪ ĐÂY
+}
+
+// ✅ Tách logic mỗi file vào function riêng — defer chạy khi function
+// con return, không phải khi processAll() return
+func processAll(paths []string) error {
+    for _, p := range paths {
+        if err := processOne(p); err != nil {
+            return err
+        }
+    }
+    return nil
+}
+
+func processOne(path string) error {
+    f, err := os.Open(path)
+    if err != nil {
+        return err
+    }
+    defer f.Close() // đóng ngay khi processOne() return, đúng như mong đợi
+    return process(f)
+}
+```
