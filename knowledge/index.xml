@@ -6,6 +6,24 @@
       <description>Last 10 notes on Dang Tho Bach&#039;s Knowledge Base</description>
       <generator>Quartz -- quartz.jzhao.xyz</generator>
       <item>
+    <title>Bai-35-Functions-Deep-Dive</title>
+    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-35-Functions-Deep-Dive</link>
+    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-35-Functions-Deep-Dive</guid>
+    <description><![CDATA[ Bài 35: Functions Sâu Hơn — Multiple Returns, Variadic, Closures, Recursion, Range Mục tiêu: Function trong Go trông đơn giản nhưng có 5 cơ chế mà dev Java hay hiểu sai vì áp đặt mental model cũ: closure bắt biến theo tham chiếu chứ không phải theo giá trị tại thời điểm gọi, range copy value chứ khô... ]]></description>
+    <pubDate>Sun, 16 Aug 2026 00:00:00 GMT</pubDate>
+  </item><item>
+    <title>Bai-36-Scheduler-GMP-Internals</title>
+    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-36-Scheduler-GMP-Internals</link>
+    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-36-Scheduler-GMP-Internals</guid>
+    <description><![CDATA[ Bài 36: Go Scheduler Internals — GMP State Machine, Preemption &amp; Correctness Mục tiêu: Bài 3 đã giới thiệu GMP ở mức “bức tranh tổng quan” (G/M/P là gì, work stealing tồn tại). ]]></description>
+    <pubDate>Sun, 16 Aug 2026 00:00:00 GMT</pubDate>
+  </item><item>
+    <title>Bai-37-Strings-Runes-Enum-Iterators</title>
+    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-37-Strings-Runes-Enum-Iterators</link>
+    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-37-Strings-Runes-Enum-Iterators</guid>
+    <description><![CDATA[ Bài 37: Strings/Runes, Enum Pattern &amp; Range-over-Func Iterators Mục tiêu: Bài cuối nhóm “Cú pháp nền tảng” — nặng về code thực chiến hơn lý thuyết. ]]></description>
+    <pubDate>Sun, 16 Aug 2026 00:00:00 GMT</pubDate>
+  </item><item>
     <title>Deep Dive: Virtual Threads vs Goroutines vs Rust Async (Tokio)</title>
     <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Deep-Dive-VirtualThreads-vs-Goroutines-vs-RustAsync</link>
     <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Deep-Dive-VirtualThreads-vs-Goroutines-vs-RustAsync</guid>
@@ -47,24 +65,6 @@
     <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-34-Constants-Control-Flow-Arrays</guid>
     <description><![CDATA[ Bài 34: Constants, Control Flow &amp; Arrays — Nền Tảng Hay Bị Bỏ Qua Mục tiêu: Đây là nhóm khái niệm tưởng “quá cơ bản để viết riêng một bài”, nhưng chính vì bị coi nhẹ mà dev Java/Spring chuyển sang Go hay dính bug từ iota, từ switch không fallthrough (ngược hẳn Java!), và từ array copy-by-value. ]]></description>
     <pubDate>Wed, 05 Aug 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>Bai-33-Dependency-Injection-Go</title>
-    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-33-Dependency-Injection-Go</link>
-    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-33-Dependency-Injection-Go</guid>
-    <description><![CDATA[ Bài 33: Dependency Injection trong Go — MVC vs Hexagonal, Pointer Semantics, Wire/Fx 2026 Mục tiêu: Hiểu DI trong Go ở tầng bản chất — composition root, hướng phụ thuộc khác nhau giữa MVC và Hexagonal, các quy tắc pointer/interface hay gây bug (typed-nil, method set), và tình trạng thực tế của Wire/... ]]></description>
-    <pubDate>Sun, 02 Aug 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>Bai-32-Data-Structures-Algorithms</title>
-    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-32-Data-Structures-Algorithms</link>
-    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-32-Data-Structures-Algorithms</guid>
-    <description><![CDATA[ Bài 32: Cấu Trúc Dữ Liệu &amp; Giải Thuật trong Go — Generics, Cú Pháp Rút Gọn &amp; Pitfalls Triển Khai Mục tiêu: Tự viết được các cấu trúc dữ liệu core (Stack, Queue, Linked List, BST, Heap, Hash Table, Graph, Trie) bằng Go generics đúng idiom, thành thạo các cú pháp rút gọn Go dùng để viết giải t... ]]></description>
-    <pubDate>Sat, 01 Aug 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>00-Series-Hub</title>
-    <link>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/00-Series-Hub</link>
-    <guid>https://dangthobach.github.io/knowledge/Go-Microservices-Mastery/00-Series-Hub</guid>
-    <description><![CDATA[ Go Microservices Mastery — từ Basic đến Production Kết quả cuối series Xây dựng GoCommerce, một hệ thống commerce/fulfillment chạy được trên máy cá nhân và có đường nâng cấp rõ ràng lên production. ]]></description>
-    <pubDate>Thu, 30 Jul 2026 00:00:00 GMT</pubDate>
   </item>
     </channel>
   </rss>
