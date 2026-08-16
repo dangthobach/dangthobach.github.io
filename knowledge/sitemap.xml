@@ -428,8 +428,20 @@
     <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-37-Strings-Runes-Enum-Iterators</loc>
     <lastmod>2026-08-16T00:00:00.000Z</lastmod>
   </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-38-Strings-Fmt-Templates-Regex</loc>
+    <lastmod>2026-08-16T00:00:00.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-39-JSON-XML-Time-Epoch</loc>
+    <lastmod>2026-08-17T00:00:00.000Z</lastmod>
+  </url><url>
     <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-4-Error-Defer-Panic</loc>
     <lastmod>2026-05-01T00:00:00.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-40-Random-Strconv-URL-Hashes-Base64</loc>
+    <lastmod>2026-08-17T00:00:00.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-41-Timers-Tickers-Atomic-Stateful-Goroutines</loc>
+    <lastmod>2026-08-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-5-Modules-Tooling</loc>
     <lastmod>2026-05-01T00:00:00.000Z</lastmod>
@@ -700,6 +712,9 @@
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Microservices-Patterns/Kafka-Partition-and-Offset-Internals</loc>
     <lastmod>2026-05-17T00:00:00.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Microservices-Patterns/Kafka-Request-Response-Pattern-High-Load</loc>
+    <lastmod>2026-08-17T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Microservices-Patterns/Kafka-Troubleshooting-and-Tips</loc>
     <lastmod>2026-05-17T00:00:00.000Z</lastmod>

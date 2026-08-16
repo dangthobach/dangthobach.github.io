@@ -6,6 +6,30 @@
       <description>Last 10 notes on Dang Tho Bach&#039;s Knowledge Base</description>
       <generator>Quartz -- quartz.jzhao.xyz</generator>
       <item>
+    <title>Bai-39-JSON-XML-Time-Epoch</title>
+    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-39-JSON-XML-Time-Epoch</link>
+    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-39-JSON-XML-Time-Epoch</guid>
+    <description><![CDATA[ Bài 39: JSON, XML, Time &amp; Epoch — Nhóm 4 Phần 2 Mục tiêu: Serialization (JSON/XML) và xử lý thời gian là 2 nguồn bug production phổ biến nhất trong hệ thống banking — sai timezone gây lệch SLA, thiếu omitempty làm vỡ contract API, streaming JSON sai cách gây OOM khi document lớn. ]]></description>
+    <pubDate>Mon, 17 Aug 2026 00:00:00 GMT</pubDate>
+  </item><item>
+    <title>Bai-40-Random-Strconv-URL-Hashes-Base64</title>
+    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-40-Random-Strconv-URL-Hashes-Base64</link>
+    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-40-Random-Strconv-URL-Hashes-Base64</guid>
+    <description><![CDATA[ Bài 40: Random Numbers, Number Parsing, URL, SHA256 &amp; Base64 — Nhóm 4 Phần 3 Mục tiêu: Bài cuối Nhóm 4 — nhóm “utility” hay bị coi nhẹ nhưng chứa 1 trong những lỗi bảo mật nghiêm trọng nhất: dùng nhầm math/rand (không an toàn crypto) cho token/OTP trong hệ thống banking. ]]></description>
+    <pubDate>Mon, 17 Aug 2026 00:00:00 GMT</pubDate>
+  </item><item>
+    <title>Bai-41-Timers-Tickers-Atomic-Stateful-Goroutines</title>
+    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-41-Timers-Tickers-Atomic-Stateful-Goroutines</link>
+    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-41-Timers-Tickers-Atomic-Stateful-Goroutines</guid>
+    <description><![CDATA[ Bài 41: Timers, Tickers, Atomic Counters &amp; Stateful Goroutines — Nhóm 3 Bổ Sung Mục tiêu: Rà soát Nhóm 3 (Concurrency) so với gobyexample.com cho thấy Bài 3 đã cover đầy đủ: Goroutines, Channels, Buffering, Directions, Select, Worker Pool, WaitGroup, Mutex. ]]></description>
+    <pubDate>Mon, 17 Aug 2026 00:00:00 GMT</pubDate>
+  </item><item>
+    <title>Kafka-Request-Response-Pattern-High-Load</title>
+    <link>https://dangthobach.github.io/knowledge/Microservices-Patterns/Kafka-Request-Response-Pattern-High-Load</link>
+    <guid>https://dangthobach.github.io/knowledge/Microservices-Patterns/Kafka-Request-Response-Pattern-High-Load</guid>
+    <description><![CDATA[ 📨 Kafka Request/Response qua Topic — Kiến trúc &amp; Runbook cho Microservices Cao Tải Mục tiêu: Tập trung riêng vào pattern business-service (nhiều pod) ↔ notification-service (nhiều pod) giao tiếp async qua Kafka request/response topic — đúng bối cảnh triệu chứng “một số email/notification không ... ]]></description>
+    <pubDate>Mon, 17 Aug 2026 00:00:00 GMT</pubDate>
+  </item><item>
     <title>Bai-35-Functions-Deep-Dive</title>
     <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-35-Functions-Deep-Dive</link>
     <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-35-Functions-Deep-Dive</guid>
@@ -24,6 +48,12 @@
     <description><![CDATA[ Bài 37: Strings/Runes, Enum Pattern &amp; Range-over-Func Iterators Mục tiêu: Bài cuối nhóm “Cú pháp nền tảng” — nặng về code thực chiến hơn lý thuyết. ]]></description>
     <pubDate>Sun, 16 Aug 2026 00:00:00 GMT</pubDate>
   </item><item>
+    <title>Bai-38-Strings-Fmt-Templates-Regex</title>
+    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-38-Strings-Fmt-Templates-Regex</link>
+    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-38-Strings-Fmt-Templates-Regex</guid>
+    <description><![CDATA[ Bài 38: String Functions, Formatting, Templates &amp; Regex — Nhóm 4 Phần 1 Mục tiêu: Nhóm 4 xử lý “text processing” — 4 mảnh cần trong hầu như mọi service PDMS: tra cứu/xử lý chuỗi (strings), format output (fmt), sinh nội dung động (text/template — email thông báo, PDF template) và validate pattern... ]]></description>
+    <pubDate>Sun, 16 Aug 2026 00:00:00 GMT</pubDate>
+  </item><item>
     <title>Deep Dive: Virtual Threads vs Goroutines vs Rust Async (Tokio)</title>
     <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Deep-Dive-VirtualThreads-vs-Goroutines-vs-RustAsync</link>
     <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Deep-Dive-VirtualThreads-vs-Goroutines-vs-RustAsync</guid>
@@ -35,36 +65,6 @@
     <guid>https://dangthobach.github.io/knowledge/Performance-System-Programming/03-Data-Format-Parsing/01-Calamine-Cross-Language-Benchmark</guid>
     <description><![CDATA[ 🦀 Calamine (Rust) vs Excelize / ClosedXML / openpyxl — Mổ xẻ Benchmark 1M×41 và Bài học Kiến trúc Mục tiêu: Hiểu chính xác benchmark 1.000.001×41 trong README của Calamine chứng minh gì, không chứng minh gì — và rút ra nguyên tắc kiến trúc áp dụng được cho file-etl (Rust decoder đang thay thế Java ... ]]></description>
     <pubDate>Sat, 15 Aug 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>02-Read-Write-Separation-Type-Conversion</title>
-    <link>https://dangthobach.github.io/knowledge/Performance-System-Programming/03-Data-Format-Parsing/02-Read-Write-Separation-Type-Conversion</link>
-    <guid>https://dangthobach.github.io/knowledge/Performance-System-Programming/03-Data-Format-Parsing/02-Read-Write-Separation-Type-Conversion</guid>
-    <description><![CDATA[ 🔀 Tách Read/Write Engine — Kiến trúc Type Conversion Tổng quát cho Spreadsheet/CSV ETL Tiếp nối: 01-Calamine-Cross-Language-Benchmark. ]]></description>
-    <pubDate>Sat, 15 Aug 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>BPMP-Architecture-Independent-Review</title>
-    <link>https://dangthobach.github.io/knowledge/BPMP-Platform/BPMP-Architecture-Independent-Review</link>
-    <guid>https://dangthobach.github.io/knowledge/BPMP-Platform/BPMP-Architecture-Independent-Review</guid>
-    <description><![CDATA[ BPMP Platform — Đánh giá kiến trúc độc lập Vị trí tài liệu này [[BPMP-Architecture-Technology-Deep-Dive]] mô tả kiến trúc mục tiêu rất chi tiết, đã có sẵn ma trận so sánh Camunda/Temporal và risk register. ]]></description>
-    <pubDate>Sat, 08 Aug 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>BPMP-Architecture-Technology-Deep-Dive</title>
-    <link>https://dangthobach.github.io/knowledge/BPMP-Platform/BPMP-Architecture-Technology-Deep-Dive</link>
-    <guid>https://dangthobach.github.io/knowledge/BPMP-Platform/BPMP-Architecture-Technology-Deep-Dive</guid>
-    <description><![CDATA[ BPMP Platform — Phân tích kiến trúc và công nghệ Mục tiêu tài liệu Tài liệu này diễn giải design.md thành một architecture deep dive có thể dùng cho review kỹ thuật, onboarding, quyết định đầu tư và chuẩn bị production. ]]></description>
-    <pubDate>Sat, 08 Aug 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>BPMP-Shadow-Verification-Simulation-Architecture</title>
-    <link>https://dangthobach.github.io/knowledge/BPMP-Platform/BPMP-Shadow-Verification-Simulation-Architecture</link>
-    <guid>https://dangthobach.github.io/knowledge/BPMP-Platform/BPMP-Shadow-Verification-Simulation-Architecture</guid>
-    <description><![CDATA[ BPMP Platform — Kiến trúc đề xuất: Shadow / Verification / Simulation Platform Vị trí tài liệu này Đây là bài thứ ba trong bộ ba tài liệu BPMP. ]]></description>
-    <pubDate>Sat, 08 Aug 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>Bai-34-Constants-Control-Flow-Arrays</title>
-    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-34-Constants-Control-Flow-Arrays</link>
-    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-34-Constants-Control-Flow-Arrays</guid>
-    <description><![CDATA[ Bài 34: Constants, Control Flow &amp; Arrays — Nền Tảng Hay Bị Bỏ Qua Mục tiêu: Đây là nhóm khái niệm tưởng “quá cơ bản để viết riêng một bài”, nhưng chính vì bị coi nhẹ mà dev Java/Spring chuyển sang Go hay dính bug từ iota, từ switch không fallthrough (ngược hẳn Java!), và từ array copy-by-value. ]]></description>
-    <pubDate>Wed, 05 Aug 2026 00:00:00 GMT</pubDate>
   </item>
     </channel>
   </rss>
