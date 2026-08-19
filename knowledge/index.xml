@@ -6,6 +6,12 @@
       <description>Last 10 notes on Dang Tho Bach&#039;s Knowledge Base</description>
       <generator>Quartz -- quartz.jzhao.xyz</generator>
       <item>
+    <title>Realtime-Customer-Alert-Never-Fail-System</title>
+    <link>https://dangthobach.github.io/knowledge/Microservices-Patterns/Realtime-Customer-Alert-Never-Fail-System</link>
+    <guid>https://dangthobach.github.io/knowledge/Microservices-Patterns/Realtime-Customer-Alert-Never-Fail-System</guid>
+    <description><![CDATA[ 🔔 Realtime Customer Alert System — Kiến trúc “Never Fail” cho Loa Báo Có Bài toán: Khách hàng bấm nút tại quầy → loa/đèn báo phải kêu ở quầy tương ứng gần như tức thời, và không bao giờ được phép im lặng — kể cả khi mất mạng, mất Kafka, hay service crash. ]]></description>
+    <pubDate>Wed, 19 Aug 2026 00:00:00 GMT</pubDate>
+  </item><item>
     <title>Bai-39-JSON-XML-Time-Epoch</title>
     <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-39-JSON-XML-Time-Epoch</link>
     <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-39-JSON-XML-Time-Epoch</guid>
@@ -58,12 +64,6 @@
     <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Deep-Dive-VirtualThreads-vs-Goroutines-vs-RustAsync</link>
     <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Deep-Dive-VirtualThreads-vs-Goroutines-vs-RustAsync</guid>
     <description><![CDATA[ Virtual Thread vs Goroutine vs Tokio: So Sánh Khoa Học Từ Scheduler Đến Tail Latency Ghi chú cập nhật — 15/08/2026 Bản nâng cấp lớn so với bản gốc (01/05/2026). ]]></description>
-    <pubDate>Sat, 15 Aug 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>01-Calamine-Cross-Language-Benchmark</title>
-    <link>https://dangthobach.github.io/knowledge/Performance-System-Programming/03-Data-Format-Parsing/01-Calamine-Cross-Language-Benchmark</link>
-    <guid>https://dangthobach.github.io/knowledge/Performance-System-Programming/03-Data-Format-Parsing/01-Calamine-Cross-Language-Benchmark</guid>
-    <description><![CDATA[ 🦀 Calamine (Rust) vs Excelize / ClosedXML / openpyxl — Mổ xẻ Benchmark 1M×41 và Bài học Kiến trúc Mục tiêu: Hiểu chính xác benchmark 1.000.001×41 trong README của Calamine chứng minh gì, không chứng minh gì — và rút ra nguyên tắc kiến trúc áp dụng được cho file-etl (Rust decoder đang thay thế Java ... ]]></description>
     <pubDate>Sat, 15 Aug 2026 00:00:00 GMT</pubDate>
   </item>
     </channel>

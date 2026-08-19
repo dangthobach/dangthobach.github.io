@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>Realtime-Customer-Alert-Never-Fail-System</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="Dang Tho Bach's Knowledge Base"/><meta property="og:title" content="Realtime-Customer-Alert-Never-Fail-System"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="Realtime-Customer-Alert-Never-Fail-System"/><meta name="twitter:description" content="🔔 Realtime Customer Alert System — Kiến trúc “Never Fail” cho Loa Báo Có Bài toán: Khách hàng bấm nút tại quầy → loa/đèn báo phải kêu ở quầy tương ứng gần như tức thời, và không bao giờ được phép im lặng — kể cả khi mất mạng, mất Kafka, hay service crash."/><meta property="og:description" content="🔔 Realtime Customer Alert System — Kiến trúc “Never Fail” cho Loa Báo Có Bài toán: Khách hàng bấm nút tại quầy → loa/đèn báo phải kêu ở quầy tương ứng gần như tức thời, và không bao giờ được phép im lặng — kể cả khi mất mạng, mất Kafka, hay service crash."/><meta property="og:image:alt" content="🔔 Realtime Customer Alert System — Kiến trúc “Never Fail” cho Loa Báo Có Bài toán: Khách hàng bấm nút tại quầy → loa/đèn báo phải kêu ở quầy tương ứng gần như tức thời, và không bao giờ được phép im lặng — kể cả khi mất mạng, mất Kafka, hay service crash."/><meta property="twitter:domain" content="dangthobach.github.io/knowledge"/><meta property="og:url" content="https://dangthobach.github.io/knowledge/Microservices-Patterns/Realtime-Customer-Alert-Never-Fail-System"/><meta property="twitter:url" content="https://dangthobach.github.io/knowledge/Microservices-Patterns/Realtime-Customer-Alert-Never-Fail-System"/><link rel="icon" href="../static/icon.png"/><meta name="description" content="🔔 Realtime Customer Alert System — Kiến trúc “Never Fail” cho Loa Báo Có Bài toán: Khách hàng bấm nút tại quầy → loa/đèn báo phải kêu ở quầy tương ứng gần như tức thời, và không bao giờ được phép im lặng — kể cả khi mất mạng, mất Kafka, hay service crash."/><meta name="generator" content="Quartz"/><link href="../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiL2hvbWUvcnVubmVyL3dvcmsvZGFuZ3Rob2JhY2guZ2l0aHViLmlvL2Rhbmd0aG9iYWNoLmdpdGh1Yi5pby9xdWFydHovcXVhcnR6L2NvbXBvbmVudHMvc3R5bGVzIiwic291cmNlcyI6WyJtZXJtYWlkLmlubGluZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFHRjtFQUNFOzs7QUFLRjtFQUNFO0VBQ0E7OztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTs7QUFJRjtFQUNFO0VBQ0E7RUFDQSIsInNvdXJjZXNDb250ZW50IjpbIi5leHBhbmQtYnV0dG9uIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbG9hdDogcmlnaHQ7XG4gIHBhZGRpbmc6IDAuNHJlbTtcbiAgbWFyZ2luOiAwLjNyZW07XG4gIHJpZ2h0OiAwOyAvLyBOT1RFOiByaWdodCB3aWxsIGJlIHNldCBpbiBtZXJtYWlkLmlubGluZS50c1xuICBjb2xvcjogdmFyKC0tZ3JheSk7XG4gIGJvcmRlci1jb2xvcjogdmFyKC0tZGFyayk7XG4gIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgYm9yZGVyOiAxcHggc29saWQ7XG4gIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgb3BhY2l0eTogMDtcbiAgdHJhbnNpdGlvbjogMC4ycztcblxuICAmID4gc3ZnIHtcbiAgICBmaWxsOiB2YXIoLS1saWdodCk7XG4gICAgZmlsdGVyOiBjb250cmFzdCgwLjMpO1xuICB9XG5cbiAgJjpob3ZlciB7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIGJvcmRlci1jb2xvcjogdmFyKC0tc2Vjb25kYXJ5KTtcbiAgfVxuXG4gICY6Zm9jdXMge1xuICAgIG91dGxpbmU6IDA7XG4gIH1cbn1cblxucHJlIHtcbiAgJjpob3ZlciA+IC5leHBhbmQtYnV0dG9uIHtcbiAgICBvcGFjaXR5OiAxO1xuICAgIHRyYW5zaXRpb246IDAuMnM7XG4gIH1cbn1cblxuI21lcm1haWQtY29udGFpbmVyIHtcbiAgcG9zaXRpb246IGZpeGVkO1xuICBjb250YWluOiBsYXlvdXQ7XG4gIHotaW5kZXg6IDk5OTtcbiAgbGVmdDogMDtcbiAgdG9wOiAwO1xuICB3aWR0aDogMTAwdnc7XG4gIGhlaWdodDogMTAwdmg7XG4gIG92ZXJmbG93OiBoaWRkZW47XG4gIGRpc3BsYXk6IG5vbmU7XG4gIGJhY2tkcm9wLWZpbHRlcjogYmx1cig0cHgpO1xuICBiYWNrZ3JvdW5kOiByZ2JhKDAsIDAsIDAsIDAuNSk7XG5cbiAgJi5hY3RpdmUge1xuICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgfVxuXG4gICYgPiAjbWVybWFpZC1zcGFjZSB7XG4gICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gICAgYm9yZGVyLXJhZGl1czogNXB4O1xuICAgIHBvc2l0aW9uOiBmaXhlZDtcbiAgICB0b3A6IDUwJTtcbiAgICBsZWZ0OiA1MCU7XG4gICAgdHJhbnNmb3JtOiB0cmFuc2xhdGUoLTUwJSwgLTUwJSk7XG4gICAgaGVpZ2h0OiA4MHZoO1xuICAgIHdpZHRoOiA4MHZ3O1xuICAgIG92ZXJmbG93OiBoaWRkZW47XG5cbiAgICAmID4gLm1lcm1haWQtY29udGVudCB7XG4gICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgICB0cmFuc2Zvcm0tb3JpZ2luOiAwIDA7XG4gICAgICB0cmFuc2l0aW9uOiB0cmFuc2Zvcm0gMC4xcyBlYXNlO1xuICAgICAgb3ZlcmZsb3c6IHZpc2libGU7XG4gICAgICBtaW4taGVpZ2h0OiAyMDBweDtcbiAgICAgIG1pbi13aWR0aDogMjAwcHg7XG5cbiAgICAgIHByZSB7XG4gICAgICAgIG1hcmdpbjogMDtcbiAgICAgICAgYm9yZGVyOiBub25lO1xuICAgICAgfVxuXG4gICAgICBzdmcge1xuICAgICAgICBtYXgtd2lkdGg6IG5vbmU7XG4gICAgICAgIGhlaWdodDogYXV0bztcbiAgICAgIH1cbiAgICB9XG5cbiAgICAmID4gLm1lcm1haWQtY29udHJvbHMge1xuICAgICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgICAgYm90dG9tOiAyMHB4O1xuICAgICAgcmlnaHQ6IDIwcHg7XG4gICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgZ2FwOiA4cHg7XG4gICAgICBwYWRkaW5nOiA4cHg7XG4gICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgYm9yZGVyLXJhZGl1czogNnB4O1xuICAgICAgYm94LXNoYWRvdzogMCAycHggNHB4IHJnYmEoMCwgMCwgMCwgMC4xKTtcbiAgICAgIHotaW5kZXg6IDI7XG5cbiAgICAgIC5tZXJtYWlkLWNvbnRyb2wtYnV0dG9uIHtcbiAgICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgIHdpZHRoOiAzMnB4O1xuICAgICAgICBoZWlnaHQ6IDMycHg7XG4gICAgICAgIHBhZGRpbmc6IDA7XG4gICAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgICAgY29sb3I6IHZhcigtLWRhcmspO1xuICAgICAgICBib3JkZXItcmFkaXVzOiA0cHg7XG4gICAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICAgICAgZm9udC1zaXplOiAxNnB4O1xuICAgICAgICBmb250LWZhbWlseTogdmFyKC0tYm9keUZvbnQpO1xuICAgICAgICB0cmFuc2l0aW9uOiBhbGwgMC4ycyBlYXNlO1xuXG4gICAgICAgICY6aG92ZXIge1xuICAgICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIH1cblxuICAgICAgICAmOmFjdGl2ZSB7XG4gICAgICAgICAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKDFweCk7XG4gICAgICAgIH1cblxuICAgICAgICAvLyBTdHlsZSB0aGUgcmVzZXQgYnV0dG9uIGRpZmZlcmVudGx5XG4gICAgICAgICY6bnRoLWNoaWxkKDIpIHtcbiAgICAgICAgICB3aWR0aDogYXV0bztcbiAgICAgICAgICBwYWRkaW5nOiAwIDEycHg7XG4gICAgICAgICAgZm9udC1zaXplOiAxNHB4O1xuICAgICAgICB9XG4gICAgICB9XG4gICAgfVxuICB9XG59XG4iXX0= */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://dangthobach.github.io/knowledge/index.xml"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image" content="https://dangthobach.github.io/knowledge/Microservices-Patterns/Realtime-Customer-Alert-Never-Fail-System-og-image.webp"/><meta property="og:image:url" content="https://dangthobach.github.io/knowledge/Microservices-Patterns/Realtime-Customer-Alert-Never-Fail-System-og-image.webp"/><meta name="twitter:image" content="https://dangthobach.github.io/knowledge/Microservices-Patterns/Realtime-Customer-Alert-Never-Fail-System-og-image.webp"/><meta property="og:image:type" content="image/.webp"/></head><body data-slug="Microservices-Patterns/Realtime-Customer-Alert-Never-Fail-System"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="..">Dang Tho Bach's Knowledge Base</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-552"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-552" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../Microservices-Patterns/">Microservices Patterns</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>Realtime Customer Alert Never Fail System</a></div></nav><h1 class="article-title">Realtime-Customer-Alert-Never-Fail-System</h1><p show-comma="true" class="content-meta"><time datetime="2026-08-19T00:00:00.000Z">Aug 19, 2026</time><span>15 min read</span></p><ul class="tags"><li><a href="../tags/realtime" class="internal tag-link">realtime</a></li><li><a href="../tags/reliability" class="internal tag-link">reliability</a></li><li><a href="../tags/edge-computing" class="internal tag-link">edge-computing</a></li><li><a href="../tags/kafka" class="internal tag-link">kafka</a></li><li><a href="../tags/iot" class="internal tag-link">iot</a></li><li><a href="../tags/fail-safe" class="internal tag-link">fail-safe</a></li><li><a href="../tags/pdms" class="internal tag-link">pdms</a></li></ul></div></div><article class="popover-hint"><h1 id="-realtime-customer-alert-system--kiến-trúc-never-fail-cho-loa-báo-có">🔔 Realtime Customer Alert System — Kiến trúc “Never Fail” cho Loa Báo Có<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-realtime-customer-alert-system--kiến-trúc-never-fail-cho-loa-báo-có" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<blockquote>
+<p><strong>Bài toán:</strong> Khách hàng bấm nút tại quầy → loa/đèn báo phải kêu ở quầy tương ứng gần như tức thời, và <strong>không bao giờ được phép im lặng</strong> — kể cả khi mất mạng, mất Kafka, hay service crash. Đồng thời hệ thống trung tâm vẫn cần audit trail chính xác (ai gọi, lúc nào, ai xử lý, SLA bao lâu) để phục vụ báo cáo và cải tiến vận hành.</p>
+<p><strong>TL;DR:</strong> Tách hệ thống thành <strong>2 mặt phẳng độc lập</strong> — Safety Plane (phần cứng, fail-safe, zero network dependency) và Intelligence Plane (phần mềm, Kafka-based, eventual consistency cho audit/analytics). Safety Plane không bao giờ được phép phụ thuộc vào Intelligence Plane. Đây là nguyên lý cốt lõi khác biệt hệ thống này với một microservice thông thường.</p>
+</blockquote>
+<hr/>
+<h2 id="-vấn-đề-cốt-lõi--tại-sao-không-thể-xử-lý-như-1-microservice-bình-thường">🧠 Vấn đề cốt lõi — Tại sao không thể xử lý như 1 microservice bình thường<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-vấn-đề-cốt-lõi--tại-sao-không-thể-xử-lý-như-1-microservice-bình-thường" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Phản xạ tự nhiên khi thấy “khách bấm nút → gửi event → xử lý” là nghĩ ngay đến:</p>
+<pre><code>Button → REST API → Kafka → Consumer → Push tới loa/màn hình
+</code></pre>
+<p>Đây là <strong>thiết kế sai</strong> cho bài toán safety-critical, vì toàn bộ chuỗi phụ thuộc vào: network còn sống, gateway còn sống, Kafka broker còn quorum, consumer group không bị rebalance treo. Bất kỳ mắt xích nào đứt → khách bấm nút, loa im lặng, không ai biết.</p>
+<p>So sánh với chuông báo cháy (fire alarm): tiêu chuẩn NFPA/TCVN yêu cầu mạch tín hiệu báo cháy là <strong>mạch độc lập, có giám sát (supervised circuit)</strong>, không được đi qua network stack chung của tòa nhà. Bài toán “loa báo có” tuy không phải an toàn sinh mạng, nhưng cùng bản chất: <strong>latency thấp + never fail</strong> là yêu cầu cứng, còn “biết ai gọi, gọi khi nào, xử lý bao lâu” là yêu cầu mềm (có thể trễ vài giây, có thể tạm mất rồi bù sau).</p>
+<p><strong>Nguyên lý thiết kế:</strong> tách 2 concern này thành 2 mặt phẳng vật lý/logic độc lập.</p>
+<hr/>
+<h2 id="️-xác-định-đúng-trade-off-trước-khi-vẽ-kiến-trúc-cappacelc">⚖️ Xác định đúng trade-off trước khi vẽ kiến trúc (CAP/PACELC)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#️-xác-định-đúng-trade-off-trước-khi-vẽ-kiến-trúc-cappacelc" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Thành phần</th><th>Ưu tiên khi có Partition (mất mạng)</th><th>Ưu tiên khi Else (bình thường)</th></tr></thead><tbody><tr><td><strong>Safety Plane</strong> (nút → loa)</td><td>Availability tuyệt đối — phải kêu bằng mọi giá</td><td>Latency — phải kêu ngay lập tức (&lt; 50ms)</td></tr><tr><td><strong>Intelligence Plane</strong> (audit, dashboard, SLA)</td><td>Availability của ghi nhận cục bộ (buffer), Consistency được hoãn lại</td><td>Latency chấp nhận vài trăm ms – vài giây</td></tr></tbody></table></div>
+<p>Nói theo PACELC: Safety Plane là <strong>PA/EL</strong> thuần túy (không có khái niệm consistency — nó không phải hệ phân tán, nó là 1 mạch điện). Intelligence Plane là <strong>PA/EC</strong> — khi mất mạng ưu tiên Available (buffer local), khi bình thường ưu tiên Consistency (exactly-once ghi vào audit log qua Outbox).</p>
+<p><strong>Sai lầm thường gặp:</strong> cố gắng làm cho Kafka “never fail” bằng cách tăng replication, tăng retry, thêm circuit breaker… Tất cả các kỹ thuật đó chỉ tăng độ tin cậy của <strong>Intelligence Plane</strong>, không thể biến nó thành Safety Plane. Không có kiến trúc phần mềm phân tán nào đạt 100% uptime — chỉ có thể giảm downtime xuống rất thấp. Muốn “never fail” thật sự, phải loại network ra khỏi critical path.</p>
+<hr/>
+<h2 id="️-kiến-trúc-tổng-thể--2-mặt-phẳng-3-lớp">🏗️ Kiến trúc tổng thể — 2 mặt phẳng, 3 lớp<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#️-kiến-trúc-tổng-thể--2-mặt-phẳng-3-lớp" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TB\n    subgraph Counter[\&quot;Quầy giao dịch\&quot;]\n        BTN[\&quot;🔴 Nút bấm\&quot;]\n        RELAY[\&quot;Relay / mạch giám sát&lt;br/>(supervised loop)\&quot;]\n        SPEAKER[\&quot;🔊 Loa + đèn báo\&quot;]\n        TAP[\&quot;GPIO Tap&lt;br/>(đọc song song, không chen vào mạch)\&quot;]\n    end\n\n    subgraph Safety[\&quot;🛡️ SAFETY PLANE — hardwired, zero network\&quot;]\n        BTN -->|\&quot;đóng mạch, &amp;lt;10ms\&quot;| RELAY\n        RELAY -->|\&quot;kích trực tiếp\&quot;| SPEAKER\n    end\n\n    subgraph Intel[\&quot;🧠 INTELLIGENCE PLANE — Kafka-based, eventual consistency\&quot;]\n        TAP --> EDGE[\&quot;Edge Controller&lt;br/>(ESP32/PLC)\&quot;]\n        EDGE -->|\&quot;MQTT QoS0, LAN\&quot;| BGW[\&quot;Branch Gateway&lt;br/>(Spring Boot, tại chi nhánh)\&quot;]\n        BGW -->|\&quot;local buffer&lt;br/>SQLite outbox\&quot;| BGW\n        BGW -->|\&quot;khi WAN sống\&quot;| KAFKA[\&quot;Kafka Cluster&lt;br/>(central, 3 AZ)\&quot;]\n        KAFKA --> COORD[\&quot;Coordinator Service&lt;br/>(SLA tracking, escalation)\&quot;]\n        KAFKA --> AUDIT[\&quot;Audit/Report Service&lt;br/>(PostgreSQL)\&quot;]\n        COORD --> DASH[\&quot;Dashboard / App&lt;br/>quản lý chi nhánh\&quot;]\n    end\n\n    BTN -.->|\&quot;cùng 1 lần bấm, 2 tín hiệu song song\&quot;| TAP\n\n    style Safety fill:#3a1a1a,stroke:#e04040,stroke-width:2px\n    style Intel fill:#1a2a3a,stroke:#4090e0,stroke-width:2px&quot;">flowchart TB
+    subgraph Counter[&quot;Quầy giao dịch&quot;]
+        BTN[&quot;🔴 Nút bấm&quot;]
+        RELAY[&quot;Relay / mạch giám sát&lt;br/>(supervised loop)&quot;]
+        SPEAKER[&quot;🔊 Loa + đèn báo&quot;]
+        TAP[&quot;GPIO Tap&lt;br/>(đọc song song, không chen vào mạch)&quot;]
+    end
+
+    subgraph Safety[&quot;🛡️ SAFETY PLANE — hardwired, zero network&quot;]
+        BTN -->|&quot;đóng mạch, &amp;lt;10ms&quot;| RELAY
+        RELAY -->|&quot;kích trực tiếp&quot;| SPEAKER
+    end
+
+    subgraph Intel[&quot;🧠 INTELLIGENCE PLANE — Kafka-based, eventual consistency&quot;]
+        TAP --> EDGE[&quot;Edge Controller&lt;br/>(ESP32/PLC)&quot;]
+        EDGE -->|&quot;MQTT QoS0, LAN&quot;| BGW[&quot;Branch Gateway&lt;br/>(Spring Boot, tại chi nhánh)&quot;]
+        BGW -->|&quot;local buffer&lt;br/>SQLite outbox&quot;| BGW
+        BGW -->|&quot;khi WAN sống&quot;| KAFKA[&quot;Kafka Cluster&lt;br/>(central, 3 AZ)&quot;]
+        KAFKA --> COORD[&quot;Coordinator Service&lt;br/>(SLA tracking, escalation)&quot;]
+        KAFKA --> AUDIT[&quot;Audit/Report Service&lt;br/>(PostgreSQL)&quot;]
+        COORD --> DASH[&quot;Dashboard / App&lt;br/>quản lý chi nhánh&quot;]
+    end
+
+    BTN -.->|&quot;cùng 1 lần bấm, 2 tín hiệu song song&quot;| TAP
+
+    style Safety fill:#3a1a1a,stroke:#e04040,stroke-width:2px
+    style Intel fill:#1a2a3a,stroke:#4090e0,stroke-width:2px
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p><strong>Điểm mấu chốt của sơ đồ:</strong> một lần bấm nút sinh ra <strong>hai tín hiệu độc lập, không phụ thuộc nhau</strong>:</p>
+<ol>
+<li>Tín hiệu điện trực tiếp đóng mạch relay → loa kêu ngay — không CPU, không OS, không network.</li>
+<li>Tín hiệu GPIO được <strong>tap song song</strong> (không nối tiếp trong mạch relay) để đưa vào Edge Controller phục vụ Intelligence Plane.</li>
+</ol>
+<p>Nếu Edge Controller crash, reboot, mất điện, mất WiFi — loa <strong>vẫn kêu</strong> vì mạch (1) không đi qua nó. Đây là khác biệt căn bản so với thiết kế “smart button gửi API”.</p>
+<hr/>
+<h2 id="️-layer-1--safety-plane-đảm-bảo-never-fail">🛡️ Layer 1 — Safety Plane: đảm bảo Never Fail<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#️-layer-1--safety-plane-đảm-bảo-never-fail" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="nguyên-tắc-thiết-kế">Nguyên tắc thiết kế<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#nguyên-tắc-thiết-kế" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Nguyên tắc</th><th>Áp dụng</th></tr></thead><tbody><tr><td><strong>Không có single point of failure ở software</strong></td><td>Relay là thiết bị cơ điện, không chạy code</td></tr><tr><td><strong>Fail-safe, không fail-silent</strong></td><td>Mạch dùng kiểu <strong>supervised loop</strong> (dòng điện chờ luôn chạy qua dây) — nếu dây đứt, dòng điện = 0 → hệ thống tự phát hiện lỗi (đèn lỗi sáng), khác với dây đứt mà không ai biết</td></tr><tr><td><strong>Dual power</strong></td><td>Nguồn chính (AC) + battery backup tại tủ điều khiển chi nhánh, tự chuyển mạch khi mất điện</td></tr><tr><td><strong>Degrade về cơ, không degrade về điện tử</strong></td><td>Nếu ngân sách cho phép, quầy VIP/quan trọng có thêm nút cơ khí dự phòng (mechanical bell) hoàn toàn không điện tử</td></tr></tbody></table></div>
+<h3 id="vòng-lặp-giám-sát-supervised-circuit">Vòng lặp giám sát (supervised circuit)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#vòng-lặp-giám-sát-supervised-circuit" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>Trạng thái bình thường: dòng điện nhỏ (ví dụ 2mA) chạy liên tục qua dây tín hiệu
+Khi bấm nút:           điện trở mạch thay đổi → controller nhận diện &quot;PRESSED&quot;
+Khi dây đứt/hở mạch:   dòng điện = 0mA → controller nhận diện &quot;FAULT — line break&quot;
+Khi chập mạch:         dòng điện vượt ngưỡng → controller nhận diện &quot;FAULT — short circuit&quot;
+</code></pre>
+<p>Đây là kỹ thuật chuẩn trong hệ thống báo cháy/báo động — cho phép hệ thống <strong>tự phát hiện lỗi phần cứng</strong> thay vì chỉ im lặng chờ ai đó phát hiện ra loa không kêu (fail-silent là kiểu lỗi nguy hiểm nhất vì không ai biết đến khi cần dùng).</p>
+<h3 id="watchdog-tại-branch-gateway-giám-sát-edge-controller-không-giám-sát-safety-plane">Watchdog tại Branch Gateway (giám sát Edge Controller, không giám sát Safety Plane)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#watchdog-tại-branch-gateway-giám-sát-edge-controller-không-giám-sát-safety-plane" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="java" data-theme="github-light github-dark"><code data-language="java" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// Branch Gateway — theo dõi heartbeat từ từng Edge Controller</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// LƯU Ý: watchdog này chỉ giám sát Intelligence Plane, KHÔNG can thiệp Safety Plane</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">@</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Component</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">public</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> class</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> EdgeHeartbeatMonitor</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    private</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> final</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> Map&lt;</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">String</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Instant</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">> lastHeartbeat </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> new</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> ConcurrentHashMap&lt;>();</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    private</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> static</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> final</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> Duration TIMEOUT </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> Duration.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">ofSeconds</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">30</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    @</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">MqttListener</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">topic</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;branch/+/heartbeat&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    public</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> void</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> onHeartbeat</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(String </span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">counterId</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, HeartbeatPayload </span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">payload</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        lastHeartbeat.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">put</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(counterId, Instant.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">now</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">());</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    }</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    @</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Scheduled</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">fixedDelay</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 10_000</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    public</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> void</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> checkStaleDevices</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">() {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        Instant threshold </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> Instant.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">now</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">().</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">minus</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(TIMEOUT);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        lastHeartbeat.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">forEach</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">((counterId, lastSeen) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-></span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">            if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (lastSeen.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">isBefore</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(threshold)) {</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">                // CHỈ cảnh báo vận hành — KHÔNG ảnh hưởng loa vật lý</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">                alertService.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">notifyOps</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">                    &quot;Counter &quot;</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> +</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> counterId </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">+</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot; mất kết nối Intelligence Plane. &quot;</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> +</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">                    &quot;Loa vẫn hoạt động qua Safety Plane, nhưng audit/SLA tracking bị gián đoạn.&quot;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">                );</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        });</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></figure>
+<hr/>
+<h2 id="-layer-2--đảm-bảo-tốc-độ-latency-budget">⚡ Layer 2 — Đảm bảo Tốc Độ (Latency Budget)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-layer-2--đảm-bảo-tốc-độ-latency-budget" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Latency được đo và ràng buộc <strong>riêng cho từng plane</strong> — không gộp chung SLA.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Chặng</th><th>Plane</th><th>Latency mục tiêu</th><th>Cơ chế</th></tr></thead><tbody><tr><td>Nút → Loa kêu</td><td>Safety</td><td><strong>&lt; 10ms</strong></td><td>Mạch điện trực tiếp, không qua CPU</td></tr><tr><td>Nút → Event xuất hiện trên dashboard chi nhánh</td><td>Intelligence (local)</td><td><strong>&lt; 200ms</strong></td><td>MQTT QoS0 trên LAN, branch-gateway xử lý in-memory</td></tr><tr><td>Nút → Event ghi vào Kafka trung tâm</td><td>Intelligence (WAN)</td><td><strong>&lt; 2s</strong> (best-effort)</td><td>Async publish, không block Safety/local path</td></tr><tr><td>Nút → Xuất hiện trên báo cáo/audit central</td><td>Intelligence (durable)</td><td><strong>&lt; 5s</strong> (SLA mềm)</td><td>Outbox + Kafka consumer, có retry</td></tr></tbody></table></div>
+<p><strong>Nguyên tắc:</strong> không bao giờ để p99 latency của WAN/Kafka (vốn có thể spike vài giây khi rebalance hoặc network congestion) làm chậm trải nghiệm tại quầy. Branch Gateway xử lý và hiển thị lên dashboard chi nhánh <strong>ngay khi nhận được từ LAN</strong>, việc đẩy lên Kafka trung tâm là tác vụ nền hoàn toàn tách rời — giống cách <code>report-service</code> trong PDMS không bao giờ block write-path của <code>pdms-service</code> (xem <a href="../Microservices-Patterns/PDMS-Architecture-Overview" class="internal" data-slug="Microservices-Patterns/PDMS-Architecture-Overview">PDMS-Architecture-Overview</a> — outbox pattern).</p>
+<h3 id="vì-sao-mqtt-qos0-cho-chặng-lan-không-phải-qos12">Vì sao MQTT QoS0 cho chặng LAN, không phải QoS1/2<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#vì-sao-mqtt-qos0-cho-chặng-lan-không-phải-qos12" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>QoS0 (fire-and-forget): phù hợp vì LAN nội bộ chi nhánh có packet loss ~0%,
+  latency ~1-3ms, và tần suất bấm nút thấp (vài lần/phút/quầy)
+  → risk mất 1 gói tin cực nhỏ, và nếu mất, retry cơ chế khác (xem Consistency)
+  vẫn bắt được qua reconciliation.
+
+QoS1 (at-least-once): dùng cho chặng Branch Gateway → Kafka (WAN),
+  vì đây là nơi thực sự cần đảm bảo không mất dữ liệu audit.
+</code></pre>
+<hr/>
+<h2 id="-layer-3--đảm-bảo-consistency-intelligence-plane">🔄 Layer 3 — Đảm bảo Consistency (Intelligence Plane)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-layer-3--đảm-bảo-consistency-intelligence-plane" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Đây là phần áp dụng đầy đủ các pattern distributed systems tiêu chuẩn, tương tự <a href="../Microservices-Patterns/Kafka-Multi-Consumer-Sync-Completion" class="internal" data-slug="Microservices-Patterns/Kafka-Multi-Consumer-Sync-Completion">Kafka-Multi-Consumer-Sync-Completion</a> đã làm cho PDMS.</p>
+<h3 id="31--idempotency-key-ngay-từ-edge">3.1 — Idempotency key ngay từ Edge<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#31--idempotency-key-ngay-từ-edge" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="java" data-theme="github-light github-dark"><code data-language="java" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// Edge Controller (ESP32/embedded) — sinh event với key duy nhất tại nguồn</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">public</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> record</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> CallEvent</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    String eventId,        </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// UUID sinh tại chip, không phải tại server — chống trùng khi retry</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    String branchId,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    String counterId,</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    long</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">   localSeq,       </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// sequence number tăng dần theo từng counter, reset khi reboot</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    Instant pressedAtLocal, </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// đồng hồ local device (dùng để debounce, KHÔNG dùng làm nguồn sự thật thời gian)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    String debounceWindow  </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// &quot;500ms&quot; — loại bỏ double-press cơ học</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) {}</span></span></code></pre></figure>
+<p><strong>Debounce tại edge:</strong> nút cơ khí luôn có hiện tượng “bounce” (rung tiếp điểm) sinh nhiều xung trong vài ms. Xử lý debounce <strong>ngay tại firmware</strong>, không đẩy việc lọc trùng này lên tầng software phía trên — nguyên tắc “xử lý nhiễu càng gần nguồn càng tốt”.</p>
+<h3 id="32--outbox-pattern-tại-branch-gateway-giống-pdms">3.2 — Outbox pattern tại Branch Gateway (giống PDMS)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#32--outbox-pattern-tại-branch-gateway-giống-pdms" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Branch Gateway đóng vai trò tương tự <code>pdms-service</code>: local database là nguồn sự thật tạm thời, publish lên Kafka qua Outbox để đảm bảo atomic — không rơi vào tình trạng “ghi log local xong nhưng publish Kafka fail và không ai biết” (đây chính xác là lỗi PDMS từng gặp ở luồng email notification — <code>kafkaTemplate.send()</code> không được await, callback chỉ log lỗi mà không cập nhật trạng thái, khiến bản ghi kẹt ở PENDING rồi âm thầm chuyển STALE — xem chi tiết ở <a href="../Microservices-Patterns/Transactional-Outbox" class="internal" data-slug="Microservices-Patterns/Transactional-Outbox">Transactional-Outbox</a>).</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="sql" data-theme="github-light github-dark"><code data-language="sql" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Branch Gateway local DB (SQLite hoặc PostgreSQL nhẹ, tùy quy mô chi nhánh)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">CREATE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> TABLE</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> call_event_outbox</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    event_id        </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">TEXT</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> PRIMARY KEY</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,       </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- UUID từ edge, idempotency key</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    branch_id       </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">TEXT</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> NOT NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    counter_id      </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">TEXT</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> NOT NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    local_seq       </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">BIGINT</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> NOT NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    pressed_at      </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">TIMESTAMPTZ</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> NOT NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    received_at     </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">TIMESTAMPTZ</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> NOT NULL</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> DEFAULT</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> NOW</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(),</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    publish_status  </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">TEXT</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> NOT NULL</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> DEFAULT</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> 'PENDING'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,  </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- PENDING | PUBLISHED | FAILED</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    publish_attempts </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">INT</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> NOT NULL</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> DEFAULT</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    last_error      </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">TEXT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    CONSTRAINT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> chk_status </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">CHECK</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (publish_status </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">IN</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">'PENDING'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">'PUBLISHED'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">'FAILED'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">))</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">CREATE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> INDEX</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> idx_outbox_pending</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> ON</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> call_event_outbox(publish_status)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    WHERE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> publish_status </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> 'PENDING'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span></code></pre></figure>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="java" data-theme="github-light github-dark"><code data-language="java" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">@</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Component</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">public</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> class</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> CallEventPublisher</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">    // Ghi local trước (đảm bảo dashboard chi nhánh hiển thị ngay dù chưa có WAN)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    @</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Transactional</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    public</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> void</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> onCallEventReceived</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(CallEvent </span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">event</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        outboxRepo.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">insertIfNotExists</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(event);   </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// idempotent nhờ PK = event_id</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        localDashboard.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">push</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(event);            </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// hiển thị ngay tại chi nhánh, không chờ Kafka</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    }</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">    // Publisher chạy nền, tách biệt hoàn toàn khỏi luồng nhận event</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    @</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Scheduled</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">fixedDelay</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 500</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    public</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> void</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> flushOutbox</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">() {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        List&lt;</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">OutboxRow</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">> pending </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> outboxRepo.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">findPending</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">100</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        for</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (OutboxRow row </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">:</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> pending) {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            kafkaTemplate.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">send</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;branch.call-events&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, row.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">branchId</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">() </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">+</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;:&quot;</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> +</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> row.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">counterId</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(), row.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">toEvent</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">())</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">                .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">whenComplete</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">((result, ex) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-></span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">                    if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (ex </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">==</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> null</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">                        outboxRepo.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">markPublished</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(row.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">eventId</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">());   </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// BẮT BUỘC cập nhật status</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">                    } </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">else</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">                        outboxRepo.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">markFailed</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(row.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">eventId</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(), ex.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">getMessage</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">());</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">                        // KHÔNG chỉ log — phải có nhánh xử lý retry, khác lỗi PDMS đã gặp</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">                    }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">                });</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></figure>
+<h3 id="33--ordering-key--partition-strategy">3.3 — Ordering key &amp; partition strategy<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#33--ordering-key--partition-strategy" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="yaml" data-theme="github-light github-dark"><code data-language="yaml" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Kafka topic: mỗi counter là 1 &quot;logical stream&quot; độc lập</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">branch.call-events</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">  partitions</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">24</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">          # đủ để scale nhiều chi nhánh, nhưng key đảm bảo order per-counter</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">  replication-factor</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">3</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">  # Producer key = &quot;{branchId}:{counterId}&quot; → mọi event của cùng 1 quầy</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">  # luôn vào cùng 1 partition → giữ đúng thứ tự bấm gọi tại quầy đó.</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">  # Không cần global ordering (giữa các quầy khác nhau) — không có ý nghĩa nghiệp vụ.</span></span></code></pre></figure>
+<h3 id="34--reconciliation-job-bù-trừ-khi-có-gián-đoạn">3.4 — Reconciliation job (bù trừ khi có gián đoạn)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#34--reconciliation-job-bù-trừ-khi-có-gián-đoạn" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="java" data-theme="github-light github-dark"><code data-language="java" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// Chạy định kỳ tại Coordinator Service — phát hiện lệch giữa local buffer và central Kafka</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">@</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Scheduled</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">cron</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;0 */15 * * * *&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">public</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> void</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> reconcileBranches</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">() {</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    for</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (Branch branch </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">:</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> branchRegistry.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">all</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">()) {</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        long</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> localMaxSeq </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> branchGatewayClient.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">getMaxLocalSeq</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(branch.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">id</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">());</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        long</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> centralMaxSeq </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> auditRepo.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">getMaxSeqReceived</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(branch.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">id</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">());</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (localMaxSeq </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">></span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> centralMaxSeq) {</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">            long</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> gap </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> localMaxSeq </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> centralMaxSeq;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            alertService.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">notifyOps</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">                &quot;Branch %s có %d event chưa sync lên central (có thể do gián đoạn WAN)&quot;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">                    .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">formatted</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(branch.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">id</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(), gap));</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            branchGatewayClient.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">requestReplay</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(branch.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">id</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(), centralMaxSeq </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">+</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></figure>
+<p>Đây là bù đắp cho việc chấp nhận <strong>eventual consistency</strong> ở Intelligence Plane khi mất WAN: dữ liệu không mất (đã nằm trong outbox local), chỉ trễ đồng bộ, và job này đảm bảo trễ đó luôn được phát hiện và tự chữa (self-healing), không cần con người phải chủ động kiểm tra.</p>
+<hr/>
+<h2 id="-failure-scenarios--fixes">🔥 Failure Scenarios &amp; Fixes<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-failure-scenarios--fixes" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Tình huống</th><th>Ảnh hưởng</th><th>Xử lý</th></tr></thead><tbody><tr><td>Mất điện lưới tại chi nhánh</td><td>Safety Plane vẫn chạy nhờ battery backup; Intelligence Plane (server, router) có thể tắt</td><td>UPS riêng cho tủ điều khiển relay tách khỏi UPS server</td></tr><tr><td>Dây tín hiệu bị đứt</td><td>Loa không kêu được (lỗi phần cứng thật)</td><td>Supervised loop phát hiện ngay, đèn lỗi tại tủ điều khiển sáng, khác hẳn “im lặng không rõ lý do”</td></tr><tr><td>Edge Controller crash/treo</td><td>Loa vẫn kêu (Safety Plane độc lập); mất log/audit tạm thời</td><td>Watchdog phần cứng tự reset Edge Controller sau N giây không phản hồi</td></tr><tr><td>Mất WAN (chi nhánh ↔ trung tâm)</td><td>Dashboard trung tâm không thấy real-time; nhân viên tại chi nhánh vẫn thấy &amp; xử lý bình thường qua dashboard local</td><td>Outbox buffer tại Branch Gateway, flush lại khi WAN phục hồi</td></tr><tr><td>Kafka broker mất quorum</td><td>Không publish được lên central</td><td>Branch Gateway tiếp tục hoạt động độc lập (đã tách khỏi critical path), outbox tích lũy, retry với backoff</td></tr><tr><td>Branch Gateway restart</td><td>Có thể replay event trùng vào Kafka</td><td><code>event_id</code> là idempotency key — consumer trung tâm dùng UPSERT theo <code>event_id</code>, không INSERT thuần</td></tr><tr><td>Double-press cơ học</td><td>Có thể tạo 2 event gần như đồng thời</td><td>Debounce tại firmware (edge) trước khi sinh <code>eventId</code></td></tr><tr><td>Nhân viên không phản hồi quá SLA</td><td>Khách chờ lâu không ai biết</td><td>Coordinator Service theo dõi <code>pressed_at</code> → chưa có ACK xử lý sau X phút → escalate lên quản lý ca (tính năng ở Intelligence Plane, không ảnh hưởng Safety Plane)</td></tr></tbody></table></div>
+<hr/>
+<h2 id="️-tech-stack-đề-xuất">⚙️ Tech Stack Đề Xuất<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#️-tech-stack-đề-xuất" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Thành phần</th><th>Lựa chọn</th><th>Lý do</th></tr></thead><tbody><tr><td>Edge Controller</td><td>ESP32 hoặc PLC công nghiệp nhỏ</td><td>Rẻ, có GPIO, hỗ trợ watchdog timer phần cứng</td></tr><tr><td>Giao tiếp LAN</td><td>MQTT (Mosquitto broker tại chi nhánh)</td><td>Nhẹ, pub/sub tự nhiên cho nhiều quầy, QoS linh hoạt</td></tr><tr><td>Branch Gateway</td><td>Spring Boot (Java 21) + embedded/local PostgreSQL hoặc SQLite</td><td>Đồng bộ stack với PDMS, tái dùng kinh nghiệm Outbox pattern sẵn có</td></tr><tr><td>Central Bus</td><td>Kafka (đã có sẵn hạ tầng PDMS)</td><td>Tận dụng cluster hiện tại, partition theo <code>branchId:counterId</code></td></tr><tr><td>Coordinator/SLA</td><td>Spring Boot + Redis (state tracking realtime, TTL cho SLA)</td><td>Giống <code>SyncTracker</code> trong <a href="../Microservices-Patterns/Kafka-Multi-Consumer-Sync-Completion" class="internal" data-slug="Microservices-Patterns/Kafka-Multi-Consumer-Sync-Completion">Kafka-Multi-Consumer-Sync-Completion</a></td></tr><tr><td>Audit/Report</td><td>PostgreSQL (giống <code>report_db</code> PDMS)</td><td>Đã có pipeline export Excel qua SAX streaming nếu cần báo cáo KPI</td></tr><tr><td>Dashboard chi nhánh</td><td>WebSocket từ Branch Gateway (không qua central)</td><td>Đảm bảo hiển thị local không phụ thuộc WAN</td></tr></tbody></table></div>
+<hr/>
+<h2 id="-bài-học-liên-hệ-trực-tiếp-từ-pdms">🧩 Bài học liên hệ trực tiếp từ PDMS<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-bài-học-liên-hệ-trực-tiếp-từ-pdms" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Bug đã phát hiện trong luồng notification của PDMS là minh chứng thực tế cho lý do phải thiết kế outbox nghiêm ngặt: <code>KafkaMessagePublisherAdapter.publishEmailEvent</code> gọi <code>kafkaTemplate.send()</code> theo kiểu fire-and-forget, <code>whenComplete</code> chỉ log lỗi thay vì gọi <code>markFailedIfPending</code>, khiến bản ghi PENDING không bao giờ chuyển FAILED mà âm thầm “già” thành STALE sau 60 phút — không có outbox pattern như luồng SFTP request (<code>SftpRequestOutbox</code>) đang có.</p>
+<p>Áp dụng vào hệ thống loa báo: nếu <code>flushOutbox()</code> ở Branch Gateway mắc lỗi tương tự (chỉ log khi publish Kafka fail, không set lại <code>publish_status = 'FAILED'</code> để retry), event sẽ kẹt vĩnh viễn ở <code>PENDING</code> — về mặt UI trông như “đã gửi” nhưng thực chất chưa từng tới trung tâm. Đây chính là lý do outbox schema ở trên có <code>publish_attempts</code> và <code>last_error</code> tường minh, và <code>whenComplete</code> bắt buộc rẽ nhánh cả 2 trường hợp thành công/thất bại.</p>
+<hr/>
+<h2 id="-core-principles">💡 Core Principles<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-core-principles" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<ol>
+<li><strong>Tách Safety Plane khỏi Intelligence Plane</strong> — chức năng “phải luôn hoạt động” không bao giờ được implement bằng phần mềm phân tán; chỉ phần cứng/mạch điện mới đạt “never fail” theo đúng nghĩa đen.</li>
+<li><strong>Supervised circuit, không phải fail-silent</strong> — hệ thống phải tự phát hiện và báo lỗi phần cứng, không để “im lặng” là trạng thái không thể phân biệt giữa “không ai gọi” và “hỏng”.</li>
+<li><strong>Latency SLA phải tách riêng theo plane</strong> — không gộp chung SLA của mạch điện (ms) với SLA của hệ phân tán (giây).</li>
+<li><strong>Idempotency key sinh tại nguồn (edge), không sinh tại server</strong> — chống trùng lặp xuyên suốt toàn bộ chuỗi retry.</li>
+<li><strong>Outbox + explicit failure branch là bắt buộc</strong> — không bao giờ fire-and-forget khi publish message có ý nghĩa nghiệp vụ (bài học trực tiếp từ bug PDMS).</li>
+<li><strong>Partition key theo logical stream (per-counter)</strong> — chỉ cần order cục bộ, không cần global order.</li>
+<li><strong>Reconciliation job là cơ chế self-healing bắt buộc</strong> khi chấp nhận eventual consistency — không dựa vào con người phát hiện lệch dữ liệu.</li>
+<li><strong>Watchdog/heartbeat chỉ giám sát Intelligence Plane</strong> — không bao giờ để logic giám sát trở thành phụ thuộc ngược của Safety Plane.</li>
+</ol>
+<hr/>
+<h2 id="-links">🔗 Links<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-links" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<ul>
+<li><a href="../Microservices-Patterns/Transactional-Outbox" class="internal" data-slug="Microservices-Patterns/Transactional-Outbox">Transactional-Outbox</a> — chi tiết pattern outbox, atomic publish</li>
+<li><a href="../Microservices-Patterns/Circuit-Breaker" class="internal" data-slug="Microservices-Patterns/Circuit-Breaker">Circuit-Breaker</a> — bảo vệ Branch Gateway khi gọi central API</li>
+<li><a href="../Microservices-Patterns/Kafka-Multi-Consumer-Sync-Completion" class="internal" data-slug="Microservices-Patterns/Kafka-Multi-Consumer-Sync-Completion">Kafka-Multi-Consumer-Sync-Completion</a> — pattern completion-tracking dùng cho Coordinator/SLA</li>
+<li><a href="../Microservices-Patterns/Event-Sourcing" class="internal" data-slug="Microservices-Patterns/Event-Sourcing">Event-Sourcing</a> — nếu cần replay toàn bộ lịch sử event theo counter</li>
+<li><a href="../Microservices-Patterns/PDMS-Architecture-Overview" class="internal" data-slug="Microservices-Patterns/PDMS-Architecture-Overview">PDMS-Architecture-Overview</a> — bối cảnh hạ tầng Kafka/PostgreSQL sẵn có tại VPBank</li>
+<li><a href="../Microservices-Patterns/Source-Of-Truth-Snapshot-Strategy" class="internal" data-slug="Microservices-Patterns/Source-Of-Truth-Snapshot-Strategy">Source-Of-Truth-Snapshot-Strategy</a> — chiến lược sync giữa Branch Gateway (local) và central</li>
+</ul></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-249" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#-realtime-customer-alert-system--kiến-trúc-never-fail-cho-loa-báo-có" data-for="-realtime-customer-alert-system--kiến-trúc-never-fail-cho-loa-báo-có">🔔 Realtime Customer Alert System — Kiến trúc “Never Fail” cho Loa Báo Có</a></li><li class="depth-1"><a href="#-vấn-đề-cốt-lõi--tại-sao-không-thể-xử-lý-như-1-microservice-bình-thường" data-for="-vấn-đề-cốt-lõi--tại-sao-không-thể-xử-lý-như-1-microservice-bình-thường">🧠 Vấn đề cốt lõi — Tại sao không thể xử lý như 1 microservice bình thường</a></li><li class="depth-1"><a href="#️-xác-định-đúng-trade-off-trước-khi-vẽ-kiến-trúc-cappacelc" data-for="️-xác-định-đúng-trade-off-trước-khi-vẽ-kiến-trúc-cappacelc">⚖️ Xác định đúng trade-off trước khi vẽ kiến trúc (CAP/PACELC)</a></li><li class="depth-1"><a href="#️-kiến-trúc-tổng-thể--2-mặt-phẳng-3-lớp" data-for="️-kiến-trúc-tổng-thể--2-mặt-phẳng-3-lớp">🏗️ Kiến trúc tổng thể — 2 mặt phẳng, 3 lớp</a></li><li class="depth-1"><a href="#️-layer-1--safety-plane-đảm-bảo-never-fail" data-for="️-layer-1--safety-plane-đảm-bảo-never-fail">🛡️ Layer 1 — Safety Plane: đảm bảo Never Fail</a></li><li class="depth-2"><a href="#nguyên-tắc-thiết-kế" data-for="nguyên-tắc-thiết-kế">Nguyên tắc thiết kế</a></li><li class="depth-2"><a href="#vòng-lặp-giám-sát-supervised-circuit" data-for="vòng-lặp-giám-sát-supervised-circuit">Vòng lặp giám sát (supervised circuit)</a></li><li class="depth-2"><a href="#watchdog-tại-branch-gateway-giám-sát-edge-controller-không-giám-sát-safety-plane" data-for="watchdog-tại-branch-gateway-giám-sát-edge-controller-không-giám-sát-safety-plane">Watchdog tại Branch Gateway (giám sát Edge Controller, không giám sát Safety Plane)</a></li><li class="depth-1"><a href="#-layer-2--đảm-bảo-tốc-độ-latency-budget" data-for="-layer-2--đảm-bảo-tốc-độ-latency-budget">⚡ Layer 2 — Đảm bảo Tốc Độ (Latency Budget)</a></li><li class="depth-2"><a href="#vì-sao-mqtt-qos0-cho-chặng-lan-không-phải-qos12" data-for="vì-sao-mqtt-qos0-cho-chặng-lan-không-phải-qos12">Vì sao MQTT QoS0 cho chặng LAN, không phải QoS1/2</a></li><li class="depth-1"><a href="#-layer-3--đảm-bảo-consistency-intelligence-plane" data-for="-layer-3--đảm-bảo-consistency-intelligence-plane">🔄 Layer 3 — Đảm bảo Consistency (Intelligence Plane)</a></li><li class="depth-2"><a href="#31--idempotency-key-ngay-từ-edge" data-for="31--idempotency-key-ngay-từ-edge">3.1 — Idempotency key ngay từ Edge</a></li><li class="depth-2"><a href="#32--outbox-pattern-tại-branch-gateway-giống-pdms" data-for="32--outbox-pattern-tại-branch-gateway-giống-pdms">3.2 — Outbox pattern tại Branch Gateway (giống PDMS)</a></li><li class="depth-2"><a href="#33--ordering-key--partition-strategy" data-for="33--ordering-key--partition-strategy">3.3 — Ordering key &amp; partition strategy</a></li><li class="depth-2"><a href="#34--reconciliation-job-bù-trừ-khi-có-gián-đoạn" data-for="34--reconciliation-job-bù-trừ-khi-có-gián-đoạn">3.4 — Reconciliation job (bù trừ khi có gián đoạn)</a></li><li class="depth-1"><a href="#-failure-scenarios--fixes" data-for="-failure-scenarios--fixes">🔥 Failure Scenarios &amp; Fixes</a></li><li class="depth-1"><a href="#️-tech-stack-đề-xuất" data-for="️-tech-stack-đề-xuất">⚙️ Tech Stack Đề Xuất</a></li><li class="depth-1"><a href="#-bài-học-liên-hệ-trực-tiếp-từ-pdms" data-for="-bài-học-liên-hệ-trực-tiếp-từ-pdms">🧩 Bài học liên hệ trực tiếp từ PDMS</a></li><li class="depth-1"><a href="#-core-principles" data-for="-core-principles">💡 Core Principles</a></li><li class="depth-1"><a href="#-links" data-for="-links">🔗 Links</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://dangthobach.github.io/">Back to Portfolio</a></li><li><a href="https://github.com/dangthobach">GitHub</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../postscript.js" type="module" data-persist="true"></script></html>
