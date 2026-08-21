@@ -443,6 +443,15 @@
     <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-41-Timers-Tickers-Atomic-Stateful-Goroutines</loc>
     <lastmod>2026-08-17T00:00:00.000Z</lastmod>
   </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-42-File-IO-Paths-Embed</loc>
+    <lastmod>2026-08-22T00:00:00.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-43-CLI-Flags-Subcommands-EnvVars</loc>
+    <lastmod>2026-08-22T00:00:00.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-44-TCP-HTTPClient-Exec-Signals</loc>
+    <lastmod>2026-08-22T00:00:00.000Z</lastmod>
+  </url><url>
     <loc>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-5-Modules-Tooling</loc>
     <lastmod>2026-05-01T00:00:00.000Z</lastmod>
   </url><url>
@@ -724,6 +733,9 @@
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Microservices-Patterns/Metrics-and-Alerting</loc>
     <lastmod>2026-04-12T00:00:00.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Microservices-Patterns/Notification-Service-High-Throughput-Never-Miss-Design</loc>
+    <lastmod>2026-08-19T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Microservices-Patterns/PDMS-Architecture-Overview</loc>
     <lastmod>2026-04-15T00:00:00.000Z</lastmod>
@@ -1283,6 +1295,15 @@
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-39-Security-Production</loc>
     <lastmod>2026-05-06T00:00:00.000Z</lastmod>
   </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-3b-Pattern-Matching-Advanced</loc>
+    <lastmod>2026-08-22T00:00:00.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-3c-Standard-Traits-Conversions</loc>
+    <lastmod>2026-08-22T00:00:00.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-3d-Operator-Overloading</loc>
+    <lastmod>2026-08-22T00:00:00.000Z</lastmod>
+  </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-4-Error-Handling-Collections</loc>
     <lastmod>2026-04-10T00:00:00.000Z</lastmod>
   </url><url>
@@ -1315,6 +1336,9 @@
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-49-Rust-Framework-Radar-2026</loc>
     <lastmod>2026-07-24T00:00:00.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-4b-Collections-Deep-Dive</loc>
+    <lastmod>2026-08-22T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-5-Lifetimes</loc>
     <lastmod>2026-04-12T00:00:00.000Z</lastmod>

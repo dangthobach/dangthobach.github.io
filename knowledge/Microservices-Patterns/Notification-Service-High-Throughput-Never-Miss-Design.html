@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>Notification-Service-High-Throughput-Never-Miss-Design</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="Dang Tho Bach's Knowledge Base"/><meta property="og:title" content="Notification-Service-High-Throughput-Never-Miss-Design"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="Notification-Service-High-Throughput-Never-Miss-Design"/><meta name="twitter:description" content="📲 Notification Service — Kiến trúc High-Throughput, Never-Miss, Consistent cho Hàng Triệu Users Bài toán: Xây notification-service nhận request từ các business service (PDMS, CoreBanking, IAM…), đẩy thông báo tới hàng triệu end-user, với 3 ràng buộc cứng đồng thời: (1) phản hồi cực nhanh cho cả phí..."/><meta property="og:description" content="📲 Notification Service — Kiến trúc High-Throughput, Never-Miss, Consistent cho Hàng Triệu Users Bài toán: Xây notification-service nhận request từ các business service (PDMS, CoreBanking, IAM…), đẩy thông báo tới hàng triệu end-user, với 3 ràng buộc cứng đồng thời: (1) phản hồi cực nhanh cho cả phí..."/><meta property="og:image:alt" content="📲 Notification Service — Kiến trúc High-Throughput, Never-Miss, Consistent cho Hàng Triệu Users Bài toán: Xây notification-service nhận request từ các business service (PDMS, CoreBanking, IAM…), đẩy thông báo tới hàng triệu end-user, với 3 ràng buộc cứng đồng thời: (1) phản hồi cực nhanh cho cả phí..."/><meta property="twitter:domain" content="dangthobach.github.io/knowledge"/><meta property="og:url" content="https://dangthobach.github.io/knowledge/Microservices-Patterns/Notification-Service-High-Throughput-Never-Miss-Design"/><meta property="twitter:url" content="https://dangthobach.github.io/knowledge/Microservices-Patterns/Notification-Service-High-Throughput-Never-Miss-Design"/><link rel="icon" href="../static/icon.png"/><meta name="description" content="📲 Notification Service — Kiến trúc High-Throughput, Never-Miss, Consistent cho Hàng Triệu Users Bài toán: Xây notification-service nhận request từ các business service (PDMS, CoreBanking, IAM…), đẩy thông báo tới hàng triệu end-user, với 3 ràng buộc cứng đồng thời: (1) phản hồi cực nhanh cho cả phí..."/><meta name="generator" content="Quartz"/><link href="../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiL2hvbWUvcnVubmVyL3dvcmsvZGFuZ3Rob2JhY2guZ2l0aHViLmlvL2Rhbmd0aG9iYWNoLmdpdGh1Yi5pby9xdWFydHovcXVhcnR6L2NvbXBvbmVudHMvc3R5bGVzIiwic291cmNlcyI6WyJtZXJtYWlkLmlubGluZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFHRjtFQUNFOzs7QUFLRjtFQUNFO0VBQ0E7OztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTs7QUFJRjtFQUNFO0VBQ0E7RUFDQSIsInNvdXJjZXNDb250ZW50IjpbIi5leHBhbmQtYnV0dG9uIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbG9hdDogcmlnaHQ7XG4gIHBhZGRpbmc6IDAuNHJlbTtcbiAgbWFyZ2luOiAwLjNyZW07XG4gIHJpZ2h0OiAwOyAvLyBOT1RFOiByaWdodCB3aWxsIGJlIHNldCBpbiBtZXJtYWlkLmlubGluZS50c1xuICBjb2xvcjogdmFyKC0tZ3JheSk7XG4gIGJvcmRlci1jb2xvcjogdmFyKC0tZGFyayk7XG4gIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgYm9yZGVyOiAxcHggc29saWQ7XG4gIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgb3BhY2l0eTogMDtcbiAgdHJhbnNpdGlvbjogMC4ycztcblxuICAmID4gc3ZnIHtcbiAgICBmaWxsOiB2YXIoLS1saWdodCk7XG4gICAgZmlsdGVyOiBjb250cmFzdCgwLjMpO1xuICB9XG5cbiAgJjpob3ZlciB7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIGJvcmRlci1jb2xvcjogdmFyKC0tc2Vjb25kYXJ5KTtcbiAgfVxuXG4gICY6Zm9jdXMge1xuICAgIG91dGxpbmU6IDA7XG4gIH1cbn1cblxucHJlIHtcbiAgJjpob3ZlciA+IC5leHBhbmQtYnV0dG9uIHtcbiAgICBvcGFjaXR5OiAxO1xuICAgIHRyYW5zaXRpb246IDAuMnM7XG4gIH1cbn1cblxuI21lcm1haWQtY29udGFpbmVyIHtcbiAgcG9zaXRpb246IGZpeGVkO1xuICBjb250YWluOiBsYXlvdXQ7XG4gIHotaW5kZXg6IDk5OTtcbiAgbGVmdDogMDtcbiAgdG9wOiAwO1xuICB3aWR0aDogMTAwdnc7XG4gIGhlaWdodDogMTAwdmg7XG4gIG92ZXJmbG93OiBoaWRkZW47XG4gIGRpc3BsYXk6IG5vbmU7XG4gIGJhY2tkcm9wLWZpbHRlcjogYmx1cig0cHgpO1xuICBiYWNrZ3JvdW5kOiByZ2JhKDAsIDAsIDAsIDAuNSk7XG5cbiAgJi5hY3RpdmUge1xuICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgfVxuXG4gICYgPiAjbWVybWFpZC1zcGFjZSB7XG4gICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gICAgYm9yZGVyLXJhZGl1czogNXB4O1xuICAgIHBvc2l0aW9uOiBmaXhlZDtcbiAgICB0b3A6IDUwJTtcbiAgICBsZWZ0OiA1MCU7XG4gICAgdHJhbnNmb3JtOiB0cmFuc2xhdGUoLTUwJSwgLTUwJSk7XG4gICAgaGVpZ2h0OiA4MHZoO1xuICAgIHdpZHRoOiA4MHZ3O1xuICAgIG92ZXJmbG93OiBoaWRkZW47XG5cbiAgICAmID4gLm1lcm1haWQtY29udGVudCB7XG4gICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgICB0cmFuc2Zvcm0tb3JpZ2luOiAwIDA7XG4gICAgICB0cmFuc2l0aW9uOiB0cmFuc2Zvcm0gMC4xcyBlYXNlO1xuICAgICAgb3ZlcmZsb3c6IHZpc2libGU7XG4gICAgICBtaW4taGVpZ2h0OiAyMDBweDtcbiAgICAgIG1pbi13aWR0aDogMjAwcHg7XG5cbiAgICAgIHByZSB7XG4gICAgICAgIG1hcmdpbjogMDtcbiAgICAgICAgYm9yZGVyOiBub25lO1xuICAgICAgfVxuXG4gICAgICBzdmcge1xuICAgICAgICBtYXgtd2lkdGg6IG5vbmU7XG4gICAgICAgIGhlaWdodDogYXV0bztcbiAgICAgIH1cbiAgICB9XG5cbiAgICAmID4gLm1lcm1haWQtY29udHJvbHMge1xuICAgICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgICAgYm90dG9tOiAyMHB4O1xuICAgICAgcmlnaHQ6IDIwcHg7XG4gICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgZ2FwOiA4cHg7XG4gICAgICBwYWRkaW5nOiA4cHg7XG4gICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgYm9yZGVyLXJhZGl1czogNnB4O1xuICAgICAgYm94LXNoYWRvdzogMCAycHggNHB4IHJnYmEoMCwgMCwgMCwgMC4xKTtcbiAgICAgIHotaW5kZXg6IDI7XG5cbiAgICAgIC5tZXJtYWlkLWNvbnRyb2wtYnV0dG9uIHtcbiAgICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgIHdpZHRoOiAzMnB4O1xuICAgICAgICBoZWlnaHQ6IDMycHg7XG4gICAgICAgIHBhZGRpbmc6IDA7XG4gICAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgICAgY29sb3I6IHZhcigtLWRhcmspO1xuICAgICAgICBib3JkZXItcmFkaXVzOiA0cHg7XG4gICAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICAgICAgZm9udC1zaXplOiAxNnB4O1xuICAgICAgICBmb250LWZhbWlseTogdmFyKC0tYm9keUZvbnQpO1xuICAgICAgICB0cmFuc2l0aW9uOiBhbGwgMC4ycyBlYXNlO1xuXG4gICAgICAgICY6aG92ZXIge1xuICAgICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIH1cblxuICAgICAgICAmOmFjdGl2ZSB7XG4gICAgICAgICAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKDFweCk7XG4gICAgICAgIH1cblxuICAgICAgICAvLyBTdHlsZSB0aGUgcmVzZXQgYnV0dG9uIGRpZmZlcmVudGx5XG4gICAgICAgICY6bnRoLWNoaWxkKDIpIHtcbiAgICAgICAgICB3aWR0aDogYXV0bztcbiAgICAgICAgICBwYWRkaW5nOiAwIDEycHg7XG4gICAgICAgICAgZm9udC1zaXplOiAxNHB4O1xuICAgICAgICB9XG4gICAgICB9XG4gICAgfVxuICB9XG59XG4iXX0= */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://dangthobach.github.io/knowledge/index.xml"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image" content="https://dangthobach.github.io/knowledge/Microservices-Patterns/Notification-Service-High-Throughput-Never-Miss-Design-og-image.webp"/><meta property="og:image:url" content="https://dangthobach.github.io/knowledge/Microservices-Patterns/Notification-Service-High-Throughput-Never-Miss-Design-og-image.webp"/><meta name="twitter:image" content="https://dangthobach.github.io/knowledge/Microservices-Patterns/Notification-Service-High-Throughput-Never-Miss-Design-og-image.webp"/><meta property="og:image:type" content="image/.webp"/></head><body data-slug="Microservices-Patterns/Notification-Service-High-Throughput-Never-Miss-Design"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="..">Dang Tho Bach's Knowledge Base</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-549"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-549" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../Microservices-Patterns/">Microservices Patterns</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>Notification Service High Throughput Never Miss Design</a></div></nav><h1 class="article-title">Notification-Service-High-Throughput-Never-Miss-Design</h1><p show-comma="true" class="content-meta"><time datetime="2026-08-19T00:00:00.000Z">Aug 19, 2026</time><span>15 min read</span></p><ul class="tags"><li><a href="../tags/notification-service" class="internal tag-link">notification-service</a></li><li><a href="../tags/high-throughput" class="internal tag-link">high-throughput</a></li><li><a href="../tags/kafka" class="internal tag-link">kafka</a></li><li><a href="../tags/websocket" class="internal tag-link">websocket</a></li><li><a href="../tags/scalability" class="internal tag-link">scalability</a></li><li><a href="../tags/pdms" class="internal tag-link">pdms</a></li></ul></div></div><article class="popover-hint"><h1 id="-notification-service--kiến-trúc-high-throughput-never-miss-consistent-cho-hàng-triệu-users">📲 Notification Service — Kiến trúc High-Throughput, Never-Miss, Consistent cho Hàng Triệu Users<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-notification-service--kiến-trúc-high-throughput-never-miss-consistent-cho-hàng-triệu-users" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<blockquote>
+<p><strong>Bài toán:</strong> Xây <code>notification-service</code> nhận request từ các business service (PDMS, CoreBanking, IAM…), đẩy thông báo tới hàng triệu end-user, với 3 ràng buộc cứng đồng thời: <strong>(1) phản hồi cực nhanh cho cả phía gọi lẫn phía nhận, (2) không được miss tin dù tải cao, (3) trạng thái phải consistent</strong> (không trùng, không lệch thứ tự, không “trông như đã gửi” nhưng thực ra chưa).</p>
+<p><strong>TL;DR:</strong> Ba ràng buộc này <strong>không được giải bằng cùng một cơ chế</strong> — mỗi ràng buộc ứng với một lớp kiến trúc riêng: (1) tách <em>write path</em> (ingest) khỏi <em>delivery path</em> bằng outbox + Kafka để trả response nhanh; (2) at-least-once + idempotency + DLQ để never-miss; (3) partition theo <code>userId</code> + state machine bền vững để consistent. Ghép chung 3 việc vào 1 service đồng bộ là nguyên nhân phổ biến nhất khiến notification-service sập khi cao tải.</p>
+</blockquote>
+<hr/>
+<h2 id="-bóc-tách-đúng-yêu-cầu-trước-khi-vẽ-kiến-trúc">🧠 Bóc tách đúng yêu cầu trước khi vẽ kiến trúc<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-bóc-tách-đúng-yêu-cầu-trước-khi-vẽ-kiến-trúc" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Câu hỏi gốc gộp 4 thứ tưởng như một nhưng thực chất là 4 latency/consistency contract khác nhau:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Yêu cầu</th><th>Diễn giải chính xác</th><th>Đo bằng gì</th></tr></thead><tbody><tr><td>”Phản hồi nhanh khi cao tải”</td><td><strong>Producer-facing API</strong> (business service gọi notification-service) phải trả response nhanh, không phụ thuộc tốc độ gửi tin thật sự</td><td>P99 latency của <code>POST /notifications</code></td></tr><tr><td>”Không miss tin”</td><td>Không được rớt tin <strong>giữa lúc nhận request và lúc tin thực sự đến tay người dùng (hoặc terminal FAILED có ghi nhận)</strong></td><td><code>accepted − terminal_outcome</code> theo SLO window (metric này đã dùng trong <a href="../Microservices-Patterns/Kafka-Request-Response-Pattern-High-Load" class="internal" data-slug="Microservices-Patterns/Kafka-Request-Response-Pattern-High-Load">Kafka-Request-Response-Pattern-High-Load</a>)</td></tr><tr><td>“Đảm bảo consistent”</td><td>Không trùng lặp gửi 2 lần cho cùng 1 sự kiện, đúng thứ tự trong phạm vi 1 user, trạng thái đọc/chưa đọc chính xác</td><td>Idempotency + per-user ordering + state machine</td></tr><tr><td>”Phản hồi nhanh nhất đến client”</td><td><strong>End-user device</strong> phải nhận tin gần realtime nếu đang online</td><td>P99 delivery latency tới thiết bị</td></tr></tbody></table></div>
+<p>Bốn cột này ứng với 4 cơ chế khác nhau trong kiến trúc bên dưới — không có 1 kỹ thuật nào giải được tất cả cùng lúc.</p>
+<hr/>
+<h2 id="️-kiến-trúc-tổng-thể">🏗️ Kiến trúc tổng thể<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#️-kiến-trúc-tổng-thể" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TB\n    subgraph Producers[\&quot;Business Services\&quot;]\n        PDMS[\&quot;pdms-service\&quot;]\n        CORE[\&quot;core-banking\&quot;]\n        IAM[\&quot;iam-service\&quot;]\n    end\n\n    subgraph Ingest[\&quot;① Ingestion Layer — trả response nhanh\&quot;]\n        API[\&quot;Notification API&lt;br/>(Spring Boot, stateless, N pods)\&quot;]\n        OUTBOX[(\&quot;Outbox Table&lt;br/>PostgreSQL\&quot;)]\n    end\n\n    subgraph Bus[\&quot;② Kafka — partition theo userId\&quot;]\n        TOPIC[\&quot;notification.events&lt;br/>(64-256 partitions)\&quot;]\n    end\n\n    subgraph Dispatch[\&quot;③ Dispatcher — Consumer Group, auto-scale theo lag\&quot;]\n        D1[\&quot;dispatcher-pod-1..N\&quot;]\n        ROUTER[\&quot;Channel Router&lt;br/>+ Idempotency check\&quot;]\n    end\n\n    subgraph Delivery[\&quot;④ Delivery Channels\&quot;]\n        WS[\&quot;WebSocket/SSE Gateway&lt;br/>(sticky, N shard)\&quot;]\n        PUSH[\&quot;FCM/APNs Adapter&lt;br/>(batch + circuit breaker)\&quot;]\n        SMS[\&quot;SMS/Email Adapter\&quot;]\n    end\n\n    subgraph State[\&quot;⑤ State &amp; Read Model\&quot;]\n        PG[(\&quot;notification_state&lt;br/>PostgreSQL\&quot;)]\n        REDIS[(\&quot;Presence + Unread Count&lt;br/>Redis\&quot;)]\n    end\n\n    PDMS -->|\&quot;POST /notifications&lt;br/>&amp;lt;30ms\&quot;| API\n    CORE --> API\n    IAM --> API\n    API -->|\&quot;1 transaction\&quot;| OUTBOX\n    OUTBOX -->|\&quot;flush async\&quot;| TOPIC\n    TOPIC --> D1\n    D1 --> ROUTER\n    ROUTER -->|\&quot;user online\&quot;| WS\n    ROUTER -->|\&quot;user offline / mobile\&quot;| PUSH\n    ROUTER -->|\&quot;kênh phụ\&quot;| SMS\n    WS -->|\&quot;presence lookup\&quot;| REDIS\n    ROUTER --> PG\n    WS -->|\&quot;ACK khi client nhận\&quot;| PG\n    PUSH -->|\&quot;delivery receipt webhook\&quot;| PG\n    PG --> REDIS\n\n    style Ingest fill:#1a2a3a,stroke:#4090e0\n    style Bus fill:#2a1a3a,stroke:#a040e0\n    style Dispatch fill:#1a3a2a,stroke:#40e090\n    style Delivery fill:#3a2a1a,stroke:#e0a040&quot;">flowchart TB
+    subgraph Producers[&quot;Business Services&quot;]
+        PDMS[&quot;pdms-service&quot;]
+        CORE[&quot;core-banking&quot;]
+        IAM[&quot;iam-service&quot;]
+    end
+
+    subgraph Ingest[&quot;① Ingestion Layer — trả response nhanh&quot;]
+        API[&quot;Notification API&lt;br/>(Spring Boot, stateless, N pods)&quot;]
+        OUTBOX[(&quot;Outbox Table&lt;br/>PostgreSQL&quot;)]
+    end
+
+    subgraph Bus[&quot;② Kafka — partition theo userId&quot;]
+        TOPIC[&quot;notification.events&lt;br/>(64-256 partitions)&quot;]
+    end
+
+    subgraph Dispatch[&quot;③ Dispatcher — Consumer Group, auto-scale theo lag&quot;]
+        D1[&quot;dispatcher-pod-1..N&quot;]
+        ROUTER[&quot;Channel Router&lt;br/>+ Idempotency check&quot;]
+    end
+
+    subgraph Delivery[&quot;④ Delivery Channels&quot;]
+        WS[&quot;WebSocket/SSE Gateway&lt;br/>(sticky, N shard)&quot;]
+        PUSH[&quot;FCM/APNs Adapter&lt;br/>(batch + circuit breaker)&quot;]
+        SMS[&quot;SMS/Email Adapter&quot;]
+    end
+
+    subgraph State[&quot;⑤ State &amp; Read Model&quot;]
+        PG[(&quot;notification_state&lt;br/>PostgreSQL&quot;)]
+        REDIS[(&quot;Presence + Unread Count&lt;br/>Redis&quot;)]
+    end
+
+    PDMS -->|&quot;POST /notifications&lt;br/>&amp;lt;30ms&quot;| API
+    CORE --> API
+    IAM --> API
+    API -->|&quot;1 transaction&quot;| OUTBOX
+    OUTBOX -->|&quot;flush async&quot;| TOPIC
+    TOPIC --> D1
+    D1 --> ROUTER
+    ROUTER -->|&quot;user online&quot;| WS
+    ROUTER -->|&quot;user offline / mobile&quot;| PUSH
+    ROUTER -->|&quot;kênh phụ&quot;| SMS
+    WS -->|&quot;presence lookup&quot;| REDIS
+    ROUTER --> PG
+    WS -->|&quot;ACK khi client nhận&quot;| PG
+    PUSH -->|&quot;delivery receipt webhook&quot;| PG
+    PG --> REDIS
+
+    style Ingest fill:#1a2a3a,stroke:#4090e0
+    style Bus fill:#2a1a3a,stroke:#a040e0
+    style Dispatch fill:#1a3a2a,stroke:#40e090
+    style Delivery fill:#3a2a1a,stroke:#e0a040
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p>5 lớp tách biệt rõ trách nhiệm, mỗi lớp scale độc lập — đây là điểm khác biệt lớn nhất so với thiết kế “1 service làm hết” (nhận request → gọi FCM đồng bộ → trả response), vốn là nguyên nhân điển hình khiến API timeout khi FCM/APNs chậm.</p>
+<hr/>
+<h2 id="-lớp---trả-response-nhanh-cho-phía-gọi-producer-facing-latency">⚡ Lớp ① — Trả response nhanh cho phía gọi (Producer-facing latency)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-lớp---trả-response-nhanh-cho-phía-gọi-producer-facing-latency" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="nguyên-tắc-không-bao-giờ-chờ-delivery-thật-để-trả-response">Nguyên tắc: KHÔNG BAO GIỜ chờ delivery thật để trả response<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#nguyên-tắc-không-bao-giờ-chờ-delivery-thật-để-trả-response" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="java" data-theme="github-light github-dark"><code data-language="java" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">@</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">RestController</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">@</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">RequestMapping</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;/notifications&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">public</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> class</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> NotificationIngestController</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    @</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">PostMapping</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    public</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> ResponseEntity&lt;</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">NotificationAck</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">> </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">create</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(@</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">RequestBody</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> NotificationRequest </span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">req</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        String notificationId </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> req.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">notificationId</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">() </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">!=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> null</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">            ?</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> req.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">notificationId</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">()          </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// caller tự sinh idempotency key nếu cần retry an toàn</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">            :</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> UUID.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">randomUUID</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">().</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">toString</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">();</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">        // 1 transaction: ghi outbox — KHÔNG gọi Kafka, KHÔNG gọi FCM ở đây</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        outboxRepo.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">insertIfNotExists</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(OutboxRow.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">of</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(notificationId, req));</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">        // Trả 202 ngay — chưa có nghĩa là &quot;đã gửi&quot;, chỉ có nghĩa là &quot;đã nhận, đảm bảo sẽ xử lý&quot;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        return</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> ResponseEntity.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">accepted</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">()</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">body</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">new</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> NotificationAck</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(notificationId, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;ACCEPTED&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">));</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></figure>
+<p>Đây chính xác là pattern <strong>Transactional Outbox</strong> đã dùng trong <code>pdms-service</code> (xem <a href="../Microservices-Patterns/PDMS-Architecture-Overview" class="internal" data-slug="Microservices-Patterns/PDMS-Architecture-Overview">PDMS-Architecture-Overview</a> và <a href="../Microservices-Patterns/Transactional-Outbox" class="internal" data-slug="Microservices-Patterns/Transactional-Outbox">Transactional-Outbox</a>) — write local DB và publish Kafka là 2 bước tách rời, atomic ở bước ghi local, publish là async best-effort có retry riêng.</p>
+<p><strong>Vì sao P99 vẫn nhanh dù DB có tải:</strong> <code>outboxRepo.insertIfNotExists</code> là 1 INSERT đơn giản có unique constraint trên <code>notification_id</code> — không JOIN, không lock diện rộng. Batch insert nếu producer gửi nhiều bản ghi cùng lúc (JDBC batch, không N round-trip).</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="sql" data-theme="github-light github-dark"><code data-language="sql" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">CREATE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> TABLE</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> notification_outbox</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    notification_id   </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">TEXT</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> PRIMARY KEY</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,      </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- idempotency key, sinh tại producer</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    user_id            </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">BIGINT</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> NOT NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    channel_hint       </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">TEXT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,                 </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- 'AUTO' | 'PUSH' | 'INAPP' | 'SMS'</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    payload            JSONB </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">NOT NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    priority           </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SMALLINT</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> NOT NULL</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> DEFAULT</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 5</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,  </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- OTP=1 (cao nhất), marketing=9</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    created_at         </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">TIMESTAMPTZ</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> NOT NULL</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> DEFAULT</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> NOW</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(),</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    publish_status     </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">TEXT</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> NOT NULL</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> DEFAULT</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> 'PENDING'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    publish_attempts   </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">INT</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> NOT NULL</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> DEFAULT</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">CREATE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> INDEX</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> idx_outbox_pending</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> ON</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> notification_outbox(priority, created_at)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    WHERE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> publish_status </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> 'PENDING'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span></code></pre></figure>
+<h3 id="backpressure--load-shedding-tại-api--bảo-vệ-chính-nó-khi-cao-tải">Backpressure &amp; load shedding tại API — bảo vệ chính nó khi cao tải<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#backpressure--load-shedding-tại-api--bảo-vệ-chính-nó-khi-cao-tải" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="java" data-theme="github-light github-dark"><code data-language="java" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// Rate limit theo producer service (token bucket), KHÔNG theo end-user</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">@</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Component</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">public</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> class</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> ProducerRateLimiter</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    private</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> final</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> Map&lt;</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">String</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">RateLimiter</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">> limiters </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> new</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> ConcurrentHashMap&lt;>();</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    public</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> boolean</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> tryAcquire</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(String </span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">producerServiceId</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;"> priority</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) {</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">        // Priority thấp (marketing) bị shed trước khi priority cao (OTP, cảnh báo giao dịch)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        RateLimiter limiter </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> limiters.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">computeIfAbsent</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(producerServiceId,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            id </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-></span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> RateLimiter.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">create</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">configFor</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(id, priority)));</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        return</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> limiter.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">tryAcquire</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">();</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></figure>
+<p>Khi vượt ngưỡng: trả <code>429 Too Many Requests</code> kèm <code>Retry-After</code> cho request priority thấp, <strong>không</strong> shed request priority cao (OTP/cảnh báo giao dịch nghi ngờ gian lận) — đây là lý do <code>priority</code> phải nằm trong outbox schema và trong quyết định shedding, không chỉ trong quyết định gửi.</p>
+<hr/>
+<h2 id="-lớp---phản-hồi-nhanh-nhất-đến-client-end-user-delivery-latency">⚡ Lớp ④ — Phản hồi nhanh nhất đến client (End-user delivery latency)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-lớp---phản-hồi-nhanh-nhất-đến-client-end-user-delivery-latency" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Đây là phần khác hẳn “gửi email” — với hàng triệu user, cần phân biệt rõ 2 tình huống:</p>
+<h3 id="trường-hợp-a--user-đang-online-app-đang-mở-websocketsse">Trường hợp A — User đang online (app đang mở): WebSocket/SSE<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#trường-hợp-a--user-đang-online-app-đang-mở-websocketsse" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;sequenceDiagram\n    participant D as Dispatcher\n    participant R as Redis Presence Registry\n    participant WSN as WebSocket Gateway Node #7\n    participant C as Client App\n\n    Note over C,WSN: Lúc connect: gateway ghi&lt;br/>presence:{userId} → node#7, TTL=heartbeat\n    D->>R: GET presence:{userId}\n    R-->>D: node#7\n    D->>WSN: publish qua Redis Pub/Sub&lt;br/>channel gateway.node7\n    WSN->>C: push qua WebSocket đang mở\n    C-->>WSN: ACK (client đã nhận)\n    WSN-->>D: cập nhật notification_state = DELIVERED&quot;">sequenceDiagram
+    participant D as Dispatcher
+    participant R as Redis Presence Registry
+    participant WSN as WebSocket Gateway Node #7
+    participant C as Client App
+
+    Note over C,WSN: Lúc connect: gateway ghi&lt;br/>presence:{userId} → node#7, TTL=heartbeat
+    D->>R: GET presence:{userId}
+    R-->>D: node#7
+    D->>WSN: publish qua Redis Pub/Sub&lt;br/>channel gateway.node7
+    WSN->>C: push qua WebSocket đang mở
+    C-->>WSN: ACK (client đã nhận)
+    WSN-->>D: cập nhật notification_state = DELIVERED
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p><strong>Vì sao cần Presence Registry thay vì broadcast tất cả gateway node:</strong> với hàng triệu connection chia trên N gateway node (mỗi node giữ ~50k-100k connection tùy tuning), broadcast message tới toàn bộ node để “node nào giữ connection thì tự lo” sẽ lãng phí băng thông N lần. Presence Registry (Redis, key = <code>userId</code>, value = <code>gatewayNodeId</code>, TTL refresh theo heartbeat) cho phép route trực tiếp tới đúng 1 node — đây là kỹ thuật bắt buộc ở quy mô triệu user, khác hẳn quy mô vài nghìn user (lúc đó broadcast vẫn chấp nhận được).</p>
+<h3 id="trường-hợp-b--user-offline--không-mở-app-push-notification-fcmapns">Trường hợp B — User offline / không mở app: Push Notification (FCM/APNs)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#trường-hợp-b--user-offline--không-mở-app-push-notification-fcmapns" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="java" data-theme="github-light github-dark"><code data-language="java" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">@</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Component</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">public</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> class</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> PushChannelAdapter</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">    // Batch gửi — FCM/APNs hỗ trợ multicast, giảm overhead per-call đáng kể ở triệu user</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    @</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">CircuitBreaker</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">name</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;fcm&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">fallbackMethod</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;queueForRetry&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    public</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> void</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> sendBatch</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(List&lt;</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">PushNotification</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">> </span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">batch</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        FcmBatchResponse resp </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> fcmClient.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">sendMulticast</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(batch);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        resp.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">getResults</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">().</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">forEach</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(r </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-></span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">            if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (r.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">isSuccess</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">()) stateStore.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">markDelivered</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(r.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">notificationId</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">());</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">            else</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (r.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">isInvalidToken</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">()) deviceTokenRepo.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">markStale</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(r.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">token</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">());  </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// token hết hạn/uninstall</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">            else</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> retryQueue.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">offer</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(r.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">notificationId</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">());  </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// transient — retry theo backoff</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        });</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    }</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">    // Circuit breaker mở khi FCM down → KHÔNG chặn dispatcher, chuyển thẳng sang retry queue</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    public</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> void</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> queueForRetry</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(List&lt;</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">PushNotification</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">> </span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">batch</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, Throwable </span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">t</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        batch.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">forEach</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(n </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-></span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> retryQueue.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">offer</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(n.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">notificationId</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">()));</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></figure>
+<p><strong>Circuit breaker ở đây quan trọng hơn cả retry:</strong> nếu FCM/APNs chậm hoặc down, Dispatcher <strong>không được phép</strong> bị block theo — pattern giống <a href="../Microservices-Patterns/Circuit-Breaker" class="internal" data-slug="Microservices-Patterns/Circuit-Breaker">Circuit-Breaker</a> đã áp dụng ở <code>gateway-service</code> PDMS. Consumer group vẫn tiếp tục drain Kafka lag cho các channel khác (WebSocket vẫn hoạt động bình thường), chỉ nhánh Push tạm queue lại.</p>
+<h3 id="bảng-latency-budget-theo-channel">Bảng latency budget theo channel<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#bảng-latency-budget-theo-channel" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Channel</th><th>P99 mục tiêu</th><th>Cơ chế đạt được</th></tr></thead><tbody><tr><td>Producer API → 202 Accepted</td><td>&lt; 30ms</td><td>Outbox insert only, không chờ Kafka/FCM</td></tr><tr><td>Outbox → Kafka</td><td>&lt; 200ms</td><td>Flush job nền, batch, không nằm trên request path</td></tr><tr><td>Kafka → Dispatcher xử lý</td><td>&lt; 300ms (p99, khi lag thấp)</td><td>Auto-scale theo consumer lag (KEDA)</td></tr><tr><td>Dispatcher → WebSocket client (online)</td><td>&lt; 1s</td><td>Presence lookup Redis (~1ms) + Pub/Sub fan-out cục bộ node</td></tr><tr><td>Dispatcher → Push (FCM/APNs)</td><td>&lt; 3-5s (best-effort, ngoài tầm kiểm soát hoàn toàn)</td><td>Batch send, circuit breaker, không block pipeline</td></tr></tbody></table></div>
+<hr/>
+<h2 id="-never-miss--không-mất-tin-dù-cao-tải">🔄 Never Miss — không mất tin dù cao tải<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-never-miss--không-mất-tin-dù-cao-tải" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="nguyên-tắc-chuỗi-trách-nhiệm-mượn-từ-kafka-request-response-pattern-high-load">Nguyên tắc chuỗi trách nhiệm (mượn từ <a href="../Microservices-Patterns/Kafka-Request-Response-Pattern-High-Load" class="internal" data-slug="Microservices-Patterns/Kafka-Request-Response-Pattern-High-Load">Kafka-Request-Response-Pattern-High-Load</a>)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#nguyên-tắc-chuỗi-trách-nhiệm-mượn-từ-kafka-request-response-pattern-high-load" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>NEVER:  ghi outbox → publish Kafka fire-and-forget (không track callback)
+PREFER: ghi outbox → publish Kafka → chờ ACK (acks=all) → mark PUBLISHED
+        NẾU publish fail → giữ PENDING, publish_attempts++, retry job nhặt lại
+</code></pre>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="java" data-theme="github-light github-dark"><code data-language="java" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">@</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Scheduled</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">fixedDelay</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 200</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">public</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> void</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> flushOutbox</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">() {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    List&lt;</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">OutboxRow</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">> pending </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> outboxRepo.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">findPendingOrderByPriority</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">500</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    for</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (OutboxRow row </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">:</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> pending) {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        kafkaTemplate.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">send</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;notification.events&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, row.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">userId</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(), row.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">toEvent</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">())</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">whenComplete</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">((result, ex) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-></span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">                if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (ex </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">==</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> null</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">                    outboxRepo.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">markPublished</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(row.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">notificationId</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">());</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">                } </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">else</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">                    // BẮT BUỘC rẽ nhánh lỗi tường minh — đây chính là lỗi</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">                    // PDMS từng gặp ở luồng email: chỉ log, không update trạng thái</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">                    outboxRepo.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">incrementAttemptAndKeepPending</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(row.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">notificationId</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(), ex.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">getMessage</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">());</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">                }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            });</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></figure>
+<h3 id="consumer-chỉ-commit-offset-sau-khi-state-đã-persist">Consumer: chỉ commit offset sau khi state đã persist<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#consumer-chỉ-commit-offset-sau-khi-state-đã-persist" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="java" data-theme="github-light github-dark"><code data-language="java" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">@</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">KafkaListener</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">topics</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;notification.events&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">groupId</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;notification-dispatcher&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">public</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> void</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> onEvent</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(NotificationEvent event, Acknowledgment ack) {</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    try</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (stateStore.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">existsAndTerminal</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(event.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">notificationId</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">())) {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            ack.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">acknowledge</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">();   </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// đã xử lý trước đó (duplicate do at-least-once) — skip, không gửi lại</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">            return</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        stateStore.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">upsert</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(event.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">notificationId</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(), SENDING);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        channelRouter.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">route</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(event);   </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// WebSocket / Push / SMS — mỗi channel tự retry riêng</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        ack.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">acknowledge</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">();            </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// commit SAU khi routing đã persist trạng thái, không phải sau khi &quot;gửi xong&quot;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    } </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">catch</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (Exception </span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">e</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) {</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">        // Không commit — Kafka sẽ redeliver, idempotency check ở trên chặn double-send thật sự</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        log.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">error</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;Dispatch failed, notificationId={}&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, event.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">notificationId</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(), e);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></figure>
+<h3 id="retry-ladder--dlq-theo-channel-mượn-nguyên-tắc-từ-kafka-request-response-pattern-high-load">Retry ladder + DLQ theo channel (mượn nguyên tắc từ <a href="../Microservices-Patterns/Kafka-Request-Response-Pattern-High-Load" class="internal" data-slug="Microservices-Patterns/Kafka-Request-Response-Pattern-High-Load">Kafka-Request-Response-Pattern-High-Load</a>)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#retry-ladder--dlq-theo-channel-mượn-nguyên-tắc-từ-kafka-request-response-pattern-high-load" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Lỗi</th><th>Xử lý</th></tr></thead><tbody><tr><td>FCM/APNs 5xx, timeout</td><td>Retry: immediate → +30s → +2m → +10m → DLQ</td></tr><tr><td>Token không hợp lệ (uninstalled app)</td><td>Không retry — mark FAILED, xóa token khỏi registry</td></tr><tr><td>WebSocket gateway node không tìm thấy presence</td><td>Fallback ngay sang Push, không chờ timeout</td></tr><tr><td>SMS provider rate limit</td><td>Backoff theo <code>Retry-After</code> header của provider</td></tr><tr><td>DLQ sau khi hết retry</td><td>Alert ops + expose qua API cho client tự pull khi mở app (xem mục Reconciliation)</td></tr></tbody></table></div>
+<h3 id="reconciliation--lưới-an-toàn-cuối-cùng-cho-client-offline-lâu">Reconciliation — lưới an toàn cuối cùng cho client offline lâu<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#reconciliation--lưới-an-toàn-cuối-cùng-cho-client-offline-lâu" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="java" data-theme="github-light github-dark"><code data-language="java" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// Client gọi khi mở app / reconnect — bù cho mọi trường hợp</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// push/WebSocket đều fail (thiết bị tắt máy nhiều ngày, token hết hạn...)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">@</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">GetMapping</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;/notifications/sync&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">public</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> List</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&lt;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">NotificationDto</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">></span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> sync</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(@</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">RequestParam</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> String userId,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">                                    @</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">RequestParam</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">required</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> false</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) String lastSeenId) {</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    return</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> notificationStateRepo.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">findUndeliveredSince</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(userId, lastSeenId, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">200</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></figure>
+<p>Đây là điểm khác biệt quan trọng với hệ thống chỉ dựa vào push: <strong>push là best-effort, không phải nguồn sự thật.</strong> Nguồn sự thật là <code>notification_state</code> table — client luôn có thể pull lại toàn bộ tin chưa đọc, nên dù push miss 100%, tin vẫn không “biến mất” theo nghĩa nghiệp vụ.</p>
+<hr/>
+<h2 id="-consistency--không-trùng-đúng-thứ-tự-trạng-thái-chính-xác">🔐 Consistency — không trùng, đúng thứ tự, trạng thái chính xác<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-consistency--không-trùng-đúng-thứ-tự-trạng-thái-chính-xác" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="idempotency-xuyên-suốt-toàn-chuỗi">Idempotency xuyên suốt toàn chuỗi<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#idempotency-xuyên-suốt-toàn-chuỗi" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>notificationId sinh tại producer (business service) — KHÔNG sinh tại notification-service
+  → outbox PK unique         → chống trùng khi producer retry HTTP call
+  → Kafka message key check  → consumer skip nếu đã terminal
+  → client-side dedup        → app dùng notificationId để không hiển thị trùng khi
+                                vừa nhận qua WebSocket vừa nhận qua reconciliation sync
+</code></pre>
+<h3 id="ordering--chỉ-cần-đúng-thứ-tự-trong-phạm-vi-1-user">Ordering — chỉ cần đúng thứ tự trong phạm vi 1 user<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#ordering--chỉ-cần-đúng-thứ-tự-trong-phạm-vi-1-user" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="yaml" data-theme="github-light github-dark"><code data-language="yaml" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">notification.events</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">  partitions</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">128</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">              # đủ scale hàng triệu user, nhưng...</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">  # Producer key = userId → mọi notification của cùng 1 user luôn vào cùng 1 partition</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">  # → giữ đúng thứ tự hiển thị (VD: &quot;giao dịch trừ tiền&quot; phải hiện trước &quot;số dư mới&quot;)</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">  # Không cần global ordering giữa các user khác nhau — vô nghĩa về nghiệp vụ</span></span></code></pre></figure>
+<p><strong>Hệ quả cần lưu ý:</strong> nếu 1 user cực kỳ active (hot key) có thể tạo hot partition. Với banking, tần suất notification/user hiếm khi đủ cao để thành vấn đề thực sự (khác use case như IoT sensor) — nhưng nếu lo ngại, có thể sub-partition theo <code>userId + notificationType</code> cho riêng nhóm cần throughput cao (marketing broadcast), miễn là nhóm cần ordering nghiêm ngặt (giao dịch tài chính) vẫn giữ key thuần <code>userId</code>.</p>
+<h3 id="state-machine--nguồn-sự-thật-duy-nhất">State machine — nguồn sự thật duy nhất<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#state-machine--nguồn-sự-thật-duy-nhất" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="sql" data-theme="github-light github-dark"><code data-language="sql" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">CREATE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> TABLE</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> notification_state</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    notification_id   </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">TEXT</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> PRIMARY KEY</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    user_id            </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">BIGINT</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> NOT NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    state</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">              TEXT</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> NOT NULL</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> DEFAULT</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> 'PENDING'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">    -- PENDING → SENDING → DELIVERED → READ</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">    --                  ↘ FAILED (sau khi hết retry, xem DLQ)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    channel_used       </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">TEXT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    created_at         </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">TIMESTAMPTZ</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> NOT NULL</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> DEFAULT</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> NOW</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(),</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    delivered_at       </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">TIMESTAMPTZ</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    read_at            </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">TIMESTAMPTZ</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    CONSTRAINT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> chk_state </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">CHECK</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">state</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> IN</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">'PENDING'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">'SENDING'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">'DELIVERED'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">'READ'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">'FAILED'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">))</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span></code></pre></figure>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="java" data-theme="github-light github-dark"><code data-language="java" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// Atomic conditional transition — chặn race condition khi WebSocket ACK</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// và Push delivery receipt cùng về gần như đồng thời cho cùng 1 notification</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">@</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Modifying</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">@</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Query</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;&quot;&quot;</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">    UPDATE notification_state</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">    SET state = :newState, delivered_at = COALESCE(delivered_at, NOW()), channel_used = :channel</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">    WHERE notification_id = :id</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">      AND state IN ('PENDING', 'SENDING')   -- chỉ transition từ trạng thái hợp lệ</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">    &quot;&quot;&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">int</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> markDelivered</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(String id, String newState, String channel);</span></span></code></pre></figure>
+<h3 id="cqrs-cho-read-model--tách-hẳn-khỏi-write-path">CQRS cho read model — tách hẳn khỏi write path<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#cqrs-cho-read-model--tách-hẳn-khỏi-write-path" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Query “có bao nhiêu tin chưa đọc” trên bảng <code>notification_state</code> (hàng tỷ dòng ở quy mô triệu user × nhiều tin/ngày) sẽ chậm dần theo thời gian nếu query trực tiếp. Áp dụng <a href="../Microservices-Patterns/CQRS-Materialized-View" class="internal" data-slug="Microservices-Patterns/CQRS-Materialized-View">CQRS-Materialized-View</a>: Redis giữ counter riêng, update qua chính event stream, không query lại Postgres cho mỗi lần mở app.</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="java" data-theme="github-light github-dark"><code data-language="java" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">@</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">KafkaListener</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">topics</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;notification.state-changed&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">groupId</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;unread-counter&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">public</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> void</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> onStateChanged</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(NotificationStateEvent e) {</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (e.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">newState</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">() </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">==</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> State.DELIVERED) {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        redisTemplate.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">opsForValue</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">().</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">increment</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;unread:&quot;</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> +</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> e.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">userId</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">());</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    } </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">else</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (e.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">newState</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">() </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">==</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> State.READ) {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        redisTemplate.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">opsForValue</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">().</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">decrement</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;unread:&quot;</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> +</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> e.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">userId</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">());</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></figure>
+<p><code>GET /notifications/unread-count</code> đọc thẳng Redis — O(1), không đụng Postgres, chịu được hàng triệu request/phút (app thường gọi API này mỗi lần mở/foreground).</p>
+<hr/>
+<h2 id="-scale-tới-hàng-triệu-users--checklist-theo-lớp">🚀 Scale tới hàng triệu users — checklist theo lớp<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-scale-tới-hàng-triệu-users--checklist-theo-lớp" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Lớp</th><th>Chiến lược scale</th></tr></thead><tbody><tr><td>Ingestion API</td><td>Stateless, scale ngang theo CPU/request rate, không giữ session</td></tr><tr><td>Outbox flush</td><td>Batch + priority ordering, chạy nhiều instance an toàn nhờ <code>SELECT ... FOR UPDATE SKIP LOCKED</code></td></tr><tr><td>Kafka</td><td>64–256 partitions tùy throughput đo được (tham khảo bảng capacity planning trong <a href="../Microservices-Patterns/Kafka-Request-Response-Pattern-High-Load" class="internal" data-slug="Microservices-Patterns/Kafka-Request-Response-Pattern-High-Load">Kafka-Request-Response-Pattern-High-Load</a>)</td></tr><tr><td>Dispatcher</td><td>Autoscale theo <strong>consumer lag</strong>, không theo CPU đơn thuần — lag phản ánh đúng “còn bao nhiêu tin chưa xử lý”</td></tr><tr><td>WebSocket Gateway</td><td>Horizontal shard theo connection, Presence Registry Redis Cluster (không phải Redis đơn)</td></tr><tr><td>Push Adapter</td><td>Batch multicast, circuit breaker riêng cho FCM và APNs (2 breaker độc lập — FCM down không kéo APNs)</td></tr><tr><td>notification_state</td><td>Partition theo <code>user_id</code> (Postgres declarative partitioning hoặc Citus/sharding) nếu volume vượt khả năng 1 instance</td></tr><tr><td>Redis (presence/unread)</td><td>Redis Cluster, TTL hợp lý cho presence (tránh stale khi gateway crash không kịp cleanup)</td></tr></tbody></table></div>
+<hr/>
+<h2 id="-failure-scenarios--fixes">🔥 Failure Scenarios &amp; Fixes<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-failure-scenarios--fixes" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Tình huống</th><th>Ảnh hưởng</th><th>Xử lý</th></tr></thead><tbody><tr><td>FCM/APNs outage</td><td>Push channel không gửi được</td><td>Circuit breaker mở, dispatcher tiếp tục drain WebSocket/SMS bình thường; queue Push retry, không block pipeline</td></tr><tr><td>WebSocket Gateway node crash</td><td>User trên node đó mất kết nối</td><td>Client tự reconnect → gateway mới ghi lại presence; dispatcher lookup presence mới nhất, không cache lâu</td></tr><tr><td>Outbox flush job dừng (deploy, crash)</td><td>Tin kẹt ở PENDING trong outbox</td><td>Nhiều instance cùng chạy flush với <code>SKIP LOCKED</code>, instance khác tiếp tục; alert nếu <code>PENDING</code> tuổi vượt SLO</td></tr><tr><td>Kafka consumer lag tăng đột biến (spike traffic)</td><td>Delivery bị trễ, không mất</td><td>Autoscale dispatcher theo lag (KEDA); OTP/priority cao có thể tách topic riêng để không bị marketing traffic chèn</td></tr><tr><td>Duplicate delivery (Kafka at-least-once redeliver)</td><td>User nhận 2 lần cùng 1 tin</td><td><code>stateStore.existsAndTerminal()</code> chặn ở dispatcher; client-side dedup theo <code>notificationId</code> chặn lần cuối</td></tr><tr><td>Presence Registry stale (Redis TTL chưa hết dù gateway đã chết)</td><td>Route nhầm tới node đã chết, mất 1 lần gửi qua WebSocket</td><td>Không retry vô hạn trên WebSocket — timeout ngắn (vài trăm ms) rồi fallback Push ngay</td></tr><tr><td>Producer service gửi trùng request (client-side retry HTTP)</td><td>Có thể tạo 2 outbox row</td><td><code>notification_id</code> PK unique — nếu producer tự sinh và gửi lại đúng ID, <code>insertIfNotExists</code> no-op</td></tr></tbody></table></div>
+<hr/>
+<h2 id="️-tech-stack-đề-xuất-khớp-stack-pdms-hiện-có">⚙️ Tech Stack Đề Xuất (khớp stack PDMS hiện có)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#️-tech-stack-đề-xuất-khớp-stack-pdms-hiện-có" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Thành phần</th><th>Lựa chọn</th></tr></thead><tbody><tr><td>Ingestion API, Dispatcher</td><td>Spring Boot 3.x, Java 21 virtual threads (I/O-bound, phù hợp cao tải)</td></tr><tr><td>Message bus</td><td>Kafka (tái dùng cluster PDMS), partition theo <code>userId</code></td></tr><tr><td>Outbox / State store</td><td>PostgreSQL (partitioned table nếu volume lớn)</td></tr><tr><td>Presence / Unread counter / Rate limit</td><td>Redis Cluster</td></tr><tr><td>WebSocket Gateway</td><td>Spring WebFlux/Netty hoặc dedicated gateway service, autoscale theo connection count</td></tr><tr><td>Push</td><td>FCM (Android) + APNs (iOS) adapter riêng, batch API</td></tr><tr><td>Autoscaling</td><td>KEDA scaler theo Kafka consumer lag trên AWS EKS (đã có sẵn hạ tầng)</td></tr><tr><td>Circuit breaker</td><td>Resilience4J (đã dùng ở <code>gateway-service</code> PDMS)</td></tr></tbody></table></div>
+<hr/>
+<h2 id="-khác-biệt-với-kafka-request-response-pattern-high-load">🧩 Khác biệt với <a href="../Microservices-Patterns/Kafka-Request-Response-Pattern-High-Load" class="internal" data-slug="Microservices-Patterns/Kafka-Request-Response-Pattern-High-Load">Kafka-Request-Response-Pattern-High-Load</a><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-khác-biệt-với-kafka-request-response-pattern-high-load" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Note đó tập trung <strong>debug</strong> hiện tượng “response bị thiếu” trong mô hình request/reply 2 chiều giữa business-service ↔ notification-service (nhiều pod mỗi phía, cùng consumer group). Note này tập trung <strong>thiết kế tổng thể</strong> notification-service từ đầu — bao gồm cả phần note kia chưa đề cập: fan-out tới hàng triệu end-user qua WebSocket/Push, presence tracking, CQRS read model cho unread count, và tách bạch 4 loại latency khác nhau trong câu hỏi gốc. Hai note bổ sung cho nhau: áp dụng nguyên tắc outbox/commit-order/callback-handling ở note kia <strong>bên trong</strong> từng thành phần của kiến trúc note này.</p>
+<hr/>
+<h2 id="-core-principles">💡 Core Principles<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-core-principles" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<ol>
+<li><strong>Tách write path (ingest) khỏi delivery path</strong> — response nhanh cho producer không có nghĩa là tin đã đến tay user; đây là 2 latency contract khác nhau, đo và alert riêng.</li>
+<li><strong>Producer sinh idempotency key, không phải server</strong> — chống trùng xuyên suốt toàn chuỗi retry (HTTP retry, Kafka redelivery, push retry).</li>
+<li><strong>Partition theo <code>userId</code></strong> — chỉ cần ordering cục bộ per-user, không cần global order.</li>
+<li><strong>Presence Registry là bắt buộc ở quy mô triệu connection</strong> — route trực tiếp, không broadcast toàn bộ gateway node.</li>
+<li><strong>Circuit breaker độc lập theo từng channel</strong> — FCM down không được phép ảnh hưởng WebSocket hay SMS.</li>
+<li><strong>State table là nguồn sự thật, push/WebSocket chỉ là phương tiện</strong> — client luôn có API reconciliation để pull lại tin đã miss, không phụ thuộc 100% vào best-effort delivery.</li>
+<li><strong>CQRS cho mọi read pattern tần suất cao</strong> (unread count) — không query trực tiếp bảng ghi lịch sử lớn trên critical read path.</li>
+<li><strong>Priority là first-class field</strong>, không phải afterthought — quyết định cả rate limiting lẫn thứ tự xử lý khi hệ thống quá tải.</li>
+</ol>
+<hr/>
+<h2 id="-links">🔗 Links<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-links" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<ul>
+<li><a href="../Microservices-Patterns/Kafka-Request-Response-Pattern-High-Load" class="internal" data-slug="Microservices-Patterns/Kafka-Request-Response-Pattern-High-Load">Kafka-Request-Response-Pattern-High-Load</a> — debug “response bị thiếu” trong mô hình multi-pod ↔ multi-pod</li>
+<li><a href="../Microservices-Patterns/Transactional-Outbox" class="internal" data-slug="Microservices-Patterns/Transactional-Outbox">Transactional-Outbox</a> — chi tiết pattern outbox dùng ở Lớp ①</li>
+<li><a href="../Microservices-Patterns/Kafka-Multi-Consumer-Sync-Completion" class="internal" data-slug="Microservices-Patterns/Kafka-Multi-Consumer-Sync-Completion">Kafka-Multi-Consumer-Sync-Completion</a> — kỹ thuật tracking completion, áp dụng ý tưởng tương tự cho multi-channel delivery</li>
+<li><a href="../Microservices-Patterns/Circuit-Breaker" class="internal" data-slug="Microservices-Patterns/Circuit-Breaker">Circuit-Breaker</a> — bảo vệ Dispatcher khi FCM/APNs/SMS provider chậm/down</li>
+<li><a href="../Microservices-Patterns/CQRS-Materialized-View" class="internal" data-slug="Microservices-Patterns/CQRS-Materialized-View">CQRS-Materialized-View</a> — read model cho unread count</li>
+<li><a href="../Microservices-Patterns/Kafka-Configuration-Deep-Dive" class="internal" data-slug="Microservices-Patterns/Kafka-Configuration-Deep-Dive">Kafka-Configuration-Deep-Dive</a> — cấu hình chi tiết producer/consumer/topic</li>
+<li><a href="../Microservices-Patterns/PDMS-Architecture-Overview" class="internal" data-slug="Microservices-Patterns/PDMS-Architecture-Overview">PDMS-Architecture-Overview</a> — bối cảnh hạ tầng Kafka/PostgreSQL/Redis sẵn có</li>
+</ul></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-245" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#-notification-service--kiến-trúc-high-throughput-never-miss-consistent-cho-hàng-triệu-users" data-for="-notification-service--kiến-trúc-high-throughput-never-miss-consistent-cho-hàng-triệu-users">📲 Notification Service — Kiến trúc High-Throughput, Never-Miss, Consistent cho Hàng Triệu Users</a></li><li class="depth-1"><a href="#-bóc-tách-đúng-yêu-cầu-trước-khi-vẽ-kiến-trúc" data-for="-bóc-tách-đúng-yêu-cầu-trước-khi-vẽ-kiến-trúc">🧠 Bóc tách đúng yêu cầu trước khi vẽ kiến trúc</a></li><li class="depth-1"><a href="#️-kiến-trúc-tổng-thể" data-for="️-kiến-trúc-tổng-thể">🏗️ Kiến trúc tổng thể</a></li><li class="depth-1"><a href="#-lớp---trả-response-nhanh-cho-phía-gọi-producer-facing-latency" data-for="-lớp---trả-response-nhanh-cho-phía-gọi-producer-facing-latency">⚡ Lớp ① — Trả response nhanh cho phía gọi (Producer-facing latency)</a></li><li class="depth-2"><a href="#nguyên-tắc-không-bao-giờ-chờ-delivery-thật-để-trả-response" data-for="nguyên-tắc-không-bao-giờ-chờ-delivery-thật-để-trả-response">Nguyên tắc: KHÔNG BAO GIỜ chờ delivery thật để trả response</a></li><li class="depth-2"><a href="#backpressure--load-shedding-tại-api--bảo-vệ-chính-nó-khi-cao-tải" data-for="backpressure--load-shedding-tại-api--bảo-vệ-chính-nó-khi-cao-tải">Backpressure &amp; load shedding tại API — bảo vệ chính nó khi cao tải</a></li><li class="depth-1"><a href="#-lớp---phản-hồi-nhanh-nhất-đến-client-end-user-delivery-latency" data-for="-lớp---phản-hồi-nhanh-nhất-đến-client-end-user-delivery-latency">⚡ Lớp ④ — Phản hồi nhanh nhất đến client (End-user delivery latency)</a></li><li class="depth-2"><a href="#trường-hợp-a--user-đang-online-app-đang-mở-websocketsse" data-for="trường-hợp-a--user-đang-online-app-đang-mở-websocketsse">Trường hợp A — User đang online (app đang mở): WebSocket/SSE</a></li><li class="depth-2"><a href="#trường-hợp-b--user-offline--không-mở-app-push-notification-fcmapns" data-for="trường-hợp-b--user-offline--không-mở-app-push-notification-fcmapns">Trường hợp B — User offline / không mở app: Push Notification (FCM/APNs)</a></li><li class="depth-2"><a href="#bảng-latency-budget-theo-channel" data-for="bảng-latency-budget-theo-channel">Bảng latency budget theo channel</a></li><li class="depth-1"><a href="#-never-miss--không-mất-tin-dù-cao-tải" data-for="-never-miss--không-mất-tin-dù-cao-tải">🔄 Never Miss — không mất tin dù cao tải</a></li><li class="depth-2"><a href="#nguyên-tắc-chuỗi-trách-nhiệm-mượn-từ-kafka-request-response-pattern-high-load" data-for="nguyên-tắc-chuỗi-trách-nhiệm-mượn-từ-kafka-request-response-pattern-high-load">Nguyên tắc chuỗi trách nhiệm (mượn từ Kafka-Request-Response-Pattern-High-Load)</a></li><li class="depth-2"><a href="#consumer-chỉ-commit-offset-sau-khi-state-đã-persist" data-for="consumer-chỉ-commit-offset-sau-khi-state-đã-persist">Consumer: chỉ commit offset sau khi state đã persist</a></li><li class="depth-2"><a href="#retry-ladder--dlq-theo-channel-mượn-nguyên-tắc-từ-kafka-request-response-pattern-high-load" data-for="retry-ladder--dlq-theo-channel-mượn-nguyên-tắc-từ-kafka-request-response-pattern-high-load">Retry ladder + DLQ theo channel (mượn nguyên tắc từ Kafka-Request-Response-Pattern-High-Load)</a></li><li class="depth-2"><a href="#reconciliation--lưới-an-toàn-cuối-cùng-cho-client-offline-lâu" data-for="reconciliation--lưới-an-toàn-cuối-cùng-cho-client-offline-lâu">Reconciliation — lưới an toàn cuối cùng cho client offline lâu</a></li><li class="depth-1"><a href="#-consistency--không-trùng-đúng-thứ-tự-trạng-thái-chính-xác" data-for="-consistency--không-trùng-đúng-thứ-tự-trạng-thái-chính-xác">🔐 Consistency — không trùng, đúng thứ tự, trạng thái chính xác</a></li><li class="depth-2"><a href="#idempotency-xuyên-suốt-toàn-chuỗi" data-for="idempotency-xuyên-suốt-toàn-chuỗi">Idempotency xuyên suốt toàn chuỗi</a></li><li class="depth-2"><a href="#ordering--chỉ-cần-đúng-thứ-tự-trong-phạm-vi-1-user" data-for="ordering--chỉ-cần-đúng-thứ-tự-trong-phạm-vi-1-user">Ordering — chỉ cần đúng thứ tự trong phạm vi 1 user</a></li><li class="depth-2"><a href="#state-machine--nguồn-sự-thật-duy-nhất" data-for="state-machine--nguồn-sự-thật-duy-nhất">State machine — nguồn sự thật duy nhất</a></li><li class="depth-2"><a href="#cqrs-cho-read-model--tách-hẳn-khỏi-write-path" data-for="cqrs-cho-read-model--tách-hẳn-khỏi-write-path">CQRS cho read model — tách hẳn khỏi write path</a></li><li class="depth-1"><a href="#-scale-tới-hàng-triệu-users--checklist-theo-lớp" data-for="-scale-tới-hàng-triệu-users--checklist-theo-lớp">🚀 Scale tới hàng triệu users — checklist theo lớp</a></li><li class="depth-1"><a href="#-failure-scenarios--fixes" data-for="-failure-scenarios--fixes">🔥 Failure Scenarios &amp; Fixes</a></li><li class="depth-1"><a href="#️-tech-stack-đề-xuất-khớp-stack-pdms-hiện-có" data-for="️-tech-stack-đề-xuất-khớp-stack-pdms-hiện-có">⚙️ Tech Stack Đề Xuất (khớp stack PDMS hiện có)</a></li><li class="depth-1"><a href="#-khác-biệt-với-kafka-request-response-pattern-high-load" data-for="-khác-biệt-với-kafka-request-response-pattern-high-load">🧩 Khác biệt với Kafka-Request-Response-Pattern-High-Load</a></li><li class="depth-1"><a href="#-core-principles" data-for="-core-principles">💡 Core Principles</a></li><li class="depth-1"><a href="#-links" data-for="-links">🔗 Links</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://dangthobach.github.io/">Back to Portfolio</a></li><li><a href="https://github.com/dangthobach">GitHub</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../postscript.js" type="module" data-persist="true"></script></html>

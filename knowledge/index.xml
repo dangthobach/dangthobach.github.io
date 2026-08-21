@@ -6,6 +6,54 @@
       <description>Last 10 notes on Dang Tho Bach&#039;s Knowledge Base</description>
       <generator>Quartz -- quartz.jzhao.xyz</generator>
       <item>
+    <title>Bai-42-File-IO-Paths-Embed</title>
+    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-42-File-IO-Paths-Embed</link>
+    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-42-File-IO-Paths-Embed</guid>
+    <description><![CDATA[ Bài 42: I/O &amp; Filesystem — Reading, Writing, Paths, Temp Files &amp; Embed Mục tiêu: Nhóm 5 — hoàn toàn chưa có bài riêng trong vault. ]]></description>
+    <pubDate>Sat, 22 Aug 2026 00:00:00 GMT</pubDate>
+  </item><item>
+    <title>Bai-43-CLI-Flags-Subcommands-EnvVars</title>
+    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-43-CLI-Flags-Subcommands-EnvVars</link>
+    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-43-CLI-Flags-Subcommands-EnvVars</guid>
+    <description><![CDATA[ Bài 43: CLI Arguments, Flags, Subcommands &amp; Environment Variables Mục tiêu: Bài 19 đã dùng Viper cho config production — nhưng đó là tầng CAO, xây trên nền flag/os.Getenv mà chưa bài nào nói tới. ]]></description>
+    <pubDate>Sat, 22 Aug 2026 00:00:00 GMT</pubDate>
+  </item><item>
+    <title>Bai-44-TCP-HTTPClient-Exec-Signals</title>
+    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-44-TCP-HTTPClient-Exec-Signals</link>
+    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-44-TCP-HTTPClient-Exec-Signals</guid>
+    <description><![CDATA[ Bài 44: TCP Server, Advanced HTTP Client, Process Spawning &amp; Signals Mục tiêu: Hoàn thành nốt Nhóm 7. ]]></description>
+    <pubDate>Sat, 22 Aug 2026 00:00:00 GMT</pubDate>
+  </item><item>
+    <title>Bai-3b-Pattern-Matching-Advanced</title>
+    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-3b-Pattern-Matching-Advanced</link>
+    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-3b-Pattern-Matching-Advanced</guid>
+    <description><![CDATA[ Bài 3b: Pattern Matching nâng cao — Khi switch-case của Java chỉ là trò trẻ con Chào Chuyên gia Java, ở Bài 3 bạn đã thấy match cơ bản với các variant của enum. ]]></description>
+    <pubDate>Sat, 22 Aug 2026 00:00:00 GMT</pubDate>
+  </item><item>
+    <title>Bai-3c-Standard-Traits-Conversions</title>
+    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-3c-Standard-Traits-Conversions</link>
+    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-3c-Standard-Traits-Conversions</guid>
+    <description><![CDATA[ Bài 3c: Standard Trait Ecosystem &amp; Conversion Traits — Cái mà Java giấu trong Object Chào Chuyên gia Java, bạn dùng equals(), hashCode(), compareTo(), toString() mỗi ngày mà không nghĩ nhiều — vì chúng nằm sẵn trong Object hoặc bạn override bằng IDE generate code. ]]></description>
+    <pubDate>Sat, 22 Aug 2026 00:00:00 GMT</pubDate>
+  </item><item>
+    <title>Bai-3d-Operator-Overloading</title>
+    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-3d-Operator-Overloading</link>
+    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-3d-Operator-Overloading</guid>
+    <description><![CDATA[ Bài 3d: Operator Overloading (std::ops) — Thứ Java chỉ cho phép với String + Chào Chuyên gia Java, Java gần như cấm operator overloading (ngoại lệ duy nhất: + cho String). ]]></description>
+    <pubDate>Sat, 22 Aug 2026 00:00:00 GMT</pubDate>
+  </item><item>
+    <title>Bai-4b-Collections-Deep-Dive</title>
+    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-4b-Collections-Deep-Dive</link>
+    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-4b-Collections-Deep-Dive</guid>
+    <description><![CDATA[ Bài 4b: Collections đầy đủ — Vượt qua “bộ ba” Vec/HashMap/String Chào Chuyên gia Java, Bài 4 mới cho bạn Vec (≈ ArrayList) và HashMap. ]]></description>
+    <pubDate>Sat, 22 Aug 2026 00:00:00 GMT</pubDate>
+  </item><item>
+    <title>Notification-Service-High-Throughput-Never-Miss-Design</title>
+    <link>https://dangthobach.github.io/knowledge/Microservices-Patterns/Notification-Service-High-Throughput-Never-Miss-Design</link>
+    <guid>https://dangthobach.github.io/knowledge/Microservices-Patterns/Notification-Service-High-Throughput-Never-Miss-Design</guid>
+    <description><![CDATA[ 📲 Notification Service — Kiến trúc High-Throughput, Never-Miss, Consistent cho Hàng Triệu Users Bài toán: Xây notification-service nhận request từ các business service (PDMS, CoreBanking, IAM…), đẩy thông báo tới hàng triệu end-user, với 3 ràng buộc cứng đồng thời: (1) phản hồi cực nhanh cho cả phí... ]]></description>
+    <pubDate>Wed, 19 Aug 2026 00:00:00 GMT</pubDate>
+  </item><item>
     <title>Realtime-Customer-Alert-Never-Fail-System</title>
     <link>https://dangthobach.github.io/knowledge/Microservices-Patterns/Realtime-Customer-Alert-Never-Fail-System</link>
     <guid>https://dangthobach.github.io/knowledge/Microservices-Patterns/Realtime-Customer-Alert-Never-Fail-System</guid>
@@ -17,54 +65,6 @@
     <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-39-JSON-XML-Time-Epoch</guid>
     <description><![CDATA[ Bài 39: JSON, XML, Time &amp; Epoch — Nhóm 4 Phần 2 Mục tiêu: Serialization (JSON/XML) và xử lý thời gian là 2 nguồn bug production phổ biến nhất trong hệ thống banking — sai timezone gây lệch SLA, thiếu omitempty làm vỡ contract API, streaming JSON sai cách gây OOM khi document lớn. ]]></description>
     <pubDate>Mon, 17 Aug 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>Bai-40-Random-Strconv-URL-Hashes-Base64</title>
-    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-40-Random-Strconv-URL-Hashes-Base64</link>
-    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-40-Random-Strconv-URL-Hashes-Base64</guid>
-    <description><![CDATA[ Bài 40: Random Numbers, Number Parsing, URL, SHA256 &amp; Base64 — Nhóm 4 Phần 3 Mục tiêu: Bài cuối Nhóm 4 — nhóm “utility” hay bị coi nhẹ nhưng chứa 1 trong những lỗi bảo mật nghiêm trọng nhất: dùng nhầm math/rand (không an toàn crypto) cho token/OTP trong hệ thống banking. ]]></description>
-    <pubDate>Mon, 17 Aug 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>Bai-41-Timers-Tickers-Atomic-Stateful-Goroutines</title>
-    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-41-Timers-Tickers-Atomic-Stateful-Goroutines</link>
-    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-41-Timers-Tickers-Atomic-Stateful-Goroutines</guid>
-    <description><![CDATA[ Bài 41: Timers, Tickers, Atomic Counters &amp; Stateful Goroutines — Nhóm 3 Bổ Sung Mục tiêu: Rà soát Nhóm 3 (Concurrency) so với gobyexample.com cho thấy Bài 3 đã cover đầy đủ: Goroutines, Channels, Buffering, Directions, Select, Worker Pool, WaitGroup, Mutex. ]]></description>
-    <pubDate>Mon, 17 Aug 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>Kafka-Request-Response-Pattern-High-Load</title>
-    <link>https://dangthobach.github.io/knowledge/Microservices-Patterns/Kafka-Request-Response-Pattern-High-Load</link>
-    <guid>https://dangthobach.github.io/knowledge/Microservices-Patterns/Kafka-Request-Response-Pattern-High-Load</guid>
-    <description><![CDATA[ 📨 Kafka Request/Response qua Topic — Kiến trúc &amp; Runbook cho Microservices Cao Tải Mục tiêu: Tập trung riêng vào pattern business-service (nhiều pod) ↔ notification-service (nhiều pod) giao tiếp async qua Kafka request/response topic — đúng bối cảnh triệu chứng “một số email/notification không ... ]]></description>
-    <pubDate>Mon, 17 Aug 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>Bai-35-Functions-Deep-Dive</title>
-    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-35-Functions-Deep-Dive</link>
-    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-35-Functions-Deep-Dive</guid>
-    <description><![CDATA[ Bài 35: Functions Sâu Hơn — Multiple Returns, Variadic, Closures, Recursion, Range Mục tiêu: Function trong Go trông đơn giản nhưng có 5 cơ chế mà dev Java hay hiểu sai vì áp đặt mental model cũ: closure bắt biến theo tham chiếu chứ không phải theo giá trị tại thời điểm gọi, range copy value chứ khô... ]]></description>
-    <pubDate>Sun, 16 Aug 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>Bai-36-Scheduler-GMP-Internals</title>
-    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-36-Scheduler-GMP-Internals</link>
-    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-36-Scheduler-GMP-Internals</guid>
-    <description><![CDATA[ Bài 36: Go Scheduler Internals — GMP State Machine, Preemption &amp; Correctness Mục tiêu: Bài 3 đã giới thiệu GMP ở mức “bức tranh tổng quan” (G/M/P là gì, work stealing tồn tại). ]]></description>
-    <pubDate>Sun, 16 Aug 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>Bai-37-Strings-Runes-Enum-Iterators</title>
-    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-37-Strings-Runes-Enum-Iterators</link>
-    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-37-Strings-Runes-Enum-Iterators</guid>
-    <description><![CDATA[ Bài 37: Strings/Runes, Enum Pattern &amp; Range-over-Func Iterators Mục tiêu: Bài cuối nhóm “Cú pháp nền tảng” — nặng về code thực chiến hơn lý thuyết. ]]></description>
-    <pubDate>Sun, 16 Aug 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>Bai-38-Strings-Fmt-Templates-Regex</title>
-    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-38-Strings-Fmt-Templates-Regex</link>
-    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-38-Strings-Fmt-Templates-Regex</guid>
-    <description><![CDATA[ Bài 38: String Functions, Formatting, Templates &amp; Regex — Nhóm 4 Phần 1 Mục tiêu: Nhóm 4 xử lý “text processing” — 4 mảnh cần trong hầu như mọi service PDMS: tra cứu/xử lý chuỗi (strings), format output (fmt), sinh nội dung động (text/template — email thông báo, PDF template) và validate pattern... ]]></description>
-    <pubDate>Sun, 16 Aug 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>Deep Dive: Virtual Threads vs Goroutines vs Rust Async (Tokio)</title>
-    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Deep-Dive-VirtualThreads-vs-Goroutines-vs-RustAsync</link>
-    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Deep-Dive-VirtualThreads-vs-Goroutines-vs-RustAsync</guid>
-    <description><![CDATA[ Virtual Thread vs Goroutine vs Tokio: So Sánh Khoa Học Từ Scheduler Đến Tail Latency Ghi chú cập nhật — 15/08/2026 Bản nâng cấp lớn so với bản gốc (01/05/2026). ]]></description>
-    <pubDate>Sat, 15 Aug 2026 00:00:00 GMT</pubDate>
   </item>
     </channel>
   </rss>
