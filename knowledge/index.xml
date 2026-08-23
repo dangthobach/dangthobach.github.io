@@ -24,6 +24,18 @@
     <description><![CDATA[ Bài 44: TCP Server, Advanced HTTP Client, Process Spawning &amp; Signals Mục tiêu: Hoàn thành nốt Nhóm 7. ]]></description>
     <pubDate>Sat, 22 Aug 2026 00:00:00 GMT</pubDate>
   </item><item>
+    <title>Bai-15b-Testing-Documentation-Deep-Dive</title>
+    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-15b-Testing-Documentation-Deep-Dive</link>
+    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-15b-Testing-Documentation-Deep-Dive</guid>
+    <description><![CDATA[ Bài 15b: Testing &amp; Documentation chuyên sâu — Vượt qua #[test] cơ bản Chào Chuyên gia Java, Bài 15 đã gộp chung Config/Tracing/Testing khá nhanh. ]]></description>
+    <pubDate>Sat, 22 Aug 2026 00:00:00 GMT</pubDate>
+  </item><item>
+    <title>Bai-23b-Cargo-Build-System-Advanced</title>
+    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-23b-Cargo-Build-System-Advanced</link>
+    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-23b-Cargo-Build-System-Advanced</guid>
+    <description><![CDATA[ Bài 23b: Cargo &amp; Build System nâng cao — Vượt qua Cargo.toml cơ bản Chào Chuyên gia Java, Bài 23 đã cho bạn workspace &amp; crate design (tương đương multi-module Maven/Gradle). ]]></description>
+    <pubDate>Sat, 22 Aug 2026 00:00:00 GMT</pubDate>
+  </item><item>
     <title>Bai-3b-Pattern-Matching-Advanced</title>
     <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-3b-Pattern-Matching-Advanced</link>
     <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-3b-Pattern-Matching-Advanced</guid>
@@ -48,23 +60,11 @@
     <description><![CDATA[ Bài 4b: Collections đầy đủ — Vượt qua “bộ ba” Vec/HashMap/String Chào Chuyên gia Java, Bài 4 mới cho bạn Vec (≈ ArrayList) và HashMap. ]]></description>
     <pubDate>Sat, 22 Aug 2026 00:00:00 GMT</pubDate>
   </item><item>
-    <title>Notification-Service-High-Throughput-Never-Miss-Design</title>
-    <link>https://dangthobach.github.io/knowledge/Microservices-Patterns/Notification-Service-High-Throughput-Never-Miss-Design</link>
-    <guid>https://dangthobach.github.io/knowledge/Microservices-Patterns/Notification-Service-High-Throughput-Never-Miss-Design</guid>
-    <description><![CDATA[ 📲 Notification Service — Kiến trúc High-Throughput, Never-Miss, Consistent cho Hàng Triệu Users Bài toán: Xây notification-service nhận request từ các business service (PDMS, CoreBanking, IAM…), đẩy thông báo tới hàng triệu end-user, với 3 ràng buộc cứng đồng thời: (1) phản hồi cực nhanh cho cả phí... ]]></description>
-    <pubDate>Wed, 19 Aug 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>Realtime-Customer-Alert-Never-Fail-System</title>
-    <link>https://dangthobach.github.io/knowledge/Microservices-Patterns/Realtime-Customer-Alert-Never-Fail-System</link>
-    <guid>https://dangthobach.github.io/knowledge/Microservices-Patterns/Realtime-Customer-Alert-Never-Fail-System</guid>
-    <description><![CDATA[ 🔔 Realtime Customer Alert System — Kiến trúc “Never Fail” cho Loa Báo Có Bài toán: Khách hàng bấm nút tại quầy → loa/đèn báo phải kêu ở quầy tương ứng gần như tức thời, và không bao giờ được phép im lặng — kể cả khi mất mạng, mất Kafka, hay service crash. ]]></description>
-    <pubDate>Wed, 19 Aug 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>Bai-39-JSON-XML-Time-Epoch</title>
-    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-39-JSON-XML-Time-Epoch</link>
-    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-39-JSON-XML-Time-Epoch</guid>
-    <description><![CDATA[ Bài 39: JSON, XML, Time &amp; Epoch — Nhóm 4 Phần 2 Mục tiêu: Serialization (JSON/XML) và xử lý thời gian là 2 nguồn bug production phổ biến nhất trong hệ thống banking — sai timezone gây lệch SLA, thiếu omitempty làm vỡ contract API, streaming JSON sai cách gây OOM khi document lớn. ]]></description>
-    <pubDate>Mon, 17 Aug 2026 00:00:00 GMT</pubDate>
+    <title>Bai-4c-String-Numeric-Internals</title>
+    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-4c-String-Numeric-Internals</link>
+    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-4c-String-Numeric-Internals</guid>
+    <description><![CDATA[ Bài 4c: String &amp; Numeric Internals — Vì sao s[0] không compile và i32 + 1 có thể panic Chào Chuyên gia Java, String trong Java là UTF-16, index bằng charAt(i) luôn O(1) và không bao giờ panic. ]]></description>
+    <pubDate>Sat, 22 Aug 2026 00:00:00 GMT</pubDate>
   </item>
     </channel>
   </rss>

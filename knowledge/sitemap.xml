@@ -1217,6 +1217,9 @@
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-15-Config-Tracing-Testing</loc>
     <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-15b-Testing-Documentation-Deep-Dive</loc>
+    <lastmod>2026-08-22T00:00:00.000Z</lastmod>
+  </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-16-Deployment</loc>
     <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
@@ -1243,6 +1246,9 @@
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-23-Workspace-Architecture</loc>
     <lastmod>2026-04-12T00:00:00.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-23b-Cargo-Build-System-Advanced</loc>
+    <lastmod>2026-08-22T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-24-Axum-Advanced</loc>
     <lastmod>2026-04-12T00:00:00.000Z</lastmod>
@@ -1338,6 +1344,9 @@
     <lastmod>2026-07-24T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-4b-Collections-Deep-Dive</loc>
+    <lastmod>2026-08-22T00:00:00.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-4c-String-Numeric-Internals</loc>
     <lastmod>2026-08-22T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-5-Lifetimes</loc>
