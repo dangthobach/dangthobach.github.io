@@ -3,7 +3,7 @@ type: course
 domain: languages/rust
 status: active
 created: 2026-04-12
-updated: 2026-04-12
+updated: 2026-08-25
 tags: []
 ---
 
@@ -255,6 +255,43 @@ bindgen::Builder::default()
     .unwrap();
 ```
 
+### `#[repr(C)]` — Struct Layout Ổn Định Qua Biên Giới FFI
+
+`extern "C"` ở trên lo phần **hàm**. Nhưng khi truyền cả **struct** qua FFI, Rust mặc định KHÔNG cam kết thứ tự field trong memory — compiler tự do reorder field để tối ưu padding (đã thấy ở Bài 17). C thì ngược lại: thứ tự field = thứ tự trong memory, luôn luôn. Thiếu `#[repr(C)]`, struct Rust truyền qua FFI có thể đọc sai hoàn toàn ở phía C dù code Rust compile OK:
+
+```rust
+// ❌ Layout mặc định — KHÔNG an toàn để truyền qua FFI
+struct Point { x: f64, y: f64 }
+
+// ✅ repr(C) — ép layout giống hệt C struct tương ứng
+#[repr(C)]
+struct Point { x: f64, y: f64 }
+// Tương ứng phía C: struct Point { double x; double y; };
+
+#[repr(C)]
+pub struct FfiConfig {
+    pub retries: u32,
+    pub timeout_ms: u64,
+    pub enabled: bool,
+}
+
+extern "C" {
+    fn process_config(cfg: *const FfiConfig) -> i32;
+}
+```
+
+**Các biến thể `repr` khác:**
+
+```rust
+#[repr(transparent)] // struct 1 field — layout GIỐNG HỆT field đó, dùng cho newtype qua FFI
+struct UserId(u64);
+
+#[repr(packed)] // bỏ HẾT padding — nguy hiểm: có thể tạo unaligned reference (UB)
+struct PackedData { a: u8, b: u32 } // chỉ dùng khi cần khớp binary format ngoài (network protocol, file format)
+```
+
+**Quy tắc:** mọi struct/enum đi qua `extern "C"` — bằng giá trị hay con trỏ — cần `#[repr(C)]` (hoặc `#[repr(transparent)]` cho newtype 1 field). Thiếu nó là lỗi FFI ngầm phổ biến nhất: code compile và chạy được, nhưng đọc sai field vì layout hai bên lệch nhau.
+
 ---
 
 ## 7. Khi Nào Dùng Unsafe — Decision Tree
@@ -357,3 +394,4 @@ cargo miri test
 1. Implement `MyVec<T>` đơn giản dùng raw pointer và unsafe. Cần: `new()`, `push()`, `get()`, `len()`, `Drop`. Viết SAFETY comment cho mỗi unsafe block.
 2. Dùng `bindgen` generate bindings cho một C function đơn giản (ví dụ: `math.h`'s `sqrt`). Gọi từ safe Rust wrapper.
 3. Chạy `cargo miri test` trên test suite của bạn. Fix bất kỳ UB nào được detect.
+4. Định nghĩa `#[repr(C)] struct SensorReading { id: u32, value: f64, valid: bool }`, viết một hàm `extern "C"` nhận con trỏ tới struct này, rồi thử bỏ `#[repr(C)]` đi và quan sát (bằng `std::mem::size_of`/`align_of`) layout có thể khác đi như thế nào.
