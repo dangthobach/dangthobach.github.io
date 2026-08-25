@@ -6,6 +6,48 @@
       <description>Last 10 notes on Dang Tho Bach&#039;s Knowledge Base</description>
       <generator>Quartz -- quartz.jzhao.xyz</generator>
       <item>
+    <title>Bai-15c-Logging-Ecosystem-Request-Logging</title>
+    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-15c-Logging-Ecosystem-Request-Logging</link>
+    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-15c-Logging-Ecosystem-Request-Logging</guid>
+    <description><![CDATA[ Bài 15c: Logging Ecosystem &amp; Request Logging Thực Chiến Chào Chuyên gia Java, Bài 15 và 34 đã dùng thẳng tracing mà chưa giải thích tại sao chọn nó, và log mọi request thì Bài 34 mới dừng ở tầng “span cho observability” (Jaeger). ]]></description>
+    <pubDate>Wed, 26 Aug 2026 00:00:00 GMT</pubDate>
+  </item><item>
+    <title>Bai-19-Unsafe-FFI</title>
+    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-19-Unsafe-FFI</link>
+    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-19-Unsafe-FFI</guid>
+    <description><![CDATA[ Bài 19: Unsafe Rust &amp; FFI — Khi Safe Không Đủ Tại sao học Unsafe? Không phải để dùng nhiều — mà để hiểu tại sao safe Rust có những restrictions như vậy. ]]></description>
+    <pubDate>Tue, 25 Aug 2026 00:00:00 GMT</pubDate>
+  </item><item>
+    <title>Bai-23c-CI-MSRV-Fuzzing</title>
+    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-23c-CI-MSRV-Fuzzing</link>
+    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-23c-CI-MSRV-Fuzzing</guid>
+    <description><![CDATA[ Bài 23c: CI, MSRV &amp; Fuzzing — Kỷ luật Crate Engineering Cấp Production Chào Chuyên gia Java, Bài 23b đã cho bạn semver/feature/build profile — phần “viết Cargo.toml đúng”. ]]></description>
+    <pubDate>Tue, 25 Aug 2026 00:00:00 GMT</pubDate>
+  </item><item>
+    <title>Bai-57-DuAn-CLI-Log-Parser</title>
+    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-57-DuAn-CLI-Log-Parser</link>
+    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-57-DuAn-CLI-Log-Parser</guid>
+    <description><![CDATA[ Bài 57 (Dự án 1): CLI Log Parser — Capstone Stage 1 (Core Language) Đây là dự án tổng hợp đầu tiên, chốt lại toàn bộ Stage 1 (Bài 1-4c, 7, 23, 23b): Cargo, pattern matching, struct/enum, Option/Result, collections, iterator/closure, và giờ thêm 1 mảnh mới — CLI argument parsing với clap, thứ chưa bà... ]]></description>
+    <pubDate>Tue, 25 Aug 2026 00:00:00 GMT</pubDate>
+  </item><item>
+    <title>Bai-58-DuAn-Axum-Postgres-FullStack</title>
+    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-58-DuAn-Axum-Postgres-FullStack</link>
+    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-58-DuAn-Axum-Postgres-FullStack</guid>
+    <description><![CDATA[ Bài 58 (Dự án 2): Axum + PostgreSQL Full-Stack Service — Capstone Stage 4 (Production Backend) Đây là dự án lắp ráp — không giới thiệu khái niệm mới, mà kết nối 8 bài đã học riêng lẻ (10, 11, 12, 26, 30, 15, 34, 35) thành một service hoàn chỉnh chạy được thật, đúng như một service PDMS module thực t... ]]></description>
+    <pubDate>Tue, 25 Aug 2026 00:00:00 GMT</pubDate>
+  </item><item>
+    <title>Bai-59-DuAn-Concurrent-Pipeline-Vs-Go</title>
+    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-59-DuAn-Concurrent-Pipeline-Vs-Go</link>
+    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-59-DuAn-Concurrent-Pipeline-Vs-Go</guid>
+    <description><![CDATA[ Bài 59 (Dự án 3): Concurrent Pipeline Triệu-Record vs Go — Capstone Cuối Cùng Đây là bài tổng kết toàn bộ series — và là bài duy nhất trực tiếp trả lời câu hỏi ngầm xuyên suốt hành trình học: “Học Rust xong thì được gì hơn so với việc cứ dùng Go, vốn đã quen thuộc và năng suất?” Không trả lời bằng l... ]]></description>
+    <pubDate>Tue, 25 Aug 2026 00:00:00 GMT</pubDate>
+  </item><item>
+    <title>Bai-8b-Cache-Eviction-Policies</title>
+    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-8b-Cache-Eviction-Policies</link>
+    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-8b-Cache-Eviction-Policies</guid>
+    <description><![CDATA[ Bài 8b: Cache Eviction Policies — Từ HashMap trần tới LRU thật sự Chào Chuyên gia Java, ở Bài 8 bạn đã có cache dạng Arc&lt;RwLock&lt;HashMap&lt;K, V&gt;&gt;&gt; — nhưng đó là cache không bao giờ xóa gì, sẽ phình vô hạn (OOM trong production). ]]></description>
+    <pubDate>Tue, 25 Aug 2026 00:00:00 GMT</pubDate>
+  </item><item>
     <title>Bai-42-File-IO-Paths-Embed</title>
     <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-42-File-IO-Paths-Embed</link>
     <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-42-File-IO-Paths-Embed</guid>
@@ -22,48 +64,6 @@
     <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-44-TCP-HTTPClient-Exec-Signals</link>
     <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-44-TCP-HTTPClient-Exec-Signals</guid>
     <description><![CDATA[ Bài 44: TCP Server, Advanced HTTP Client, Process Spawning &amp; Signals Mục tiêu: Hoàn thành nốt Nhóm 7. ]]></description>
-    <pubDate>Sat, 22 Aug 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>Bai-15b-Testing-Documentation-Deep-Dive</title>
-    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-15b-Testing-Documentation-Deep-Dive</link>
-    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-15b-Testing-Documentation-Deep-Dive</guid>
-    <description><![CDATA[ Bài 15b: Testing &amp; Documentation chuyên sâu — Vượt qua #[test] cơ bản Chào Chuyên gia Java, Bài 15 đã gộp chung Config/Tracing/Testing khá nhanh. ]]></description>
-    <pubDate>Sat, 22 Aug 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>Bai-23b-Cargo-Build-System-Advanced</title>
-    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-23b-Cargo-Build-System-Advanced</link>
-    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-23b-Cargo-Build-System-Advanced</guid>
-    <description><![CDATA[ Bài 23b: Cargo &amp; Build System nâng cao — Vượt qua Cargo.toml cơ bản Chào Chuyên gia Java, Bài 23 đã cho bạn workspace &amp; crate design (tương đương multi-module Maven/Gradle). ]]></description>
-    <pubDate>Sat, 22 Aug 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>Bai-3b-Pattern-Matching-Advanced</title>
-    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-3b-Pattern-Matching-Advanced</link>
-    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-3b-Pattern-Matching-Advanced</guid>
-    <description><![CDATA[ Bài 3b: Pattern Matching nâng cao — Khi switch-case của Java chỉ là trò trẻ con Chào Chuyên gia Java, ở Bài 3 bạn đã thấy match cơ bản với các variant của enum. ]]></description>
-    <pubDate>Sat, 22 Aug 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>Bai-3c-Standard-Traits-Conversions</title>
-    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-3c-Standard-Traits-Conversions</link>
-    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-3c-Standard-Traits-Conversions</guid>
-    <description><![CDATA[ Bài 3c: Standard Trait Ecosystem &amp; Conversion Traits — Cái mà Java giấu trong Object Chào Chuyên gia Java, bạn dùng equals(), hashCode(), compareTo(), toString() mỗi ngày mà không nghĩ nhiều — vì chúng nằm sẵn trong Object hoặc bạn override bằng IDE generate code. ]]></description>
-    <pubDate>Sat, 22 Aug 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>Bai-3d-Operator-Overloading</title>
-    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-3d-Operator-Overloading</link>
-    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-3d-Operator-Overloading</guid>
-    <description><![CDATA[ Bài 3d: Operator Overloading (std::ops) — Thứ Java chỉ cho phép với String + Chào Chuyên gia Java, Java gần như cấm operator overloading (ngoại lệ duy nhất: + cho String). ]]></description>
-    <pubDate>Sat, 22 Aug 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>Bai-4b-Collections-Deep-Dive</title>
-    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-4b-Collections-Deep-Dive</link>
-    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-4b-Collections-Deep-Dive</guid>
-    <description><![CDATA[ Bài 4b: Collections đầy đủ — Vượt qua “bộ ba” Vec/HashMap/String Chào Chuyên gia Java, Bài 4 mới cho bạn Vec (≈ ArrayList) và HashMap. ]]></description>
-    <pubDate>Sat, 22 Aug 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>Bai-4c-String-Numeric-Internals</title>
-    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-4c-String-Numeric-Internals</link>
-    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-4c-String-Numeric-Internals</guid>
-    <description><![CDATA[ Bài 4c: String &amp; Numeric Internals — Vì sao s[0] không compile và i32 + 1 có thể panic Chào Chuyên gia Java, String trong Java là UTF-16, index bằng charAt(i) luôn O(1) và không bao giờ panic. ]]></description>
     <pubDate>Sat, 22 Aug 2026 00:00:00 GMT</pubDate>
   </item>
     </channel>

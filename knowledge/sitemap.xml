@@ -1220,6 +1220,9 @@
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-15b-Testing-Documentation-Deep-Dive</loc>
     <lastmod>2026-08-22T00:00:00.000Z</lastmod>
   </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-15c-Logging-Ecosystem-Request-Logging</loc>
+    <lastmod>2026-08-26T00:00:00.000Z</lastmod>
+  </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-16-Deployment</loc>
     <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
@@ -1230,7 +1233,7 @@
     <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-19-Unsafe-FFI</loc>
-    <lastmod>2026-04-12T00:00:00.000Z</lastmod>
+    <lastmod>2026-08-25T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-2-Borrowing-Multi-threading</loc>
     <lastmod>2026-04-10T00:00:00.000Z</lastmod>
@@ -1249,6 +1252,9 @@
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-23b-Cargo-Build-System-Advanced</loc>
     <lastmod>2026-08-22T00:00:00.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-23c-CI-MSRV-Fuzzing</loc>
+    <lastmod>2026-08-25T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-24-Axum-Advanced</loc>
     <lastmod>2026-04-12T00:00:00.000Z</lastmod>
@@ -1373,6 +1379,15 @@
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-56-Dioxus-0.7-to-0.8-Watchlist</loc>
     <lastmod>2026-07-24T00:00:00.000Z</lastmod>
   </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-57-DuAn-CLI-Log-Parser</loc>
+    <lastmod>2026-08-25T00:00:00.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-58-DuAn-Axum-Postgres-FullStack</loc>
+    <lastmod>2026-08-25T00:00:00.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-59-DuAn-Concurrent-Pipeline-Vs-Go</loc>
+    <lastmod>2026-08-25T00:00:00.000Z</lastmod>
+  </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-6-Generics-Traits-Advanced</loc>
     <lastmod>2026-04-12T00:00:00.000Z</lastmod>
   </url><url>
@@ -1381,6 +1396,9 @@
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-8-Smart-Pointers-Error-Design</loc>
     <lastmod>2026-04-12T00:00:00.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-8b-Cache-Eviction-Policies</loc>
+    <lastmod>2026-08-25T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-9-Async-Tokio</loc>
     <lastmod>2026-04-18T00:00:00.000Z</lastmod>
