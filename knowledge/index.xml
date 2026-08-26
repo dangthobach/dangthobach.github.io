@@ -6,6 +6,12 @@
       <description>Last 10 notes on Dang Tho Bach&#039;s Knowledge Base</description>
       <generator>Quartz -- quartz.jzhao.xyz</generator>
       <item>
+    <title>Bai-1-Ownership-Mindset</title>
+    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-1-Ownership-Mindset</link>
+    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-1-Ownership-Mindset</guid>
+    <description><![CDATA[ Bài 1: Ownership - Chìa khóa Tối ưu Bộ nhớ (Deep Dive) Chào Chuyên gia Java, hãy quên Garbage Collector (GC) trong chốc lát. ]]></description>
+    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
+  </item><item>
     <title>Bai-15c-Logging-Ecosystem-Request-Logging</title>
     <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-15c-Logging-Ecosystem-Request-Logging</link>
     <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-15c-Logging-Ecosystem-Request-Logging</guid>
@@ -58,12 +64,6 @@
     <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-43-CLI-Flags-Subcommands-EnvVars</link>
     <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-43-CLI-Flags-Subcommands-EnvVars</guid>
     <description><![CDATA[ Bài 43: CLI Arguments, Flags, Subcommands &amp; Environment Variables Mục tiêu: Bài 19 đã dùng Viper cho config production — nhưng đó là tầng CAO, xây trên nền flag/os.Getenv mà chưa bài nào nói tới. ]]></description>
-    <pubDate>Sat, 22 Aug 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>Bai-44-TCP-HTTPClient-Exec-Signals</title>
-    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-44-TCP-HTTPClient-Exec-Signals</link>
-    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-44-TCP-HTTPClient-Exec-Signals</guid>
-    <description><![CDATA[ Bài 44: TCP Server, Advanced HTTP Client, Process Spawning &amp; Signals Mục tiêu: Hoàn thành nốt Nhóm 7. ]]></description>
     <pubDate>Sat, 22 Aug 2026 00:00:00 GMT</pubDate>
   </item>
     </channel>
