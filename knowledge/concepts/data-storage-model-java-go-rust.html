@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr"><head><title>data-storage-model-java-go-rust</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="Dang Tho Bach's Knowledge Base"/><meta property="og:title" content="data-storage-model-java-go-rust"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="data-storage-model-java-go-rust"/><meta name="twitter:description" content="🗄️ Mô Hình Lưu Trữ Dữ Liệu — Java vs Go vs Rust: Từ Tổng Quan Hệ Thống Đến Chi Tiết Bit-Level Mục tiêu: Hệ thống hóa toàn bộ cách 3 ngôn ngữ này biểu diễn dữ liệu trong bộ nhớ — không phải “GC vs không GC” (đã có ở rust-java-go-comparison §2), mà là câu hỏi sâu hơn: metadata nằm ở đâu, ai trả phí c..."/><meta property="og:description" content="🗄️ Mô Hình Lưu Trữ Dữ Liệu — Java vs Go vs Rust: Từ Tổng Quan Hệ Thống Đến Chi Tiết Bit-Level Mục tiêu: Hệ thống hóa toàn bộ cách 3 ngôn ngữ này biểu diễn dữ liệu trong bộ nhớ — không phải “GC vs không GC” (đã có ở rust-java-go-comparison §2), mà là câu hỏi sâu hơn: metadata nằm ở đâu, ai trả phí c..."/><meta property="og:image:alt" content="🗄️ Mô Hình Lưu Trữ Dữ Liệu — Java vs Go vs Rust: Từ Tổng Quan Hệ Thống Đến Chi Tiết Bit-Level Mục tiêu: Hệ thống hóa toàn bộ cách 3 ngôn ngữ này biểu diễn dữ liệu trong bộ nhớ — không phải “GC vs không GC” (đã có ở rust-java-go-comparison §2), mà là câu hỏi sâu hơn: metadata nằm ở đâu, ai trả phí c..."/><meta property="twitter:domain" content="dangthobach.github.io/knowledge"/><meta property="og:url" content="https://dangthobach.github.io/knowledge/concepts/data-storage-model-java-go-rust"/><meta property="twitter:url" content="https://dangthobach.github.io/knowledge/concepts/data-storage-model-java-go-rust"/><link rel="icon" href="../static/icon.png"/><meta name="description" content="🗄️ Mô Hình Lưu Trữ Dữ Liệu — Java vs Go vs Rust: Từ Tổng Quan Hệ Thống Đến Chi Tiết Bit-Level Mục tiêu: Hệ thống hóa toàn bộ cách 3 ngôn ngữ này biểu diễn dữ liệu trong bộ nhớ — không phải “GC vs không GC” (đã có ở rust-java-go-comparison §2), mà là câu hỏi sâu hơn: metadata nằm ở đâu, ai trả phí c..."/><meta name="generator" content="Quartz"/><link href="../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+<html lang="en" dir="ltr"><head><title>data-storage-model-java-go-rust</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="Dang Tho Bach's Knowledge Base"/><meta property="og:title" content="data-storage-model-java-go-rust"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="data-storage-model-java-go-rust"/><meta name="twitter:description" content="🗄️ Java vs Go vs Rust — Toàn Chuỗi Runtime: Storage, Allocator, Vtable, GC, Context Switch, Memory Model Mental model xuyên suốt bài Một chuỗi câu hỏi áp dụng cho MỌI value trong cả 3 ngôn ngữ: representation → ai sở hữu/tham chiếu nó? → stack/register hay heap? → nếu heap thì allocator nào phát? →..."/><meta property="og:description" content="🗄️ Java vs Go vs Rust — Toàn Chuỗi Runtime: Storage, Allocator, Vtable, GC, Context Switch, Memory Model Mental model xuyên suốt bài Một chuỗi câu hỏi áp dụng cho MỌI value trong cả 3 ngôn ngữ: representation → ai sở hữu/tham chiếu nó? → stack/register hay heap? → nếu heap thì allocator nào phát? →..."/><meta property="og:image:alt" content="🗄️ Java vs Go vs Rust — Toàn Chuỗi Runtime: Storage, Allocator, Vtable, GC, Context Switch, Memory Model Mental model xuyên suốt bài Một chuỗi câu hỏi áp dụng cho MỌI value trong cả 3 ngôn ngữ: representation → ai sở hữu/tham chiếu nó? → stack/register hay heap? → nếu heap thì allocator nào phát? →..."/><meta property="twitter:domain" content="dangthobach.github.io/knowledge"/><meta property="og:url" content="https://dangthobach.github.io/knowledge/concepts/data-storage-model-java-go-rust"/><meta property="twitter:url" content="https://dangthobach.github.io/knowledge/concepts/data-storage-model-java-go-rust"/><link rel="icon" href="../static/icon.png"/><meta name="description" content="🗄️ Java vs Go vs Rust — Toàn Chuỗi Runtime: Storage, Allocator, Vtable, GC, Context Switch, Memory Model Mental model xuyên suốt bài Một chuỗi câu hỏi áp dụng cho MỌI value trong cả 3 ngôn ngữ: representation → ai sở hữu/tham chiếu nó? → stack/register hay heap? → nếu heap thì allocator nào phát? →..."/><meta name="generator" content="Quartz"/><link href="../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
   position: absolute;
   display: flex;
   float: right;
@@ -115,40 +115,66 @@ pre:hover > .expand-button {
   padding: 0 12px;
   font-size: 14px;
 }
-/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiL2hvbWUvcnVubmVyL3dvcmsvZGFuZ3Rob2JhY2guZ2l0aHViLmlvL2Rhbmd0aG9iYWNoLmdpdGh1Yi5pby9xdWFydHovcXVhcnR6L2NvbXBvbmVudHMvc3R5bGVzIiwic291cmNlcyI6WyJtZXJtYWlkLmlubGluZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFHRjtFQUNFOzs7QUFLRjtFQUNFO0VBQ0E7OztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTs7QUFJRjtFQUNFO0VBQ0E7RUFDQSIsInNvdXJjZXNDb250ZW50IjpbIi5leHBhbmQtYnV0dG9uIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbG9hdDogcmlnaHQ7XG4gIHBhZGRpbmc6IDAuNHJlbTtcbiAgbWFyZ2luOiAwLjNyZW07XG4gIHJpZ2h0OiAwOyAvLyBOT1RFOiByaWdodCB3aWxsIGJlIHNldCBpbiBtZXJtYWlkLmlubGluZS50c1xuICBjb2xvcjogdmFyKC0tZ3JheSk7XG4gIGJvcmRlci1jb2xvcjogdmFyKC0tZGFyayk7XG4gIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgYm9yZGVyOiAxcHggc29saWQ7XG4gIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgb3BhY2l0eTogMDtcbiAgdHJhbnNpdGlvbjogMC4ycztcblxuICAmID4gc3ZnIHtcbiAgICBmaWxsOiB2YXIoLS1saWdodCk7XG4gICAgZmlsdGVyOiBjb250cmFzdCgwLjMpO1xuICB9XG5cbiAgJjpob3ZlciB7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIGJvcmRlci1jb2xvcjogdmFyKC0tc2Vjb25kYXJ5KTtcbiAgfVxuXG4gICY6Zm9jdXMge1xuICAgIG91dGxpbmU6IDA7XG4gIH1cbn1cblxucHJlIHtcbiAgJjpob3ZlciA+IC5leHBhbmQtYnV0dG9uIHtcbiAgICBvcGFjaXR5OiAxO1xuICAgIHRyYW5zaXRpb246IDAuMnM7XG4gIH1cbn1cblxuI21lcm1haWQtY29udGFpbmVyIHtcbiAgcG9zaXRpb246IGZpeGVkO1xuICBjb250YWluOiBsYXlvdXQ7XG4gIHotaW5kZXg6IDk5OTtcbiAgbGVmdDogMDtcbiAgdG9wOiAwO1xuICB3aWR0aDogMTAwdnc7XG4gIGhlaWdodDogMTAwdmg7XG4gIG92ZXJmbG93OiBoaWRkZW47XG4gIGRpc3BsYXk6IG5vbmU7XG4gIGJhY2tkcm9wLWZpbHRlcjogYmx1cig0cHgpO1xuICBiYWNrZ3JvdW5kOiByZ2JhKDAsIDAsIDAsIDAuNSk7XG5cbiAgJi5hY3RpdmUge1xuICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgfVxuXG4gICYgPiAjbWVybWFpZC1zcGFjZSB7XG4gICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gICAgYm9yZGVyLXJhZGl1czogNXB4O1xuICAgIHBvc2l0aW9uOiBmaXhlZDtcbiAgICB0b3A6IDUwJTtcbiAgICBsZWZ0OiA1MCU7XG4gICAgdHJhbnNmb3JtOiB0cmFuc2xhdGUoLTUwJSwgLTUwJSk7XG4gICAgaGVpZ2h0OiA4MHZoO1xuICAgIHdpZHRoOiA4MHZ3O1xuICAgIG92ZXJmbG93OiBoaWRkZW47XG5cbiAgICAmID4gLm1lcm1haWQtY29udGVudCB7XG4gICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgICB0cmFuc2Zvcm0tb3JpZ2luOiAwIDA7XG4gICAgICB0cmFuc2l0aW9uOiB0cmFuc2Zvcm0gMC4xcyBlYXNlO1xuICAgICAgb3ZlcmZsb3c6IHZpc2libGU7XG4gICAgICBtaW4taGVpZ2h0OiAyMDBweDtcbiAgICAgIG1pbi13aWR0aDogMjAwcHg7XG5cbiAgICAgIHByZSB7XG4gICAgICAgIG1hcmdpbjogMDtcbiAgICAgICAgYm9yZGVyOiBub25lO1xuICAgICAgfVxuXG4gICAgICBzdmcge1xuICAgICAgICBtYXgtd2lkdGg6IG5vbmU7XG4gICAgICAgIGhlaWdodDogYXV0bztcbiAgICAgIH1cbiAgICB9XG5cbiAgICAmID4gLm1lcm1haWQtY29udHJvbHMge1xuICAgICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgICAgYm90dG9tOiAyMHB4O1xuICAgICAgcmlnaHQ6IDIwcHg7XG4gICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgZ2FwOiA4cHg7XG4gICAgICBwYWRkaW5nOiA4cHg7XG4gICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgYm9yZGVyLXJhZGl1czogNnB4O1xuICAgICAgYm94LXNoYWRvdzogMCAycHggNHB4IHJnYmEoMCwgMCwgMCwgMC4xKTtcbiAgICAgIHotaW5kZXg6IDI7XG5cbiAgICAgIC5tZXJtYWlkLWNvbnRyb2wtYnV0dG9uIHtcbiAgICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgIHdpZHRoOiAzMnB4O1xuICAgICAgICBoZWlnaHQ6IDMycHg7XG4gICAgICAgIHBhZGRpbmc6IDA7XG4gICAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgICAgY29sb3I6IHZhcigtLWRhcmspO1xuICAgICAgICBib3JkZXItcmFkaXVzOiA0cHg7XG4gICAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICAgICAgZm9udC1zaXplOiAxNnB4O1xuICAgICAgICBmb250LWZhbWlseTogdmFyKC0tYm9keUZvbnQpO1xuICAgICAgICB0cmFuc2l0aW9uOiBhbGwgMC4ycyBlYXNlO1xuXG4gICAgICAgICY6aG92ZXIge1xuICAgICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIH1cblxuICAgICAgICAmOmFjdGl2ZSB7XG4gICAgICAgICAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKDFweCk7XG4gICAgICAgIH1cblxuICAgICAgICAvLyBTdHlsZSB0aGUgcmVzZXQgYnV0dG9uIGRpZmZlcmVudGx5XG4gICAgICAgICY6bnRoLWNoaWxkKDIpIHtcbiAgICAgICAgICB3aWR0aDogYXV0bztcbiAgICAgICAgICBwYWRkaW5nOiAwIDEycHg7XG4gICAgICAgICAgZm9udC1zaXplOiAxNHB4O1xuICAgICAgICB9XG4gICAgICB9XG4gICAgfVxuICB9XG59XG4iXX0= */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://dangthobach.github.io/knowledge/index.xml"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image" content="https://dangthobach.github.io/knowledge/concepts/data-storage-model-java-go-rust-og-image.webp"/><meta property="og:image:url" content="https://dangthobach.github.io/knowledge/concepts/data-storage-model-java-go-rust-og-image.webp"/><meta name="twitter:image" content="https://dangthobach.github.io/knowledge/concepts/data-storage-model-java-go-rust-og-image.webp"/><meta property="og:image:type" content="image/.webp"/></head><body data-slug="concepts/data-storage-model-java-go-rust"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="..">Dang Tho Bach's Knowledge Base</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-1130"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-1130" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../concepts/">concepts</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>data storage model java go rust</a></div></nav><h1 class="article-title">data-storage-model-java-go-rust</h1><p show-comma="true" class="content-meta"><time datetime="2026-09-02T00:00:00.000Z">Sep 02, 2026</time><span>15 min read</span></p><ul class="tags"><li><a href="../tags/concepts" class="internal tag-link">concepts</a></li><li><a href="../tags/memory" class="internal tag-link">memory</a></li><li><a href="../tags/storage" class="internal tag-link">storage</a></li><li><a href="../tags/java" class="internal tag-link">java</a></li><li><a href="../tags/go" class="internal tag-link">go</a></li><li><a href="../tags/rust" class="internal tag-link">rust</a></li><li><a href="../tags/jvm" class="internal tag-link">jvm</a></li><li><a href="../tags/runtime" class="internal tag-link">runtime</a></li><li><a href="../tags/evergreen" class="internal tag-link">evergreen</a></li></ul></div></div><article class="popover-hint"><h1 id="️-mô-hình-lưu-trữ-dữ-liệu--java-vs-go-vs-rust-từ-tổng-quan-hệ-thống-đến-chi-tiết-bit-level">🗄️ Mô Hình Lưu Trữ Dữ Liệu — Java vs Go vs Rust: Từ Tổng Quan Hệ Thống Đến Chi Tiết Bit-Level<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#️-mô-hình-lưu-trữ-dữ-liệu--java-vs-go-vs-rust-từ-tổng-quan-hệ-thống-đến-chi-tiết-bit-level" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
-<blockquote>
-<p><strong>Mục tiêu:</strong> Hệ thống hóa toàn bộ cách 3 ngôn ngữ này biểu diễn dữ liệu trong bộ nhớ — không phải “GC vs không GC” (đã có ở <a href="../concepts/rust-java-go-comparison" class="internal" data-slug="concepts/rust-java-go-comparison">rust-java-go-comparison</a> §2), mà là câu hỏi sâu hơn: <strong>metadata nằm ở đâu, ai trả phí cho nó, và trả lúc nào.</strong></p>
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiL2hvbWUvcnVubmVyL3dvcmsvZGFuZ3Rob2JhY2guZ2l0aHViLmlvL2Rhbmd0aG9iYWNoLmdpdGh1Yi5pby9xdWFydHovcXVhcnR6L2NvbXBvbmVudHMvc3R5bGVzIiwic291cmNlcyI6WyJtZXJtYWlkLmlubGluZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFHRjtFQUNFOzs7QUFLRjtFQUNFO0VBQ0E7OztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTs7QUFJRjtFQUNFO0VBQ0E7RUFDQSIsInNvdXJjZXNDb250ZW50IjpbIi5leHBhbmQtYnV0dG9uIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbG9hdDogcmlnaHQ7XG4gIHBhZGRpbmc6IDAuNHJlbTtcbiAgbWFyZ2luOiAwLjNyZW07XG4gIHJpZ2h0OiAwOyAvLyBOT1RFOiByaWdodCB3aWxsIGJlIHNldCBpbiBtZXJtYWlkLmlubGluZS50c1xuICBjb2xvcjogdmFyKC0tZ3JheSk7XG4gIGJvcmRlci1jb2xvcjogdmFyKC0tZGFyayk7XG4gIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgYm9yZGVyOiAxcHggc29saWQ7XG4gIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgb3BhY2l0eTogMDtcbiAgdHJhbnNpdGlvbjogMC4ycztcblxuICAmID4gc3ZnIHtcbiAgICBmaWxsOiB2YXIoLS1saWdodCk7XG4gICAgZmlsdGVyOiBjb250cmFzdCgwLjMpO1xuICB9XG5cbiAgJjpob3ZlciB7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIGJvcmRlci1jb2xvcjogdmFyKC0tc2Vjb25kYXJ5KTtcbiAgfVxuXG4gICY6Zm9jdXMge1xuICAgIG91dGxpbmU6IDA7XG4gIH1cbn1cblxucHJlIHtcbiAgJjpob3ZlciA+IC5leHBhbmQtYnV0dG9uIHtcbiAgICBvcGFjaXR5OiAxO1xuICAgIHRyYW5zaXRpb246IDAuMnM7XG4gIH1cbn1cblxuI21lcm1haWQtY29udGFpbmVyIHtcbiAgcG9zaXRpb246IGZpeGVkO1xuICBjb250YWluOiBsYXlvdXQ7XG4gIHotaW5kZXg6IDk5OTtcbiAgbGVmdDogMDtcbiAgdG9wOiAwO1xuICB3aWR0aDogMTAwdnc7XG4gIGhlaWdodDogMTAwdmg7XG4gIG92ZXJmbG93OiBoaWRkZW47XG4gIGRpc3BsYXk6IG5vbmU7XG4gIGJhY2tkcm9wLWZpbHRlcjogYmx1cig0cHgpO1xuICBiYWNrZ3JvdW5kOiByZ2JhKDAsIDAsIDAsIDAuNSk7XG5cbiAgJi5hY3RpdmUge1xuICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgfVxuXG4gICYgPiAjbWVybWFpZC1zcGFjZSB7XG4gICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gICAgYm9yZGVyLXJhZGl1czogNXB4O1xuICAgIHBvc2l0aW9uOiBmaXhlZDtcbiAgICB0b3A6IDUwJTtcbiAgICBsZWZ0OiA1MCU7XG4gICAgdHJhbnNmb3JtOiB0cmFuc2xhdGUoLTUwJSwgLTUwJSk7XG4gICAgaGVpZ2h0OiA4MHZoO1xuICAgIHdpZHRoOiA4MHZ3O1xuICAgIG92ZXJmbG93OiBoaWRkZW47XG5cbiAgICAmID4gLm1lcm1haWQtY29udGVudCB7XG4gICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgICB0cmFuc2Zvcm0tb3JpZ2luOiAwIDA7XG4gICAgICB0cmFuc2l0aW9uOiB0cmFuc2Zvcm0gMC4xcyBlYXNlO1xuICAgICAgb3ZlcmZsb3c6IHZpc2libGU7XG4gICAgICBtaW4taGVpZ2h0OiAyMDBweDtcbiAgICAgIG1pbi13aWR0aDogMjAwcHg7XG5cbiAgICAgIHByZSB7XG4gICAgICAgIG1hcmdpbjogMDtcbiAgICAgICAgYm9yZGVyOiBub25lO1xuICAgICAgfVxuXG4gICAgICBzdmcge1xuICAgICAgICBtYXgtd2lkdGg6IG5vbmU7XG4gICAgICAgIGhlaWdodDogYXV0bztcbiAgICAgIH1cbiAgICB9XG5cbiAgICAmID4gLm1lcm1haWQtY29udHJvbHMge1xuICAgICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgICAgYm90dG9tOiAyMHB4O1xuICAgICAgcmlnaHQ6IDIwcHg7XG4gICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgZ2FwOiA4cHg7XG4gICAgICBwYWRkaW5nOiA4cHg7XG4gICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgYm9yZGVyLXJhZGl1czogNnB4O1xuICAgICAgYm94LXNoYWRvdzogMCAycHggNHB4IHJnYmEoMCwgMCwgMCwgMC4xKTtcbiAgICAgIHotaW5kZXg6IDI7XG5cbiAgICAgIC5tZXJtYWlkLWNvbnRyb2wtYnV0dG9uIHtcbiAgICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgIHdpZHRoOiAzMnB4O1xuICAgICAgICBoZWlnaHQ6IDMycHg7XG4gICAgICAgIHBhZGRpbmc6IDA7XG4gICAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgICAgY29sb3I6IHZhcigtLWRhcmspO1xuICAgICAgICBib3JkZXItcmFkaXVzOiA0cHg7XG4gICAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICAgICAgZm9udC1zaXplOiAxNnB4O1xuICAgICAgICBmb250LWZhbWlseTogdmFyKC0tYm9keUZvbnQpO1xuICAgICAgICB0cmFuc2l0aW9uOiBhbGwgMC4ycyBlYXNlO1xuXG4gICAgICAgICY6aG92ZXIge1xuICAgICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIH1cblxuICAgICAgICAmOmFjdGl2ZSB7XG4gICAgICAgICAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKDFweCk7XG4gICAgICAgIH1cblxuICAgICAgICAvLyBTdHlsZSB0aGUgcmVzZXQgYnV0dG9uIGRpZmZlcmVudGx5XG4gICAgICAgICY6bnRoLWNoaWxkKDIpIHtcbiAgICAgICAgICB3aWR0aDogYXV0bztcbiAgICAgICAgICBwYWRkaW5nOiAwIDEycHg7XG4gICAgICAgICAgZm9udC1zaXplOiAxNHB4O1xuICAgICAgICB9XG4gICAgICB9XG4gICAgfVxuICB9XG59XG4iXX0= */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://dangthobach.github.io/knowledge/index.xml"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image" content="https://dangthobach.github.io/knowledge/concepts/data-storage-model-java-go-rust-og-image.webp"/><meta property="og:image:url" content="https://dangthobach.github.io/knowledge/concepts/data-storage-model-java-go-rust-og-image.webp"/><meta name="twitter:image" content="https://dangthobach.github.io/knowledge/concepts/data-storage-model-java-go-rust-og-image.webp"/><meta property="og:image:type" content="image/.webp"/></head><body data-slug="concepts/data-storage-model-java-go-rust"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="..">Dang Tho Bach's Knowledge Base</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-1132"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-1132" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../concepts/">concepts</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>data storage model java go rust</a></div></nav><h1 class="article-title">data-storage-model-java-go-rust</h1><p show-comma="true" class="content-meta"><time datetime="2026-09-02T00:00:00.000Z">Sep 02, 2026</time><span>22 min read</span></p><ul class="tags"><li><a href="../tags/concepts" class="internal tag-link">concepts</a></li><li><a href="../tags/memory" class="internal tag-link">memory</a></li><li><a href="../tags/storage" class="internal tag-link">storage</a></li><li><a href="../tags/allocator" class="internal tag-link">allocator</a></li><li><a href="../tags/gc" class="internal tag-link">gc</a></li><li><a href="../tags/scheduler" class="internal tag-link">scheduler</a></li><li><a href="../tags/memory-model" class="internal tag-link">memory-model</a></li><li><a href="../tags/ffi" class="internal tag-link">ffi</a></li><li><a href="../tags/java" class="internal tag-link">java</a></li><li><a href="../tags/go" class="internal tag-link">go</a></li><li><a href="../tags/rust" class="internal tag-link">rust</a></li><li><a href="../tags/jvm" class="internal tag-link">jvm</a></li><li><a href="../tags/runtime" class="internal tag-link">runtime</a></li><li><a href="../tags/evergreen" class="internal tag-link">evergreen</a></li></ul></div></div><article class="popover-hint"><h1 id="️-java-vs-go-vs-rust--toàn-chuỗi-runtime-storage-allocator-vtable-gc-context-switch-memory-model">🗄️ Java vs Go vs Rust — Toàn Chuỗi Runtime: Storage, Allocator, Vtable, GC, Context Switch, Memory Model<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#️-java-vs-go-vs-rust--toàn-chuỗi-runtime-storage-allocator-vtable-gc-context-switch-memory-model" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<blockquote class="callout abstract" data-callout="abstract">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Mental model xuyên suốt bài </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>Một chuỗi câu hỏi áp dụng cho MỌI value trong cả 3 ngôn ngữ:
+<strong>representation → ai sở hữu/tham chiếu nó? → stack/register hay heap? → nếu heap thì allocator nào phát? → dynamic dispatch cần metadata gì? → cái gì giữ nó sống? → ai thu hồi, và khi nào? → nếu task bị suspend, execution state nằm ở đâu? → thread khác thấy write theo rule ordering nào?</strong></p>
+<p>Bài viết trước (<a href="../concepts/data-storage-model-java-go-rust" class="internal" data-slug="concepts/data-storage-model-java-go-rust">data-storage-model-java-go-rust</a> — chính là bài này) chỉ đi tới câu hỏi “dynamic dispatch cần metadata gì”. Bản cập nhật này nối tiếp toàn bộ chuỗi tới allocator, GC, context switch, memory ordering, unsafe/FFI và diagnostics — đối chiếu với một research pass riêng để tách rõ <strong>spec/language guarantee</strong> khỏi <strong>compiler/runtime implementation detail</strong> (JVMS ≠ HotSpot; Go spec ≠ <code>gc</code> toolchain runtime; Rust Reference ≠ rustc internal).</p>
+</div>
+</blockquote>
+<blockquote class="callout warning" data-callout="warning">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Quy tắc đọc bài này </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>Bất cứ chỗ nào bài nói về <strong>kích thước byte cụ thể</strong> (header 12-16B, itab 2-word…), đó là <strong>mô tả khái niệm ở một thời điểm/cấu hình phổ biến</strong>, KHÔNG phải cam kết ABI vĩnh viễn. HotSpot Compact Object Headers, các thay đổi trong Go runtime giữa các release, và việc rustc vtable layout chưa từng là stable ABI đều là lý do để luôn hedge câu này khi đọc lại sau vài năm.</p>
+</div>
 </blockquote>
 <hr/>
 <h2 id="-trục-phân-tích-không-phải-có-gc-hay-không">🎯 Trục phân tích: không phải “có GC hay không”<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-trục-phân-tích-không-phải-có-gc-hay-không" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
-<p>Cách phân loại phổ biến “Java/Go có GC, Rust không có GC” đúng nhưng nông. Trục thực sự quyết định mọi thứ bên dưới là <strong>3 câu hỏi</strong>, áp dụng cho MỌI đơn vị dữ liệu (scalar, struct, string, collection, interface):</p>
+<p>3 câu hỏi áp dụng cho mọi đơn vị dữ liệu:</p>
 <ol>
 <li><strong>Metadata có bị bắt buộc gắn liền với value không?</strong> (header, type tag, vtable pointer…)</li>
-<li><strong>Ai quyết định stack hay heap — và quyết định lúc nào?</strong> (compile time tường minh / compile time suy luận / runtime GC)</li>
-<li><strong>Chi phí đó trả cho MỌI value, hay chỉ trả khi thực sự cần (opt-in)?</strong></li>
+<li><strong>Ai quyết định stack hay heap — và quyết định lúc nào?</strong> (compile time tường minh / compiler heuristic / JIT runtime speculative)</li>
+<li><strong>Chi phí đó trả cho MỌI value, hay chỉ khi thực sự cần (opt-in)?</strong></li>
 </ol>
-<p>Toàn bộ bài này đi từ tầng tổng quát nhất (triết lý hệ thống) xuống tầng chi tiết nhất (byte layout), áp câu hỏi trên vào từng loại dữ liệu.</p>
 <hr/>
 <h2 id="️-tầng-0--ba-triết-lý-lưu-trữ-tổng-quát">🏛️ Tầng 0 — Ba Triết Lý Lưu Trữ Tổng Quát<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#️-tầng-0--ba-triết-lý-lưu-trữ-tổng-quát" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
 <pre><code>┌───────────────────────────┐  ┌───────────────────────────┐  ┌───────────────────────────┐
-│          JAVA              │  │           GO               │  │          RUST              │
+│          JAVA               │  │           GO               │  │          RUST              │
 │   Managed Object Model      │  │   Value-type + GC          │  │  Value-type + Ownership     │
 ├───────────────────────────┤  ├───────────────────────────┤  ├───────────────────────────┤
-│ Mọi non-primitive = object  │  │ struct = value trần,        │  │ struct = value trần,        │
-│ → LUÔN ở heap                │  │ không header                │  │ không header                │
-│ → LUÔN có header (12-16B)   │  │ stack/heap: compiler quyết  │  │ stack mặc định; heap CHỈ    │
-│ GC quản lý toàn bộ vòng đời  │  │ định bằng escape analysis   │  │ khi gọi Box/Vec/String/Rc   │
-│                              │  │ (cứng, xem được qua -gcflags)│  │ tường minh — không compiler │
-│                              │  │ GC chỉ quản lý phần đã       │  │ nào tự ý heap-alloc hộ bạn  │
-│                              │  │ escape lên heap              │  │ Ownership → free            │
-│                              │  │                              │  │ deterministic, KHÔNG GC     │
+│ Object/array semantically    │  │ struct = value trần,        │  │ struct = value trần,        │
+│ đến từ heap theo JVMS        │  │ không header bắt buộc       │  │ không header bắt buộc       │
+│ nhưng JIT có thể loại bỏ     │  │ stack/heap: compiler quyết  │  │ heap CHỈ khi gọi Box/Vec/   │
+│ allocation vật lý (scalar    │  │ định bằng escape analysis   │  │ String/Rc tường minh —      │
+│ replacement) nếu identity    │  │ (compile-time, có thể đổi   │  │ không compiler nào tự ý     │
+│ không bị quan sát            │  │ giữa các bản Go)            │  │ heap-alloc hộ bạn            │
+│ GC quản lý phần vật lý hóa   │  │ GC quản lý phần đã escape   │  │ Ownership → Drop khi ra     │
+│                              │  │ lên heap                    │  │ khỏi scope, KHÔNG tracing GC │
 └───────────────────────────┘  └───────────────────────────┘  └───────────────────────────┘
-     Metadata: bắt buộc              Metadata: opt-in (chỉ khi        Metadata: opt-in (chỉ khi
-     100% mọi object                 box vào interface)                coerce sang fat pointer)
 </code></pre>
-<p><strong>Hệ quả then chốt:</strong> Java trả phí metadata cho MỌI object bất kể có dùng polymorphism hay không. Go và Rust chỉ trả phí khi bạn <em>chủ động</em> yêu cầu (interface conversion / <code>dyn Trait</code>) — phần còn lại của chương trình chạy như C.</p>
+<blockquote class="callout tip" data-callout="tip">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Spec vs implementation </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>JVM Specification chỉ nói heap là nơi chứa class instance/array và có automatic storage management — nó <strong>không</strong> bắt buộc physical object layout hay GC algorithm. Mọi chi tiết về header, TLAB, G1 ở bài này là <strong>HotSpot implementation</strong>, không phải điều JVMS yêu cầu.</p>
+</div>
+</blockquote>
+<p><strong>Hệ quả then chốt:</strong> Java trả phí metadata (header) cho MỌI object bất kể có polymorphism hay không. Go và Rust chỉ trả phí khi bạn <em>chủ động</em> box vào interface/<code>dyn Trait</code> — phần còn lại chạy gần như C.</p>
 <hr/>
-<h2 id="-tầng-1--scalar--primitive-đơn-vị-nhỏ-nhất">🔢 Tầng 1 — Scalar / Primitive: đơn vị nhỏ nhất<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-tầng-1--scalar--primitive-đơn-vị-nhỏ-nhất" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h2 id="-tầng-1--scalar--primitive">🔢 Tầng 1 — Scalar / Primitive<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-tầng-1--scalar--primitive" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
 
 
 
@@ -184,85 +210,95 @@ pre:hover > .expand-button {
 
 
 
-
-
-
-
-
-
-<div class="table-container"><table><thead><tr><th>Kiểu</th><th>Java</th><th>Go</th><th>Rust</th></tr></thead><tbody><tr><td>Số nguyên 32-bit</td><td><code>int</code> — 4B, value</td><td><code>int32</code> — 4B, value</td><td><code>i32</code> — 4B, value</td></tr><tr><td>Số nguyên 64-bit</td><td><code>long</code> — 8B, value</td><td><code>int64</code> — 8B, value</td><td><code>i64</code> — 8B, value</td></tr><tr><td>Số thực</td><td><code>double</code> — 8B, value</td><td><code>float64</code> — 8B, value</td><td><code>f64</code> — 8B, value</td></tr><tr><td>Boolean</td><td><code>boolean</code> — impl-defined (thường 1B trong array, 4B khi đứng lẻ do alignment)</td><td><code>bool</code> — 1B</td><td><code>bool</code> — 1B</td></tr><tr><td>Ký tự</td><td><code>char</code> — <strong>2B, UTF-16 code unit</strong> (KHÔNG phải 1 code point đầy đủ — code point ngoài BMP cần surrogate pair 2×char)</td><td><code>rune</code> (alias <code>int32</code>) — <strong>4B, full Unicode scalar value</strong></td><td><code>char</code> — <strong>4B, full Unicode scalar value</strong></td></tr></tbody></table></div>
-<p><strong>Điểm dễ nhầm nhất:</strong> Java <code>char</code> không tương đương Go <code>rune</code> hay Rust <code>char</code> — Java <code>char</code> chỉ là nửa mảnh của một số code point (UTF-16 code unit), còn Go/Rust dùng biểu diễn 4-byte đủ cho mọi code point Unicode trong 1 giá trị.</p>
-<p><strong>Boxing — chi phí ẩn khi scalar “biến thành object”:</strong></p>
-<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="java" data-theme="github-light github-dark"><code data-language="java" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// Java: mọi lúc dùng generic (List&lt;Integer>), int PHẢI box thành object</span></span>
-<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">Integer boxed </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 42</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
-<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// Bộ nhớ: 12-16B header + 4B int value → 16B total (padded), thay vì 4B thô</span></span>
-<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// Integer cache: -128..127 được cache sẵn, ngoài range → alloc mới mỗi lần</span></span></code></pre></figure>
-<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="go" data-theme="github-light github-dark"><code data-language="go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// Go: value chỉ &quot;box&quot; (heap-escape + metadata) khi gán vào interface{}</span></span>
-<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">var</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> i </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">interface</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">{} </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 42</span></span>
-<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// int 42 quá nhỏ để fit trực tiếp vào word của interface value trên phần lớn</span></span>
-<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// implementation hiện đại → có thể escape lên heap, kèm theo 1 word type descriptor</span></span></code></pre></figure>
-<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="rust" data-theme="github-light github-dark"><code data-language="rust" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// Rust: KHÔNG BAO GIỜ tự động box. Muốn heap, phải viết tường minh:</span></span>
-<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">let</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> boxed</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">:</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> Box</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">&lt;</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">i32</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">> </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> Box</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">new</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">42</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">); </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// chỉ heap khi bạn gọi Box::new</span></span></code></pre></figure>
+<div class="table-container"><table><thead><tr><th>Kiểu</th><th>Java</th><th>Go</th><th>Rust</th></tr></thead><tbody><tr><td>Số nguyên 32-bit</td><td><code>int</code> — 4B, value</td><td><code>int32</code> — 4B, value</td><td><code>i32</code> — 4B, value</td></tr><tr><td>Số nguyên 64-bit</td><td><code>long</code> — 8B, value</td><td><code>int64</code> — 8B, value</td><td><code>i64</code> — 8B, value</td></tr><tr><td>Boolean</td><td><code>boolean</code> — impl-defined</td><td><code>bool</code> — 1B</td><td><code>bool</code> — 1B</td></tr><tr><td>Ký tự</td><td><code>char</code> — <strong>2B, UTF-16 code unit</strong> (không phải 1 code point đầy đủ)</td><td><code>rune</code> (alias <code>int32</code>) — <strong>4B, Unicode scalar value</strong></td><td><code>char</code> — <strong>4B, Unicode scalar value</strong></td></tr></tbody></table></div>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="java" data-theme="github-light github-dark"><code data-language="java" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">Integer boxed </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 42</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;  </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// box: header (~12-16B, xem cảnh báo Tầng 2) + 4B int</span></span></code></pre></figure>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="go" data-theme="github-light github-dark"><code data-language="go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">var</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> i </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">interface</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">{} </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 42</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">  // box chỉ khi vào interface{} — có thể escape lên heap</span></span></code></pre></figure>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="rust" data-theme="github-light github-dark"><code data-language="rust" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">let</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> boxed</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">:</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> Box</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">&lt;</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">i32</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">> </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> Box</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">new</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">42</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);  </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// KHÔNG BAO GIỜ tự động — luôn tường minh</span></span></code></pre></figure>
 <hr/>
 <h2 id="-tầng-2--composite-structobject-layout">📦 Tầng 2 — Composite: Struct/Object Layout<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-tầng-2--composite-structobject-layout" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
-<h3 id="21-java--header-bắt-buộc-trên-mọi-object">2.1 Java — Header bắt buộc trên MỌI object<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#21-java--header-bắt-buộc-trên-mọi-object" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h3 id="21-javahotspot--header-bắt-buộc-trên-mọi-object">2.1 Java/HotSpot — Header bắt buộc trên MỌI object<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#21-javahotspot--header-bắt-buộc-trên-mọi-object" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
 <pre><code>┌─────────────────────────────┐
-│  Mark Word (8 byte)         │ ← hash code, GC age, lock state (biased/thin/fat lock)
+│  Mark word                  │ ← hash, GC age, lock state
 ├─────────────────────────────┤
-│  Klass Pointer (4B nếu       │ ← trỏ tới class metadata (vtable + itable nằm ở đây)
-│  compressed oops, mặc định   │
-│  khi heap &lt; 32GB; 8B nếu tắt)│
+│  Klass pointer (compressed   │ ← trỏ tới HotSpot Klass metadata
+│  hoặc full tùy config)       │   (chứa C++-style vtable, xem Tầng 8)
 ├─────────────────────────────┤
-│  [padding tới bội số 8B]    │
-├─────────────────────────────┤
-│  field 1, field 2, ...      │ ← JVM TỰ SẮP THỨ TỰ (long/double → int/float →
-└─────────────────────────────┘    short/char → byte/boolean → reference) để giảm padding
+│  field 1, field 2, ...      │ ← HotSpot tự sắp field để giảm padding
+└─────────────────────────────┘
 </code></pre>
-<p>Chi tiết tính overhead header và field-reordering đã có ở <a href="../concepts/memory-hierarchy-cpu-cache" class="internal" data-slug="concepts/memory-hierarchy-cpu-cache">memory-hierarchy-cpu-cache</a> (Tip 2) — điểm bổ sung ở đây: <strong>developer không kiểm soát được thứ tự vật lý field</strong>, JVM tự tối ưu bất kể bạn khai báo thứ tự nào trong source code.</p>
-<h3 id="22-go--plain-struct-field-order-do-bạn-quyết-định">2.2 Go — Plain struct, field order do BẠN quyết định<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#22-go--plain-struct-field-order-do-bạn-quyết-định" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
-<p>Không header, nhưng khác Java: <strong>compiler KHÔNG tự reorder field</strong> — thứ tự khai báo = thứ tự vật lý trong bộ nhớ. Bạn tự chịu trách nhiệm tránh padding lãng phí:</p>
-<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="go" data-theme="github-light github-dark"><code data-language="go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">type</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> Bad</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {   </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// 24 bytes: bool(1)+pad(7)+int64(8)+bool(1)+pad(7)</span></span>
-<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    A </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">bool</span></span>
-<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    B </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">int64</span></span>
-<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    C </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">bool</span></span>
-<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span>
-<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">type</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> Good</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {  </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// 16 bytes: int64(8)+bool(1)+bool(1)+pad(6)</span></span>
-<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    B </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">int64</span></span>
-<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    A </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">bool</span></span>
-<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    C </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">bool</span></span>
-<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></figure>
-<h3 id="23-rust--compiler-tự-reorder-mặc-định-nhưng-có-repr-để-kiểm-soát">2.3 Rust — Compiler tự reorder (mặc định), nhưng có <code>repr</code> để kiểm soát<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#23-rust--compiler-tự-reorder-mặc-định-nhưng-có-repr-để-kiểm-soát" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
-<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="rust" data-theme="github-light github-dark"><code data-language="rust" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">struct</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> Document</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {   </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// repr(Rust) mặc định: compiler ĐƯỢC PHÉP reorder field</span></span>
-<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    id</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">:</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> String</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,      </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// giống Java, developer không đảm bảo thứ tự vật lý</span></span>
-<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    size</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">:</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> u64</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
-<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    active</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">:</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> bool</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
-<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span>
-<span data-line> </span>
-<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">#[repr(</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">C</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)]           </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// ép giữ đúng thứ tự khai báo — bắt buộc khi FFI với C/Go qua CGO</span></span>
-<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">struct</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> FfiDocument</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> { id</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">:</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> u64</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, active</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">:</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> bool</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> }</span></span></code></pre></figure>
-<p><strong>Hai tối ưu chỉ Rust có:</strong></p>
-<ul>
-<li><strong>Zero-Sized Types (ZST):</strong> <code>struct Marker;</code> chiếm <strong>0 byte</strong>. <code>Vec&lt;Marker></code> với 1 triệu phần tử <strong>không cấp phát byte dữ liệu nào</strong> (chỉ có len/cap).</li>
-<li><strong>Niche optimization:</strong> <code>&amp;T</code>/<code>Box&lt;T></code> không bao giờ null → compiler mượn chính giá trị <code>0x0</code> làm biểu diễn ẩn cho <code>None</code>, nên <code>Option&lt;Box&lt;T>></code> có <strong>kích thước bằng đúng</strong> <code>Box&lt;T></code> — không tốn thêm byte nào cho “có giá trị hay không”, khác hẳn wrapper nullable tốn thêm cờ boolean ở ngôn ngữ khác.</li>
-</ul>
+<blockquote class="callout warning" data-callout="warning">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Đừng hard-code &quot;12-16 byte header&quot; </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>HotSpot glossary mô tả mark word + Klass pointer là 2 phần đầu object header, nhưng <strong>JEP Compact Object Headers đã thay đổi cách HotSpot mã hóa header</strong> ở các JDK/config mới, làm kích thước thay đổi. Con số 12-16B chỉ đúng ở một số cấu hình phổ biến trước đó — không dùng làm hằng số vĩnh viễn.</p>
+</div>
+</blockquote>
+<h3 id="22-go--plain-struct-không-có-universal-header">2.2 Go — Plain struct, KHÔNG có universal header<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#22-go--plain-struct-không-có-universal-header" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<blockquote class="callout note" data-callout="note">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Implementation detail </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>Go struct không có class inheritance và không cần vptr/header kiểu Java trên mọi value. Runtime giữ allocation/GC metadata ở <strong>side structures</strong> riêng (span/size-class) thay vì gắn vào từng object. Chi tiết phụ trợ này có thể đổi giữa các release — không nên giả định “Go object luôn 0 byte overhead tuyệt đối trong mọi ngữ cảnh runtime”, chỉ nên nói <strong>không có per-object class header kiểu Java</strong>.</p>
+</div>
+</blockquote>
+<p>Field order do bạn quyết định (compiler KHÔNG tự reorder):</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="go" data-theme="github-light github-dark"><code data-language="go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">type</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> Bad</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> { A </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">bool</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">; B </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">int64</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">; C </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">bool</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> }   </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// 24B: padding lãng phí</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">type</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> Good</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> { B </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">int64</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">; A </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">bool</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">; C </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">bool</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> }  </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// 16B: tự sắp lớn→nhỏ</span></span></code></pre></figure>
+<h3 id="23-rust--compiler-tự-reorder-mặc-định-nhưng-có-repr-để-kiểm-soát">2.3 Rust — Compiler tự reorder mặc định, nhưng có <code>repr</code> để kiểm soát<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#23-rust--compiler-tự-reorder-mặc-định-nhưng-có-repr-để-kiểm-soát" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="rust" data-theme="github-light github-dark"><code data-language="rust" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">struct</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> Document</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> { id</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">:</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> String</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, size</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">:</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> u64</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, active</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">:</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> bool</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> } </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// repr(Rust): compiler ĐƯỢC PHÉP reorder</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">#[repr(</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">C</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)] </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">struct</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> FfiDocument</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> { id</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">:</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> u64</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, active</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">:</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> bool</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> }  </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// ép giữ thứ tự — bắt buộc khi FFI</span></span></code></pre></figure>
+<blockquote class="callout tip" data-callout="tip">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Spec vs implementation </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>Rust Reference nói rõ <code>repr(Rust)</code> mặc định <strong>không phải stable FFI layout</strong>; compiler có toàn quyền sắp xếp/pad. Đây là lý do mọi sơ đồ byte-layout Rust trong bài này là “khái niệm”, không phải ABI cam kết.</p>
+</div>
+</blockquote>
+<p><strong>Hai tối ưu chỉ Rust có:</strong> Zero-Sized Types (0 byte) và niche optimization (<code>Option&lt;Box&lt;T>></code> cùng size với <code>Box&lt;T></code> vì null làm tag ẩn cho <code>None</code>).</p>
 <hr/>
 <h2 id="-tầng-3--ai-quyết-định-stack-hay-heap">🧭 Tầng 3 — Ai Quyết Định Stack Hay Heap?<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-tầng-3--ai-quyết-định-stack-hay-heap" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
-<pre><code>JAVA:  JIT escape analysis (runtime, &quot;best-effort&quot;, KHÔNG đảm bảo)
-       → nếu chứng minh object không escape method → &quot;scalar replacement&quot;
-       → tách field ra biến cục bộ trên stack/register — ẩn, dev không kiểm soát
+<pre><code>JAVA:  JIT escape analysis (runtime, best-effort) → NẾU chứng minh object
+       không escape VÀ identity không bị quan sát → SCALAR REPLACEMENT
+       (phân rã field thành biến/register) — KHÔNG phải &quot;object xuống stack&quot;
 
-GO:    Compiler escape analysis (compile-time, CỨNG — quyết định 1 lần, xem được)
-       $ go build -gcflags=&quot;-m&quot;  → in ra &quot;escapes to heap&quot; / &quot;does not escape&quot;
-       Value escape khi: trả về pointer, capture trong closure lưu lâu,
-       gán vào interface{}, kích thước quá lớn cho stack
+GO:    Compiler escape analysis (compile-time, quyết định 1 lần khi build,
+       KHÔNG phải JIT speculative runtime) → `go build -gcflags=-m=3` xem được
+       Escape có tính LAN TRUYỀN: object chứa pointer tới object khác cần
+       sống dài hơn → object bị trỏ tới cũng escape theo
 
-RUST:  Developer TƯỜNG MINH 100% — stack mặc định, heap CHỈ khi gọi
-       Box::new / Vec::new / String::new / Rc::new / Arc::new
-       → không có &quot;compiler tự ý heap alloc&quot; ẩn ở bất kỳ đâu
+RUST:  Developer TƯỜNG MINH 100% qua Box/Vec/String/Rc/Arc — compiler
+       KHÔNG có &quot;escape-analysis phase&quot; để tự động promote borrowed local
+       lên heap. Trả về reference tới local đã chết → COMPILE ERROR
+       (borrow checker), không phải runtime tự sửa giúp bạn.
 </code></pre>
-<p>Đây là khác biệt triết lý sâu nhất: Java và Go đều có một “cơ chế thông minh” (JIT/escape analysis) quyết định thay bạn — tiện nhưng khó dự đoán 100%. Rust từ chối mọi allocation ẩn, đổi lấy việc bạn phải viết <code>Box</code>/<code>Vec</code> tường minh ở mọi nơi cần heap.</p>
+<blockquote class="callout warning" data-callout="warning">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>2 misconception phổ biến nhất trong toàn bộ chủ đề này </p></div>
+                  
+                </div>
+<div class="callout-content">
+<ol>
+<li><strong>“Escape analysis nghĩa là Java/Go object được chuyển xuống stack.”</strong> Với Java, mô tả đúng là <em>scalar replacement / allocation elimination</em> — object không “chuyển chỗ”, nó bị compiler chứng minh là không cần tồn tại như object quan sát được. Với Go, storage location vẫn có thể là stack thật, nhưng đây là compiler optimization decision, không phải cú pháp <code>&amp;</code>/<code>new</code> quyết định.</li>
+<li><strong>“Dùng <code>&amp;x</code> hay <code>new</code> ở Go/Java luôn tạo heap allocation.”</strong> Sai — compiler quyết định, không phải cú pháp. Luôn kiểm chứng bằng escape output/profiler thay vì đoán từ source.</li>
+</ol>
+</div>
+</blockquote>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="go" data-theme="github-light github-dark"><code data-language="go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">func</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> local</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">x</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> { p </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">:=</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> Point</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">{x, x</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">+</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}; </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">return</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> p.X</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">+</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">p.Y }   </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// p có thể ở lại stack/register</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">func</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> escapes</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">x</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">Point</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> { p </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">:=</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> Point</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">{x, x</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">+</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}; </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">return</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> &amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">p }    </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// p thường phải escape lên heap</span></span></code></pre></figure>
+<p>Rust từ chối ví dụ tương đương ngay lúc compile thay vì “tự cứu” bằng cách heap-promote:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="rust" data-theme="github-light github-dark"><code data-language="rust" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">fn</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> bad</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">() </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-></span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> &amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">'</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">static</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> i32</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> { </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">let</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> x </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 42</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">; </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">x }  </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// COMPILE ERROR — không có bước &quot;escape nên đưa x lên heap&quot;</span></span></code></pre></figure>
 <hr/>
-<h2 id="-tầng-4--pointerreference-thin-vs-fat">👉 Tầng 4 — Pointer/Reference: Thin vs Fat<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-tầng-4--pointerreference-thin-vs-fat" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h2 id="-tầng-4--pointerreference-thin-vs-fat-wide">👉 Tầng 4 — Pointer/Reference: Thin vs Fat (Wide)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-tầng-4--pointerreference-thin-vs-fat-wide" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
 
 
 
@@ -292,35 +328,16 @@ RUST:  Developer TƯỜNG MINH 100% — stack mặc định, heap CHỈ khi gọ
 
 
 
-<div class="table-container"><table><thead><tr><th></th><th>Java (reference/oop)</th><th>Go (<code>*T</code>)</th><th>Rust (<code>&amp;T</code>)</th></tr></thead><tbody><tr><td>Kích thước cơ bản</td><td>4B (compressed oops, heap&lt;32GB) hoặc 8B</td><td>8B (thin, luôn 1 word)</td><td>8B nếu <code>T: Sized</code> (thin)</td></tr><tr><td>Khi nào “phình” ra</td><td>Không bao giờ — luôn trỏ tới object có header riêng</td><td>Không bao giờ</td><td><strong>Fat pointer (16B)</strong> khi <code>T</code> unsized: <code>&amp;[T]</code> slice → {ptr, len}; <code>&amp;str</code> → {ptr, len}; <code>&amp;dyn Trait</code> → {ptr, vtable}</td></tr><tr><td>Null</td><td>Có (<code>null</code>), mọi reference type</td><td>Có (<code>nil</code>)</td><td><strong>Không có null</strong> — dùng <code>Option&lt;&amp;T></code> (niche-optimized, vẫn 8B nhờ mục 2.3)</td></tr></tbody></table></div>
+<div class="table-container"><table><thead><tr><th></th><th>Java (reference/oop)</th><th>Go (<code>*T</code>)</th><th>Rust (<code>&amp;T</code>)</th></tr></thead><tbody><tr><td>Kích thước cơ bản</td><td>4B (compressed, tùy config) hoặc 8B</td><td>8B, luôn thin</td><td>8B nếu <code>T: Sized</code></td></tr><tr><td>Khi nào “phình” ra</td><td>Không bao giờ</td><td>Không bao giờ</td><td><strong>Wide/fat pointer (16B)</strong> khi <code>T</code> unsized: <code>&amp;[T]</code>→{ptr,len}; <code>&amp;str</code>→{ptr,len}; <code>&amp;dyn Trait</code>→{ptr, vtable}</td></tr><tr><td>Null</td><td>Có (<code>null</code>)</td><td>Có (<code>nil</code>)</td><td>Không có null — <code>Option&lt;&amp;T></code> (niche-optimized, vẫn 8B)</td></tr></tbody></table></div>
 <hr/>
-<h2 id="-tầng-5--string-cùng-khái-niệm-3-cách-lưu-hoàn-toàn-khác">🔤 Tầng 5 — String: Cùng Khái Niệm, 3 Cách Lưu Hoàn Toàn Khác<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-tầng-5--string-cùng-khái-niệm-3-cách-lưu-hoàn-toàn-khác" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
-<pre><code>JAVA (từ Java 9, JEP 254 &quot;Compact Strings&quot;):
-┌─────────────────────────────────────┐
-│ header (12-16B)                      │
-│ byte[] value    ← LATIN1 (1B/char)   │  chỉ dùng UTF16 (2B/char) nếu có
-│                   HOẶC UTF16          │  ký tự ngoài Latin-1
-│ byte coder      ← cờ chọn encoding    │
-│ int hash        ← cache, lazy compute │  (an toàn vì String immutable)
-└─────────────────────────────────────┘
-+ String pool (intern): literal string dùng chung 1 bản trong pool
-
-GO:
-┌──────────┬──────────┐
-│ pointer  │  len     │  ← 2-word header (16B), TRỎ tới mảng byte UTF-8 bất biến
-└──────────┴──────────┘
-Slicing string (s[2:5]) CHIA SẺ cùng backing array — copy header rẻ (16B),
-không copy dữ liệu.
-
-RUST:
-String (owned, growable):        &amp;str (borrow, view):
-┌──────────┬─────┬──────┐        ┌──────────┬──────┐
-│ pointer  │ len │ cap  │        │ pointer  │ len  │
-└──────────┴─────┴──────┘        └──────────┴──────┘
-   3-word (24B), thực chất            2-word fat pointer (16B)
-   là Vec&lt;u8> đã validate UTF-8       không có capacity vì immutable view
+<h2 id="-tầng-5--string-storage">🔤 Tầng 5 — String Storage<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-tầng-5--string-storage" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><code>JAVA (Compact Strings, JEP 254): header + byte[] value (LATIN1 hoặc UTF16)
+                                  + byte coder + int hash (cache lazy)
+                                  + String pool cho literal
+GO:   {pointer, len} — 2-word, trỏ mảng byte UTF-8 bất biến; slicing CHIA SẺ backing array
+RUST: String (owned) = {ptr,len,cap} 3-word, thực chất là Vec&lt;u8> đã validate UTF-8
+      &amp;str (borrow)  = {ptr,len} 2-word fat pointer, không có capacity
 </code></pre>
-<p>Không có string pool tự động trong Rust — trừ <code>&amp;'static str</code> (literal) nằm sẵn trong <code>.rodata</code> của binary, không cần alloc runtime.</p>
 <hr/>
 <h2 id="-tầng-6--collection-arraylist--slice--vec">📚 Tầng 6 — Collection: ArrayList / Slice / Vec<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-tầng-6--collection-arraylist--slice--vec" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
 
@@ -352,40 +369,40 @@ String (owned, growable):        &amp;str (borrow, view):
 
 
 
-
-
-
-
-
-
-<div class="table-container"><table><thead><tr><th></th><th>Java <code>ArrayList&lt;T></code></th><th>Go <code>[]T</code> (slice)</th><th>Rust <code>Vec&lt;T></code></th></tr></thead><tbody><tr><td>Header</td><td><code>Object[] elementData</code> + <code>int size</code> — mỗi phần tử là 1 reference riêng (pointer chasing nếu T không phải primitive box sẵn)</td><td>3-word <code>{ptr, len, cap}</code> trỏ backing array liên tục</td><td>3-word <code>{ptr, len, cap}</code> — <strong>giống hệt Go về cấu trúc</strong></td></tr><tr><td>Growth factor</td><td>×1.5 (<code>oldCap + oldCap>>1</code>)</td><td>~×2 cho slice nhỏ, giảm dần ~×1.25 khi lớn (thay đổi giữa các bản Go runtime)</td><td>×2 (amortized doubling)</td></tr><tr><td>Generic</td><td>Type-erased → <code>Object[]</code>, primitive phải box</td><td>Monomorphized qua GC shape stenciling (Tầng 9)</td><td>Monomorphized hoàn toàn (Tầng 9)</td></tr><tr><td><strong>Pitfall aliasing</strong></td><td>Không có (copy-on-write không tồn tại, mỗi list độc lập)</td><td>⚠️ 2 slice từ cùng backing array <strong>CHIA SẺ</strong> vùng nhớ — sửa qua slice này ảnh hưởng slice kia nếu vùng overlap (bug kinh điển khi <code>append</code>/truncate batch trong pipeline)</td><td>Không thể xảy ra ẩn — borrow checker buộc bạn tường minh hóa việc chia sẻ (<code>&amp;[T]</code>), và cấm dùng slice sau khi <code>Vec</code> gốc bị resize/drop</td></tr></tbody></table></div>
+<div class="table-container"><table><thead><tr><th></th><th>Java <code>ArrayList&lt;T></code></th><th>Go <code>[]T</code></th><th>Rust <code>Vec&lt;T></code></th></tr></thead><tbody><tr><td>Header</td><td><code>Object[]</code>+<code>size</code>, mỗi phần tử 1 reference riêng</td><td>3-word <code>{ptr,len,cap}</code></td><td>3-word <code>{ptr,len,cap}</code> — <strong>giống hệt Go về cấu trúc</strong></td></tr><tr><td>Growth</td><td>×1.5</td><td>~×2 rồi giảm dần (đổi giữa các bản Go)</td><td>×2</td></tr><tr><td><strong>Pitfall aliasing</strong></td><td>Không có</td><td>⚠️ 2 slice cùng backing array <strong>chia sẻ vùng nhớ</strong> — sửa qua slice này ảnh hưởng slice kia</td><td>Không thể xảy ra ẩn — borrow checker buộc tường minh hóa việc chia sẻ</td></tr></tbody></table></div>
 <hr/>
-<h2 id="-tầng-7--enum--sum-type--không-có-giá-trị">🎭 Tầng 7 — Enum / Sum Type / “Không Có Giá Trị”<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-tầng-7--enum--sum-type--không-có-giá-trị" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
-<pre><code>JAVA — null là giá trị đặc biệt của MỌI reference type:
-String s = null;      // hợp lệ với BẤT KỲ reference nào — không gì ngăn được
-s.length();           // NullPointerException tại RUNTIME
+<h2 id="-tầng-7--enum--nullable--không-có-giá-trị">🎭 Tầng 7 — Enum / Nullable / “Không Có Giá Trị”<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-tầng-7--enum--nullable--không-có-giá-trị" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><code>JAVA: null là giá trị đặc biệt của MỌI reference type → NullPointerException RUNTIME
 
-GO — nil, và cạm bẫy &quot;typed nil&quot; nổi tiếng:
-var p *MyType = nil
-var i MyInterface = p     // interface value = {type: *MyType, data: nil}
-i != nil                  // → TRUE! vì type descriptor KHÁC nil,
-                           //   dù data logically nil — interface toàn phần
-                           //   chỉ nil khi CẢ type VÀ data đều nil
+GO:   nil, và &quot;typed nil&quot; nổi tiếng:
+      var p *T = nil; var i Interface = p
+      i != nil  // TRUE! vì type descriptor khác nil dù data logically nil
 
-RUST — không có null. Enum = tagged union thật sự:
-enum Shape {
-    Circle(f64),           // payload lớn nhất: 8B
-    Rectangle(f64, f64),   // payload lớn nhất: 16B ← quyết định size union
-    Empty,
-}
-┌────────────┬───────────────────────────┐
-│  tag (8B)  │   payload (16B, DÙNG CHUNG) │  → tổng 24B, KHÔNG cộng dồn
-└────────────┴───────────────────────────┘   từng variant như struct thường
+RUST: enum = tagged union thật sự — payload các variant DÙNG CHUNG vùng nhớ
+      (size = tag + max(payload các variant), không cộng dồn)
+      Option&lt;Box&lt;T>> FREE về size nhờ niche optimization
 </code></pre>
-<p><code>Option&lt;T></code> chính là enum 2 variant (<code>Some(T)</code> / <code>None</code>) — với niche optimization (mục 2.3), <code>Option&lt;Box&lt;T>></code>/<code>Option&lt;&amp;T></code> <strong>free</strong> về mặt kích thước so với kiểu gốc.</p>
 <hr/>
-<h2 id="-tầng-8--interface--trait-object-vtable-bắt-buộc-vs-opt-in">🧩 Tầng 8 — Interface / Trait Object: Vtable Bắt Buộc vs Opt-in<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-tầng-8--interface--trait-object-vtable-bắt-buộc-vs-opt-in" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
-<p><em>(tóm tắt lại có hệ thống — chi tiết đầy đủ về cơ chế vtable/itable/itab đã build trong series thảo luận trước, đây là bản tổng hợp chuẩn hóa cho bài viết)</em></p>
+<h2 id="-tầng-8--vtabledynamic-dispatch-3-cơ-chế-khác-hẳn-nhau">🧩 Tầng 8 — Vtable/Dynamic Dispatch: 3 Cơ Chế Khác Hẳn Nhau<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-tầng-8--vtabledynamic-dispatch-3-cơ-chế-khác-hẳn-nhau" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<blockquote class="callout tip" data-callout="tip">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Thuật ngữ chính xác (khác với bản trước của bài này) </p></div>
+                  
+                </div>
+<div class="callout-content">
+<ul>
+<li><strong>Go:</strong> interface value CÓ METHOD dùng <code>ITab* + data</code> (2-word); interface RỖNG (<code>any</code>/<code>interface{}</code>) dùng <code>*_type + data</code> — KHÔNG có method table vì không cần dispatch. <code>ITab</code> chứa: interface type, concrete type, hash, và mảng <code>Fun[]</code> (function pointer theo thứ tự method). <code>ITab</code> gắn với <strong>cặp (interface type, concrete type)</strong>, không phải vptr nhúng trong object.</li>
+<li><strong>Java/HotSpot:</strong> object <strong>không có vptr riêng</strong> như C++. Đường dẫn là object → header (Klass pointer) → <strong>Klass metadata</strong> (chứa C++-style vtable) → method code. JIT có thể devirtualize/inline nếu profiling đủ tin cậy — <code>invokevirtual</code> ở bytecode KHÔNG đồng nghĩa runtime luôn có 1 indirect load.</li>
+<li><strong>Rust:</strong> <code>&amp;dyn Trait</code>/<code>Box&lt;dyn Trait></code> là <strong>wide pointer</strong> {data ptr, vtable ptr}. Vtable (rustc hiện hành) có header entries <code>drop_in_place</code>, <code>size</code>, <code>align</code>, rồi tới method pointers theo thứ tự khai báo, có thể kèm supertrait vtable pointers phục vụ trait upcasting. <strong>Đây là compiler implementation detail, KHÔNG phải stable Rust ABI</strong> — không hard-code offset.</li>
+</ul>
+</div>
+</blockquote>
+<pre><code>Go:    interface value {ITab*, data} ──► ITab{InterType, ConcreteType, Hash, Fun[]} ──► code
+Java:  reference ──► object{mark,Klass*,fields} ──► Klass{...vtable...} ──► code
+Rust:  &amp;dyn Trait {data*, vtable*} ──► vtable{drop_in_place,size,align,methods[...]} ──► code
+</code></pre>
+<p><strong>Static dispatch không cần vtable ở đâu cả:</strong> Rust generic monomorphized biết target method tại compile time — vtable chỉ tồn tại cho <code>dyn Trait</code>, không phải overhead mặc định của mọi trait.</p>
 
 
 
@@ -415,33 +432,271 @@ enum Shape {
 
 
 
-
-
-
-
-
-
-<div class="table-container"><table><thead><tr><th></th><th>Java</th><th>Go</th><th>Rust</th></tr></thead><tbody><tr><td>Đơn vị dữ liệu</td><td>Object header ĐÃ CÓ SẴN klass pointer → tái dùng cho cả invokevirtual (vtable) và invokeinterface (itable)</td><td><strong>Interface value</strong> — 2-word <code>{type ptr, data ptr}</code>, chỉ tồn tại khi convert</td><td><strong>Fat pointer</strong> — 2-word <code>{data ptr, vtable ptr}</code>, chỉ tồn tại khi coerce <code>dyn Trait</code></td></tr><tr><td>Bảng dựng lúc nào</td><td>Class-loading (linking)</td><td><strong>Runtime</strong>, lần đầu gặp cặp (type, interface) → <code>itab</code> được cache lại</td><td><strong>Compile-time</strong>, dữ liệu tĩnh trong binary — không có bước dựng lúc runtime</td></tr><tr><td>Trả phí khi nào</td><td>LUÔN LUÔN (mọi object)</td><td>Chỉ khi convert sang interface</td><td>Chỉ khi coerce sang <code>dyn Trait</code></td></tr><tr><td>Tối ưu runtime</td><td>JIT inline caching — monomorphic call site gần như free</td><td>Compiler devirtualize rất hạn chế</td><td>Monomorphization loại bỏ dispatch cho generic; <code>dyn Trait</code> không devirtualize được (AOT)</td></tr></tbody></table></div>
+<div class="table-container"><table><thead><tr><th></th><th>Java</th><th>Go</th><th>Rust</th></tr></thead><tbody><tr><td>Bảng dựng lúc nào</td><td>Class-loading (linking)</td><td><strong>Runtime</strong>, lần đầu gặp cặp (type,interface) → cache</td><td><strong>Compile-time</strong>, dữ liệu tĩnh trong binary</td></tr><tr><td>Trả phí khi nào</td><td>LUÔN LUÔN</td><td>Chỉ khi convert sang interface</td><td>Chỉ khi coerce <code>dyn Trait</code></td></tr><tr><td>Tối ưu runtime</td><td>JIT inline caching, devirtualize monomorphic site</td><td>Compiler devirtualize rất hạn chế</td><td>Monomorphization loại bỏ dispatch cho generic; <code>dyn Trait</code> không devirtualize (AOT)</td></tr></tbody></table></div>
 <hr/>
 <h2 id="-tầng-9--generic-3-cách-giải-quyết-cùng-code-khác-type">🧬 Tầng 9 — Generic: 3 Cách Giải Quyết “Cùng Code, Khác Type”<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-tầng-9--generic-3-cách-giải-quyết-cùng-code-khác-type" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
-<pre><code>JAVA — Type Erasure:
-List&lt;Integer> list;   // runtime chỉ thấy &quot;ArrayList&quot;, KHÔNG có &lt;Integer>
-                       // → primitive PHẢI box (Integer, không phải int)
-                       // → pointer chasing khi duyệt list số nguyên
-
-GO — GC Shape Stenciling (từ Go 1.18):
-func Map[T, R any](s []T, f func(T) R) []R { ... }
-// Các instantiation CÙNG &quot;shape&quot; (cùng kích thước/số con trỏ trong layout,
-// ví dụ mọi T là pointer 8-byte) → GỘP CHUNG 1 bản code, truyền thêm
-// &quot;dictionary&quot; (bảng type info) lúc runtime → ít code bloat hơn Rust,
-// nhưng có 1 lớp indirection nhẹ, không hoàn toàn zero-cost
-
-RUST — Full Monomorphization:
-fn largest&lt;T: PartialOrd>(list: &amp;[T]) -> &amp;T { ... }
-// Mỗi type cụ thể dùng thực tế → 1 BẢN MÁY RIÊNG tại compile time
-// largest::&lt;i32>, largest::&lt;String>, ... đều là hàm độc lập, inline được
-// Zero runtime overhead, đổi lại: binary size lớn hơn + compile lâu hơn
+<pre><code>JAVA — Type Erasure: List&lt;Integer> runtime chỉ thấy &quot;ArrayList&quot; → primitive PHẢI box
+GO    — GC Shape Stenciling (1.18+): instantiation CÙNG shape (cùng size/số pointer)
+         gộp chung 1 bản code + &quot;dictionary&quot; type info truyền lúc runtime
+RUST  — Full Monomorphization: mỗi type cụ thể → 1 bản máy riêng, zero overhead,
+         đổi lấy binary size lớn hơn + compile lâu hơn
 </code></pre>
+<hr/>
+<h2 id="️-tầng-10--allocator-nội-bộ-ai-thực-sự-phát-ra-địa-chỉ-heap">🏗️ Tầng 10 — Allocator Nội Bộ: Ai Thực Sự Phát Ra Địa Chỉ Heap?<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#️-tầng-10--allocator-nội-bộ-ai-thực-sự-phát-ra-địa-chỉ-heap" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<blockquote class="callout abstract" data-callout="abstract">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Mental model </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>“Heap allocation” không đồng nghĩa “gọi kernel mỗi lần”. Cả 3 runtime đều có hierarchy giảm tranh chấp lock/syscall.</p>
+</div>
+</blockquote>
+<pre><code>GO — small allocation:
+size class → mcache (P-local, fast path, không lock)
+           → mcentral (khi mcache rỗng, refill)
+           → mheap / spans / pages → OS virtual memory
+large allocation: bypass phần lớn fast path, đi thẳng gần hơn về mheap → OS
+
+JAVA/HOTSPOT:
+bytecode `new` → JIT chứng minh không cần? → scalar replacement (elimination)
+              → materialize → TLAB (Thread-Local Allocation Buffer) bump pointer
+                (không cần đồng bộ hóa liên-thread cho fast path)
+              → TLAB hết chỗ → refill / đi slow path của collector
+
+RUST:
+Box::new(T)/Vec::new() → GlobalAlloc trait (allocation/deallocation là
+UNSAFE CONTRACT) → allocator toàn cục (mặc định hệ thống, hoặc đăng ký
+custom allocator qua #[global_allocator])
+</code></pre>
+<blockquote class="callout warning" data-callout="warning">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Common misconception </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>“Go GC concurrent nên allocation miễn phí” — sai, allocation vẫn làm tăng GC work (xem Tầng 11). “Java heap allocation luôn đắt vì phải lock” — sai với fast path TLAB, đây là mental model lỗi thời. “<code>Box::new</code> là probe đáng tin cậy để đếm allocation vật lý” — cũng không hẳn: compiler Rust được phép optimize/elide allocation nếu không đổi observable semantics.</p>
+</div>
+</blockquote>
+<hr/>
+<h2 id="️-tầng-11--lifetime--reclamation-gc-mechanics-chi-tiết">♻️ Tầng 11 — Lifetime &amp; Reclamation: GC Mechanics Chi Tiết<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#️-tầng-11--lifetime--reclamation-gc-mechanics-chi-tiết" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><code>GO — collector: concurrent mark-and-sweep, NON-GENERATIONAL, NON-COMPACTING
+  roots (stacks, globals) → concurrent mark (song song mutator, có write
+  barrier để không bỏ sót object trở thành reachable qua mutation giữa chừng)
+  → khi allocation rate cao, mutator phải làm &quot;mark assist&quot; (trả CPU work
+  cho GC) → sweep tái sử dụng span không còn live
+  ⚠️ Live object GIỮ NGUYÊN địa chỉ (non-moving) — không compaction toàn cục,
+     locality dựa vào span/size-class allocator, không dựa GC
+
+JAVA/HOTSPOT — &quot;Java GC&quot; không phải MỘT thuật toán, mà là POLICY CHỌN ĐƯỢC:
+  G1 (mặc định server phổ biến): chia heap thành region đều nhau, generational
+    (young/old), EVACUATE (copy) live object sang region khác khi collect
+    → hiệu ứng COMPACTION + giảm fragmentation; concurrent marking cho old-gen
+  ZGC: đã chuyển sang mô hình GENERATIONAL, tối ưu latency cực thấp
+  Parallel GC: tối ưu throughput bằng parallel stop-the-world collection
+  ⚠️ Khác biệt kiến trúc rõ với Go: G1 evacuation DI CHUYỂN object (địa chỉ
+     đổi), Go thì KHÔNG BAO GIỜ di chuyển object đang sống.
+
+RUST — không có tracing collector chuẩn:
+  owner ra khỏi drop scope → gọi Drop/drop glue theo type → deallocate
+  Reference counting (Rc/Arc) là construct THƯ VIỆN, không phải GC ngôn ngữ:
+  counter về 0 → reclaim; nhưng CYCLE giữa các strong reference có thể khiến
+  counter KHÔNG BAO GIỜ về 0 → memory-safe LEAK (không phải use-after-free,
+  nhưng vẫn là leak thật) — dùng Weak để phá cycle.
+</code></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th></th><th>Go</th><th>Java (G1)</th><th>Rust</th></tr></thead><tbody><tr><td>Tracing GC</td><td>Có</td><td>Có</td><td>Không</td></tr><tr><td>Generational</td><td>Không</td><td>Có</td><td>N/A</td></tr><tr><td>Compaction</td><td>Không</td><td>Có (evacuation)</td><td>N/A</td></tr><tr><td>Object địa chỉ</td><td>Cố định</td><td>Có thể đổi (evacuate)</td><td>Cố định (không moving GC)</td></tr><tr><td>“Không bao giờ leak”?</td><td>Vẫn có thể leak qua giữ reference dư thừa</td><td>Tương tự</td><td>Có thể leak qua <code>Rc</code> cycle dù memory-safe</td></tr></tbody></table></div>
+<hr/>
+<h2 id="-tầng-12--context-switching--scheduling">🔀 Tầng 12 — Context Switching &amp; Scheduling<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-tầng-12--context-switching--scheduling" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><code>GO — G-M-P scheduler (user-space, TRÊN kernel scheduling):
+  G (goroutine) đang chạy → cần park/block/preempt → SAVE state (SP, PC...)
+  vào g.sched/gobuf → CHUYỂN sang g0 (system stack của M) → scheduler tìm
+  G runnable khác (findRunnable) → RESTORE context của G mới
+  ⚠️ Đây là switch trong USER-SPACE; bên dưới nó, kernel vẫn có thể context-
+     switch các OS thread (M) mà Go runtime dùng — 2 tầng scheduling riêng biệt
+
+JAVA — 2 tầng thread hoàn toàn khác nhau:
+  Platform thread: wrapper mỏng quanh OS thread → context switch = OS-level
+    thread scheduling thông thường, CPU context/stack thuộc native model
+  Virtual thread (Project Loom/JEP 444): JVM MOUNT một virtual thread lên
+    platform carrier thread; khi gặp blocking op hỗ trợ unmount → UNMOUNT,
+    carrier được giải phóng chạy virtual thread khác
+  🤯 Điểm đảo ngược trực giác quan trọng nhất bài: STACK CỦA VIRTUAL THREAD
+     ĐƯỢC LƯU TRONG GC HEAP dưới dạng &quot;stack-chunk objects&quot;, có thể grow/
+     shrink — &quot;logical stack&quot; ở đây KHÔNG đồng nghĩa native stack region
+  ⚠️ Pinning: một số blocking operation (native method, foreign-function
+     call) khiến virtual thread KHÔNG unmount được — không sai correctness
+     nhưng giảm scalability vì carrier bị giữ
+
+RUST — 2 mô hình tách biệt hoàn toàn:
+  std::thread: NATIVE OS thread thật — context switch là OS-level, không có
+    Go-style scheduler chen giữa
+  async: KHÔNG CÓ executor/runtime mặc định trong std. Future tiến triển
+    khi được executor poll(); trả Pending → tiếp tục sau khi wake+poll lại.
+    &quot;Switch task&quot; trong async nghĩa là EXECUTOR ĐỔI FUTURE ĐƯỢC POLL —
+    KHÔNG NHẤT THIẾT lưu toàn bộ register set + đổi native stack như OS
+    context switch thật (vì async fn lowering thành state machine, không
+    phải native stack riêng)
+</code></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th></th><th>Go</th><th>Java</th><th>Rust</th></tr></thead><tbody><tr><td>Đơn vị lightweight</td><td>Goroutine (built-in)</td><td>Virtual thread (built-in, JEP 444)</td><td>Task/Future (ecosystem chọn runtime, không có trong std)</td></tr><tr><td>Ai schedule</td><td>Go runtime (G-M-P)</td><td>JVM (mount/unmount lên carrier)</td><td>Executor do bạn chọn (Tokio, async-std…)</td></tr><tr><td>Stack nằm ở đâu</td><td>Runtime-managed goroutine stack</td><td><strong>Stack chunk trong GC heap</strong> khi unmounted</td><td>Suspended state = state machine field, không phải OS stack</td></tr><tr><td>OS thread bên dưới</td><td>Có (M), kernel vẫn schedule nó</td><td>Platform thread = trực tiếp OS thread</td><td><code>std::thread</code> = trực tiếp OS thread</td></tr></tbody></table></div>
+<hr/>
+<h2 id="-tầng-13--memory-model--ordering">⚡ Tầng 13 — Memory Model &amp; Ordering<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-tầng-13--memory-model--ordering" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><code>GO:    sync/atomic công khai hành xử như SEQUENTIALLY CONSISTENT — cố ý đơn
+       giản hơn C++/Rust. Channel, Mutex, Once, atomics tạo &quot;happens-before
+       edges&quot; tường minh trong Go Memory Model. Chia sẻ ordinary memory mà
+       thiếu synchronization VẪN LÀ BUG dù atomics &quot;dễ&quot; hơn — dùng `-race`.
+
+JAVA:  Java Memory Model (JLS) dùng happens-before:
+       unlock monitor → happens-before → subsequent lock cùng monitor
+       write volatile → happens-before → subsequent read volatile field đó
+       Thread.start() / join() cũng tạo happens-before edge
+       Chương trình correctly-synchronized (data-race-free) → execution
+       quan sát được TƯƠNG ĐƯƠNG sequentially consistent (không cấm compiler/
+       CPU reorder nội bộ, chỉ giới hạn kết quả quan sát được).
+
+RUST:  Đầy đủ phổ ordering kiểu C++11: Relaxed / Acquire / Release / AcqRel /
+       SeqCst — linh hoạt nhất nhưng cũng dễ sai nhất trong 3 ngôn ngữ. Data
+       race ở tầng low-level Rust có thể dẫn tới UNDEFINED BEHAVIOR, không
+       chỉ &quot;bug logic&quot; như Go/Java.
+</code></pre>
+<hr/>
+<h2 id="️-tầng-14--unsafe--ffi-nơi-mọi-invariant-có-thể-bị-phá">☠️ Tầng 14 — Unsafe &amp; FFI: Nơi Mọi Invariant Có Thể Bị Phá<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#️-tầng-14--unsafe--ffi-nơi-mọi-invariant-có-thể-bị-phá" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<blockquote class="callout danger" data-callout="danger">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Ranh giới nguy hiểm nhất trong cả 3 ngôn ngữ </p></div>
+                  
+                </div>
+</blockquote>
+<pre><code>GO:    unsafe.Pointer + cgo có thể phá assumption mà GC/stack management
+       dựa vào. Ví dụ kinh điển: giấu Go pointer dưới dạng integer đủ lâu
+       khiến runtime KHÔNG còn nhận nó là pointer root → GC bỏ sót.
+       runtime/cgo.Handle tồn tại CHÍNH ĐỂ truyền giá trị chứa Go pointer
+       qua C dưới dạng handle thay vì vi phạm pointer-passing rules.
+
+JAVA:  JNI/native memory nằm NGOÀI phần lớn managed assumptions. Native
+       Memory Tracking (NMT) chỉ theo dõi memory do HotSpot SUBSYSTEM quản
+       lý — KHÔNG thấy allocation của native code bên thứ 3 (JNI leak điều
+       tra sai công cụ sẽ mất dấu).
+
+RUST:  unsafe không tắt &quot;memory rules&quot; — nó chuyển trách nhiệm CHỨNG MINH
+       invariant (pointer hợp lệ, không alias vi phạm, layout đúng, lifetime
+       đúng) từ compiler sang PROGRAMMER. Vi phạm vẫn là Undefined Behavior
+       dù code compile và &quot;có vẻ chạy đúng&quot;.
+</code></pre>
+<hr/>
+<h2 id="-tầng-15--diagnostics-đo-thay-vì-đoán">🔬 Tầng 15 — Diagnostics: Đo Thay Vì Đoán<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-tầng-15--diagnostics-đo-thay-vì-đoán" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th></th><th>Go</th><th>Java</th><th>Rust</th></tr></thead><tbody><tr><td>Công cụ chính</td><td><code>pprof</code> (heap, cpu, goroutine, threadcreate, block, mutex profiles)</td><td>JFR/JDK Mission Control, <code>jcmd</code> (heap dump, class histogram, thread dump), NMT</td><td>Không có profiler GC managed-heap tương đương (vì không có tracing GC) — dùng allocator/OS-level tool (<code>valgrind</code>, <code>heaptrack</code>, <code>perf</code>)</td></tr><tr><td>Giới hạn cần nhớ</td><td>Escape output (<code>-gcflags=-m</code>) bổ sung cho pprof để hiểu allocation pressure</td><td><strong>NMT không thấy native leak ngoài JVM</strong></td><td>Benchmark phải đo allocation thật (<code>criterion</code> + hardware counters), vì compiler có thể elide allocation</td></tr></tbody></table></div>
+<blockquote class="callout tip" data-callout="tip">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Nguyên tắc đo lường chung cho cả 3 ngôn ngữ </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>Đo <strong>allocation rate, retained/live memory, GC CPU/pause, thread/task behavior, dispatch profile</strong> — KHÔNG đếm số dòng có <code>new</code>/<code>&amp;</code>/<code>Box::new</code>/interface call trong source. Mọi runtime ở đây đều có optimization khiến source-level construct không ánh xạ 1-1 sang physical allocation/code path.</p>
+</div>
+</blockquote>
 <hr/>
 <h2 id="-bảng-tổng-hợp-toàn-diện">📊 Bảng Tổng Hợp Toàn Diện<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-bảng-tổng-hợp-toàn-diện" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
 
@@ -515,57 +770,165 @@ fn largest&lt;T: PartialOrd>(list: &amp;[T]) -> &amp;T { ... }
 
 
 
-<div class="table-container"><table><thead><tr><th>Storage unit</th><th>Java</th><th>Go</th><th>Rust</th></tr></thead><tbody><tr><td>Scalar</td><td>Value; box → object +12-16B overhead</td><td>Value trần; box chỉ khi vào <code>interface{}</code></td><td>Value trần; box chỉ khi <code>Box&lt;T></code> tường minh</td></tr><tr><td>Header trên struct/object</td><td><strong>Luôn có</strong> (12-16B)</td><td>Không có</td><td>Không có</td></tr><tr><td>Field reordering</td><td>JVM tự động</td><td>Không tự động (dev tự sắp)</td><td>Compiler tự động (<code>repr(Rust)</code>); tường minh nếu <code>repr(C)</code></td></tr><tr><td>Stack/Heap</td><td>JIT escape analysis (runtime, best-effort)</td><td>Compiler escape analysis (compile-time, cứng)</td><td>Developer tường minh 100%</td></tr><tr><td>Reference</td><td>oop, có thể compressed 4B</td><td>Pointer trần 8B, luôn thin</td><td>Thin (Sized) hoặc fat 16B (unsized)</td></tr><tr><td>String</td><td><code>byte[]</code>+coder (Compact Strings) + cached hash + pool</td><td>2-word <code>{ptr,len}</code>, UTF-8 bất biến</td><td><code>String</code> owned 3-word; <code>&amp;str</code> fat 2-word</td></tr><tr><td>Array/List</td><td><code>Object[]</code>+size, generic erased</td><td>slice 3-word, backing array <strong>shareable</strong></td><td><code>Vec</code> 3-word, <code>&amp;[T]</code> fat 2-word, <strong>ownership rõ ràng</strong></td></tr><tr><td>Nullable</td><td><code>null</code> mọi reference, NPE runtime</td><td><code>nil</code>, “typed nil” gotcha</td><td>Không null; <code>Option&lt;T></code> tagged union, niche-optimized</td></tr><tr><td>Interface/dyn</td><td>klass ptr sẵn có + vtable/itable, class-loading</td><td>interface value 2-word + <code>itab</code> cache runtime</td><td>fat pointer 2-word + vtable static compile-time</td></tr><tr><td>Generic</td><td>Type erasure + boxing</td><td>GC shape stenciling + dictionary</td><td>Monomorphization, zero-cost</td></tr></tbody></table></div>
-<hr/>
-<h2 id="-case-study-pdms--cùng-1-document-3-cách-nằm-trong-ram">🏦 Case Study PDMS — Cùng 1 <code>Document</code>, 3 Cách Nằm Trong RAM<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-case-study-pdms--cùng-1-document-3-cách-nằm-trong-ram" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
-<pre><code>struct/class Document { id: String, status: String, size: u64 }
 
-┌─ JAVA ────────────────────────────────────────────────────┐
-│ header(16B) + ref→String id(4B) + ref→String status(4B)    │
-│ + long size(8B) + padding(4B) = 36B CHO RIÊNG &quot;vỏ&quot; object,  │
-│ CHƯA TÍNH 2 String con — mỗi String LẠI có header riêng     │
-│ (16B) + byte[] payload riêng → tổng 1 Document &quot;nhẹ&quot; thực   │
-│ tế tốn ~90-120B rải rác ở nhiều vùng heap khác nhau         │
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Trục</th><th>Java/HotSpot</th><th>Go</th><th>Rust</th></tr></thead><tbody><tr><td>Header trên object</td><td>Luôn có (mark word + Klass ptr)</td><td>Không có universal header</td><td>Không có universal header</td></tr><tr><td>Stack/Heap quyết định bởi</td><td>JIT escape analysis (runtime, best-effort)</td><td>Compiler escape analysis (compile-time, cứng nhưng có thể đổi giữa version)</td><td>Developer tường minh 100%</td></tr><tr><td>Allocator fast path</td><td>TLAB bump pointer</td><td><code>mcache</code>(P-local)→<code>mcentral</code>→<code>mheap</code></td><td><code>GlobalAlloc</code> (mặc định hệ thống hoặc custom)</td></tr><tr><td>Dispatch metadata</td><td>object→Klass→vtable, LUÔN gắn với object</td><td><code>ITab*+data</code> (interface có method) hoặc <code>type*+data</code> (empty interface), chỉ khi box</td><td>wide pointer <code>{data,vtable}</code>, chỉ khi <code>dyn Trait</code></td></tr><tr><td>Dispatch bảng dựng lúc</td><td>class-loading</td><td>runtime, cache theo cặp (type,interface)</td><td>compile-time, tĩnh</td></tr><tr><td>Tracing GC</td><td>Có (nhiều collector: G1/ZGC/Parallel…)</td><td>Có (1 collector: concurrent mark-sweep)</td><td>Không</td></tr><tr><td>Generational/Compacting</td><td>G1: cả hai</td><td>Không cả hai</td><td>N/A</td></tr><tr><td>Lightweight concurrency</td><td>Virtual thread (JEP 444), stack <strong>trong GC heap</strong> khi unmounted</td><td>Goroutine (built-in)</td><td>Async task (ecosystem chọn runtime)</td></tr><tr><td>Atomic ordering</td><td>JMM happens-before + <code>volatile</code></td><td>SC atomics (đơn giản nhất)</td><td>Relaxed/Acquire/Release/AcqRel/SeqCst (linh hoạt nhất)</td></tr><tr><td>FFI hazard chính</td><td>NMT không thấy native leak bên thứ 3</td><td>Go pointer giấu trong integer khiến GC bỏ sót</td><td><code>unsafe</code> chuyển trách nhiệm invariant sang programmer</td></tr><tr><td>Rủi ro “leak dù an toàn”</td><td>Giữ reference dư thừa</td><td>Giữ reference dư thừa</td><td><code>Rc</code>/<code>Arc</code> cycle</td></tr></tbody></table></div>
+<hr/>
+<h2 id="-case-study-pdms--cùng-1-document-3-cách-nằm-trong-ram-và-3-cách-bị-thu-hồi">🏦 Case Study PDMS — Cùng 1 <code>Document</code>, 3 Cách Nằm Trong RAM Và 3 Cách Bị Thu Hồi<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-case-study-pdms--cùng-1-document-3-cách-nằm-trong-ram-và-3-cách-bị-thu-hồi" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><code>┌─ JAVA ────────────────────────────────────────────────────┐
+│ header + 2 ref→String + long size = ~36B &quot;vỏ&quot; object,      │
+│ CHƯA TÍNH 2 String con (mỗi String lại có header riêng)     │
+│ → 1 Document &quot;nhẹ&quot; thực tế rải rác ~90-120B ở nhiều vùng    │
+│ heap khác nhau. Khi hết reachable: G1 evacuate nó (nếu còn  │
+│ trẻ) sang survivor/old region — ĐỊA CHỈ CÓ THỂ ĐỔI.         │
 └──────────────────────────────────────────────────────────┘
 
 ┌─ GO ──────────────────────────────────────────────────────┐
-│ struct Document { ID string; Status string; Size uint64 }   │
-│ = 16B(ID header) + 16B(Status header) + 8B(Size) = 40B      │
-│ INLINE liền mạch trong 1 vùng nhớ (nếu Document trên stack/ │
-│ trong slice) — 2 string CHỈ trỏ ra ngoài cho phần byte thật, │
-│ bản thân struct không rải rác như Java                       │
+│ struct inline liền mạch (nếu trong []Document, không phải   │
+│ []*Document) — 2 string CHỈ trỏ ra ngoài cho phần byte thật. │
+│ Khi hết reachable: mark-sweep đánh dấu rồi trả span về pool  │
+│ — ĐỊA CHỈ KHÔNG ĐỔI, không có bước evacuate.                │
 └──────────────────────────────────────────────────────────┘
 
 ┌─ RUST ────────────────────────────────────────────────────┐
-│ struct Document { id: String, status: String, size: u64 }   │
-│ = 24B(id: ptr+len+cap) + 24B(status) + 8B(size) = 56B        │
-│ CŨNG inline liền mạch; Vec&lt;Document> → toàn bộ struct nằm    │
-│ liên tục trong 1 buffer (cache-friendly khi duyệt hàng loạt) │
+│ struct inline liền mạch trong Vec&lt;Document> — cache-friendly│
+│ khi duyệt hàng loạt. Khi Vec (hoặc owner) ra khỏi scope: mỗi │
+│ Document bị Drop TƯỜNG MINH ngay lập tức, không chờ collector│
+│ cycle nào — deterministic, dự đoán được thời điểm chính xác. │
 └──────────────────────────────────────────────────────────┘
 </code></pre>
-<p>Khi xử lý batch hàng triệu <code>Document</code> (đúng bối cảnh <a href="../file-etl" class="internal" data-slug="file-etl">file-etl</a> — engine validate/load Excel/CSV cho PDMS), khác biệt này quyết định trực tiếp: Java <code>List&lt;Document></code> = mảng con trỏ tới object rải rác (cache miss khi duyệt), còn Go/Rust nếu dùng <code>[]Document</code>/<code>Vec&lt;Document></code> (không phải slice/Vec con trỏ) thì cả mảng struct nằm liền mạch → duyệt tuần tự tận dụng prefetcher gần như tối đa (xem thêm <a href="../concepts/memory-hierarchy-cpu-cache" class="internal" data-slug="concepts/memory-hierarchy-cpu-cache">memory-hierarchy-cpu-cache</a> về cache line và prefetching).</p>
+<p>Trong bối cảnh <a href="../file-etl" class="internal" data-slug="file-etl">file-etl</a> (batch validate/load hàng triệu row Excel/CSV), 3 khác biệt này cộng dồn: Java trả giá GC evacuation + reference rải rác; Go tránh evacuation nhưng vẫn trả GC mark-work theo allocation rate; Rust không trả giá tracing GC nào nhưng đòi hỏi ownership graph được thiết kế đúng để free đúng lúc, đúng chỗ.</p>
+<hr/>
+<h2 id="-pitfalls-nhanh--tra-cứu-khi-review-code">📝 Pitfalls Nhanh — Tra Cứu Khi Review Code<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-pitfalls-nhanh--tra-cứu-khi-review-code" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p><strong>Go</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Sai lầm</th><th>Đúng</th></tr></thead><tbody><tr><td>”<code>&amp;x</code>/<code>new</code> chắc chắn heap”</td><td>Compiler quyết định; xem escape output</td></tr><tr><td>”GC concurrent nên allocation free”</td><td>Vẫn tốn GC work, mark assist, write barrier</td></tr><tr><td>”Interface giống Java object có vptr”</td><td>Interface value mang <code>ITab+data</code>; concrete object không có vptr đó</td></tr><tr><td>”Goroutine switch = OS context switch”</td><td>User-space scheduling trên M/P, tầng khác OS scheduling</td></tr></tbody></table></div>
+<p><strong>Java</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Sai lầm</th><th>Đúng</th></tr></thead><tbody><tr><td>”Mỗi <code>new</code> là physical allocation”</td><td>JIT có thể scalar-replace/eliminate</td></tr><tr><td>”Escape analysis = object xuống stack”</td><td>Scalar replacement/allocation elimination là mô tả đúng</td></tr><tr><td>”Mọi object header cố định X byte”</td><td>JVMS không mandate; Compact Object Headers thay đổi layout</td></tr><tr><td>”Java chỉ 1 thuật toán GC”</td><td>HotSpot có nhiều collector (G1/ZGC/Parallel…), là policy chọn được</td></tr><tr><td>”Virtual thread là OS thread nhỏ”</td><td>JVM mount/unmount lên carrier; stack nằm trong GC heap</td></tr><tr><td>”NMT thấy mọi native leak”</td><td>Chỉ thấy JVM-internal, không thấy native code bên thứ 3</td></tr></tbody></table></div>
+<p><strong>Rust</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Sai lầm</th><th>Đúng</th></tr></thead><tbody><tr><td>”Không GC = không có heap”</td><td><code>Box</code>/<code>Vec</code>/<code>String</code>/<code>Rc</code> vẫn dùng heap, khác ở cách quản lý lifetime</td></tr><tr><td>”Borrow checker tự đưa local lên heap khi cần”</td><td>Compile fail; phải chọn ownership representation khác</td></tr><tr><td>”Mọi trait có vtable overhead”</td><td>Chỉ <code>dyn Trait</code>; static/generic monomorphized không cần</td></tr><tr><td>”Rust vtable layout là ABI ổn định”</td><td>Chỉ là rustc implementation detail</td></tr><tr><td>”Memory-safe Rust không leak”</td><td><code>Rc</code> cycle vẫn leak được (memory-safe nhưng không zero-leak)</td></tr></tbody></table></div>
 <hr/>
 <h2 id="-key-takeaways">📝 Key Takeaways<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-key-takeaways" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
 <ol>
-<li><strong>Trục thật sự không phải “GC vs không GC”</strong> — mà là: metadata bắt buộc hay opt-in, ai quyết định stack/heap, và trả phí lúc nào.</li>
-<li>Java trả phí header (12-16B) cho <strong>MỌI</strong> object, bất kể có polymorphism hay không — bù lại JIT rất giỏi triệt tiêu chi phí virtual call ở call site monomorphic.</li>
-<li>Go và Rust có struct <strong>hoàn toàn trần</strong> — chỉ phát sinh metadata khi bạn chủ động box vào <code>interface{}</code>/<code>dyn Trait</code>.</li>
-<li>Escape analysis của Go là <strong>compile-time, cứng, xem được</strong> (<code>-gcflags=&quot;-m&quot;</code>); của Java là <strong>JIT runtime, best-effort, ẩn</strong>. Rust <strong>không có</strong> escape analysis vì heap alloc luôn tường minh.</li>
-<li>Fat pointer (2 word) xuất hiện ở Rust cho <code>&amp;[T]</code>, <code>&amp;str</code>, <code>&amp;dyn Trait</code> — Go và Java không có khái niệm này vì reference của chúng luôn thin.</li>
-<li>Niche optimization là thứ chỉ Rust có: <code>Option&lt;&amp;T></code>/<code>Option&lt;Box&lt;T>></code> <strong>free</strong> về size nhờ mượn giá trị null làm tag ẩn.</li>
-<li>Go slice và Rust <code>Vec</code> có cấu trúc header giống hệt nhau (3-word <code>{ptr,len,cap}</code>) — khác biệt duy nhất là ownership: Go cho phép 2 slice âm thầm share backing array (pitfall), Rust bắt buộc tường minh hóa qua borrow checker.</li>
-<li>3 cách giải generic hoàn toàn khác triết lý: Java erasure+boxing (chậm nhất, cache-unfriendly), Go dictionary-passing qua shape stenciling (cân bằng), Rust monomorphization (nhanh nhất, đổi lấy binary size).</li>
+<li>Trục thật sự không phải “GC vs không GC” — mà là ai giữ metadata, ai quyết định stack/heap, và trả phí lúc nào.</li>
+<li><strong>“Escape analysis = stack allocation”</strong> là misconception phổ biến nhất — với Java, mô tả đúng là scalar replacement/allocation elimination; với Go, đó vẫn là compiler heuristic có thể đổi giữa version, không phải cú pháp quyết định.</li>
+<li>3 cơ chế vtable dùng thuật ngữ và vòng đời dựng bảng khác hẳn nhau: Go <code>ITab</code> (runtime-cached theo cặp type/interface), Java Klass metadata (class-loading, luôn gắn với object), Rust vtable (compile-time static, chỉ khi <code>dyn Trait</code>).</li>
+<li>GC không phải một thuật toán — Go là 1 collector cố định (concurrent mark-sweep, non-generational, non-compacting); Java/HotSpot là NHIỀU collector chọn được (G1 mặc định, generational, có evacuation/compaction); Rust không có tracing GC nhưng vẫn có heap và vẫn có thể leak qua <code>Rc</code> cycle.</li>
+<li>Điểm đảo ngược trực giác lớn nhất: <strong>stack của Java virtual thread nằm TRONG GC heap</strong> dưới dạng stack-chunk object khi unmounted — “logical stack” không đồng nghĩa native stack region.</li>
+<li>Rust không có Go-style escape promotion cho correctness: reference tới local chết bị compile-error, không có bước runtime “cứu” bằng cách heap-promote.</li>
+<li>Memory ordering đơn giản dần từ Rust (đầy đủ phổ C++11) → Java (happens-before/JMM) → Go (SC atomics, cố ý đơn giản nhất).</li>
+<li><code>unsafe</code>/FFI là nơi mọi runtime đều có thể bị phá invariant: Go pointer giấu trong integer khiến GC bỏ sót, Java NMT không thấy native leak bên thứ 3, Rust unsafe chuyển trách nhiệm chứng minh sang programmer nhưng UB vẫn là UB.</li>
 </ol>
 <hr/>
 <h2 id="-liên-kết">🔗 Liên kết<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-liên-kết" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
 <ul>
-<li><a href="../concepts/rust-java-go-comparison" class="internal" data-slug="concepts/rust-java-go-comparison">rust-java-go-comparison</a> — bức tranh tổng thể GC/ownership/concurrency/ecosystem (bài này đào sâu riêng phần storage layout)</li>
-<li><a href="../concepts/gc-llvm-runtime-cpu-memory-internals" class="internal" data-slug="concepts/gc-llvm-runtime-cpu-memory-internals">gc-llvm-runtime-cpu-memory-internals</a> — cơ chế GC và runtime internals chi tiết hơn</li>
-<li><a href="../concepts/memory-hierarchy-cpu-cache" class="internal" data-slug="concepts/memory-hierarchy-cpu-cache">memory-hierarchy-cpu-cache</a> — cache line, false sharing, tại sao layout liền mạch (Tầng 6, Case Study) quan trọng</li>
-<li><a href="../concepts/native-image-aot-jit" class="internal" data-slug="concepts/native-image-aot-jit">native-image-aot-jit</a> — AOT vs JIT ảnh hưởng thế nào tới việc tối ưu storage</li>
-<li><a href="../concepts/java-virtual-threads-deep-dive" class="internal" data-slug="concepts/java-virtual-threads-deep-dive">java-virtual-threads-deep-dive</a> — stack memory của virtual thread so với OS thread</li>
-<li><a href="../file-etl" class="internal" data-slug="file-etl">file-etl</a> — nơi áp dụng thực tế: batch validate/load hàng triệu row, layout struct liền mạch quyết định throughput</li>
-</ul></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+<li><a href="../concepts/rust-java-go-comparison" class="internal" data-slug="concepts/rust-java-go-comparison">rust-java-go-comparison</a> — bức tranh tổng thể GC/ownership/concurrency/ecosystem ở mức tổng quan hơn</li>
+<li><a href="../concepts/gc-llvm-runtime-cpu-memory-internals" class="internal" data-slug="concepts/gc-llvm-runtime-cpu-memory-internals">gc-llvm-runtime-cpu-memory-internals</a> — bổ sung góc nhìn compiler backend (LLVM vs Go compiler) ảnh hưởng tới hiệu năng cuối</li>
+<li><a href="../concepts/memory-hierarchy-cpu-cache" class="internal" data-slug="concepts/memory-hierarchy-cpu-cache">memory-hierarchy-cpu-cache</a> — vì sao layout liền mạch (Case Study Tầng cuối) quyết định throughput qua cache locality</li>
+<li><a href="../concepts/native-image-aot-jit" class="internal" data-slug="concepts/native-image-aot-jit">native-image-aot-jit</a> — AOT vs JIT ảnh hưởng thế nào tới việc scalar-replace/devirtualize</li>
+<li><a href="../concepts/java-virtual-threads-deep-dive" class="internal" data-slug="concepts/java-virtual-threads-deep-dive">java-virtual-threads-deep-dive</a>, <a href="../concepts/project-loom-deep-dive" class="internal" data-slug="concepts/project-loom-deep-dive">project-loom-deep-dive</a> — đào sâu riêng cơ chế mount/unmount và stack chunk</li>
+<li><a href="../file-etl" class="internal" data-slug="file-etl">file-etl</a> — nơi áp dụng thực tế: batch validate/load hàng triệu row, khác biệt GC/allocator giữa 3 ngôn ngữ ảnh hưởng trực tiếp throughput</li>
+</ul>
+<blockquote class="callout note" data-callout="note">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Ý tưởng mở rộng tiếp theo (chưa làm) </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>Research gốc đề xuất tách bài này thành một MOC (<code>Memory-Management-Go-Java-Rust.md</code>) cộng ~15 note chuyên sâu riêng từng chủ đề (<code>Go-Interface-ITab.md</code>, <code>HotSpot-VTable-and-Klass.md</code>, <code>Rust-Trait-Object-VTable.md</code>, <code>Context-Switching.md</code>, <code>Memory-Models-and-Ordering.md</code>…) để cập nhật từng mảnh (vd. “HotSpot compact header mới”) mà không sửa toàn bộ bài. Đây là việc đáng làm nếu bài này tiếp tục phình to — nói khi nào muốn tách.</p>
+</div>
+</blockquote></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
                 s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
                 c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
                 C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
@@ -575,6 +938,6 @@ fn largest&lt;T: PartialOrd>(list: &amp;[T]) -> &amp;T { ... }
                 C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
                 S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
                 s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
-                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-517" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#️-mô-hình-lưu-trữ-dữ-liệu--java-vs-go-vs-rust-từ-tổng-quan-hệ-thống-đến-chi-tiết-bit-level" data-for="️-mô-hình-lưu-trữ-dữ-liệu--java-vs-go-vs-rust-từ-tổng-quan-hệ-thống-đến-chi-tiết-bit-level">🗄️ Mô Hình Lưu Trữ Dữ Liệu — Java vs Go vs Rust: Từ Tổng Quan Hệ Thống Đến Chi Tiết Bit-Level</a></li><li class="depth-1"><a href="#-trục-phân-tích-không-phải-có-gc-hay-không" data-for="-trục-phân-tích-không-phải-có-gc-hay-không">🎯 Trục phân tích: không phải “có GC hay không”</a></li><li class="depth-1"><a href="#️-tầng-0--ba-triết-lý-lưu-trữ-tổng-quát" data-for="️-tầng-0--ba-triết-lý-lưu-trữ-tổng-quát">🏛️ Tầng 0 — Ba Triết Lý Lưu Trữ Tổng Quát</a></li><li class="depth-1"><a href="#-tầng-1--scalar--primitive-đơn-vị-nhỏ-nhất" data-for="-tầng-1--scalar--primitive-đơn-vị-nhỏ-nhất">🔢 Tầng 1 — Scalar / Primitive: đơn vị nhỏ nhất</a></li><li class="depth-1"><a href="#-tầng-2--composite-structobject-layout" data-for="-tầng-2--composite-structobject-layout">📦 Tầng 2 — Composite: Struct/Object Layout</a></li><li class="depth-2"><a href="#21-java--header-bắt-buộc-trên-mọi-object" data-for="21-java--header-bắt-buộc-trên-mọi-object">2.1 Java — Header bắt buộc trên MỌI object</a></li><li class="depth-2"><a href="#22-go--plain-struct-field-order-do-bạn-quyết-định" data-for="22-go--plain-struct-field-order-do-bạn-quyết-định">2.2 Go — Plain struct, field order do BẠN quyết định</a></li><li class="depth-2"><a href="#23-rust--compiler-tự-reorder-mặc-định-nhưng-có-repr-để-kiểm-soát" data-for="23-rust--compiler-tự-reorder-mặc-định-nhưng-có-repr-để-kiểm-soát">2.3 Rust — Compiler tự reorder (mặc định), nhưng có repr để kiểm soát</a></li><li class="depth-1"><a href="#-tầng-3--ai-quyết-định-stack-hay-heap" data-for="-tầng-3--ai-quyết-định-stack-hay-heap">🧭 Tầng 3 — Ai Quyết Định Stack Hay Heap?</a></li><li class="depth-1"><a href="#-tầng-4--pointerreference-thin-vs-fat" data-for="-tầng-4--pointerreference-thin-vs-fat">👉 Tầng 4 — Pointer/Reference: Thin vs Fat</a></li><li class="depth-1"><a href="#-tầng-5--string-cùng-khái-niệm-3-cách-lưu-hoàn-toàn-khác" data-for="-tầng-5--string-cùng-khái-niệm-3-cách-lưu-hoàn-toàn-khác">🔤 Tầng 5 — String: Cùng Khái Niệm, 3 Cách Lưu Hoàn Toàn Khác</a></li><li class="depth-1"><a href="#-tầng-6--collection-arraylist--slice--vec" data-for="-tầng-6--collection-arraylist--slice--vec">📚 Tầng 6 — Collection: ArrayList / Slice / Vec</a></li><li class="depth-1"><a href="#-tầng-7--enum--sum-type--không-có-giá-trị" data-for="-tầng-7--enum--sum-type--không-có-giá-trị">🎭 Tầng 7 — Enum / Sum Type / “Không Có Giá Trị”</a></li><li class="depth-1"><a href="#-tầng-8--interface--trait-object-vtable-bắt-buộc-vs-opt-in" data-for="-tầng-8--interface--trait-object-vtable-bắt-buộc-vs-opt-in">🧩 Tầng 8 — Interface / Trait Object: Vtable Bắt Buộc vs Opt-in</a></li><li class="depth-1"><a href="#-tầng-9--generic-3-cách-giải-quyết-cùng-code-khác-type" data-for="-tầng-9--generic-3-cách-giải-quyết-cùng-code-khác-type">🧬 Tầng 9 — Generic: 3 Cách Giải Quyết “Cùng Code, Khác Type”</a></li><li class="depth-1"><a href="#-bảng-tổng-hợp-toàn-diện" data-for="-bảng-tổng-hợp-toàn-diện">📊 Bảng Tổng Hợp Toàn Diện</a></li><li class="depth-1"><a href="#-case-study-pdms--cùng-1-document-3-cách-nằm-trong-ram" data-for="-case-study-pdms--cùng-1-document-3-cách-nằm-trong-ram">🏦 Case Study PDMS — Cùng 1 Document, 3 Cách Nằm Trong RAM</a></li><li class="depth-1"><a href="#-key-takeaways" data-for="-key-takeaways">📝 Key Takeaways</a></li><li class="depth-1"><a href="#-liên-kết" data-for="-liên-kết">🔗 Liên kết</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://dangthobach.github.io/">Back to Portfolio</a></li><li><a href="https://github.com/dangthobach">GitHub</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-517" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#️-java-vs-go-vs-rust--toàn-chuỗi-runtime-storage-allocator-vtable-gc-context-switch-memory-model" data-for="️-java-vs-go-vs-rust--toàn-chuỗi-runtime-storage-allocator-vtable-gc-context-switch-memory-model">🗄️ Java vs Go vs Rust — Toàn Chuỗi Runtime: Storage, Allocator, Vtable, GC, Context Switch, Memory Model</a></li><li class="depth-1"><a href="#-trục-phân-tích-không-phải-có-gc-hay-không" data-for="-trục-phân-tích-không-phải-có-gc-hay-không">🎯 Trục phân tích: không phải “có GC hay không”</a></li><li class="depth-1"><a href="#️-tầng-0--ba-triết-lý-lưu-trữ-tổng-quát" data-for="️-tầng-0--ba-triết-lý-lưu-trữ-tổng-quát">🏛️ Tầng 0 — Ba Triết Lý Lưu Trữ Tổng Quát</a></li><li class="depth-1"><a href="#-tầng-1--scalar--primitive" data-for="-tầng-1--scalar--primitive">🔢 Tầng 1 — Scalar / Primitive</a></li><li class="depth-1"><a href="#-tầng-2--composite-structobject-layout" data-for="-tầng-2--composite-structobject-layout">📦 Tầng 2 — Composite: Struct/Object Layout</a></li><li class="depth-2"><a href="#21-javahotspot--header-bắt-buộc-trên-mọi-object" data-for="21-javahotspot--header-bắt-buộc-trên-mọi-object">2.1 Java/HotSpot — Header bắt buộc trên MỌI object</a></li><li class="depth-2"><a href="#22-go--plain-struct-không-có-universal-header" data-for="22-go--plain-struct-không-có-universal-header">2.2 Go — Plain struct, KHÔNG có universal header</a></li><li class="depth-2"><a href="#23-rust--compiler-tự-reorder-mặc-định-nhưng-có-repr-để-kiểm-soát" data-for="23-rust--compiler-tự-reorder-mặc-định-nhưng-có-repr-để-kiểm-soát">2.3 Rust — Compiler tự reorder mặc định, nhưng có repr để kiểm soát</a></li><li class="depth-1"><a href="#-tầng-3--ai-quyết-định-stack-hay-heap" data-for="-tầng-3--ai-quyết-định-stack-hay-heap">🧭 Tầng 3 — Ai Quyết Định Stack Hay Heap?</a></li><li class="depth-1"><a href="#-tầng-4--pointerreference-thin-vs-fat-wide" data-for="-tầng-4--pointerreference-thin-vs-fat-wide">👉 Tầng 4 — Pointer/Reference: Thin vs Fat (Wide)</a></li><li class="depth-1"><a href="#-tầng-5--string-storage" data-for="-tầng-5--string-storage">🔤 Tầng 5 — String Storage</a></li><li class="depth-1"><a href="#-tầng-6--collection-arraylist--slice--vec" data-for="-tầng-6--collection-arraylist--slice--vec">📚 Tầng 6 — Collection: ArrayList / Slice / Vec</a></li><li class="depth-1"><a href="#-tầng-7--enum--nullable--không-có-giá-trị" data-for="-tầng-7--enum--nullable--không-có-giá-trị">🎭 Tầng 7 — Enum / Nullable / “Không Có Giá Trị”</a></li><li class="depth-1"><a href="#-tầng-8--vtabledynamic-dispatch-3-cơ-chế-khác-hẳn-nhau" data-for="-tầng-8--vtabledynamic-dispatch-3-cơ-chế-khác-hẳn-nhau">🧩 Tầng 8 — Vtable/Dynamic Dispatch: 3 Cơ Chế Khác Hẳn Nhau</a></li><li class="depth-1"><a href="#-tầng-9--generic-3-cách-giải-quyết-cùng-code-khác-type" data-for="-tầng-9--generic-3-cách-giải-quyết-cùng-code-khác-type">🧬 Tầng 9 — Generic: 3 Cách Giải Quyết “Cùng Code, Khác Type”</a></li><li class="depth-1"><a href="#️-tầng-10--allocator-nội-bộ-ai-thực-sự-phát-ra-địa-chỉ-heap" data-for="️-tầng-10--allocator-nội-bộ-ai-thực-sự-phát-ra-địa-chỉ-heap">🏗️ Tầng 10 — Allocator Nội Bộ: Ai Thực Sự Phát Ra Địa Chỉ Heap?</a></li><li class="depth-1"><a href="#️-tầng-11--lifetime--reclamation-gc-mechanics-chi-tiết" data-for="️-tầng-11--lifetime--reclamation-gc-mechanics-chi-tiết">♻️ Tầng 11 — Lifetime &amp; Reclamation: GC Mechanics Chi Tiết</a></li><li class="depth-1"><a href="#-tầng-12--context-switching--scheduling" data-for="-tầng-12--context-switching--scheduling">🔀 Tầng 12 — Context Switching &amp; Scheduling</a></li><li class="depth-1"><a href="#-tầng-13--memory-model--ordering" data-for="-tầng-13--memory-model--ordering">⚡ Tầng 13 — Memory Model &amp; Ordering</a></li><li class="depth-1"><a href="#️-tầng-14--unsafe--ffi-nơi-mọi-invariant-có-thể-bị-phá" data-for="️-tầng-14--unsafe--ffi-nơi-mọi-invariant-có-thể-bị-phá">☠️ Tầng 14 — Unsafe &amp; FFI: Nơi Mọi Invariant Có Thể Bị Phá</a></li><li class="depth-1"><a href="#-tầng-15--diagnostics-đo-thay-vì-đoán" data-for="-tầng-15--diagnostics-đo-thay-vì-đoán">🔬 Tầng 15 — Diagnostics: Đo Thay Vì Đoán</a></li><li class="depth-1"><a href="#-bảng-tổng-hợp-toàn-diện" data-for="-bảng-tổng-hợp-toàn-diện">📊 Bảng Tổng Hợp Toàn Diện</a></li><li class="depth-1"><a href="#-case-study-pdms--cùng-1-document-3-cách-nằm-trong-ram-và-3-cách-bị-thu-hồi" data-for="-case-study-pdms--cùng-1-document-3-cách-nằm-trong-ram-và-3-cách-bị-thu-hồi">🏦 Case Study PDMS — Cùng 1 Document, 3 Cách Nằm Trong RAM Và 3 Cách Bị Thu Hồi</a></li><li class="depth-1"><a href="#-pitfalls-nhanh--tra-cứu-khi-review-code" data-for="-pitfalls-nhanh--tra-cứu-khi-review-code">📝 Pitfalls Nhanh — Tra Cứu Khi Review Code</a></li><li class="depth-1"><a href="#-key-takeaways" data-for="-key-takeaways">📝 Key Takeaways</a></li><li class="depth-1"><a href="#-liên-kết" data-for="-liên-kết">🔗 Liên kết</a></li><li class="overflow-end"></li></ul></div><div class="backlinks"><h3>Backlinks</h3><ul id="list-2" class="overflow"><li><a href="../concepts/data-storage-model-java-go-rust" class="internal">data-storage-model-java-go-rust</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://dangthobach.github.io/">Back to Portfolio</a></li><li><a href="https://github.com/dangthobach">GitHub</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
 </script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
 </script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../postscript.js" type="module" data-persist="true"></script></html>

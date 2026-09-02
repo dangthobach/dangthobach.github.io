@@ -9,7 +9,7 @@
     <title>data-storage-model-java-go-rust</title>
     <link>https://dangthobach.github.io/knowledge/concepts/data-storage-model-java-go-rust</link>
     <guid>https://dangthobach.github.io/knowledge/concepts/data-storage-model-java-go-rust</guid>
-    <description><![CDATA[ 🗄️ Mô Hình Lưu Trữ Dữ Liệu — Java vs Go vs Rust: Từ Tổng Quan Hệ Thống Đến Chi Tiết Bit-Level Mục tiêu: Hệ thống hóa toàn bộ cách 3 ngôn ngữ này biểu diễn dữ liệu trong bộ nhớ — không phải “GC vs không GC” (đã có ở rust-java-go-comparison §2), mà là câu hỏi sâu hơn: metadata nằm ở đâu, ai trả phí c... ]]></description>
+    <description><![CDATA[ 🗄️ Java vs Go vs Rust — Toàn Chuỗi Runtime: Storage, Allocator, Vtable, GC, Context Switch, Memory Model Mental model xuyên suốt bài Một chuỗi câu hỏi áp dụng cho MỌI value trong cả 3 ngôn ngữ: representation → ai sở hữu/tham chiếu nó? → stack/register hay heap? → nếu heap thì allocator nào phát? →... ]]></description>
     <pubDate>Wed, 02 Sep 2026 00:00:00 GMT</pubDate>
   </item><item>
     <title>Bai-1-Ownership-Mindset</title>
