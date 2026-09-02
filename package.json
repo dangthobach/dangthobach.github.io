@@ -26,7 +26,7 @@
     "eslint-plugin-react-refresh": "^0.4.5",
     "jimp": "^1.6.1",
     "pdf-parse": "^2.4.5",
-    "pdfjs-dist": "^5.7.284",
+    "pdfjs-dist": "^6.3.289",
     "vite": "~8.0.16"
   },
   "overrides": {
