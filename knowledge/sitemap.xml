@@ -1236,7 +1236,7 @@
     <lastmod>2026-08-25T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-2-Borrowing-Multi-threading</loc>
-    <lastmod>2026-04-10T00:00:00.000Z</lastmod>
+    <lastmod>2026-08-27T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-20-Macro-System</loc>
     <lastmod>2026-04-12T00:00:00.000Z</lastmod>
@@ -1275,7 +1275,7 @@
     <lastmod>2026-05-05T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-3-Struct-Enum-Trait</loc>
-    <lastmod>2026-04-10T00:00:00.000Z</lastmod>
+    <lastmod>2026-08-27T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-30-Validation</loc>
     <lastmod>2026-04-12T00:00:00.000Z</lastmod>
@@ -1600,6 +1600,9 @@
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/concepts/data-binding-one-way-vs-two-way</loc>
     <lastmod>2026-05-17T00:00:00.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/concepts/data-storage-model-java-go-rust</loc>
+    <lastmod>2026-09-02T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/concepts/ddd-strategic</loc>
     <lastmod>2026-05-02T00:00:00.000Z</lastmod>

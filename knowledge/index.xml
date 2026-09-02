@@ -6,10 +6,28 @@
       <description>Last 10 notes on Dang Tho Bach&#039;s Knowledge Base</description>
       <generator>Quartz -- quartz.jzhao.xyz</generator>
       <item>
+    <title>data-storage-model-java-go-rust</title>
+    <link>https://dangthobach.github.io/knowledge/concepts/data-storage-model-java-go-rust</link>
+    <guid>https://dangthobach.github.io/knowledge/concepts/data-storage-model-java-go-rust</guid>
+    <description><![CDATA[ 🗄️ Mô Hình Lưu Trữ Dữ Liệu — Java vs Go vs Rust: Từ Tổng Quan Hệ Thống Đến Chi Tiết Bit-Level Mục tiêu: Hệ thống hóa toàn bộ cách 3 ngôn ngữ này biểu diễn dữ liệu trong bộ nhớ — không phải “GC vs không GC” (đã có ở rust-java-go-comparison §2), mà là câu hỏi sâu hơn: metadata nằm ở đâu, ai trả phí c... ]]></description>
+    <pubDate>Wed, 02 Sep 2026 00:00:00 GMT</pubDate>
+  </item><item>
     <title>Bai-1-Ownership-Mindset</title>
     <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-1-Ownership-Mindset</link>
     <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-1-Ownership-Mindset</guid>
     <description><![CDATA[ Bài 1: Ownership - Chìa khóa Tối ưu Bộ nhớ (Deep Dive) Chào Chuyên gia Java, hãy quên Garbage Collector (GC) trong chốc lát. ]]></description>
+    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
+  </item><item>
+    <title>Bai-2-Borrowing-Multi-threading</title>
+    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-2-Borrowing-Multi-threading</link>
+    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-2-Borrowing-Multi-threading</guid>
+    <description><![CDATA[ Bài 2: Borrowing &amp; Multi-threading - Bí kíp “Diệt tận gốc” Data Race (Deep Dive) Ở Bài 1, String bị move khi gán cho biến khác. ]]></description>
+    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
+  </item><item>
+    <title>Bai-3-Struct-Enum-Trait</title>
+    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-3-Struct-Enum-Trait</link>
+    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-3-Struct-Enum-Trait</guid>
+    <description><![CDATA[ Bài 3: Structs, Enums &amp; Traits - “Class” kiểu mới trong Rust (Deep Dive) Không có Class, không có Inheritance — vậy Rust đóng gói (encapsulate) và trừu tượng hóa (abstract) dữ liệu bằng cơ chế gì? Câu trả lời nằm ở bộ ba: struct (dữ liệu), enum (dữ liệu có nhiều hình dạng — tagged union), trait ... ]]></description>
     <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
   </item><item>
     <title>Bai-15c-Logging-Ecosystem-Request-Logging</title>
@@ -47,24 +65,6 @@
     <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-59-DuAn-Concurrent-Pipeline-Vs-Go</guid>
     <description><![CDATA[ Bài 59 (Dự án 3): Concurrent Pipeline Triệu-Record vs Go — Capstone Cuối Cùng Đây là bài tổng kết toàn bộ series — và là bài duy nhất trực tiếp trả lời câu hỏi ngầm xuyên suốt hành trình học: “Học Rust xong thì được gì hơn so với việc cứ dùng Go, vốn đã quen thuộc và năng suất?” Không trả lời bằng l... ]]></description>
     <pubDate>Tue, 25 Aug 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>Bai-8b-Cache-Eviction-Policies</title>
-    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-8b-Cache-Eviction-Policies</link>
-    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-8b-Cache-Eviction-Policies</guid>
-    <description><![CDATA[ Bài 8b: Cache Eviction Policies — Từ HashMap trần tới LRU thật sự Chào Chuyên gia Java, ở Bài 8 bạn đã có cache dạng Arc&lt;RwLock&lt;HashMap&lt;K, V&gt;&gt;&gt; — nhưng đó là cache không bao giờ xóa gì, sẽ phình vô hạn (OOM trong production). ]]></description>
-    <pubDate>Tue, 25 Aug 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>Bai-42-File-IO-Paths-Embed</title>
-    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-42-File-IO-Paths-Embed</link>
-    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-42-File-IO-Paths-Embed</guid>
-    <description><![CDATA[ Bài 42: I/O &amp; Filesystem — Reading, Writing, Paths, Temp Files &amp; Embed Mục tiêu: Nhóm 5 — hoàn toàn chưa có bài riêng trong vault. ]]></description>
-    <pubDate>Sat, 22 Aug 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>Bai-43-CLI-Flags-Subcommands-EnvVars</title>
-    <link>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-43-CLI-Flags-Subcommands-EnvVars</link>
-    <guid>https://dangthobach.github.io/knowledge/Go-Zero-To-Hero/Bai-43-CLI-Flags-Subcommands-EnvVars</guid>
-    <description><![CDATA[ Bài 43: CLI Arguments, Flags, Subcommands &amp; Environment Variables Mục tiêu: Bài 19 đã dùng Viper cho config production — nhưng đó là tầng CAO, xây trên nền flag/os.Getenv mà chưa bài nào nói tới. ]]></description>
-    <pubDate>Sat, 22 Aug 2026 00:00:00 GMT</pubDate>
   </item>
     </channel>
   </rss>
