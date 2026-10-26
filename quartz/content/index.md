@@ -30,7 +30,7 @@ RxJava    ░░░░░░░░░░░░░░░░░░░░  Chưa b�
 - [ ] [[JVM-Frameworks-2026/01-Quarkus/P1-Foundation/03 Config & Dev Mode|Config & Dev Mode]] — @ConfigProperty, Dev Services, live reload
 - [ ] Mini project: tái implement 1 PDMS endpoint trong Quarkus
 
-**Log tuần này:** [[JVM-Frameworks-2026/00 Weekly Study Log#Tuần 1|→ Weekly Log Tuần 1]]
+**Log tuần này:** [[JVM-Frameworks-2026/00 Weekly Study Log#🗓️ Tuần 1 — 14/04 → 20/04/2026|→ Weekly Log Tuần 1]]
 
 ---
 

@@ -43,6 +43,13 @@ export const CrawlLinks: QuartzTransformerPlugin<Partial<Options>> = (userOpts) 
           return (tree: Root, file) => {
             const curSlug = simplifySlug(file.data.slug!)
             const outgoing: Set<SimpleSlug> = new Set()
+            const headingIds = new Set<string>()
+
+            visit(tree, "element", (node) => {
+              if (/^h[1-6]$/.test(node.tagName) && typeof node.properties?.id === "string") {
+                headingIds.add(node.properties.id)
+              }
+            })
 
             const transformOptions: TransformOptions = {
               strategy: opts.markdownLinkResolution,
@@ -94,6 +101,31 @@ export const CrawlLinks: QuartzTransformerPlugin<Partial<Options>> = (userOpts) 
                   classes.push("alias")
                 }
                 node.properties.className = classes
+
+                if (dest.startsWith("#")) {
+                  let requested = dest.slice(1)
+                  try {
+                    requested = decodeURIComponent(requested)
+                  } catch {
+                    // Keep the original fragment when it contains malformed escapes.
+                  }
+                  if (!headingIds.has(requested)) {
+                    const requestedTokens = requested
+                      .toLocaleLowerCase()
+                      .split(/[-_]+/u)
+                      .filter(Boolean)
+                    const candidates = [...headingIds].filter((headingId) => {
+                      const headingTokens = new Set(
+                        headingId.toLocaleLowerCase().split(/[-_]+/u).filter(Boolean),
+                      )
+                      return requestedTokens.every((token) => headingTokens.has(token))
+                    })
+
+                    if (candidates.length === 1) {
+                      dest = node.properties.href = `#${candidates[0]}` as RelativeURL
+                    }
+                  }
+                }
 
                 if (isExternal && opts.openLinksInNewTab) {
                   node.properties.target = "_blank"
