@@ -118,7 +118,12 @@ export const CrawlLinks: QuartzTransformerPlugin<Partial<Options>> = (userOpts) 
                       const headingTokens = new Set(
                         headingId.toLocaleLowerCase().split(/[-_]+/u).filter(Boolean),
                       )
-                      return requestedTokens.every((token) => headingTokens.has(token))
+                      const compactRequested = requested.toLocaleLowerCase().replace(/[-_]+/gu, "")
+                      const compactHeading = headingId.toLocaleLowerCase().replace(/[-_]+/gu, "")
+                      return (
+                        requestedTokens.every((token) => headingTokens.has(token)) ||
+                        compactHeading.startsWith(compactRequested)
+                      )
                     })
 
                     if (candidates.length === 1) {
