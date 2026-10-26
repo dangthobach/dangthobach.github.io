@@ -280,7 +280,10 @@ export const ObsidianFlavoredMarkdown: QuartzTransformerPlugin<Partial<Options>>
                 // treat as broken link if slug not in ctx.allSlugs
                 if (opts.disableBrokenWikilinks) {
                   const slug = slugifyFilePath(fp as FilePath)
-                  const exists = ctx.allSlugs && ctx.allSlugs.includes(slug)
+                  const suffixMatches = ctx.allSlugs?.filter(
+                    (candidate) => candidate === slug || candidate.endsWith(`/${slug}`),
+                  )
+                  const exists = suffixMatches?.length === 1
                   if (!exists) {
                     return {
                       type: "html",
@@ -350,7 +353,7 @@ export const ObsidianFlavoredMarkdown: QuartzTransformerPlugin<Partial<Options>>
 
                 return {
                   type: "link",
-                  url: base + `/tags/${tag}`,
+                  url: base + `/tags/${slugTag(tag)}`,
                   data: {
                     hProperties: {
                       className: ["tag-link"],

@@ -581,6 +581,12 @@ footer {
 
   .page > #quartz-body .sidebar.left {
     z-index: 20;
+    top: 0;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 0.55rem;
     height: auto;
     margin: 0 -0.85rem;
     padding: 0.7rem 0.85rem;
@@ -590,6 +596,53 @@ footer {
     background: color-mix(in srgb, var(--surface) 90%, transparent);
     box-shadow: 0 6px 20px color-mix(in srgb, var(--dark) 5%, transparent);
     backdrop-filter: blur(18px);
+  }
+
+  .page > #quartz-body .sidebar.left > .page-title {
+    flex: 1 1 auto;
+    min-width: 0;
+    margin: 0;
+  }
+
+  .page > #quartz-body .sidebar.left > .mobile-only,
+  .page > #quartz-body .sidebar.left .brand-subtitle {
+    display: none;
+  }
+
+  .page > #quartz-body .sidebar.left > .flex-component {
+    flex: 0 0 auto;
+    gap: 0.35rem;
+  }
+
+  .page > #quartz-body .sidebar.left .explorer {
+    flex: 0 0 2.3rem;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .page > #quartz-body .sidebar.left .mobile-explorer {
+    display: grid;
+    width: 2.3rem;
+    height: 2.3rem;
+    padding: 0;
+    place-items: center;
+    border: 1px solid var(--border-soft);
+    border-radius: 0.72rem;
+    background: var(--surface-subtle);
+  }
+
+  .page > #quartz-body .sidebar.left .explorer-content {
+    padding: 4.75rem 1rem 2rem;
+    background: var(--surface);
+    box-shadow: var(--shadow-panel);
+  }
+
+  .page > #quartz-body .sidebar.left .explorer-content > .explorer-ul {
+    height: 100%;
+    padding-right: 0.35rem;
+    overflow-y: auto;
   }
 
   .page > #quartz-body > .center {
@@ -645,5 +698,15 @@ footer {
   .search > .search-container > .search-space {
     width: calc(100% - 1.5rem);
     margin-top: 4.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .page > #quartz-body .sidebar.left .brand-copy {
+    display: none;
+  }
+
+  .page > #quartz-body .sidebar.left > .page-title {
+    flex: 0 0 auto;
   }
 }

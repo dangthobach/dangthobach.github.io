@@ -1,4 +1,4 @@
-import { readdir, readFile, stat } from "node:fs/promises"
+import { readdir, readFile } from "node:fs/promises"
 import path from "node:path"
 import process from "node:process"
 
@@ -62,7 +62,16 @@ function extractAnchors(html) {
 
 const allFiles = await walk(outputDirectory)
 const relativeFiles = new Set(allFiles.map((file) => toPosix(path.relative(outputDirectory, file))))
-const htmlFiles = allFiles.filter((file) => file.endsWith(".html"))
+const htmlFiles = allFiles.filter((file) => {
+  if (!file.endsWith(".html")) return false
+
+  // Quartz can emit both `topic.html` and `topic/index.html` when a note also
+  // describes a folder. GitHub Pages resolves the clean URL to `topic.html`;
+  // the index file is a shadow copy rather than a separately linked page.
+  const relative = toPosix(path.relative(outputDirectory, file))
+  if (!relative.endsWith("/index.html")) return true
+  return !relativeFiles.has(`${relative.slice(0, -"/index.html".length)}.html`)
+})
 const htmlCache = new Map()
 
 async function findTarget(pathname) {

@@ -7,6 +7,7 @@ import {
   stripSlashes,
   simplifySlug,
   splitAnchor,
+  slugTag,
   transformLink,
 } from "../../util/path"
 import path from "path"
@@ -103,6 +104,10 @@ export const CrawlLinks: QuartzTransformerPlugin<Partial<Options>> = (userOpts) 
                   isAbsoluteUrl(dest, { httpOnly: false }) || dest.startsWith("#")
                 )
                 if (isInternal) {
+                  dest = dest.replace(
+                    /(^|\/)tags\/([^#?]+)/,
+                    (_match, prefix, tag) => `${prefix}tags/${slugTag(tag)}`,
+                  ) as RelativeURL
                   dest = node.properties.href = transformLink(
                     file.data.slug!,
                     dest,
