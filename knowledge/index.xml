@@ -6,6 +6,24 @@
       <description>Last 10 notes on Dang Tho Bach&#039;s Knowledge Base</description>
       <generator>Quartz -- quartz.jzhao.xyz</generator>
       <item>
+    <title>SolidJS-00-Overview</title>
+    <link>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-00-Overview</link>
+    <guid>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-00-Overview</guid>
+    <description><![CDATA[ SolidJS 00 — Overview &amp; Setup: Bản đồ khóa học solidjs frontend overview phase-0 Mục tiêu: Cho người học nhìn thấy toàn cảnh trước khi vào bài 01: SolidJS là gì, khóa học này dạy phiên bản nào, đi theo thứ tự nào, và những API nào sắp thay đổi khi Solid 2.0 ra bản ổn định. ]]></description>
+    <pubDate>Sun, 25 Oct 2026 00:00:00 GMT</pubDate>
+  </item><item>
+    <title>VAULT-P2-CLUSTER-MAP</title>
+    <link>https://dangthobach.github.io/knowledge/_moc/VAULT-P2-CLUSTER-MAP</link>
+    <guid>https://dangthobach.github.io/knowledge/_moc/VAULT-P2-CLUSTER-MAP</guid>
+    <description><![CDATA[ P2 — Bản đồ cluster trùng chủ đề Chi tiết cho phase P2 của VAULT-REFACTOR-2026-10. Chỉ đọc và lập bản đồ, chưa sửa / xóa / gộp note nào. ]]></description>
+    <pubDate>Sun, 25 Oct 2026 00:00:00 GMT</pubDate>
+  </item><item>
+    <title>VAULT-REFACTOR-2026-10</title>
+    <link>https://dangthobach.github.io/knowledge/_moc/VAULT-REFACTOR-2026-10</link>
+    <guid>https://dangthobach.github.io/knowledge/_moc/VAULT-REFACTOR-2026-10</guid>
+    <description><![CDATA[ Vault Refactor &amp; Currency Audit — 2026-10 Tracker cho việc rà soát kiến thức lỗi thời + refactor hệ thống kiến thức. ]]></description>
+    <pubDate>Sun, 25 Oct 2026 00:00:00 GMT</pubDate>
+  </item><item>
     <title>data-storage-model-java-go-rust</title>
     <link>https://dangthobach.github.io/knowledge/concepts/data-storage-model-java-go-rust</link>
     <guid>https://dangthobach.github.io/knowledge/concepts/data-storage-model-java-go-rust</guid>
@@ -46,24 +64,6 @@
     <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-23c-CI-MSRV-Fuzzing</link>
     <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-23c-CI-MSRV-Fuzzing</guid>
     <description><![CDATA[ Bài 23c: CI, MSRV &amp; Fuzzing — Kỷ luật Crate Engineering Cấp Production Chào Chuyên gia Java, Bài 23b đã cho bạn semver/feature/build profile — phần “viết Cargo.toml đúng”. ]]></description>
-    <pubDate>Tue, 25 Aug 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>Bai-57-DuAn-CLI-Log-Parser</title>
-    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-57-DuAn-CLI-Log-Parser</link>
-    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-57-DuAn-CLI-Log-Parser</guid>
-    <description><![CDATA[ Bài 57 (Dự án 1): CLI Log Parser — Capstone Stage 1 (Core Language) Đây là dự án tổng hợp đầu tiên, chốt lại toàn bộ Stage 1 (Bài 1-4c, 7, 23, 23b): Cargo, pattern matching, struct/enum, Option/Result, collections, iterator/closure, và giờ thêm 1 mảnh mới — CLI argument parsing với clap, thứ chưa bà... ]]></description>
-    <pubDate>Tue, 25 Aug 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>Bai-58-DuAn-Axum-Postgres-FullStack</title>
-    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-58-DuAn-Axum-Postgres-FullStack</link>
-    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-58-DuAn-Axum-Postgres-FullStack</guid>
-    <description><![CDATA[ Bài 58 (Dự án 2): Axum + PostgreSQL Full-Stack Service — Capstone Stage 4 (Production Backend) Đây là dự án lắp ráp — không giới thiệu khái niệm mới, mà kết nối 8 bài đã học riêng lẻ (10, 11, 12, 26, 30, 15, 34, 35) thành một service hoàn chỉnh chạy được thật, đúng như một service PDMS module thực t... ]]></description>
-    <pubDate>Tue, 25 Aug 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>Bai-59-DuAn-Concurrent-Pipeline-Vs-Go</title>
-    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-59-DuAn-Concurrent-Pipeline-Vs-Go</link>
-    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-59-DuAn-Concurrent-Pipeline-Vs-Go</guid>
-    <description><![CDATA[ Bài 59 (Dự án 3): Concurrent Pipeline Triệu-Record vs Go — Capstone Cuối Cùng Đây là bài tổng kết toàn bộ series — và là bài duy nhất trực tiếp trả lời câu hỏi ngầm xuyên suốt hành trình học: “Học Rust xong thì được gì hơn so với việc cứ dùng Go, vốn đã quen thuộc và năng suất?” Không trả lời bằng l... ]]></description>
     <pubDate>Tue, 25 Aug 2026 00:00:00 GMT</pubDate>
   </item>
     </channel>
