@@ -15,7 +15,13 @@
     <title>VAULT-P2-CLUSTER-MAP</title>
     <link>https://dangthobach.github.io/knowledge/_moc/VAULT-P2-CLUSTER-MAP</link>
     <guid>https://dangthobach.github.io/knowledge/_moc/VAULT-P2-CLUSTER-MAP</guid>
-    <description><![CDATA[ P2 — Bản đồ cluster trùng chủ đề Chi tiết cho phase P2 của VAULT-REFACTOR-2026-10. Chỉ đọc và lập bản đồ, chưa sửa / xóa / gộp note nào. ]]></description>
+    <description><![CDATA[ P2 — Bản đồ cluster trùng chủ đề Chi tiết cho phase P2 của VAULT-REFACTOR-2026-10. Không xóa, không gộp, không ghi đè note cũ. ]]></description>
+    <pubDate>Sun, 25 Oct 2026 00:00:00 GMT</pubDate>
+  </item><item>
+    <title>VAULT-P3-VERSION-BASELINE</title>
+    <link>https://dangthobach.github.io/knowledge/_moc/VAULT-P3-VERSION-BASELINE</link>
+    <guid>https://dangthobach.github.io/knowledge/_moc/VAULT-P3-VERSION-BASELINE</guid>
+    <description><![CDATA[ P3 — Baseline phiên bản stack PDMS (tra ngày 2026-10-25) Mốc đối chiếu cho bước audit Tầng A của VAULT-REFACTOR-2026-10. ]]></description>
     <pubDate>Sun, 25 Oct 2026 00:00:00 GMT</pubDate>
   </item><item>
     <title>VAULT-REFACTOR-2026-10</title>
@@ -58,12 +64,6 @@
     <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-19-Unsafe-FFI</link>
     <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-19-Unsafe-FFI</guid>
     <description><![CDATA[ Bài 19: Unsafe Rust &amp; FFI — Khi Safe Không Đủ Tại sao học Unsafe? Không phải để dùng nhiều — mà để hiểu tại sao safe Rust có những restrictions như vậy. ]]></description>
-    <pubDate>Tue, 25 Aug 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>Bai-23c-CI-MSRV-Fuzzing</title>
-    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-23c-CI-MSRV-Fuzzing</link>
-    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-23c-CI-MSRV-Fuzzing</guid>
-    <description><![CDATA[ Bài 23c: CI, MSRV &amp; Fuzzing — Kỷ luật Crate Engineering Cấp Production Chào Chuyên gia Java, Bài 23b đã cho bạn semver/feature/build profile — phần “viết Cargo.toml đúng”. ]]></description>
     <pubDate>Tue, 25 Aug 2026 00:00:00 GMT</pubDate>
   </item>
     </channel>
