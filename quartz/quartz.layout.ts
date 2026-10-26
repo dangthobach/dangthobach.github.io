@@ -8,7 +8,7 @@ const knowledgeExplorer = () =>
     folderClickBehavior: "link",
     useSavedState: false,
     filterFn: (node) =>
-      !["tags", ".smart-env", "_scripts", "_templates", "_archive", "Notion Knowledge"].includes(
+      !["tags", ".smart-env", "_scripts", "_templates", "_archive", "Notion-Knowledge"].includes(
         node.slugSegment,
       ),
     mapFn: (node) => {
@@ -21,7 +21,7 @@ const knowledgeExplorer = () =>
         "Microservices-Patterns": "Microservices Patterns",
         "Database-Patterns": "Database Patterns",
         "Go-Microservices-Mastery": "Go Microservices",
-        "Notion Knowledge": "Reference Library",
+        "Notion-Knowledge": "Reference Library",
       }
       node.displayName = labels[node.slugSegment] ?? node.displayName.replaceAll("-", " ")
     },
