@@ -1,5 +1,6 @@
 import { QuartzTransformerPlugin } from "../types"
-import { Root } from "mdast"
+import { Root as MdastRoot } from "mdast"
+import { Element, Root as HtmlRoot } from "hast"
 import { visit } from "unist-util-visit"
 import { toString } from "mdast-util-to-string"
 import Slugger from "github-slugger"
@@ -32,7 +33,7 @@ export const TableOfContents: QuartzTransformerPlugin<Partial<Options>> = (userO
     markdownPlugins() {
       return [
         () => {
-          return async (tree: Root, file) => {
+          return async (tree: MdastRoot, file) => {
             const display = file.data.frontmatter?.enableToc ?? opts.showByDefault
             if (display) {
               slugAnchor.reset()
@@ -59,6 +60,33 @@ export const TableOfContents: QuartzTransformerPlugin<Partial<Options>> = (userO
               }
             }
           }
+        },
+      ]
+    },
+    htmlPlugins() {
+      return [
+        () => (tree: HtmlRoot, file) => {
+          if (!file.data.toc) return
+
+          const headingIds: string[] = []
+          visit(tree, "element", (node: Element) => {
+            const depth = /^h([1-6])$/.exec(node.tagName)?.[1]
+            if (
+              depth !== undefined &&
+              Number(depth) <= opts.maxDepth &&
+              typeof node.properties?.id === "string"
+            ) {
+              headingIds.push(node.properties.id)
+            }
+          })
+
+          // rehype-slug operates on the final HTML text, which can differ from
+          // Markdown text for generics (`Option<T>`) and inline HTML. Treat the
+          // emitted heading IDs as the source of truth for navigation.
+          file.data.toc = file.data.toc.map((entry, index) => ({
+            ...entry,
+            slug: headingIds[index] ?? entry.slug,
+          }))
         },
       ]
     },

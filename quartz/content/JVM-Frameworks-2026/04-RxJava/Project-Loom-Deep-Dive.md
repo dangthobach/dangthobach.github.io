@@ -823,3 +823,40 @@ hikaricp_pending_threads  // metric để watch
 - [JEP 462](https://openjdk.org/jeps/462) — Structured Concurrency (Java 22 Second Preview)
 - https://inside.java/tag/loom — Inside Java blog
 - https://spring.io/blog/2022/10/11/embracing-virtual-threads — Spring + Loom
+
+
+## 🛠️ Đính chính (2026-10-25)
+
+> [!warning] 1. Pinning do `synchronized` và `Object.wait()` đã được khắc phục từ JDK 24
+> Sơ đồ lifecycle và Part 3 (bảng các cấu trúc khóa gây pin, gồm `Object.wait()`) đúng cho JDK 21–23. Từ **JDK 24**, JEP 491 cho virtual thread acquire, hold và release monitor độc lập với carrier; chờ monitor và `Object.wait()` đều nhả carrier. JEP nêu rõ không cần chuyển code sang `ReentrantLock`, và không cần hoàn nguyên code đã chuyển. Pinning còn lại: virtual thread gọi native code (native method hoặc FFM) mà native code gọi ngược về Java và block, cùng một số trường hợp khác không liên quan `synchronized` được liệt kê trong JEP.
+> Nguồn: [JEP 491](https://openjdk.org/jeps/491)
+
+> [!warning] 2. `-Djdk.tracePinnedThreads` đã bị gỡ ở JDK 24
+> Phần phát hiện pinning (Part 3) và flags quan sát (Part 8) dùng `-Djdk.tracePinnedThreads=full`. Từ JDK 24 thuộc tính này không còn tác dụng; dùng sự kiện JFR `jdk.VirtualThreadPinned`, được giữ lại và bổ sung lý do pin cùng thông tin carrier thread.
+> Nguồn: [JEP 491](https://openjdk.org/jeps/491)
+
+> [!warning] 3. "Carrier thread không bao giờ bị block" là nói quá
+> Khi virtual thread bị pin do native frame (JNI/FFM) rồi block, carrier và OS thread bên dưới cũng bị block, đúng như JEP 491 mô tả. Câu "Key Insight" cần đọc là "trong trường hợp thông thường".
+> Nguồn: [JEP 491](https://openjdk.org/jeps/491)
+
+> [!warning] 4. ScopedValue đã chính thức ở JDK 25
+> Note mô tả ScopedValue theo JEP 446 (preview ở JDK 21). `ScopedValue` được JEP 506 chốt chính thức ở **JDK 25**, với một thay đổi nhỏ: `ScopedValue.orElse` không còn nhận `null`. Cần đối chiếu lại các ví dụ theo API final.
+> Nguồn: [JEP 506 — Scoped Values](https://openjdk.org/jeps/506)
+
+> [!warning] 5. Structured Concurrency: trạng thái và API đã đổi
+> - Vẫn là API preview qua JDK 27 (JEP 533, preview lần thứ bảy); JEP 543 chốt chính thức ở **JDK 28** (dự kiến phát hành 03/2027).
+> - Part 5 dùng `ShutdownOnFailure` / `ShutdownOnSuccess` và lớp con tùy biến `handleComplete`. Từ JDK 25 (JEP 505) API được thiết kế lại theo `StructuredTaskScope.open(...)` và `Joiner`; từ JDK 27 các joiner chuẩn ném `ExecutionException` thay cho `FailedException`. Ví dụ cũ chỉ đúng cho JDK 21–24.
+> Nguồn: [InfoQ — JEP 543](https://www.infoq.com/news/2026/10/jep-543-jdk-28/), [InfoQ — JEP 533](https://www.infoq.com/news/2026/05/jep-533-jdk-27/)
+
+> [!question] Chưa xác minh (sẽ kiểm tra ở P3)
+> - Ví dụ `Thread.getState()` trả "PARKED/PINNED": `Thread.State` không có hai giá trị này theo Javadoc (NEW, RUNNABLE, BLOCKED, WAITING, TIMED_WAITING, TERMINATED); cần xem lại đoạn ví dụ.
+> - Phát biểu về PgJDBC 42.5+ và HikariCP đã bỏ `synchronized` hay chưa.
+> - Các con số bộ nhớ (1 triệu virtual thread) là ước lượng, chưa đo thực.
+
+## 🔗 Bản đồ note liên quan (2026-10-25)
+
+Bốn note cùng chủ đề virtual thread, mỗi note giữ một vai trò riêng. Note này là **tham chiếu Java đầy đủ nhất** (API, ScopedValue, Structured Concurrency, observability, tích hợp).
+
+- [[concepts/java-virtual-threads-deep-dive|Java Virtual Threads Deep Dive]] — khái niệm ngắn (Little's Law, ẩn dụ, Java/Rust analog)
+- [[concepts/project-loom-deep-dive|Project Loom Deep Dive (khung quyết định)]] — Loom vs Reactive, khuyến nghị cho PDMS
+- [[Go-Zero-To-Hero/Deep-Dive-VirtualThreads-vs-Goroutines-vs-RustAsync|Virtual Threads vs Goroutines vs Rust Async]] — so sánh đa ngôn ngữ; mục pinning đã cập nhật theo JEP 491

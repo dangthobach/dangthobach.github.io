@@ -865,3 +865,25 @@ Lựa chọn đúng dựa trên **workload shape, failure semantics, resource bo
 ---
 
 **Liên quan trong vault**: [[Bai-1-Go-Mindset]] · [[Performance-Pitfalls-Rust]] · [[os-process-thread-scheduling]] · [[gc-llvm-runtime-cpu-memory-internals]] · [[MOC-Concurrency]]
+
+
+## 🛠️ Đối chiếu và đính chính (2026-10-25)
+
+> [!success] Đã đối chiếu: phần pinning khớp JEP 491
+> Mô tả pinning sau JDK 24 trong note này khớp JEP 491 (monitor không còn pin; pinning còn lại ở native frame, FFM). Đây là note đã cập nhật nhất trong bốn note về virtual thread, và là nguồn tham chiếu cho chủ đề pinning.
+> Nguồn: [JEP 491](https://openjdk.org/jeps/491)
+
+> [!warning] Số thứ tự preview của Structured Concurrency bị lệch một bậc
+> Note ghi "Structured Concurrency (Seventh Preview) ở JDK 26" và liệt kê "JEP 505 — Fifth/Seventh Preview (JDK 25/26)". Theo InfoQ, các lần preview là: JEP 505 (JDK 25, lần 5), JEP 525 (JDK 26, lần 6), JEP 533 (JDK 27, lần 7). JEP 543 chốt chính thức ở **JDK 28** (dự kiến phát hành 03/2027).
+> Nguồn: [InfoQ — JEP 543](https://www.infoq.com/news/2026/10/jep-543-jdk-28/), [InfoQ — JEP 533](https://www.infoq.com/news/2026/05/jep-533-jdk-27/)
+
+> [!info] Mốc phiên bản (baseline) cần cập nhật
+> Baseline của note là JDK 26. JDK 27 theo lịch phát hành vào 2026-09-15, và JDK 28 đã có JEP chốt Structured Concurrency. Mốc Go và Rust trong note cũng cần rà lại ở bước audit phiên bản (P3).
+
+## 🔗 Bản đồ note liên quan (2026-10-25)
+
+Bốn note cùng chủ đề virtual thread, mỗi note giữ một vai trò riêng. Note này là **so sánh đa ngôn ngữ và benchmark**, đồng thời là nơi đã cập nhật JEP 491.
+
+- [[concepts/java-virtual-threads-deep-dive|Java Virtual Threads Deep Dive]] — khái niệm ngắn (Little's Law, ẩn dụ, Java/Rust analog)
+- [[JVM-Frameworks-2026/04-RxJava/Project-Loom-Deep-Dive|Project Loom Deep Dive (tham chiếu Java đầy đủ)]] — API, ScopedValue, Structured Concurrency, observability
+- [[concepts/project-loom-deep-dive|Project Loom Deep Dive (khung quyết định)]] — Loom vs Reactive, khuyến nghị cho PDMS

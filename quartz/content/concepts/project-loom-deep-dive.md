@@ -492,3 +492,37 @@ Bài toán của bạn là gì?
 - [[Rust-Zero-To-Hero/Bai-9-Async-Tokio]] — Tokio: Rust's answer to the same problem
 - [[Rust-Zero-To-Hero/Bai-21-Async-Internals-Pin]] — Async state machine internals (compare với JVM VT continuation)
 - [[Microservices-Patterns/04-Observability]] — Monitor VT vs Reactive performance trong production
+
+
+## 🛠️ Đính chính (2026-10-25)
+
+> [!warning] 1. Pinning do `synchronized` đã được khắc phục từ JDK 24
+> Phần mô tả pinning (trường hợp `synchronized` và cách sửa bằng `ReentrantLock`) đúng cho JDK 21–23. Từ **JDK 24**, JEP 491 cho virtual thread acquire, hold và release monitor độc lập với carrier, và `Object.wait()` cũng nhả carrier. JEP nêu rõ không cần chuyển code sang `ReentrantLock`. Pinning còn lại chủ yếu khi virtual thread gọi native code (native method hoặc FFM) mà native code gọi ngược về Java và block.
+> Nguồn: [JEP 491](https://openjdk.org/jeps/491)
+
+> [!warning] 2. `-Djdk.tracePinnedThreads` đã bị gỡ ở JDK 24
+> Thuộc tính này không còn tác dụng từ JDK 24. Cách phát hiện pinning hiện nay là sự kiện JFR `jdk.VirtualThreadPinned`, được giữ lại và bổ sung lý do pin cùng thông tin carrier thread. Trên JDK 21–23, thuộc tính cũ vẫn dùng được.
+> Nguồn: [JEP 491](https://openjdk.org/jeps/491), mục "The system property jdk.tracePinnedThreads is no longer needed"
+
+> [!warning] 3. Structured Concurrency chưa từng "stable" ở Java 23
+> Ghi chú "Java 23 stable" là sai. `StructuredTaskScope` là API preview từ JDK 21 (JEP 453) qua JDK 27 (JEP 533, preview lần thứ bảy). JEP 543 đưa nó thành tính năng chính thức ở **JDK 28** (dự kiến phát hành 03/2027).
+> Nguồn: [InfoQ — JEP 543](https://www.infoq.com/news/2026/10/jep-543-jdk-28/), [InfoQ — JEP 533](https://www.infoq.com/news/2026/05/jep-533-jdk-27/)
+
+> [!warning] 4. Ví dụ Structured Concurrency chỉ đúng cho JDK 21–24
+> - `scope.fork(...)` trả về `Subtask<T>` (từ JDK 21), không phải `Future<T>` như trong ví dụ.
+> - Các lớp `ShutdownOnFailure` / `ShutdownOnSuccess` thuộc API cũ. Từ JDK 25 (JEP 505) API được thiết kế lại theo `StructuredTaskScope.open(...)` và `Joiner`.
+> - Từ JDK 27 (JEP 533), các joiner chuẩn ném `ExecutionException` thay cho `FailedException`.
+> Nguồn: [InfoQ — JEP 533](https://www.infoq.com/news/2026/05/jep-533-jdk-27/), [mastertheboss — Subtask thay Future ở JDK 21](https://www.mastertheboss.com/java/java-structured-concurrency-in-practice/)
+
+> [!question] Chưa xác minh (sẽ kiểm tra ở P3)
+> - Các phát biểu về Hibernate 6.2+, Jedis/Lettuce đã hết pinning hay chưa.
+> - Mục "Benchmark" dùng số minh họa, chưa phải đo thực; nên gắn nhãn rõ.
+> - Link `ADR-002-Project-Loom-vs-Reactive-for-PDMS` chưa có file (ghi chú "cần viết" của tác giả); nội dung khung quyết định trong note này là nguồn để viết ADR đó.
+
+## 🔗 Bản đồ note liên quan (2026-10-25)
+
+Bốn note cùng chủ đề virtual thread, mỗi note giữ một vai trò riêng. Note này là **khung quyết định Loom vs Reactive** và khuyến nghị cho PDMS.
+
+- [[concepts/java-virtual-threads-deep-dive|Java Virtual Threads Deep Dive]] — khái niệm ngắn (Little's Law, ẩn dụ, Java/Rust analog)
+- [[JVM-Frameworks-2026/04-RxJava/Project-Loom-Deep-Dive|Project Loom Deep Dive (tham chiếu Java đầy đủ)]] — API, ScopedValue, Structured Concurrency, observability
+- [[Go-Zero-To-Hero/Deep-Dive-VirtualThreads-vs-Goroutines-vs-RustAsync|Virtual Threads vs Goroutines vs Rust Async]] — so sánh đa ngôn ngữ; mục pinning đã cập nhật theo JEP 491

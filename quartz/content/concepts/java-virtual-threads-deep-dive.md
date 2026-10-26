@@ -112,3 +112,23 @@ Hành khách (Virtual Threads) rất đông. Chỉ có vài chiếc xe bus (Carr
 
 ---
 **Note cho VPBank PDMS:** Khi migrate sang Quarkus, hãy bật `quarkus.virtual-threads.enabled=true` để tận dụng cơ chế này cho các endpoint REST.
+
+
+## 🛠️ Đính chính (2026-10-25)
+
+> [!warning] Pinning do `synchronized` đã được khắc phục từ JDK 24
+> Phần Pitfalls mô tả virtual thread bị pin khi blocking trong `synchronized` và khuyên đổi sang `ReentrantLock`. Điều đó đúng cho JDK 21–23. Từ **JDK 24**, JEP 491 cho virtual thread acquire, hold và release monitor độc lập với carrier, và `Object.wait()` cũng nhả carrier. JEP nêu rõ không cần chuyển code từ `synchronized` sang `ReentrantLock`, và không cần hoàn nguyên code đã chuyển. Pinning vẫn còn khi virtual thread gọi native code (native method hoặc Foreign Function & Memory API) mà native code gọi ngược về Java rồi block.
+> Nguồn: [JEP 491 — Synchronize Virtual Threads without Pinning](https://openjdk.org/jeps/491)
+
+> [!question] Chưa xác minh
+> Hướng dẫn bật `quarkus.virtual-threads.enabled=true` "để endpoint REST dùng virtual thread" cần đối chiếu với cơ chế `@RunOnVirtualThread` của Quarkus. Sẽ kiểm tra ở bước audit phiên bản (P3).
+
+## 🔗 Bản đồ note liên quan (2026-10-25)
+
+Bốn note cùng chủ đề virtual thread, mỗi note giữ một vai trò riêng:
+
+- [[JVM-Frameworks-2026/04-RxJava/Project-Loom-Deep-Dive|Project Loom Deep Dive (tham chiếu Java đầy đủ)]] — API, ScopedValue, Structured Concurrency, observability
+- [[concepts/project-loom-deep-dive|Project Loom Deep Dive (khung quyết định)]] — Loom vs Reactive, khuyến nghị cho PDMS
+- [[Go-Zero-To-Hero/Deep-Dive-VirtualThreads-vs-Goroutines-vs-RustAsync|Virtual Threads vs Goroutines vs Rust Async]] — so sánh đa ngôn ngữ; mục pinning đã cập nhật theo JEP 491
+
+Note này là bản khái niệm ngắn: Little's Law, ẩn dụ, so sánh Java/Rust, nguyên tắc không pool virtual thread.

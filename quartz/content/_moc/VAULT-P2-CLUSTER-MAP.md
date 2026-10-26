@@ -9,7 +9,7 @@ tags: [moc, audit, refactor, cluster-map]
 
 # P2 — Bản đồ cluster trùng chủ đề
 
-> Chi tiết cho phase P2 của [[_moc/VAULT-REFACTOR-2026-10]]. **Không xóa, không gộp, không ghi đè note cũ.** Chỉnh sửa duy nhất lên note có sẵn là các mục "Đính chính" / "Bổ sung" ở cuối trang (ghi trong nhật ký từng cluster).
+> Chi tiết cho phase P2 của [[_moc/VAULT-REFACTOR-2026-10]]. **Không xóa, không gộp, không ghi đè note cũ.** Chỉnh sửa duy nhất lên note có sẵn là các mục "Đính chính" / "Bổ sung" / "Bản đồ note liên quan" ở cuối trang (ghi trong nhật ký từng cluster).
 > Quy ước: *canonical* = note giữ làm bản chính cho một chủ đề; *absorbed* = note cũ sẽ chuyển `status: superseded` sau khi ledger hoàn tất (bất biến 3–4).
 
 ## Trạng thái các cluster
@@ -17,7 +17,7 @@ tags: [moc, audit, refactor, cluster-map]
 | # | Cluster | Trạng thái |
 |---|---|---|
 | 1 | SolidJS (hai series song song) | Đã lập bản đồ; đã sửa link hỏng, đã đính chính 1 claim; còn cặp 03 ↔ 05 chưa đối chiếu |
-| 2 | Virtual thread / Loom (4 nơi) | Đã lập bản đồ; **kết luận: tách vai trò, không gộp**; chưa đính chính các note Java |
+| 2 | Virtual thread / Loom (4 nơi) | Đã lập bản đồ; **kết luận: tách vai trò, không gộp**; **đã đính chính và liên kết chéo 4 note (2026-10-25)**; còn ADR-002 và P3 |
 | 3 | Index PostgreSQL (concepts + PostgreSQL/04 + 2 Notion) | Chưa đọc |
 | 4 | Saga / CQRS (Notion + Microservices-Patterns) | Chưa đọc |
 | 5 | Sharding (3 Notion + PostgreSQL/10) | Chưa đọc |
@@ -54,7 +54,7 @@ tags: [moc, audit, refactor, cluster-map]
 
 ### Đã xử lý (2026-10-25)
 
-- **Link hỏng đã sửa:** tạo thật bài [[SolidJS-Series/SolidJS-00-Overview]] (toàn cảnh, phiên bản, bản đồ khóa học, bảng API bị ảnh hưởng bởi Solid 2.0). Link `SolidJS-00-Overview` trong bài 01 nay resolve (bài Overview có 1 inlink).
+- **Link hỏng đã sửa:** tạo thật bài [[SolidJS-Series/SolidJS-00-Overview]] (toàn cảnh, phiên bản, bản đồ khóa học, bảng API bị ảnh hưởng bởi Solid 2.0). Link `SolidJS-00-Overview` trong bài 01 nay resolve.
 - **Bổ sung MOC:** thêm mục "Bổ sung (P2)" vào [[SolidJS-Series/SolidJS-MOC]] liệt kê Overview, bài 13, bài 14.
 - **Đính chính bài 08:** thêm mục "Đính chính (2026-10-25)" cuối [[SolidJS-Series/SolidJS-08-Async-Resources]] — fetcher của `createResource` 1.x chỉ nhận `{ value, refetching }`, không có `signal`. Nguồn: tài liệu `createResource` và type definitions `solid-js@1.9.12`. Nội dung gốc giữ nguyên.
 
@@ -77,12 +77,12 @@ tags: [moc, audit, refactor, cluster-map]
 
 ### Các note trong cluster
 
-| Ký hiệu | Note | Kích thước | Ghi chú |
+| Ký hiệu | Note | Kích thước lúc lập bản đồ | Ghi chú |
 |---|---|---|---|
 | A | [[concepts/java-virtual-threads-deep-dive]] | ~6 KB | `status: in-progress`; mở đầu ngắn gọn; frontmatter có alias "Project Loom" |
 | B | [[concepts/project-loom-deep-dive]] | ~18.5 KB | `status: evergreen`; khung quyết định Loom vs Reactive, khuyến nghị cho PDMS |
 | C | [[JVM-Frameworks-2026/04-RxJava/Project-Loom-Deep-Dive]] | ~27 KB | Tham chiếu Java đầy đủ nhất (API, pinning, ScopedValue, Structured Concurrency, observability, tích hợp) |
-| D | [[Go-Zero-To-Hero/Deep-Dive-VirtualThreads-vs-Goroutines-vs-RustAsync]] | ~60 KB | So sánh đa ngôn ngữ; **đã được cập nhật 2026-08-15**, đã ghi nhận JEP 491 và coi phần cũ là lỗi thời |
+| D | [[Go-Zero-To-Hero/Deep-Dive-VirtualThreads-vs-Goroutines-vs-RustAsync]] | ~60 KB | So sánh đa ngôn ngữ; **đã được cập nhật 2026-08-15**, đã ghi nhận JEP 491 |
 
 Liên quan nhưng chưa đọc: [[Database-Patterns/JDBC-vs-R2DBC-vs-VirtualThreads]] (kiểm tra ở P3 cùng nhóm JDBC/Hibernate).
 
@@ -99,54 +99,62 @@ Bốn note trùng một phần cơ chế (mount/unmount, pinning, API) nhưng m�
 
 ### Ma trận sở hữu chủ đề (single source of truth)
 
-| Chủ đề | Note sở hữu | Note khác trùng | Hành động đề xuất |
+| Chủ đề | Note sở hữu | Note khác trùng | Hành động |
 |---|---|---|---|
 | Cơ chế mount/unmount, continuation, carrier | C | A, B, D | Giữ; các note khác trỏ tới C |
-| **Pinning** | **D** (đã đính chính) | A, B, C | Thêm callout đính chính trỏ tới D |
+| **Pinning** | **D** (đã đính chính) | A, B, C | Đã thêm callout đính chính trỏ tới JEP 491 |
 | API tạo virtual thread, thuộc tính | C | A, B | Giữ |
-| ScopedValue vs ThreadLocal | C | A (ThreadLocal), D | Gắn nhãn phiên bản (xem sổ claim) |
-| Structured Concurrency | C | B | Gắn nhãn phiên bản và API đã đổi |
+| ScopedValue vs ThreadLocal | C | A (ThreadLocal), D | Đã gắn đính chính (final ở JDK 25) |
+| Structured Concurrency | C | B | Đã gắn đính chính trạng thái và API |
 | Quyết định Loom vs Reactive, PDMS | B | C (tóm tắt) | Giữ; tạo ADR-002 khi bạn duyệt |
 | Little's Law, ẩn dụ, Java/Rust analog | A | B | Giữ |
 | Cấu hình Spring Boot / Tomcat / Quarkus | C, B | A | Xác minh ở P3 |
-| Observability (JFR, thread dump, scheduler flags) | C | B | Sửa theo JEP 491 |
+| Observability (JFR, thread dump, scheduler flags) | C | B | Đã sửa theo JEP 491 |
 | So sánh Go / Rust, benchmark | D | — | Cập nhật baseline ở P3 |
 
 ### Sổ claim lỗi thời hoặc nghi sai
 
-**Đã xác minh bằng nguồn chính (JEP 491, CSR JDK-8338813, InfoQ về JEP 533 / 543):**
+**Đã xác minh bằng nguồn (JEP 491, JEP 506, InfoQ về JEP 533 / 543):**
 
 | # | Claim trong vault | Thực tế đã tra | Ảnh hưởng |
 |---|---|---|---|
-| 1 | `synchronized` (và `Object.wait()`) **pin** virtual thread; fix bằng `ReentrantLock` | Từ **JDK 24**, JEP 491 giúp virtual thread nhả carrier khi chờ monitor, nên `synchronized` không còn là nguyên nhân pin trong trường hợp thường gặp | A (Pitfalls), B (§ pinning), C (sơ đồ lifecycle, Part 3). **D đã đính chính** |
-| 2 | Phát hiện pin bằng `-Djdk.tracePinnedThreads=full` | Thuộc tính này **đã bị gỡ ở JDK 24**; dùng JFR event `jdk.VirtualThreadPinned` | B (§ phát hiện), C (Part 3, Part 8) |
-| 3 | B: Structured Concurrency "Java 23 stable" | **Sai.** Vẫn là preview qua nhiều bản: JEP 453 (JDK 21) … JEP 505 (JDK 25), JEP 525 (JDK 26), JEP 533 (JDK 27, preview thứ bảy). JEP 543 đưa SC thành tính năng chính thức ở **JDK 28** | B |
-| 4 | D: "Structured Concurrency Seventh Preview ở JDK 26" và nguồn "JEP 505 — Fifth/Seventh Preview (JDK 25/26)" | JDK 26 là preview thứ **sáu** (JEP 525); thứ **bảy** là JDK 27 (JEP 533) | D |
+| 1 | `synchronized` (và `Object.wait()`) **pin** virtual thread; fix bằng `ReentrantLock` | Từ **JDK 24**, JEP 491 giúp virtual thread nhả carrier khi chờ monitor và khi `Object.wait()`. JEP nêu rõ không cần chuyển sang `ReentrantLock` | A (Pitfalls), B, C (sơ đồ lifecycle, Part 3). **D đã đúng** |
+| 2 | Phát hiện pin bằng `-Djdk.tracePinnedThreads=full` | Thuộc tính **đã bị gỡ ở JDK 24**; dùng JFR event `jdk.VirtualThreadPinned` | B, C (Part 3, Part 8) |
+| 3 | B: Structured Concurrency "Java 23 stable" | **Sai.** Preview từ JDK 21 (JEP 453) đến JDK 27 (JEP 533); JEP 543 chốt chính thức ở **JDK 28** (GA dự kiến 03/2027) | B |
+| 4 | D: "Structured Concurrency Seventh Preview ở JDK 26" và nguồn "JEP 505 — Fifth/Seventh Preview (JDK 25/26)" | JDK 25 = lần 5 (JEP 505), JDK 26 = lần 6 (JEP 525), JDK 27 = lần 7 (JEP 533) | D |
 | 5 | D lấy mốc JDK 26 | JDK 27 theo lịch phát hành 2026-09-15; mốc cần cập nhật khi rà phiên bản (P3) | D |
-| 6 | Ví dụ `StructuredTaskScope.ShutdownOnFailure`, `handleComplete` tùy biến | API được thiết kế lại ở JDK 25 (JEP 505, dùng `Joiner`); từ JDK 27 joiner báo lỗi bằng `ExecutionException` thay cho `FailedException` | B, C — ví dụ chỉ đúng cho JDK 21–24 |
+| 6 | Ví dụ `ShutdownOnFailure`, `handleComplete` tùy biến | API thiết kế lại ở JDK 25 (JEP 505, dùng `open(...)` và `Joiner`); từ JDK 27 joiner ném `ExecutionException` thay cho `FailedException` | B, C — ví dụ chỉ đúng cho JDK 21–24 |
+| 7 | B: `scope.fork(...)` trả `Future<User>` | Từ JDK 21 `fork` trả `Subtask` (nguồn thứ cấp mastertheboss) | B |
+| 8 | C: "Carrier thread **không bao giờ** bị block" | Nói quá: pin do native frame (JNI/FFM) vẫn block carrier (JEP 491) | C |
+| 9 | C: ScopedValue theo JEP 446 (preview JDK 21) | Chính thức ở **JDK 25** (JEP 506); `ScopedValue.orElse` không còn nhận `null` | C |
 
 **Nghi sai, chưa tra nguồn (đưa vào P3):**
 
-- C: "Carrier thread **không bao giờ** bị block" — nói quá; D mô tả các trường hợp còn giữ carrier (native/FFM).
-- C: `Thread.getState()` trả "PARKED/PINNED" — `Thread.State` không có hai giá trị này (chúng là trạng thái khái niệm).
-- B: dùng `Future<User>` cho kết quả của `scope.fork(...)` — từ JDK 21 `fork` trả `Subtask`.
+- C: `Thread.getState()` trả "PARKED/PINNED" — theo Javadoc, `Thread.State` không có hai giá trị này (chưa dẫn nguồn trong phiên này).
 - A: bật `quarkus.virtual-threads.enabled=true` "để endpoint REST dùng virtual thread" — cần đối chiếu cơ chế `@RunOnVirtualThread` của Quarkus.
 - B / C: các phát biểu về Hibernate 6.2+, Jedis/Lettuce, HikariCP, PgJDBC (đã sửa synchronized hay chưa).
-- B: mục "Benchmark" dùng số minh họa, chưa đo thực; nên gắn nhãn rõ (D đã tách minh họa và đo thực).
-- C / D: ScopedValue chính thức ở JDK 25 (D ghi "finalized ở Java 25 LTS", C còn ghi preview ở JDK 21) — cần dẫn JEP 506 khi sửa.
+- B: mục "Benchmark" dùng số minh họa, chưa đo thực; nên gắn nhãn rõ.
+- C: con số bộ nhớ cho 1 triệu virtual thread là ước lượng.
+
+> [!note] Ghi chú về nguồn
+> Một số bài viết (ví dụ foojay pedia) ghi sai rằng Structured Concurrency đã final ở JDK 24. Theo JEP và InfoQ, nó vẫn là preview đến JDK 27. Khi sửa note, chỉ dẫn nguồn chính (openjdk.org) hoặc tin tức đã đối chiếu.
 
 ### Lỗi sẵn có phát hiện khi đọc (không do refactor gây ra)
 
 - B link tới `JVM-Frameworks-2026/ADR-002-Project-Loom-vs-Reactive-for-PDMS` — **file không tồn tại** (tác giả đã ghi "cần viết"). Chỉ có ADR-001.
 - A có alias "Project Loom" trong khi note B có tiêu đề "Project Loom Deep Dive" — tìm theo tên dễ nhầm.
-- D không link tới A, B, C; A chỉ có 1 outlink — các note cùng chủ đề không biết đến nhau.
+- Trước khi liên kết chéo, D không link tới A, B, C; A chỉ có 1 outlink.
 
-### Việc làm tiếp theo cho Cluster 2 (additive, chờ bạn duyệt)
+### Đã xử lý (2026-10-25)
 
-1. Thêm mục "Đính chính (2026-10-25)" cuối A, B, C cho các claim đã xác minh (#1, #2, #3, #6), trỏ sang D và nêu rõ phạm vi phiên bản. Nội dung gốc giữ nguyên.
-2. Thêm mục "Bản đồ note liên quan" cuối A, B, C, D (liên kết chéo + vai trò từng note).
-3. Tạo `ADR-002-Project-Loom-vs-Reactive-for-PDMS` từ nội dung khung quyết định của B (cần bạn xác nhận ngữ cảnh PDMS).
-4. P3: sửa mốc phiên bản của D, xác minh nhóm "nghi sai", đọc thêm [[Database-Patterns/JDBC-vs-R2DBC-vs-VirtualThreads]].
+1. Thêm mục "Đính chính" vào A, B, C và "Đối chiếu và đính chính" vào D — chỉ các claim đã xác minh bằng nguồn chính, kèm link nguồn. Nội dung gốc giữ nguyên.
+2. Thêm mục "Bản đồ note liên quan" cuối cả bốn note (liên kết chéo và vai trò từng note).
+3. Kiểm tra: dung lượng cả bốn note tăng; mỗi note tăng đúng 3 outlink và 3 inlink.
+
+### Còn mở (Cluster 2)
+
+- Tạo `ADR-002-Project-Loom-vs-Reactive-for-PDMS` từ khung quyết định của B (cần bạn xác nhận ngữ cảnh PDMS).
+- P3: cập nhật mốc phiên bản của D, xác minh nhóm "nghi sai", đọc thêm [[Database-Patterns/JDBC-vs-R2DBC-vs-VirtualThreads]].
 
 ---
 
