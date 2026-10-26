@@ -27,10 +27,10 @@
     "jimp": "^1.6.1",
     "pdf-parse": "^2.4.5",
     "pdfjs-dist": "^6.3.289",
-    "vite": "~8.0.16"
+    "vite": "~8.3.5"
   },
   "overrides": {
-    "brace-expansion": "1.1.18",
+    "brace-expansion": "1.1.21",
     "postcss": "8.5.26"
   }
 }

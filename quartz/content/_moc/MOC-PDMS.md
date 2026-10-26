@@ -110,3 +110,12 @@ Physical Document Management System @ VPBank.
 - `domain_policies` là ABAC rule engine per domain — PDMS có workflow rules, Warehouse có custody/value-limit rules
 - authz_local isolation tại consumer layer — PDMS consumer chỉ subscribe `domainCode=PDMS`, không thấy WAREHOUSE data
 - Thêm domain mới = INSERT vào `domains` + `resource_types` + define roles/permissions — **không ALTER TABLE, không redeploy IAM**
+
+
+## Bổ sung (P1.5 · 2026-10-25) — BPMP Platform (liên quan)
+
+> BPMP-Platform trước đây chưa có hub; ba note chỉ link lẫn nhau.
+
+- [[BPMP-Platform/BPMP-Architecture-Independent-Review|BPMP Architecture — Independent Review]]
+- [[BPMP-Platform/BPMP-Architecture-Technology-Deep-Dive|BPMP Architecture — Technology Deep Dive]]
+- [[BPMP-Platform/BPMP-Shadow-Verification-Simulation-Architecture|BPMP — Shadow Verification & Simulation Architecture]]

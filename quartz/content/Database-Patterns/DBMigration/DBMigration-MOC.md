@@ -132,3 +132,8 @@ Giải pháp được khuyến nghị:
 ## 🏷️ Tags
 
 #database-migration #flyway #atlasgo #liquibase #enterprise #postgresql #spring-boot #devops #pdms #schema-management
+
+
+## Bổ sung (P1.5 · 2026-10-25)
+
+- [[Database-Patterns/DBMigration/DBMigration-06-Flyway-TechLead-Governance|DBMigration-06: Flyway Tech Lead Governance]]

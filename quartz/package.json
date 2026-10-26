@@ -113,10 +113,10 @@
   },
   "overrides": {
     "immutable": "5.1.9",
-    "brace-expansion": "5.0.9",
+    "brace-expansion": "5.0.12",
     "serve-handler": {
       "minimatch": {
-        "brace-expansion": "1.1.18"
+        "brace-expansion": "1.1.21"
       }
     }
   }

@@ -41,3 +41,11 @@ updated: 2026-05-01
 - [[_moc/MOC-Rust|MOC Rust]]
 - [[_moc/MOC-Database|MOC Database (Usage)]]
 - [[concepts/postgresql-performance-deep-dive|PostgreSQL Internals]]
+
+
+## Bổ sung (P1.5 · 2026-10-25) — Data format parsing & ETL performance
+
+> `Performance-System-Programming/03-Data-Format-Parsing` trước đây chưa có hub.
+
+- [[Performance-System-Programming/03-Data-Format-Parsing/01-Calamine-Cross-Language-Benchmark|Calamine Cross-Language Benchmark]]
+- [[Performance-System-Programming/03-Data-Format-Parsing/02-Read-Write-Separation-Type-Conversion|Read/Write Separation & Type Conversion]]

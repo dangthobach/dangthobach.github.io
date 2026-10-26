@@ -68,3 +68,7 @@ WHERE contains(tags, "technology-update")
 SORT updated DESC
 ```
 
+
+## Refactor & Currency Audit
+
+- [[_moc/VAULT-REFACTOR-2026-10|Vault Refactor & Currency Audit 2026-10]] — tracker phase, baseline, dashboard review theo tầng

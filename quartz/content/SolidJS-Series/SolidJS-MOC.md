@@ -125,3 +125,9 @@ SolidJS-Series/
 ## 🔗 Concept Graph
 
 - [[concepts/frontend-concept-map|Frontend Concept Map — SolidJS ↔ React ↔ Angular]]
+
+
+## Bổ sung (P1.5 · 2026-10-25)
+
+- [[SolidJS-Series/SolidJS-15-Reactivity-vs-React-vDOM|SolidJS-15: Reactivity vs React vDOM]]
+- Series cũ dạng skeleton (nghi bị thay thế bởi series `SolidJS-xx`, chờ P2 xác nhận): [[SolidJS-Series/00-Roadmap|Roadmap cũ]]

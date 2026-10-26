@@ -83,3 +83,28 @@ Xem [[Curriculum-Full]] để biết tất cả topics theo layer.
 
 ---
 *Lưu ý: Dùng `cargo check` thường xuyên, `cargo clippy -- -D warnings` trước commit.*
+
+
+## Bổ sung (P1.5 · 2026-10-25) — bài chưa có link vào lộ trình
+
+> Thêm để nối note mồ côi; sẽ sắp xếp lại theo thứ tự học ở P2 (xem [[_moc/VAULT-REFACTOR-2026-10]]).
+
+**Bài mở rộng (b/c/d)**
+- [[Rust-Zero-To-Hero/Bai-3b-Pattern-Matching-Advanced|Bài 3b: Pattern Matching Advanced]]
+- [[Rust-Zero-To-Hero/Bai-3c-Standard-Traits-Conversions|Bài 3c: Standard Traits & Conversions]]
+- [[Rust-Zero-To-Hero/Bai-3d-Operator-Overloading|Bài 3d: Operator Overloading]]
+- [[Rust-Zero-To-Hero/Bai-4b-Collections-Deep-Dive|Bài 4b: Collections Deep Dive]]
+- [[Rust-Zero-To-Hero/Bai-4c-String-Numeric-Internals|Bài 4c: String & Numeric Internals]]
+- [[Rust-Zero-To-Hero/Bai-8b-Cache-Eviction-Policies|Bài 8b: Cache Eviction Policies]]
+- [[Rust-Zero-To-Hero/Bai-15b-Testing-Documentation-Deep-Dive|Bài 15b: Testing & Documentation Deep Dive]]
+- [[Rust-Zero-To-Hero/Bai-15c-Logging-Ecosystem-Request-Logging|Bài 15c: Logging Ecosystem & Request Logging]]
+- [[Rust-Zero-To-Hero/Bai-23b-Cargo-Build-System-Advanced|Bài 23b: Cargo Build System Advanced]]
+- [[Rust-Zero-To-Hero/Bai-23c-CI-MSRV-Fuzzing|Bài 23c: CI, MSRV, Fuzzing]]
+
+**Changelog**
+- [[Rust-Zero-To-Hero/Bai-47-Rust-Changelog-2026-Deep-Dive|Bài 47: Rust Changelog 2026 Deep Dive]]
+
+**Dự án**
+- [[Rust-Zero-To-Hero/Bai-57-DuAn-CLI-Log-Parser|Bài 57: Dự án CLI Log Parser]]
+- [[Rust-Zero-To-Hero/Bai-58-DuAn-Axum-Postgres-FullStack|Bài 58: Dự án Axum + Postgres FullStack]]
+- [[Rust-Zero-To-Hero/Bai-59-DuAn-Concurrent-Pipeline-Vs-Go|Bài 59: Dự án Concurrent Pipeline vs Go]]

@@ -198,3 +198,16 @@ Xem [[Curriculum-Full]] để biết tất cả topics theo layer.
 - [[Go-Zero-To-Hero/Bai-29-Echo-v5-Migration|Echo v5 Migration]]
 - [[Go-Zero-To-Hero/Bai-30-Chi-5.3-Production-Router|Chi 5.3 Production Router]]
 - [[Go-Zero-To-Hero/Bai-31-Go-Data-Messaging-Clients-2026|Go Data & Messaging Clients 2026]]
+
+
+## Bổ sung (P1.5 · 2026-10-25) — bài chưa có link vào lộ trình
+
+> Thêm để nối note mồ côi; sẽ sắp xếp lại theo thứ tự học ở P2 (xem [[_moc/VAULT-REFACTOR-2026-10]]).
+
+- [[Go-Zero-To-Hero/Bai-33-Dependency-Injection-Go|Bài 33: Dependency Injection trong Go]]
+- [[Go-Zero-To-Hero/Bai-37-Strings-Runes-Enum-Iterators|Bài 37: Strings, Runes, Enum, Iterators]]
+- [[Go-Zero-To-Hero/Bai-39-JSON-XML-Time-Epoch|Bài 39: JSON, XML, Time, Epoch]]
+- [[Go-Zero-To-Hero/Bai-41-Timers-Tickers-Atomic-Stateful-Goroutines|Bài 41: Timers, Tickers, Atomic, Stateful Goroutines]]
+- [[Go-Zero-To-Hero/Bai-42-File-IO-Paths-Embed|Bài 42: File I/O, Paths, Embed]]
+- [[Go-Zero-To-Hero/Bai-43-CLI-Flags-Subcommands-EnvVars|Bài 43: CLI Flags, Subcommands, EnvVars]]
+- [[Go-Zero-To-Hero/Bai-44-TCP-HTTPClient-Exec-Signals|Bài 44: TCP, HTTP Client, Exec, Signals]]

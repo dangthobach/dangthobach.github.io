@@ -95,3 +95,17 @@ Microservices Challenges
 | Pattern | Nhóm | File |
 |---|---|---|
 | Debezium & CDC (full deep dive) | Data Streaming | [[Debezium-CDC-Deep-Dive]] |
+
+
+## Bổ sung (P1.5 · 2026-10-25) — note chưa có link vào hub
+
+> Thêm để nối note mồ côi vào hub; sẽ sắp xếp lại theo chủ đề ở P2 (xem [[_moc/VAULT-REFACTOR-2026-10]]).
+
+- [[Microservices-Patterns/Apache-Avro-Deep-Dive|Apache Avro Deep Dive]]
+- [[Microservices-Patterns/API-Design-REST-GraphQL-Webhook|API Design: REST, GraphQL, Webhook]]
+- [[Microservices-Patterns/AuthZ-Platform-Dynamic-5-Layer-Design|AuthZ Platform: Dynamic 5-Layer Design]]
+- [[Microservices-Patterns/BPMN-CMMN-DMN-Enterprise-Process-Modeling|BPMN / CMMN / DMN: Enterprise Process Modeling]]
+- [[Microservices-Patterns/CQRS-Rust-vs-SpringBoot|CQRS: Rust vs Spring Boot]]
+- [[Microservices-Patterns/Debezium-Postgres-to-MongoDB-Guide|Debezium: PostgreSQL → MongoDB Guide]]
+- [[Microservices-Patterns/Notification-Service-High-Throughput-Never-Miss-Design|Notification Service: High Throughput, Never Miss]]
+- [[Microservices-Patterns/Realtime-Customer-Alert-Never-Fail-System|Realtime Customer Alert: Never-Fail System]]

@@ -156,3 +156,12 @@ Legacy service cần throughput cao, không muốn rewrite:
   - [[PostgreSQL/04-Index-Internals]] — Index types, EXPLAIN, pitfalls
   - [[PostgreSQL/05-Performance-Tuning]] — Memory, vacuum, monitoring, anti-patterns
   - [[PostgreSQL/06-Query-Planner]] — Cost model, join algorithms, plan caching
+
+
+## Bổ sung (P1.5 · 2026-10-25) — Hibernate concept notes (stub ngắn)
+
+> Ba note dưới 1 KB, chưa rõ là stub hay con trỏ; sẽ đối chiếu nội dung ở P2.
+
+- [[concepts/hibernate-cache-architecture|Hibernate Cache Architecture]]
+- [[concepts/hibernate-entity-state-and-merge|Hibernate Entity State & Merge]]
+- [[concepts/hibernate-transaction-flush-clear|Hibernate Transaction, Flush & Clear]]

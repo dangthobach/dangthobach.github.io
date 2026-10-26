@@ -169,3 +169,8 @@ gantt
 - [[JVM-Frameworks-2026/Framework-Decision-Matrix|Framework Decision Matrix]] — khi nào chọn framework nào
 - [[JVM-Frameworks-2026/Spring-to-Quarkus-Cheatsheet|Spring → Quarkus Cheatsheet]] — 12 layers annotation mapping
 - [[JVM-Frameworks-2026/Spring-to-Micronaut-Cheatsheet|Spring → Micronaut Cheatsheet]] — annotation mapping, @Client, Kafka
+
+
+## Bổ sung (P1.5 · 2026-10-25)
+
+- [[JVM-Frameworks-2026/04-RxJava/Project-Reactor-Deep-Dive|Project Reactor Deep Dive]]
