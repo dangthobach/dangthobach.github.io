@@ -274,6 +274,22 @@ describe("link strategies", () => {
       assert.strictEqual(path.transformLink(cur, "a/b/index", opts), "./a/b/")
       assert.strictEqual(path.transformLink(cur, "index", opts), "./")
     })
+
+    test("resolves a unique folder-qualified suffix inside a collection", () => {
+      const nestedOpts: TransformOptions = {
+        strategy: "shortest",
+        allSlugs: [
+          "JVM-Frameworks-2026/00-Weekly-Study-Log",
+          "JVM-Frameworks-2026/01-Quarkus/P1-Foundation/01-CDI-vs-Spring-IoC",
+        ] as FullSlug[],
+      }
+      const cur = "JVM-Frameworks-2026/00-Weekly-Study-Log" as FullSlug
+
+      assert.strictEqual(
+        path.transformLink(cur, "01-Quarkus/P1-Foundation/01-CDI-vs-Spring-IoC", nestedOpts),
+        "../JVM-Frameworks-2026/01-Quarkus/P1-Foundation/01-CDI-vs-Spring-IoC",
+      )
+    })
   })
 
   describe("relative", () => {

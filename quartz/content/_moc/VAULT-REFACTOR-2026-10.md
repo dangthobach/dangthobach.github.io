@@ -234,3 +234,6 @@ SORT updated DESC
 - Chi tiết: [[_moc/VAULT-P2-CLUSTER-MAP]]
 - 2026-10-25 — Cluster 1 (SolidJS) đã lập bản đồ; còn lại 5 cluster. Chưa sửa / xóa / gộp note nào.
 - Phát hiện: `useTransition` của Solid chỉ tồn tại trong bài cũ `05-Async-and-Suspense` → bài cũ **chưa được gộp** cho tới khi ledger hoàn tất.
+- 2026-10-25 — **Cluster 2 (Loom)** đã lập bản đồ: kết luận *tách vai trò, không gộp* (A: khái niệm, C: tham chiếu Java, B: quyết định Loom vs Reactive, D: so sánh đa ngôn ngữ). Sổ claim lỗi thời đã tra nguồn chính (JEP 491, JEP 533 / 543); chưa đính chính các note Java, chờ duyệt.
+- 2026-10-25 — **Cluster 1 (SolidJS) xử lý một phần:** tạo `SolidJS-00-Overview` (sửa link hỏng), thêm mục "Bổ sung (P2)" vào `SolidJS-MOC`, thêm mục "Đính chính" cuối `SolidJS-08-Async-Resources`. Tất cả chỉ append hoặc tạo mới.
+- Phát hiện phiên bản: Solid 2.0 vẫn ở RC (`rc.9`, 2026-09-18); series giữ baseline 1.x.

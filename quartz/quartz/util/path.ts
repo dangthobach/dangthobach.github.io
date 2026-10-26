@@ -237,6 +237,18 @@ export function transformLink(src: FullSlug, target: string, opts: TransformOpti
     let [targetCanonical, targetAnchor] = splitAnchor(canonicalSlug)
 
     if (opts.strategy === "shortest") {
+      // Obsidian commonly stores folder-qualified links relative to the current
+      // note (for example `01-Quarkus/P1/...`) even when the note itself lives
+      // below another collection folder. Resolve a unique path suffix before
+      // falling back to basename matching so those links keep their context.
+      const matchingPathSuffixes = opts.allSlugs.filter(
+        (slug) => slug === targetCanonical || slug.endsWith(`/${targetCanonical}`),
+      )
+
+      if (matchingPathSuffixes.length === 1) {
+        return (resolveRelative(src, matchingPathSuffixes[0]) + targetAnchor) as RelativeURL
+      }
+
       // if the file name is unique, then it's just the filename
       const matchingFileNames = opts.allSlugs.filter((slug) => {
         const parts = slug.split("/")

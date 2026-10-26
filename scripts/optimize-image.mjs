@@ -1,4 +1,4 @@
-import { Jimp } from 'jimp';
+import sharp from 'sharp';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
@@ -10,15 +10,13 @@ const tempPath = resolve(__dirname, '../src/assets/profile-pic-optimized.jpg');
 async function main() {
   try {
     console.log('Optimizing profile picture...');
-    const image = await Jimp.read(inputPath);
-    
-    console.log(`Original dimensions: ${image.width}x${image.height}`);
-    
-    // Resize to width 450px, maintaining aspect ratio
-    image.resize({ w: 450 });
-    
-    // Write out the optimized image as JPEG
-    await image.write(tempPath);
+    const image = sharp(inputPath);
+    const metadata = await image.metadata();
+
+    console.log(`Original dimensions: ${metadata.width}x${metadata.height}`);
+
+    // Resize to width 450px, maintaining aspect ratio, and encode as JPEG.
+    await image.resize({ width: 450 }).jpeg({ quality: 82 }).toFile(tempPath);
     
     // Replace the original file
     fs.copyFileSync(tempPath, inputPath);
@@ -28,6 +26,7 @@ async function main() {
     console.log(`Successfully optimized. New file size: ${(stats.size / 1024).toFixed(2)} KB`);
   } catch (error) {
     console.error('Error during image optimization:', error);
+    process.exitCode = 1;
   }
 }
 

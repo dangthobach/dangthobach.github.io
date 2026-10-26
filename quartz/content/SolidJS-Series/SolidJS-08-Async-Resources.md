@@ -566,3 +566,13 @@ const [data] = createResource(
 ---
 
 *Series: [[SolidJS-Series/SolidJS-MOC|SolidJS Master Index]]*
+
+
+## 🛠️ Đính chính (2026-10-25)
+
+> [!warning] `createResource` không có `signal` (AbortSignal)
+> Ví dụ ở phần Pitfalls dùng `async (id, { signal }) => ...` và ghi "AbortSignal từ SolidJS v1.8+". Theo tài liệu `createResource` của Solid 1.x và type definitions của `solid-js@1.9.12`, tham số thứ hai của fetcher là `{ value, refetching }`; **không có** `signal`, nên đoạn mã đó sẽ không nhận được AbortSignal. Cách hủy request mạng khi tham số đổi cần được kiểm chứng theo tài liệu trước khi áp dụng. Nội dung gốc phía trên được giữ nguyên để đối chiếu.
+> Nguồn: [createResource — tài liệu Solid 1.x](https://docs.solidjs.com/reference/basic-reactivity/create-resource)
+
+> [!info] Solid 2.0
+> `createResource` bị gỡ ở Solid 2.0 (đang ở Release Candidate). Xem [[SolidJS-Series/SolidJS-00-Overview]], mục "Phiên bản và hiện trạng".

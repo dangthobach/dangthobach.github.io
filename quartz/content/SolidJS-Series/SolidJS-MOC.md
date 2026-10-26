@@ -131,3 +131,10 @@ SolidJS-Series/
 
 - [[SolidJS-Series/SolidJS-15-Reactivity-vs-React-vDOM|SolidJS-15: Reactivity vs React vDOM]]
 - Series cũ dạng skeleton (nghi bị thay thế bởi series `SolidJS-xx`, chờ P2 xác nhận): [[SolidJS-Series/00-Roadmap|Roadmap cũ]]
+
+
+## Bổ sung (P2 · 2026-10-25)
+
+- [[SolidJS-Series/SolidJS-00-Overview|00 · Overview & Setup]] — toàn cảnh, phiên bản (1.x ổn định, 2.0 đang RC), bảng API bị ảnh hưởng bởi Solid 2.0
+- [[SolidJS-Series/SolidJS-13-Routing-Layout-SearchState|13 · Routing, Layout & Search State]]
+- [[SolidJS-Series/SolidJS-14-Multiple-Outlets-Pattern|14 · Multiple Outlets Pattern]] (bài ngắn)
