@@ -566,20 +566,6 @@ footer {
   }
 
   .page > #quartz-body .sidebar.right {
-    gap: 0.75rem;
-    position: initial;
-    width: 100%;
-    height: auto;
-    padding: 0;
-    flex-direction: row;
-  }
-
-  .page > #quartz-body .sidebar.right > * {
-    flex: 1;
-    max-height: 24rem;
-  }
-
-  .page > #quartz-body .sidebar.right > .toc {
     display: none;
   }
 }

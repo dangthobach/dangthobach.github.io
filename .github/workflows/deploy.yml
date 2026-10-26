@@ -44,6 +44,11 @@ jobs:
           cd quartz
           npx quartz build
 
+      - name: Check Quartz Links
+        run: |
+          cd quartz
+          npm run check:links
+
       - name: Merge Builds
         run: |
           mkdir -p dist/knowledge
