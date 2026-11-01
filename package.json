@@ -31,6 +31,7 @@
   },
   "overrides": {
     "brace-expansion": "1.1.21",
+    "minimatch": "11.0.3",
     "postcss": "8.5.26",
     "source-map-js": "1.2.2"
   }
