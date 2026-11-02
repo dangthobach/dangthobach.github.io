@@ -6,6 +6,24 @@
       <description>Last 10 notes on Dang Tho Bach&#039;s Knowledge Base</description>
       <generator>Quartz -- quartz.jzhao.xyz</generator>
       <item>
+    <title>Chọn cơ chế khóa bi quan đúng bài toán: FOR UPDATE, advisory lock, DB lease hay Redis?</title>
+    <link>https://dangthobach.github.io/knowledge/Deep-Research-Articles/04-Chon-co-che-khoa-bi-quan-dung-bai-toan</link>
+    <guid>https://dangthobach.github.io/knowledge/Deep-Research-Articles/04-Chon-co-che-khoa-bi-quan-dung-bai-toan</guid>
+    <description><![CDATA[ Chọn cơ chế khóa bi quan đúng bài toán: FOR UPDATE, advisory lock, DB lease hay Redis? Luận đề “Pessimistic locking đã lỗi thời vì giữ connection quá lâu” là một kết luận sai loại. ]]></description>
+    <pubDate>Tue, 03 Nov 2026 00:00:00 GMT</pubDate>
+  </item><item>
+    <title>PostgreSQL locking thực chiến: FOR UPDATE, advisory lock và SKIP LOCKED</title>
+    <link>https://dangthobach.github.io/knowledge/Deep-Research-Articles/05-PostgreSQL-locking-thuc-chien-FOR-UPDATE-advisory-SKIP-LOCKED</link>
+    <guid>https://dangthobach.github.io/knowledge/Deep-Research-Articles/05-PostgreSQL-locking-thuc-chien-FOR-UPDATE-advisory-SKIP-LOCKED</guid>
+    <description><![CDATA[ PostgreSQL locking thực chiến: FOR UPDATE, advisory lock và SKIP LOCKED Luận đề Trong PostgreSQL, primitive tốt nhất thường là primitive nhỏ nhất vẫn giữ được invariant: một atomic UPDATE nếu đủ; FOR UPDATE khi cần đọc rồi kiểm tra nhiều dữ kiện; advisory lock cho tài nguyên logic; SKIP LOCKED cho b... ]]></description>
+    <pubDate>Tue, 03 Nov 2026 00:00:00 GMT</pubDate>
+  </item><item>
+    <title>Lease, fencing token và idempotency cho job dài</title>
+    <link>https://dangthobach.github.io/knowledge/Deep-Research-Articles/06-Lease-fencing-token-va-idempotency-cho-job-dai</link>
+    <guid>https://dangthobach.github.io/knowledge/Deep-Research-Articles/06-Lease-fencing-token-va-idempotency-cho-job-dai</guid>
+    <description><![CDATA[ Lease, fencing token và idempotency cho job dài Luận đề TTL chỉ cho phép hệ thống cấp lại quyền sau một thời gian; nó không dừng worker cũ. ]]></description>
+    <pubDate>Tue, 03 Nov 2026 00:00:00 GMT</pubDate>
+  </item><item>
     <title>B-Tree-Clustered-Index-Random-Write-Cost</title>
     <link>https://dangthobach.github.io/knowledge/Database-Patterns/B-Tree-Clustered-Index-Random-Write-Cost</link>
     <guid>https://dangthobach.github.io/knowledge/Database-Patterns/B-Tree-Clustered-Index-Random-Write-Cost</guid>
@@ -24,19 +42,19 @@
     <description><![CDATA[ Heap, CTID và VACUUM (Database) — PostgreSQL không xếp bảng theo primary key Bài này dành cho ai? Bạn đã biết SQL, đã nghe “PostgreSQL dùng MVCC”, nhưng chưa thấy tận mắt một bảng thật sự nằm trên đĩa như thế nào. ]]></description>
     <pubDate>Mon, 02 Nov 2026 00:00:00 GMT</pubDate>
   </item><item>
-    <title>01-Thiet-ke-index-B-tree-cho-query-thuc-te</title>
+    <title>Thiết kế index B-tree cho query thực tế: từ ORDER BY đến EXPLAIN ANALYZE</title>
     <link>https://dangthobach.github.io/knowledge/Deep-Research-Articles/01-Thiet-ke-index-B-tree-cho-query-thuc-te</link>
     <guid>https://dangthobach.github.io/knowledge/Deep-Research-Articles/01-Thiet-ke-index-B-tree-cho-query-thuc-te</guid>
     <description><![CDATA[ Thiết kế index B-tree cho query thực tế: từ ORDER BY đến EXPLAIN ANALYZE Luận đề Index tốt không phải index “xuất hiện trong EXPLAIN”, mà là index làm giảm công việc vật lý đo được: số entry phải duyệt, số row phải lấy từ heap/clustered table, số row phải sort, lượng I/O và thời gian CPU. ]]></description>
     <pubDate>Mon, 02 Nov 2026 00:00:00 GMT</pubDate>
   </item><item>
-    <title>02-Kafka-work-queue-consumer-group-va-share-group</title>
+    <title>Kafka làm work queue: Consumer Group, rebalance storm và Share Groups 4.x</title>
     <link>https://dangthobach.github.io/knowledge/Deep-Research-Articles/02-Kafka-work-queue-consumer-group-va-share-group</link>
     <guid>https://dangthobach.github.io/knowledge/Deep-Research-Articles/02-Kafka-work-queue-consumer-group-va-share-group</guid>
     <description><![CDATA[ Kafka làm work queue: Consumer Group, rebalance storm và Share Groups 4.x Luận đề Nói “Kafka không phải queue” đã lỗi thời nếu hiểu tuyệt đối: Kafka 4.2 đưa KIP-932 Share Groups lên production-ready, với concurrent consumption trong cùng partition, per-record acknowledgement, delivery count và acqui... ]]></description>
     <pubDate>Mon, 02 Nov 2026 00:00:00 GMT</pubDate>
   </item><item>
-    <title>03-Export-5-trieu-rows-khong-qua-tai-database</title>
+    <title>Export 5 triệu dòng mà không làm quá tải database</title>
     <link>https://dangthobach.github.io/knowledge/Deep-Research-Articles/03-Export-5-trieu-rows-khong-qua-tai-database</link>
     <guid>https://dangthobach.github.io/knowledge/Deep-Research-Articles/03-Export-5-trieu-rows-khong-qua-tai-database</guid>
     <description><![CDATA[ Export 5 triệu dòng mà không làm quá tải database Luận đề Năm triệu row không tự thân là nguy hiểm. ]]></description>
@@ -46,24 +64,6 @@
     <link>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-00-Overview</link>
     <guid>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-00-Overview</guid>
     <description><![CDATA[ SolidJS 00 — Overview &amp; Setup: Bản đồ khóa học solidjs frontend overview phase-0 Mục tiêu: Cho người học nhìn thấy toàn cảnh trước khi vào bài 01: SolidJS là gì, khóa học này dạy phiên bản nào, đi theo thứ tự nào, và những API nào sắp thay đổi khi Solid 2.0 ra bản ổn định. ]]></description>
-    <pubDate>Sun, 25 Oct 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>VAULT-P2-CLUSTER-MAP</title>
-    <link>https://dangthobach.github.io/knowledge/_moc/VAULT-P2-CLUSTER-MAP</link>
-    <guid>https://dangthobach.github.io/knowledge/_moc/VAULT-P2-CLUSTER-MAP</guid>
-    <description><![CDATA[ P2 — Bản đồ cluster trùng chủ đề Chi tiết cho phase P2 của VAULT-REFACTOR-2026-10. Không xóa, không gộp, không ghi đè note cũ. ]]></description>
-    <pubDate>Sun, 25 Oct 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>VAULT-P3-VERSION-BASELINE</title>
-    <link>https://dangthobach.github.io/knowledge/_moc/VAULT-P3-VERSION-BASELINE</link>
-    <guid>https://dangthobach.github.io/knowledge/_moc/VAULT-P3-VERSION-BASELINE</guid>
-    <description><![CDATA[ P3 — Baseline phiên bản stack PDMS (tra ngày 2026-10-25) Mốc đối chiếu cho bước audit Tầng A của VAULT-REFACTOR-2026-10. ]]></description>
-    <pubDate>Sun, 25 Oct 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>VAULT-REFACTOR-2026-10</title>
-    <link>https://dangthobach.github.io/knowledge/_moc/VAULT-REFACTOR-2026-10</link>
-    <guid>https://dangthobach.github.io/knowledge/_moc/VAULT-REFACTOR-2026-10</guid>
-    <description><![CDATA[ Vault Refactor &amp; Currency Audit — 2026-10 Tracker cho việc rà soát kiến thức lỗi thời + refactor hệ thống kiến thức. ]]></description>
     <pubDate>Sun, 25 Oct 2026 00:00:00 GMT</pubDate>
   </item>
     </channel>
