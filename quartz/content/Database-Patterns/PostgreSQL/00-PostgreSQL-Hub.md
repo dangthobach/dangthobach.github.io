@@ -128,3 +128,8 @@ tags: []
 
 *Tags: #postgresql #database #hub #moc*
 *Updated: 2026-05-07 | Articles: 17*
+
+
+## Bổ sung (2026-11-02) — Heap, CTID và VACUUM
+
+- [[Database-Patterns/PostgreSQL/19-Heap-CTID-Vacuum|19 — Heap, CTID và VACUUM]] — PostgreSQL không xếp bảng theo primary key: UPDATE tạo tuple mới, index trỏ CTID, vacuum dọn xác; vì sao bảng phình và index-only scan vẫn chạm bảng. Có 4 lab tự chạy + câu hỏi tự kiểm tra.

@@ -241,12 +241,17 @@ event.metadata.sequence  = vector_clock or Lamport  // for ordering
 > -- Gap in sequence không có nghĩa gap in time
 > -- Multiple nodes → sequence collision
 >
-> -- ✅ Dùng UUIDv7 (time-ordered UUID)
-> -- UUIDv7 = 48-bit timestamp + 12-bit seq + random
-> -- Sortable, globally unique, includes time
+> -- ✅ Dùng UUIDv7 (time-ordered UUID, RFC 9562)
+> -- UUIDv7 = 48-bit unix_ts_ms + 4-bit version + 12-bit rand_a + 2-bit variant + 62-bit rand_b
+> -- Sortable theo thời gian (ms), globally unique
 > SELECT gen_random_uuid();          -- UUIDv4 (no order)
-> SELECT uuid_generate_v7();         -- UUIDv7 (time-ordered)
+> SELECT uuidv7();                   -- UUIDv7 (time-ordered) — built-in từ PostgreSQL 18
+> -- PostgreSQL ≤ 17: sinh ở application hoặc dùng extension.
+> -- Extension uuid-ossp KHÔNG có v7 và KHÔNG có hàm uuid_generate_v7().
 > ```
+>
+> ⚠️ UUIDv7 chỉ là *k-sortable*: timestamp lấy từ wall clock của từng máy, nên **không** dùng để suy ra thứ tự nhân quả giữa các node — việc đó thuộc về Lamport / Vector / HLC (các mục phía trên).
+> Đính chính 2026-11-02: bản trước ghi `uuid_generate_v7()` (hàm không tồn tại trong `uuid-ossp`). Chi tiết ID strategy: [[Database-Patterns/Chon-Kieu-ID-He-Thong-Hien-Dai|Chọn kiểu ID cho hệ thống hiện đại]].
 
 > **Tip 2 — NTP sync check**
 > ```bash

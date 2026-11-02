@@ -310,10 +310,14 @@ Shard 1: INSERT → id=1, 2, 3, 4... ← CONFLICT!
 
 -- Solutions:
 -- 1. Snowflake ID (Twitter): timestamp + datacenter + sequence
+--    (đổi lại: mỗi generator đang sống cần workerID duy nhất + đồng hồ không lùi)
 -- 2. UUID v4: globally unique, không sortable (index fragmentation)
--- 3. UUID v7: time-ordered, globally unique (PG 17+)
+-- 3. UUID v7 / ULID: time-ordered, globally unique
+--    (PostgreSQL 18+ có uuidv7() built-in; PG ≤ 17: sinh ở application hoặc extension)
 -- 4. Centralized ID service (bottleneck!)
 ```
+
+> Phân tích đầy đủ 4 lựa chọn: [[Database-Patterns/Chon-Kieu-ID-He-Thong-Hien-Dai|Chọn kiểu ID cho hệ thống hiện đại]]. Đính chính 2026-11-02: bản trước ghi UUID v7 built-in ở "PG 17+" — đúng là **PostgreSQL 18**.
 
 ---
 
@@ -379,6 +383,12 @@ Option C: Avoid cross-shard writes by design
 // Snowflake ID (giải pháp phổ biến nhất)
 // Format: 41-bit timestamp | 10-bit node_id | 12-bit sequence
 // ~4096 IDs/ms per node, sortable, 69 years
+//
+// ⚠️ Tính duy nhất là CÓ ĐIỀU KIỆN:
+//   1. nodeId phải duy nhất giữa mọi instance ĐANG SỐNG (K8s: lease/StatefulSet ordinal,
+//      đừng hash IP — 30 node với 10 bit ≈ 35% xác suất trùng)
+//   2. Đồng hồ không được lùi (NTP step, VM migration) → phải phát hiện và chờ/từ chối
+//   3. EPOCH + bit layout bất biến; ra API dạng string (long > 2^53 làm tròn trong JavaScript)
 
 // Spring Boot implementation (Twitter Snowflake):
 @Component
@@ -389,6 +399,11 @@ public class SnowflakeIdGenerator {
 
     public synchronized long nextId() {
         long timestamp = System.currentTimeMillis();
+        if (timestamp < lastTimestamp) {
+            // đồng hồ lùi → sinh tiếp sẽ có thể trùng ID đã cấp
+            throw new IllegalStateException(
+                "Clock moved backwards by " + (lastTimestamp - timestamp) + " ms");
+        }
         if (timestamp == lastTimestamp) {
             sequence = (sequence + 1) & 0xFFF;  // 12 bits
             if (sequence == 0) {
@@ -403,11 +418,17 @@ public class SnowflakeIdGenerator {
         return ((timestamp - EPOCH) << 22) | (nodeId << 12) | sequence;
     }
 }
-
-// PostgreSQL 17+: UUID v7 (built-in)
-SELECT gen_random_uuid();         -- UUID v4 (random)
--- UUID v7 requires PG17+ or extension
 ```
+
+```sql
+-- PostgreSQL 18+: UUID v7 built-in
+SELECT uuidv7();                  -- UUID v7 (time-ordered)
+SELECT gen_random_uuid();         -- UUID v4 (random); PG 18 thêm alias uuidv4()
+-- PostgreSQL ≤ 17: không có built-in v7 → sinh ở application hoặc dùng extension
+-- (uuid-ossp KHÔNG có v7)
+```
+
+> Đầy đủ nghĩa vụ workerID, clock rollback và so sánh với UUIDv7/ULID: [[Database-Patterns/Chon-Kieu-ID-He-Thong-Hien-Dai|Chọn kiểu ID cho hệ thống hiện đại]].
 
 ---
 
@@ -535,3 +556,8 @@ Recommended approach nếu cần scale:
 
 *Tags: #postgresql #sharding #scaling #partitioning #distributed-systems*  
 *Created: 2026-05-06 | Difficulty: ⭐⭐⭐⭐*
+
+
+## Xem thêm (2026-11-02)
+
+- [[Database-Patterns/Chon-Kieu-ID-He-Thong-Hien-Dai|Chọn kiểu ID cho hệ thống hiện đại]] — phân tích đầy đủ Snowflake (nghĩa vụ workerID, clock rollback), UUIDv7/ULID và `BINARY(16)`. Lưu ý: `uuidv7()` có từ **PostgreSQL 18**, không phải 17 (xem mục "Đính chính" trong note đó).

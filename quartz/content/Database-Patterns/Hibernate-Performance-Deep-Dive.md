@@ -3049,8 +3049,11 @@ private Long id;
 
 // ✅ UUID — distributed, không cần sequence
 @Id
-@UuidGenerator  // Hibernate 6.2+
+@UuidGenerator(style = UuidGenerator.Style.VERSION_7)  // time-ordered, RFC 9562
 private UUID id;
+// Style.RANDOM (cũng là AUTO) = UUIDv4 → ngẫu nhiên, hại B-tree ở bảng lớn
+// Style.VERSION_7 có trong javadoc Hibernate 7.0; một số nguồn nói đã có từ 6.5
+//   → đối chiếu theo phiên bản đang dùng
 // Hoặc legacy:
 @Id
 @GeneratedValue(generator = "uuid2")
@@ -3058,10 +3061,16 @@ private UUID id;
 @Column(columnDefinition = "uuid", updatable = false, nullable = false)
 private UUID id;
 
-// ⚠️ UUID index performance: UUID là random → B-tree index fragmentation cao
-// → PostgreSQL: dùng gen_random_uuid() (v4) hoặc uuid_generate_v7() (ordered)
-// → Hibernate: @UuidGenerator(style = UuidGenerator.Style.TIME) cho ordered UUID
+// ⚠️ UUID index performance: UUIDv4 là random → B-tree index fragmentation cao
+// → PostgreSQL 18+: DEFAULT uuidv7() (built-in). PG ≤ 17: sinh ở application hoặc extension;
+//   extension uuid-ossp KHÔNG có v7 (chỉ v1/v3/v4/v5) và KHÔNG có hàm uuid_generate_v7()
+// → Hibernate: dùng Style.VERSION_7 cho UUID có thứ tự.
+//   KHÔNG dùng Style.TIME cho mục đích này: TIME là kiểu v1 (kèm IP), time_low đứng đầu
+//   nên không sort theo thời gian theo byte, và có thể là bottleneck (synchronized counter)
 ```
+
+> [!bug] Đã đính chính 2026-11-02
+> Bản trước ghi `uuid_generate_v7()` và `Style.TIME` cho "ordered UUID" — cả hai đều sai. Phân tích đầy đủ (InnoDB, `BINARY(16)`, Snowflake): [[Database-Patterns/Chon-Kieu-ID-He-Thong-Hien-Dai|Chọn kiểu ID cho hệ thống hiện đại]].
 
 ---
 
@@ -7478,3 +7487,7 @@ Relationship là gì?
 
 > **Related notes:** [[Hibernate-Reactive-Deep-Dive]] · [[Spring-Data-R2DBC-Deep-Dive]] · [[00-Hub-Database-Persistence]]
 > **Tags:** #hibernate #jpa #cascade #collection #java16 #orm #data-loss #production-bug #bidirectional
+# 📋 Entity Field Definition — Những Lưu Ý Quan Trọng
+## 4. `@Id` và Strategy — Ảnh Hưởng Đến Performance
+
+<!-- Heading dư do thao tác patch ngày 2026-11-02 (nội dung đã được sửa đúng ở mục "4. @Id và Strategy" phía trên). An toàn để xoá 2 dòng heading cuối file này. -->

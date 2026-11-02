@@ -113,3 +113,15 @@ updated: 2026-05-06
 
 *Tags: #moc #database #postgresql #sql*
 *Updated: 2026-05-06*
+
+
+## Bổ sung (2026-11-02) — ID strategy
+
+> Cách chọn kiểu ID: auto-increment vs UUIDv4 vs Snowflake vs UUIDv7/ULID (`BINARY(16)`), kèm cơ chế InnoDB/B+Tree.
+
+- [[Database-Patterns/Chon-Kieu-ID-He-Thong-Hien-Dai|Chọn kiểu ID cho hệ thống hiện đại (Database)]]
+  → 4 giới hạn của auto-increment · vì sao UUIDv4 làm hỏng InnoDB · nghĩa vụ workerID của Snowflake · vì sao UUIDv7/ULID lưu BINARY(16) là mặc định cho hệ mới.
+- [[Database-Patterns/B-Tree-Clustered-Index-Random-Write-Cost|B-tree, clustered index và cái giá của ghi random (Database)]]
+  → page · buffer pool · page split · change buffer · phân mảnh nối thành một mạch; cơ chế nền của bài ID strategy phía trên.
+- [[Database-Patterns/PostgreSQL/19-Heap-CTID-Vacuum|Heap, CTID và VACUUM (Database)]]
+  → PostgreSQL không xếp bảng theo PK: UPDATE tạo tuple mới, index trỏ CTID, vacuum dọn xác; vì sao bảng phình và index-only scan vẫn chạm bảng.

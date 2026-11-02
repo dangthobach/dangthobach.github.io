@@ -49,3 +49,10 @@ updated: 2026-05-01
 
 - [[Performance-System-Programming/03-Data-Format-Parsing/01-Calamine-Cross-Language-Benchmark|Calamine Cross-Language Benchmark]]
 - [[Performance-System-Programming/03-Data-Format-Parsing/02-Read-Write-Separation-Type-Conversion|Read/Write Separation & Type Conversion]]
+
+
+## Bổ sung (2026-11-02) — ID strategy ở mức B+Tree
+
+- [[Database-Patterns/Chon-Kieu-ID-He-Thong-Hien-Dai|Chọn kiểu ID cho hệ thống hiện đại (Database)]] — PK ngẫu nhiên vs PK theo thời gian trên clustered index (InnoDB): page split, fill factor, buffer pool, PK nhân vào secondary index.
+- [[Database-Patterns/B-Tree-Clustered-Index-Random-Write-Cost|B-tree, clustered index và cái giá của ghi random (Database)]] — mạch nhân quả từ page → buffer pool → page split → change buffer → phân mảnh, kèm cách đo trên InnoDB/PostgreSQL.
+- [[Database-Patterns/PostgreSQL/19-Heap-CTID-Vacuum|Heap, CTID và VACUUM (Database)]] — phía PostgreSQL của câu chuyện lưu trữ: heap + index trỏ CTID, tuple versioning, vacuum, bloat, visibility map; đối trọng với InnoDB clustered index.

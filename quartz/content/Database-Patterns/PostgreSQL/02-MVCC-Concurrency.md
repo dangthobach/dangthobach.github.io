@@ -446,3 +446,8 @@ ORDER BY age(relfrozenxid) DESC;
 
 *Tags: #postgresql #mvcc #concurrency #vacuum #internals*  
 *Created: 2026-05-06 | Difficulty: ⭐⭐⭐⭐*
+
+
+## Xem thêm (2026-11-02)
+
+- [[Database-Patterns/PostgreSQL/19-Heap-CTID-Vacuum|19 — Heap, CTID và VACUUM]] — bản dễ hiểu, có lab, "chạm vào vật lý" của các khái niệm trong note này (page, line pointer, CTID, HOT pruning, 3 pha vacuum, visibility map, vì sao Index-Only Scan vẫn có Heap Fetches).
