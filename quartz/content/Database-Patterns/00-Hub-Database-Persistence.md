@@ -171,3 +171,4 @@ Legacy service cần throughput cao, không muốn rewrite:
 
 - [[Database-Patterns/Chon-Kieu-ID-He-Thong-Hien-Dai|Chọn kiểu ID cho hệ thống hiện đại]] — Auto-increment vs UUIDv4 vs Snowflake vs UUIDv7/ULID; ảnh hưởng tới batch insert (Hibernate), index/WAL và sharding.
 - [[Database-Patterns/B-Tree-Clustered-Index-Random-Write-Cost|B-tree, clustered index và cái giá của ghi random]] — cơ chế nền của việc chọn ID: page, buffer pool, page split, change buffer, phân mảnh.
+- [[Database-Patterns/PostgreSQL/19-Heap-CTID-Vacuum|Heap, CTID và VACUUM]] — PostgreSQL không xếp bảng theo PK: UPDATE tạo tuple mới, index trỏ CTID, vacuum dọn xác, bloat và index-only scan; có lab, Usage, Mistakes và nguồn dẫn chứng.

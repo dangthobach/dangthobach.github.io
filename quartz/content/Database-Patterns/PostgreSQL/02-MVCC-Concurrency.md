@@ -297,45 +297,59 @@ ALTER TABLE documents SET (
 
 ## HOT Update — Optimization quan trọng
 
-Mỗi UPDATE bình thường phải update cả heap tuple **và** tất cả indexes pointing to it. Với table nhiều indexes, UPDATE rất tốn kém.
+Mỗi UPDATE bình thường tạo tuple mới ở địa chỉ (CTID) mới, nên phải **thêm một index entry mới vào tất cả index** của bảng (entry cũ ở lại chờ vacuum dọn). Với table nhiều indexes, UPDATE rất tốn kém.
 
-**HOT = Heap-Only Tuple** — optimization cho UPDATE không thay đổi indexed columns.
+**HOT = Heap-Only Tuple** — optimization cho UPDATE không làm đổi giá trị của cột nào có index.
 
 ```
 Normal UPDATE (balance thay đổi, balance là indexed):
   ┌─────────────────────────────────────────────┐
   │  Heap page: mark old dead, insert new       │
-  │  Index₁ (balance): delete old entry,        │
-  │                     insert new entry        │
-  │  Index₂ (status):  delete old entry,        │
-  │                     insert new entry        │
+  │  Index₁ (balance): giữ entry cũ,            │
+  │                     THÊM entry mới → CTID mới│
+  │  Index₂ (status):  giữ entry cũ,            │
+  │                     THÊM entry mới → CTID mới│
   └─────────────────────────────────────────────┘
-  → N index updates = expensive
+  → N index updates = expensive, và sinh rác trong cả N index
 
 HOT UPDATE (chỉ balance thay đổi, nhưng balance NOT indexed):
   ┌─────────────────────────────────────────────┐
   │  Heap page: mark old dead, insert new       │
-  │  → old tuple's ctid points to new tuple     │
-  │  Indexes: NO CHANGES! (chỉ trỏ vào page,   │
-  │            follow ctid chain tại runtime)   │
+  │  → old tuple's t_ctid points to new tuple   │
+  │  Indexes: NO CHANGES! Entry cũ vẫn trỏ vào  │
+  │  CTID của tuple GỐC của chuỗi; runtime đi   │
+  │  theo chuỗi t_ctid trong cùng page          │
   └─────────────────────────────────────────────┘
   → 0 index updates = much cheaper
 ```
 
 ```
-HOT chain:
-  Index → Slot 1 (dead, ctid→Slot 2) → Slot 2 (dead, ctid→Slot 3) → Slot 3 (live)
-  VACUUM prunes HOT chains: Index → Slot 3 (live)
+HOT chain (trong CÙNG một page):
+  Index entry ──► Slot 1 (dead, t_ctid→Slot 2) ──► Slot 2 (dead, t_ctid→Slot 3) ──► Slot 3 (live, heap-only)
+
+Sau khi PRUNING (page pruning):
+  Index entry ──► Slot 1 = LP_REDIRECT ──► Slot 3 (live)
+  (Slot 2 và dữ liệu của tuple dead được giải phóng; index KHÔNG phải sửa gì — vẫn trỏ Slot 1)
 ```
 
-**Điều kiện HOT update:**
-1. UPDATE column không phải indexed column
-2. New tuple fit vào cùng page với old tuple (`fillfactor` ảnh hưởng điều này)
+> [!bug] Đính chính 2026-11-02
+> Bản trước viết *"VACUUM prunes HOT chains: Index → Slot 3"*. Chính xác hơn: (1) **pruning không chỉ do VACUUM** — khi page gần đầy, *bất kỳ* truy vấn nào chạm page cũng có thể tỉa chuỗi HOT (không cần quét index); (2) index entry **không** được sửa để trỏ Slot 3 — slot gốc chuyển thành **line pointer kiểu `REDIRECT`** trỏ sang tuple sống. Giải thích từng bước kèm lab: [[Database-Patterns/PostgreSQL/19-Heap-CTID-Vacuum|19 — Heap, CTID và VACUUM]] (§4.2).
 
-```ini
--- Để HOT update có space để hoạt động:
-CREATE TABLE hot_heavy_table (...) WITH (fillfactor = 70);
--- 30% space dành cho HOT updates trên cùng page
+**Điều kiện HOT update:**
+1. **Không cột nào có index bị đổi giá trị** — tính theo *giá trị thực sự đổi*, không phải theo danh sách `SET`; gồm cả cột nằm trong `INCLUDE`, cột dùng trong biểu thức/partial index. (Từ PostgreSQL 16, đổi cột chỉ nằm trong index kiểu *summarizing* như BRIN không còn chặn HOT — đối chiếu release notes bản bạn dùng.)
+2. New tuple fit vào **cùng page** với old tuple (`fillfactor` ảnh hưởng điều này)
+
+```sql
+-- Để HOT update có chỗ hoạt động:
+CREATE TABLE hot_heavy_table (...) WITH (fillfactor = 85);
+-- Chừa ~15% mỗi page cho tuple mới (70 là rất tay; 80–90 thường là điểm khởi đầu — hãy đo hot_pct).
+-- Lưu ý: ALTER TABLE ... SET (fillfactor=...) CHỈ áp cho page MỚI; muốn áp cho page cũ phải viết lại bảng
+-- (VACUUM FULL / pg_repack / REPACK).
+
+-- Đo tỉ lệ HOT thật:
+SELECT relname, n_tup_upd, n_tup_hot_upd,
+       round(100.0 * n_tup_hot_upd / NULLIF(n_tup_upd, 0), 1) AS hot_pct
+FROM pg_stat_user_tables WHERE relname = 'hot_heavy_table';
 ```
 
 ---

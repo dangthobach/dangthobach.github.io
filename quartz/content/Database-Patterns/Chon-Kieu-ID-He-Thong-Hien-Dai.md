@@ -409,3 +409,170 @@ Bảng chỉ nằm trên 1 DB, nội bộ, không lộ ra ngoài?
 ## Cơ chế nền (bổ sung 2026-11-02)
 
 - [[Database-Patterns/B-Tree-Clustered-Index-Random-Write-Cost|B-tree, clustered index và cái giá của ghi random]] — page, buffer pool, page split, change buffer, phân mảnh: vì sao thứ tự khóa quyết định chi phí ghi (cơ sở của §2 trong bài này).
+
+
+---
+
+## 🛠 Usage — công thức dùng ngay
+
+### U1. Dịch vụ mới trên MySQL/InnoDB: UUIDv7 + `BINARY(16)` + batch insert
+
+```java
+// Entity (Hibernate 7.x; với 6.x đối chiếu javadoc phiên bản đang dùng — xem R9)
+@Entity
+public class Document {
+    @Id
+    @UuidGenerator(style = UuidGenerator.Style.VERSION_7)   // time-ordered, RFC 9562
+    private UUID id;                                         // MySQL dialect thường map sang BINARY(16)
+
+    @Column(nullable = false, unique = true, length = 50)
+    private String code;                                     // business key tách khỏi PK
+}
+```
+
+```java
+// Khi tự thao tác byte (JdbcTemplate, ETL): big-endian → timestamp đứng đầu → thứ tự byte = thứ tự thời gian
+static byte[] toBytes(UUID u) {
+    return ByteBuffer.allocate(16).putLong(u.getMostSignificantBits())
+                                  .putLong(u.getLeastSignificantBits()).array();
+}
+static UUID fromBytes(byte[] b) {
+    ByteBuffer bb = ByteBuffer.wrap(b);
+    return new UUID(bb.getLong(), bb.getLong());
+}
+// Sinh v7 ngoài Hibernate:  UuidCreator.getTimeOrderedEpoch()  (uuid-creator)
+```
+
+```yaml
+# Vì ID biết trước INSERT nên batch hoạt động — nhớ bật ở cả ORM lẫn driver
+spring.jpa.properties.hibernate.jdbc.batch_size: 100
+spring.jpa.properties.hibernate.order_inserts: true
+spring.jpa.properties.hibernate.order_updates: true
+# MySQL Connector/J: thêm rewriteBatchedStatements=true vào JDBC URL
+# PostgreSQL JDBC:    thêm reWriteBatchedInserts=true
+```
+
+### U2. PostgreSQL 18+: mặc định ở schema + trích timestamp
+
+```sql
+CREATE TABLE document (
+    id         uuid PRIMARY KEY DEFAULT uuidv7(),     -- lưới an toàn cho INSERT ngoài ORM (ETL, script)
+    code       text NOT NULL UNIQUE,
+    created_at timestamptz NOT NULL DEFAULT now()
+);
+
+SELECT uuid_extract_timestamp(id) AS id_ts, created_at FROM document LIMIT 5;  -- đối chiếu lệch giờ
+```
+
+### U3. Dual ID — PK nội bộ có locality, public ID không lộ thời gian
+
+```sql
+CREATE TABLE case_file (
+    id         uuid PRIMARY KEY DEFAULT uuidv7(),           -- clustering/FK nội bộ
+    public_id  uuid NOT NULL DEFAULT gen_random_uuid(),     -- v4, đưa ra API/URL
+    CONSTRAINT uk_case_file_public UNIQUE (public_id)
+);
+-- API: GET /cases/{public_id}  → tra public_id → id nội bộ cho mọi join/FK
+```
+
+### U4. Snowflake: cấp `workerID` bằng lease trong DB (nghĩa vụ #1 và #3 của §3.2)
+
+```sql
+CREATE TABLE worker_lease (
+    worker_id   smallint    PRIMARY KEY CHECK (worker_id BETWEEN 0 AND 1023),
+    owner       text,
+    lease_until timestamptz NOT NULL DEFAULT '-infinity',
+    last_ts_ms  bigint      NOT NULL DEFAULT 0          -- timestamp ID cuối cùng chủ cũ đã phát
+);
+
+-- Acquire: lấy một worker_id đã hết hạn, KHÔNG tranh với instance khác
+UPDATE worker_lease SET owner = :me, lease_until = now() + interval '30 seconds'
+WHERE worker_id = (SELECT worker_id FROM worker_lease
+                   WHERE lease_until < now() ORDER BY worker_id LIMIT 1 FOR UPDATE SKIP LOCKED)
+RETURNING worker_id, last_ts_ms;
+```
+
+Quy tắc đi kèm: (a) gia hạn lease định kỳ (≈ ⅓ TTL) và **ngừng phát ID ngay khi mất lease**; (b) chủ mới phải chờ cho tới khi `now_ms > last_ts_ms` trước khi phát ID; (c) định kỳ ghi `last_ts_ms` khi gia hạn lease.
+
+### U5. Đổi PK `BIGINT` → UUIDv7 trên bảng đã có dữ liệu (expand/contract, không ALTER in-place)
+
+| Bước | Việc làm | Vì sao an toàn |
+|---|---|---|
+| 1 | Thêm cột `new_id` (nullable), backfill theo lô nhỏ | Không giữ khóa dài, không rewrite bảng |
+| 2 | Tạo unique index trên `new_id` bằng `CREATE INDEX CONCURRENTLY` (PostgreSQL) | Không chặn ghi |
+| 3 | Thêm cột FK mới ở bảng con, backfill, dual-write | Hai khóa cùng tồn tại trong giai đoạn chuyển |
+| 4 | Chuyển đọc sang `new_id`, theo dõi lỗi | Rollback = đọc lại khóa cũ |
+| 5 | Đổi PK/FK, bỏ cột cũ trong một lần deploy riêng | Bước phá hủy tách biệt và đảo ngược được tới phút cuối |
+
+Chiến lược migration dài hạn và governance: [[Database-Patterns/DBMigration/DBMigration-06-Flyway-TechLead-Governance|Flyway Governance]].
+
+### U6. Bài kiểm thử "ID có thật sự tăng theo thời gian không?"
+
+```sql
+-- Kỳ vọng: chỉ vài ca cùng mili-giây hoặc lệch đồng hồ giữa node
+SELECT COUNT(*) AS out_of_order
+FROM (SELECT id, LAG(id) OVER (ORDER BY created_at, id) AS prev_id
+      FROM document ORDER BY created_at LIMIT 100000) t
+WHERE prev_id > id;
+```
+
+---
+
+## ⚠️ Mistakes — lỗi thường gặp (cơ chế · cách phát hiện · cách sửa)
+
+| # | Lỗi | Vì sao sai (cơ chế) | Cách phát hiện | Cách sửa |
+|---|---|---|---|---|
+| 1 | Lưu UUID dạng `CHAR(36)`/`VARCHAR(36)` | PK nhân vào mọi secondary index (InnoDB) ⇒ 36 B thay vì 16 B (≈ ×2,25); so sánh qua collation, không phải `memcmp` | `SHOW CREATE TABLE`; so `mysql.innodb_index_stats` (stat `size`) với dự kiến | Dùng `BINARY(16)` (MySQL) hoặc `uuid` (PostgreSQL) |
+| 2 | UUIDv4 làm PK InnoDB cho bảng lớn | Chèn ngẫu nhiên ⇒ split, fill ≈ ½–15/16, vách đá buffer pool (xem bài B-tree §4–§7) | `index_page_splits` tăng nhanh; `Innodb_buffer_pool_reads` / `read_requests` cao khi bảng > RAM | UUIDv7/ULID cho PK; v4 chỉ làm `public_id` |
+| 3 | Bật `swap_flag=1` của `UUID_TO_BIN` cho UUIDv7/ULID | `swap_flag` hoán đổi trường thời gian để *sửa* UUIDv1; áp vào v7 sẽ làm xáo timestamp | Chạy U6: `out_of_order` cao bất thường | `swap_flag=0` (mặc định) cho v7/ULID |
+| 4 | Dùng `Style.TIME` hoặc `uuid_generate_v7()` cho "ordered UUID" | `TIME` là kiểu v1 (time_low đứng đầu → không sort theo byte); `uuid-ossp` không có v7 | Chạy U6 | `Style.VERSION_7`; `uuidv7()` (PG 18+) hoặc sinh ở application |
+| 5 | Snowflake: `workerId = hash(IP)` | Xác suất trùng tăng theo birthday paradox: 30 node/1024 ô ≈ 35 % | Hai instance cùng `workerId` (log khi khởi động) | Lease (U4) hoặc StatefulSet ordinal |
+| 6 | Snowflake: không phát hiện đồng hồ lùi | `now < lastTs` ⇒ sinh lại cặp (timestamp, worker, sequence) đã dùng | Metric "clock moved backwards"; unique violation hiếm, khó tái hiện | Chờ/từ chối khi lùi (code §3.2), giám sát NTP offset |
+| 7 | Tái dùng `workerId` ngay sau khi pod chết | Chủ mới có thể phát lại timestamp chủ cũ vừa dùng | So `last_ts_ms` với đồng hồ lúc khởi động | Cooldown tới `last_ts_ms` (U4-b) |
+| 8 | Trả Snowflake `long` ra JSON số | JavaScript chỉ chính xác tới 2^53 ⇒ làm tròn chữ số cuối | ID ở client khác ID ở server | Serialize dạng **string** |
+| 9 | Dùng UUIDv7 làm token/secret | RFC 9562 cảnh báo không coi UUID là capability bảo mật; v7 lộ timestamp, ~74 bit ngẫu nhiên/ms | Review chỗ dùng ID làm "link bí mật" | Token ngẫu nhiên mật mã (≥128 bit từ CSPRNG) tách khỏi ID |
+| 10 | Suy luận thứ tự nhân quả từ ID (v7/Snowflake) | Timestamp lấy từ wall clock của từng máy, có skew ⇒ chỉ k-sortable | Test với hai node lệch giờ | Dùng logical clock/version ([[concepts/distributed-clocks-ordering\|Distributed Clocks]]) |
+| 11 | Shard theo *prefix* của ID thời gian | Mọi insert mới rơi vào cùng shard ⇒ hotspot | Một shard CPU/IO cao, các shard khác rảnh | Shard theo hash của khóa ([[Database-Patterns/PostgreSQL/10-Sharding-When-Why-Pitfalls\|Sharding]]) |
+| 12 | Dùng sequence/identity làm số chứng từ liên tục | Sequence không rollback ⇒ có gap; cache sequence ⇒ gap khi restart | Truy vấn tìm khoảng trống | Bảng đánh số riêng có khóa, hoặc chấp nhận gap |
+| 13 | `GenerationType.IDENTITY` rồi bật `batch_size` | Hibernate phải INSERT ngay để lấy ID ⇒ batch bị vô hiệu | Bật SQL log: mỗi row một câu INSERT | `SEQUENCE` + `allocationSize`, hoặc UUID sinh ở app |
+| 14 | Bỏ unique constraint vì "ID gần như không trùng" | Bug generator/clock/sao chép dữ liệu vẫn tạo trùng; hỏng âm thầm | Không phát hiện được nếu không có ràng buộc | Luôn `PRIMARY KEY`/`UNIQUE` làm lưới an toàn |
+| 15 | `ALTER TABLE ... MODIFY id` đổi kiểu PK trực tiếp trên bảng lớn | Rewrite toàn bảng + dựng lại mọi index, khóa/tốn I/O | Ước lượng thời gian bằng bản sao | Expand/contract (U5) |
+
+---
+
+## 📚 Tài liệu dẫn chứng
+
+### Bảng: khẳng định → nguồn
+
+| Khẳng định trong bài | Nguồn |
+|---|---|
+| Insert tuần tự ⇒ page ≈ 15/16 đầy; ngẫu nhiên ⇒ ½ … 15/16; `innodb_fill_factor` | R1 |
+| Secondary index lưu PK; PK dài làm mọi index to | R2 |
+| `swap_flag` của `UUID_TO_BIN` dành cho UUIDv1 | R3 |
+| Bố cục UUIDv7 (48 + 4 + 12 + 2 + 62 bit); UUID không phải capability bảo mật | R4 |
+| Bố cục ULID (48 + 80 bit, Crockford Base32) | R5 |
+| Bố cục Snowflake 41/10/12 | R6 |
+| `uuidv7()`, `uuid_extract_timestamp()` có từ PostgreSQL 18; `uuid-ossp` chỉ v1/v3/v4/v5 | R7, R8 |
+| `UuidGenerator.Style.VERSION_7` | R9 |
+| `IDENTITY` ngăn batch insert | R10 |
+| Xác suất trùng workerID (birthday problem) | R11 |
+| Đồng hồ vật lý không đủ để suy ra thứ tự nhân quả | R12 |
+| Kích thước PK ảnh hưởng chi phí B-Tree, locality của khóa | R13 |
+
+### Danh mục nguồn
+
+- **R1** — MySQL 8.4 Reference Manual, *The Physical Structure of an InnoDB Index*: https://dev.mysql.com/doc/refman/8.4/en/innodb-physical-structure.html
+- **R2** — MySQL 8.4 Reference Manual, *Clustered and Secondary Indexes*: https://dev.mysql.com/doc/refman/8.4/en/innodb-index-types.html
+- **R3** — MySQL 8.4 Reference Manual, `UUID_TO_BIN()`: https://dev.mysql.com/doc/refman/8.4/en/miscellaneous-functions.html#function_uuid-to-bin
+- **R4** — RFC 9562, *Universally Unique IDentifiers (UUIDs)* (có mục Security Considerations): https://www.rfc-editor.org/rfc/rfc9562
+- **R5** — ULID specification: https://github.com/ulid/spec
+- **R6** — Twitter Snowflake (kho lưu trữ): https://github.com/twitter-archive/snowflake
+- **R7** — PostgreSQL docs, *UUID Functions*: https://www.postgresql.org/docs/current/functions-uuid.html · Release notes 18: https://www.postgresql.org/docs/release/18.0/
+- **R8** — PostgreSQL docs, `uuid-ossp`: https://www.postgresql.org/docs/current/uuid-ossp.html
+- **R9** — Hibernate ORM 7.0 javadoc, `UuidGenerator.Style`: https://docs.jboss.org/hibernate/orm/7.0/javadocs/org/hibernate/annotations/UuidGenerator.Style.html
+- **R10** — Hibernate User Guide (identifier generators): https://docs.hibernate.org/orm/current/userguide/html_single/Hibernate_User_Guide.html
+- **R11** — Birthday problem: https://en.wikipedia.org/wiki/Birthday_problem
+- **R12** — L. Lamport, *Time, Clocks, and the Ordering of Events in a Distributed System*, CACM 21(7), 1978.
+- **R13** — M. Kleppmann, *Designing Data-Intensive Applications*, ch. 3 (Storage and Retrieval) · G. Graefe, *Modern B-Tree Techniques*, Foundations and Trends in Databases, 2011.
+
+> Quy ước của vault cho các article triển khai: mỗi bài có đủ **Usage** (dùng ngay), **Mistakes** (cơ chế · phát hiện · sửa) và **Tài liệu dẫn chứng** (khẳng định → nguồn). Số liệu mô hình hóa luôn ghi rõ là minh họa; số đo thật phải lấy từ hệ thống của bạn.

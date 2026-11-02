@@ -422,3 +422,193 @@ SELECT wal_fpi, wal_bytes FROM pg_stat_wal;     -- so sánh trước/sau khi đ�
 ---
 
 *Tags: #database #b-tree #clustered-index #innodb #buffer-pool #page-split #change-buffer #fragmentation*
+
+
+---
+
+## 🛠 Usage — công thức dùng ngay
+
+### U1. Ước lượng fanout, chiều cao và kích thước index *trước khi* tạo bảng
+
+```python
+def estimate(rows, row_bytes, key_bytes, fill=15/16, page=16384, ptr=4, hdr=6):
+    """Mô hình bậc nhất cho InnoDB (page 16 KB). hdr ≈ header record nhánh; số liệu là ƯỚC LƯỢNG."""
+    usable        = page * fill
+    rows_per_leaf = int(usable // row_bytes)
+    leaves        = -(-rows // rows_per_leaf)                     # ceil
+    fanout        = int(usable // (key_bytes + ptr + hdr))
+    levels, n = 1, leaves
+    while n > 1:
+        n = -(-n // fanout); levels += 1
+    upper_pages = sum(-(-leaves // fanout**k) for k in range(1, levels))
+    return dict(rows_per_leaf=rows_per_leaf, leaf_pages=leaves, fanout=fanout, height=levels,
+                leaf_gb=round(leaves * page / 1e9, 1), upper_mb=round(upper_pages * page / 1e6))
+
+print(estimate(200_000_000, 220, 16))                 # sequential, fill 15/16
+print(estimate(200_000_000, 220, 16, fill=0.69))      # random, fill ≈ ln2
+```
+
+So sánh hai dòng để thấy hệ số phình của index khi khóa ngẫu nhiên (≈ ×1,3–1,4 ở ví dụ này), rồi đối chiếu với buffer pool dự kiến theo §4.
+
+### U2. Giao thức A/B đo "cái giá ghi random" trên máy của bạn (MySQL 8.4)
+
+**Nguyên tắc khoa học:** chỉ đổi *một biến* (thứ tự khóa), giữ nguyên mọi thứ khác, và **làm bảng vượt buffer pool** — nếu không sẽ không thấy vách đá (xem §4).
+
+```bash
+# Buffer pool nhỏ để vách đá xuất hiện sớm (vài triệu row)
+docker run -d --name mysql-lab -e MYSQL_ROOT_PASSWORD=lab -p 3307:3306 mysql:8.4 \
+  --innodb-buffer-pool-size=256M --innodb-doublewrite=ON
+```
+
+```sql
+CREATE DATABASE lab; USE lab;
+CREATE TABLE t_rand (id BINARY(16) PRIMARY KEY, payload CHAR(200) NOT NULL) ENGINE=InnoDB;
+CREATE TABLE t_seq  (id BINARY(16) PRIMARY KEY, payload CHAR(200) NOT NULL) ENGINE=InnoDB;
+SET GLOBAL innodb_monitor_enable = 'module_index';       -- bật bộ đếm page split/merge
+```
+
+```bash
+# Nạp theo lô 50 000 dòng, ghi thời gian từng lô (lặp tới khi bảng ≫ 256 MB)
+for i in $(seq 1 300); do
+  S=$(date +%s.%N)
+  mysql -uroot -plab -P3307 -h127.0.0.1 lab -e "
+    INSERT INTO t_rand
+    SELECT RANDOM_BYTES(16), REPEAT('x',200)
+    FROM (SELECT 1 FROM information_schema.columns a, information_schema.columns b LIMIT 50000) s;"
+  E=$(date +%s.%N); echo "rand,$i,$(echo "$E - $S" | bc)" >> result.csv
+done
+# Lặp lại với bảng t_seq, thay biểu thức khóa bằng:  UUID_TO_BIN(UUID(), 1)
+# (MySQL UUID() là UUIDv1; swap_flag=1 đưa phần thời gian lên đầu → khóa tăng dần — đúng use-case của hàm)
+```
+
+**Ghi lại sau mỗi lô:** thời gian lô · `Innodb_buffer_pool_reads` (delta) · `index_page_splits` (delta, từ `INNODB_METRICS`) · kích thước index (`mysql.innodb_index_stats`, `stat_name='size'`). **Hình dạng kết quả kỳ vọng:** hai đường gần nhau lúc đầu; khi `t_rand` vượt buffer pool, thời gian lô và số đọc đĩa tăng vọt, `t_seq` gần như phẳng. Nếu bạn *không* thấy vậy, kiểm tra lại: bảng đã vượt buffer pool chưa, đĩa có quá nhanh/cache của OS che khuất không.
+
+### U3. Đặt buffer pool theo working set, đo tỉ lệ miss bằng *delta*
+
+```sql
+-- Kích thước dữ liệu + index theo schema (clustered index nằm trong data_length)
+SELECT table_schema,
+       ROUND(SUM(data_length)  / POW(1024,3), 1) AS data_gb,
+       ROUND(SUM(index_length) / POW(1024,3), 1) AS secondary_index_gb
+FROM information_schema.tables WHERE engine = 'InnoDB' GROUP BY table_schema;
+
+SELECT ROUND(@@innodb_buffer_pool_size / POW(1024,3), 1) AS buffer_pool_gb;
+
+-- Miss rate trong một cửa sổ thời gian: lấy hai lần cách nhau 60 s rồi trừ
+SHOW GLOBAL STATUS WHERE Variable_name IN ('Innodb_buffer_pool_reads','Innodb_buffer_pool_read_requests');
+--   miss_rate = Δ(reads) / Δ(read_requests)       (các bộ đếm là TÍCH LŨY — đừng dùng giá trị thô)
+```
+
+### U4. Kịch bản nạp hàng loạt (bulk load) đúng cách
+
+| Bước | InnoDB (theo tài liệu MySQL, R8) | PostgreSQL |
+|---|---|---|
+| 1 | Sắp dữ liệu **theo PK** trước khi nạp | Dùng `COPY` thay vì nhiều `INSERT` |
+| 2 | Tắt `autocommit`, commit theo lô lớn | Một transaction cho cả lô (hoặc lô lớn) |
+| 3 | Nếu *chắc chắn* dữ liệu sạch: `SET unique_checks=0; SET foreign_key_checks=0;` rồi bật lại | Tạo FK/constraint sau khi nạp |
+| 4 | **Tạo secondary index sau khi nạp** (dùng sorted index build) | Tạo index sau khi nạp; tăng `maintenance_work_mem` cho `CREATE INDEX` |
+| 5 | `ANALYZE TABLE` | `ANALYZE` |
+
+> Tắt `unique_checks` cho phép change buffer áp dụng cả với unique secondary index, nhưng nếu dữ liệu có trùng thì ràng buộc **không còn được bảo vệ trong lúc nạp** — chỉ dùng khi đã kiểm tra dữ liệu.
+
+### U5. Khi nào rebuild? — điểm khởi đầu để ra quyết định (không phải ngưỡng chuẩn)
+
+```sql
+-- PostgreSQL: mật độ lá và độ phân mảnh của một index
+SELECT index_size, leaf_pages, avg_leaf_density, leaf_fragmentation
+FROM pgstatindex('idx_document_pkey');
+-- Gợi ý: avg_leaf_density thấp kéo dài (ví dụ < 60–70 %) và index lớn → ứng viên REINDEX CONCURRENTLY.
+-- Luôn so với baseline của CHÍNH index đó ngay sau khi tạo mới.
+```
+
+```sql
+-- MySQL: InnoDB cấp phát lại bằng online DDL (OPTIMIZE TABLE ≈ ALTER TABLE ... FORCE + ANALYZE)
+ALTER TABLE document ENGINE=InnoDB, ALGORITHM=INPLACE, LOCK=NONE;   -- cần chỗ trống đĩa cỡ bảng; chạy ngoài giờ cao điểm
+```
+
+### U6. Bảng điều khiển tối thiểu cho "ghi random"
+
+| Chỉ số | Nguồn | Ý nghĩa khi xấu đi |
+|---|---|---|
+| Miss rate buffer pool (delta) | `Innodb_buffer_pool_reads` / `read_requests` | Working set vượt RAM — vách đá đang đến |
+| `index_page_splits` / giây | `INFORMATION_SCHEMA.INNODB_METRICS` | Khóa ngẫu nhiên hoặc fill đã đầy |
+| Tốc độ tăng kích thước index so với số row | `mysql.innodb_index_stats` | Fill thấp / phân mảnh nội |
+| Dirty pages và checkpoint age | `Innodb_buffer_pool_pages_dirty`, `SHOW ENGINE INNODB STATUS` | Flush không theo kịp → stall |
+| p99 latency insert (không chỉ trung bình) | APM/ứng dụng | Stall do flush/checkpoint chỉ lộ ở đuôi |
+| PostgreSQL: `wal_fpi`, `avg_leaf_density` | `pg_stat_wal`, `pgstatindex()` | Full-page image / lá thưa |
+
+---
+
+## ⚠️ Mistakes — lỗi thường gặp (cơ chế · cách phát hiện · cách sửa)
+
+| # | Lỗi | Vì sao sai (cơ chế) | Cách phát hiện | Cách sửa |
+|---|---|---|---|---|
+| 1 | Load test với dữ liệu nhỏ hơn buffer pool | Cả hai cách chọn khóa đều ≈ 0 % miss ⇒ không thấy khác biệt (bảng §4) | So kích thước index với `innodb_buffer_pool_size` | Test với bảng ≥ 2–4× buffer pool (U2) |
+| 2 | Tăng RAM/buffer pool thay vì sửa khóa | Chỉ dời vách đá sang bảng lớn hơn; chi phí split/fill vẫn còn | Miss rate lại tăng khi dữ liệu lớn thêm | Sửa locality khóa; RAM là bước bổ sung |
+| 3 | Tin change buffer cứu PK/unique | Insert vào clustered index và unique secondary phải đọc lá (đặt row, kiểm tra trùng) ⇒ không buffer được | `SHOW ENGINE INNODB STATUS` mục *Ibuf* ít merge dù miss cao | Khóa có locality; chỉ trông chờ change buffer cho secondary non-unique |
+| 4 | Hạ fill factor cho bảng **append-only** "để tránh split" | Append-only vốn ít split; chừa chỗ chỉ làm index to hơn ⇒ cần nhiều RAM hơn | Index lớn hơn dự kiến, `avg_fill` thấp | Giữ mặc định; chỉnh fill cho bảng sửa tại chỗ nhiều |
+| 5 | Rebuild định kỳ (cron `OPTIMIZE`) thay vì chữa gốc | Khóa ngẫu nhiên sẽ phân mảnh lại ngay sau rebuild | Kích thước index quay lại mức cũ sau vài tuần | Đổi khóa/partition; rebuild chỉ là bảo trì |
+| 6 | Index "phòng hờ" trên nhiều cột ngẫu nhiên | Mỗi index = thêm một B-Tree bị chạm mỗi insert + mang theo PK | Index `idx_scan = 0` (PostgreSQL) / `sys.schema_unused_indexes` (MySQL) | Xóa index không dùng; gộp index |
+| 7 | Chỉ nhìn latency trung bình | Stall do flush/checkpoint xuất hiện ở đuôi (p99/p999) | So p50 với p99 insert | Theo dõi phân vị; kiểm tra `innodb_io_capacity`, dirty pages |
+| 8 | `innodb_io_capacity`/`_max` thấp hơn năng lực thiết bị | Page cleaner flush quá chậm ⇒ dirty page tích tụ ⇒ stall khi checkpoint | Dirty pages tăng đều, checkpoint age sát giới hạn | Đo IOPS thiết bị, đặt `io_capacity` tương ứng |
+| 9 | `OPTIMIZE TABLE`/rebuild giờ cao điểm hoặc thiếu chỗ đĩa | Online DDL vẫn cần chỗ trống cỡ bảng + I/O lớn + khóa ngắn ở đầu/cuối | `df`; ước lượng bằng bản sao | Chạy ngoài giờ, kiểm dung lượng, dùng công cụ online khi cần |
+| 10 | Coi `ln 2 ≈ 69 %` hay `15/16` là số tuyệt đối | Đó là kết quả lý thuyết/tài liệu cho điều kiện lý tưởng; thực tế còn kích thước record, xóa/chèn xen kẽ | Đo fill thật (`INNODB_BUFFER_PAGE`, `pgstatindex`) | Dùng làm công cụ lập luận, **đo** để kết luận |
+| 11 | Chọn PK rộng (`CHAR(36)`, composite dài) | PK nhân vào mọi secondary index và làm giảm fanout nhánh ⇒ cây cao/to hơn | So `stat_value` size của index theo kiểu PK | PK hẹp (BIGINT/BINARY(16)) |
+| 12 | Cho rằng SSD "không cần locality" | SSD giảm phân mảnh *ngoại* nhưng không xóa write amplification, fill thấp, vách đá RAM | Đo trên NVMe vẫn thấy miss/flush tăng | Giữ nguyên tắc locality kể cả trên SSD |
+| 13 | Tắt doublewrite để "nhanh" khi filesystem không đảm bảo atomic write 16 KB | Ghi dở một page (torn page) khi mất điện ⇒ page hỏng, redo log không vá được | `innodb_doublewrite`; kiểm tra bảo đảm của FS/phần cứng | Giữ `ON`, trừ khi nền tảng đảm bảo atomic write đã kiểm chứng |
+| 14 | Khóa tuần tự nhưng tốc độ ghi cực cao trên **một** B-Tree | Mọi writer tranh nhau latch của lá phải nhất | CPU cao, mutex/latch wait ở lá cuối | Partition (theo thời gian/hash), nhiều B-Tree nhỏ |
+
+---
+
+## 📚 Tài liệu dẫn chứng
+
+### Bảng: khẳng định → nguồn
+
+| Khẳng định trong bài | Nguồn |
+|---|---|
+| Page 16 KB, extent 1 MB, mức lấp đầy 15/16 vs ½…15/16, `innodb_fill_factor` | R1, R5 |
+| Buffer pool: LRU điểm giữa 3/8, `old_blocks_time` | R2 |
+| Change buffer: chỉ secondary, non-unique; `innodb_change_buffer_max_size` mặc định 25 % | R3 |
+| Doublewrite chống torn page | R4 |
+| Bộ đếm `index_page_splits`, `index_page_merge_*` | R6 |
+| `INNODB_BUFFER_PAGE` có `DATA_SIZE` theo page | R7 |
+| Bulk load: sắp theo PK, tắt `unique_checks`, tạo index sau | R8 |
+| Secondary index lưu PK | R9 |
+| Lehman–Yao: high key + right-link; B-Tree PostgreSQL | R10, R16 |
+| `pgstatindex`, `pageinspect`, `full_page_writes` | R11, R12, R20 |
+| MariaDB gỡ change buffer (11.0) | R13 |
+| Độ lấp đầy trung bình ≈ ln 2 khi chèn ngẫu nhiên | R17, R14 |
+| Dedup (PG 13), bottom-up deletion (PG 14) | R21 |
+| OPTIMIZE TABLE = rebuild online | R22 |
+
+### Danh mục nguồn
+
+- **R1** — MySQL 8.4, *The Physical Structure of an InnoDB Index*: https://dev.mysql.com/doc/refman/8.4/en/innodb-physical-structure.html
+- **R2** — MySQL 8.4, *Buffer Pool*: https://dev.mysql.com/doc/refman/8.4/en/innodb-buffer-pool.html
+- **R3** — MySQL 8.4, *Change Buffer*: https://dev.mysql.com/doc/refman/8.4/en/innodb-change-buffer.html
+- **R4** — MySQL 8.4, *Doublewrite Buffer*: https://dev.mysql.com/doc/refman/8.4/en/innodb-doublewrite-buffer.html
+- **R5** — MySQL 8.4, InnoDB system variables (`innodb_fill_factor`): https://dev.mysql.com/doc/refman/8.4/en/innodb-parameters.html
+- **R6** — MySQL 8.4, `INFORMATION_SCHEMA.INNODB_METRICS`: https://dev.mysql.com/doc/refman/8.4/en/innodb-information-schema-metrics-table.html
+- **R7** — MySQL 8.4, `INNODB_BUFFER_PAGE`: https://dev.mysql.com/doc/refman/8.4/en/information-schema-innodb-buffer-page-table.html
+- **R8** — MySQL 8.4, *Optimizing InnoDB Bulk Data Loading*: https://dev.mysql.com/doc/refman/8.4/en/optimizing-innodb-bulk-data-loading.html
+- **R9** — MySQL 8.4, *Clustered and Secondary Indexes*: https://dev.mysql.com/doc/refman/8.4/en/innodb-index-types.html
+- **R10** — PostgreSQL docs, *B-Tree Indexes* (implementation): https://www.postgresql.org/docs/current/btree.html
+- **R11** — PostgreSQL docs, `pgstattuple` (`pgstatindex`): https://www.postgresql.org/docs/current/pgstattuple.html
+- **R12** — PostgreSQL docs, `pageinspect`: https://www.postgresql.org/docs/current/pageinspect.html
+- **R13** — MariaDB KB, *InnoDB Change Buffering*: https://mariadb.com/kb/en/innodb-change-buffering/
+- **R14** — G. Graefe, *Modern B-Tree Techniques*, Foundations and Trends in Databases 3(4), 2011.
+- **R15** — R. Bayer, E. McCreight, *Organization and Maintenance of Large Ordered Indexes*, Acta Informatica 1, 1972.
+- **R16** — P. Lehman, S. B. Yao, *Efficient Locking for Concurrent Operations on B-Trees*, ACM TODS 6(4), 1981.
+- **R17** — A. C.-C. Yao, *On Random 2–3 Trees*, Acta Informatica 9, 1978 (độ lấp đầy trung bình ≈ ln 2).
+- **R18** — J. Cole, *The physical structure of InnoDB index pages*: https://blog.jcole.us/2013/01/07/the-physical-structure-of-innodb-index-pages/
+- **R19** — M. Kleppmann, *Designing Data-Intensive Applications*, ch. 3.
+- **R20** — PostgreSQL docs, WAL configuration (`full_page_writes`): https://www.postgresql.org/docs/current/runtime-config-wal.html
+- **R21** — PostgreSQL release notes 13 và 14: https://www.postgresql.org/docs/release/13.0/ · https://www.postgresql.org/docs/release/14.0/
+- **R22** — MySQL 8.4, *Online DDL Operations*: https://dev.mysql.com/doc/refman/8.4/en/innodb-online-ddl-operations.html
+
+> Lưu ý trung thực: các con số trong §4–§9 (miss rate, trần insert/s, hệ số phình ×1,37) là **mô hình minh họa** suy ra từ các tham số trong bài, không phải số đo; U2 là cách bạn tự đo trên máy mình.
+
+
+## Xem thêm (2026-11-02)
+
+- [[Database-Patterns/PostgreSQL/19-Heap-CTID-Vacuum|Heap, CTID và VACUUM]] — đối trọng phía PostgreSQL: row nằm ở **heap** (không theo PK), index trỏ CTID, `UPDATE` tạo tuple mới, `VACUUM` dọn xác. Giúp hiểu vì sao cùng một khóa ngẫu nhiên, InnoDB và PostgreSQL trả giá khác nhau.

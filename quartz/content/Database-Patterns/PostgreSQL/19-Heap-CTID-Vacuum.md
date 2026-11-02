@@ -655,3 +655,200 @@ SELECT * FROM pg_visibility_map_summary('lab_ios');         -- số page all_vis
 ---
 
 *Tags: #postgresql #heap #ctid #vacuum #hot-update #bloat #visibility-map #index-only-scan*
+
+
+---
+
+## 🛠 Usage — công thức dùng ngay
+
+### U1. Runbook chẩn đoán "bảng phình / vacuum không dọn được" (chạy theo thứ tự)
+
+```sql
+-- ① Bảng nào nhiều dead tuple? (n_dead_tup là ƯỚC LƯỢNG từ thống kê, không phải số đếm chính xác)
+SELECT relname, n_live_tup, n_dead_tup,
+       round(100.0 * n_dead_tup / NULLIF(n_live_tup + n_dead_tup, 0), 1) AS dead_pct,
+       last_autovacuum, autovacuum_count
+FROM pg_stat_user_tables ORDER BY n_dead_tup DESC LIMIT 20;
+
+-- ② Ai đang giữ horizon? (transaction dài, idle in transaction)
+SELECT pid, usename, state, now() - xact_start AS xact_age,
+       age(backend_xmin) AS xmin_age, left(query, 80) AS q
+FROM pg_stat_activity
+WHERE backend_xmin IS NOT NULL OR state = 'idle in transaction'
+ORDER BY xact_age DESC NULLS LAST LIMIT 20;
+
+-- ③ Replication slot bỏ quên giữ xmin + WAL
+SELECT slot_name, slot_type, active, xmin, catalog_xmin,
+       pg_size_pretty(pg_wal_lsn_diff(pg_current_wal_lsn(), restart_lsn)) AS retained_wal
+FROM pg_replication_slots;
+
+-- ④ Prepared transaction (2PC) bị treo
+SELECT gid, prepared, owner, database FROM pg_prepared_xacts;
+
+-- ⑤ Tuổi XID theo database (nguy cơ wraparound)
+SELECT datname, age(datfrozenxid) AS xid_age FROM pg_database ORDER BY xid_age DESC;
+
+-- ⑥ VACUUM đang ở pha nào, tiến độ ra sao
+SELECT pid, relid::regclass AS tbl, phase, heap_blks_total, heap_blks_scanned,
+       heap_blks_vacuumed, index_vacuum_count
+FROM pg_stat_progress_vacuum;
+```
+
+Đọc kết quả: ① cao + ② có transaction cũ ⇒ nguyên nhân là **horizon**; ① cao + ② sạch + `last_autovacuum` cũ ⇒ **autovacuum không theo kịp**; ⑥ chạy lâu với `index_vacuum_count` lớn ⇒ **quá nhiều index / bộ nhớ dead-tuple nhỏ** (trước PG 17).
+
+### U2. Ba "công thức" autovacuum theo từng kiểu bảng (đặt theo bảng, không động vào global)
+
+```sql
+-- (a) Bảng cập nhật liên tục (trạng thái hồ sơ): mục tiêu HOT + dọn sớm
+ALTER TABLE case_status SET (
+    fillfactor                      = 85,      -- chừa 15 % mỗi page; CHỈ áp cho page mới (xem Mistake 6)
+    autovacuum_vacuum_scale_factor  = 0.02,
+    autovacuum_vacuum_threshold     = 1000,
+    autovacuum_vacuum_cost_limit    = 1000     -- mặc định hiệu dụng 200: quá thấp cho ổ SSD/NVMe
+);
+
+-- (b) Bảng queue/outbox (insert → xử lý → delete): churn cao nhưng luôn nhỏ → dọn theo số tuyệt đối
+ALTER TABLE outbox_events SET (
+    autovacuum_vacuum_scale_factor  = 0.0,
+    autovacuum_vacuum_threshold     = 5000,
+    autovacuum_vacuum_cost_limit    = 2000
+);
+-- Tốt hơn cả: partition theo ngày, DROP/DETACH partition cũ → không sinh dead tuple, không cần vacuum
+
+-- (c) Bảng chỉ-insert lớn (audit/log): để visibility map được set đều (PG 13+)
+ALTER TABLE audit_log SET (
+    autovacuum_vacuum_insert_scale_factor = 0.05,
+    autovacuum_vacuum_insert_threshold    = 100000
+);
+```
+
+> Mọi con số trên là **điểm khởi đầu** để thử và đo (`n_dead_tup`, thời gian chạy vacuum, `Heap Fetches`), không phải giá trị chuẩn.
+
+### U3. Làm UPDATE thành HOT: kiểm toán index và đo tỉ lệ HOT
+
+```sql
+-- Index chưa từng được dùng (ứng viên bỏ). Lưu ý: idx_scan tính từ lần reset thống kê;
+-- kiểm tra cả replica và chu kỳ nghiệp vụ (báo cáo cuối tháng/quý) trước khi xóa.
+SELECT s.schemaname, s.relname, s.indexrelname, s.idx_scan,
+       pg_size_pretty(pg_relation_size(s.indexrelid)) AS size
+FROM pg_stat_user_indexes s JOIN pg_index i ON i.indexrelid = s.indexrelid
+WHERE s.idx_scan = 0 AND NOT i.indisunique AND NOT i.indisprimary
+ORDER BY pg_relation_size(s.indexrelid) DESC;
+
+-- Bảng update nhiều mà HOT thấp
+SELECT relname, n_tup_upd, n_tup_hot_upd,
+       round(100.0 * n_tup_hot_upd / NULLIF(n_tup_upd, 0), 1) AS hot_pct
+FROM pg_stat_user_tables WHERE n_tup_upd > 10000
+ORDER BY hot_pct NULLS FIRST LIMIT 20;
+```
+
+Quy trình: (1) tìm cột bị UPDATE mà **có index** (đối chiếu `pg_index` với câu UPDATE thực tế), (2) bỏ index không cần hoặc chuyển cột hay đổi sang bảng riêng, (3) `fillfactor` 80–90, (4) viết lại bảng một lần để page cũ cũng có chỗ trống (U4), (5) đo lại `hot_pct`.
+
+### U4. Thu hồi dung lượng an toàn — chọn đúng công cụ
+
+| Mục tiêu | Công cụ | Khoá | Lưu ý |
+|---|---|---|---|
+| Chỉ **index** bị bloat | `REINDEX INDEX CONCURRENTLY` | Khoá ngắn, không chặn ghi | Cần chỗ trống ≈ kích thước index; có thể để lại index "invalid" nếu hủy giữa chừng |
+| Bảng + index bloat, hệ thống 24/7 | `pg_repack` (extension) hoặc `REPACK (CONCURRENTLY)` (PG 19) | Chỉ giữ khoá mạnh ngắn ở cuối | `pg_repack` cần PK hoặc unique index trên cột NOT NULL; `REPACK CONCURRENTLY` có giới hạn (đọc release notes) |
+| Có cửa sổ bảo trì | `VACUUM FULL` | **ACCESS EXCLUSIVE** (chặn cả đọc) | Cần chỗ trống ≈ dữ liệu sống của bảng + index |
+| Dữ liệu theo thời gian / queue | Partition + `DETACH`/`DROP` | Khoá ngắn | Không sinh dead tuple; cách rẻ nhất |
+| Chỉ cần *ngừng phình* | Chữa nguyên nhân (U1) + autovacuum (U2) | — | File không nhỏ lại nhưng chỗ trống được tái dùng |
+
+### U5. Tối ưu Index-Only Scan: kiểm tra từng mắt xích
+
+```sql
+EXPLAIN (ANALYZE, BUFFERS) SELECT id, v FROM lab_ios WHERE id BETWEEN 1 AND 20000;   -- đọc dòng "Heap Fetches"
+
+SELECT * FROM pg_visibility_map_summary('lab_ios');                  -- số page all_visible / all_frozen
+
+SELECT relpages, relallvisible,
+       round(100.0 * relallvisible / NULLIF(relpages, 0), 1) AS visible_pct
+FROM pg_class WHERE relname = 'lab_ios';       -- planner dựa vào relallvisible (do VACUUM cập nhật) để cân nhắc index-only
+```
+
+Checklist: cột cần lấy có nằm trong index (`INCLUDE`)? · `SELECT` có kéo cột ngoài index (hoặc `*`)? · `visible_pct` cao? · autovacuum chạy gần đây? · có transaction dài giữ horizon? · bảng chỉ-insert đã có `autovacuum_vacuum_insert_*` (U2-c)?
+
+### U6. Ngưỡng cảnh báo — điểm khởi đầu (hãy hiệu chỉnh theo hệ thống)
+
+| Tín hiệu | Gợi ý ngưỡng khởi đầu | Hành động |
+|---|---|---|
+| `idle in transaction` | > 5 phút | Tìm app giữ transaction; đặt `idle_in_transaction_session_timeout` |
+| Transaction dài trên primary OLTP | > 30–60 phút | Chuyển báo cáo sang replica/snapshot |
+| Replication slot không active + WAL giữ lại | tăng liên tục | Xóa slot nếu consumer đã chết |
+| `age(datfrozenxid)` | cảnh báo ≥ 500 triệu, nghiêm trọng ≥ 1 tỷ | Kiểm tra autovacuum anti-wraparound |
+| `hot_pct` bảng update-nặng | < 50 % kéo dài | U3 |
+| `dead_pct` | > 20 % kéo dài | U1 → U2 |
+| Kích thước bảng/index tăng khi số dòng thật không tăng | xu hướng tuần/tháng | Bloat: U1, U4 |
+
+---
+
+## ⚠️ Mistakes — lỗi thường gặp (cơ chế · cách phát hiện · cách sửa)
+
+| # | Lỗi | Vì sao sai (cơ chế) | Cách phát hiện | Cách sửa |
+|---|---|---|---|---|
+| 1 | Chạy `VACUUM FULL` giờ cao điểm để "gọn bảng" | Viết lại bảng với khoá **ACCESS EXCLUSIVE** ⇒ mọi truy vấn chờ; cần thêm chỗ đĩa cỡ dữ liệu sống | Hàng đợi `pg_locks`/`pg_stat_activity` chờ lock | `pg_repack`/`REPACK CONCURRENTLY`, hoặc cửa sổ bảo trì |
+| 2 | Tắt autovacuum (toàn cục hoặc theo bảng) "cho nhanh" | Bảng phình, visibility map không được set (index-only chậm), thống kê cũ (plan xấu), nguy cơ XID wraparound | `SHOW autovacuum;` và `SELECT relname, reloptions FROM pg_class WHERE reloptions::text LIKE '%autovacuum_enabled=false%';` | Bật lại, chỉnh cost/threshold thay vì tắt |
+| 3 | Để mặc định throttle cho bảng nóng trên SSD/NVMe | Cost limit hiệu dụng thấp ⇒ vacuum chạy chậm hơn tốc độ sinh rác | `pg_stat_progress_vacuum` tiến chậm; `n_dead_tup` vẫn tăng | `autovacuum_vacuum_cost_limit` theo bảng (U2), cân nhắc tăng số worker; PG 19: autovacuum song song trên index |
+| 4 | Transaction mở lâu / `idle in transaction` (ORM open-in-view, gọi API ngoài trong `@Transactional`) | Giữ **horizon** ⇒ VACUUM không được xóa bản cũ ⇒ bloat toàn DB | U1-② | Rút ngắn transaction, tắt open-in-view ([[Database-Patterns/Hibernate-Performance-Deep-Dive\|Hibernate Deep Dive]]), `idle_in_transaction_session_timeout` |
+| 5 | Index mọi cột lọc, kể cả cột hay UPDATE (`updated_at`, `status`) | Đổi cột có index ⇒ không HOT ⇒ ghi lại **mọi** index, sinh rác trong index | `hot_pct` thấp (U3) | Bỏ index không cần; partial index; tách cột nóng sang bảng riêng |
+| 6 | Kỳ vọng `ALTER TABLE SET (fillfactor=…)` có hiệu lực ngay | Chỉ áp cho **page mới**; page cũ giữ nguyên độ đầy | `pgstattuple`: `free_percent` không đổi | Viết lại bảng một lần (U4) |
+| 7 | Dùng `ctid` làm khoá/tham chiếu qua transaction | CTID đổi khi UPDATE non-HOT, `VACUUM FULL`, `CLUSTER`; có thể trỏ nhầm row khác | Mã nguồn lưu `ctid` | Dùng khoá nghiệp vụ/PK; `ctid` chỉ để debug trong một câu lệnh |
+| 8 | Coi `n_dead_tup` là số chính xác | Là ước lượng từ thống kê; có thể lệch hoặc bị reset | So với `pgstattuple`/`pgstattuple_approx` | Đo chính xác khi cần quyết định |
+| 9 | Nhầm "chỗ trống ổn định" là bloat rồi repack liên tục | Bảng khoẻ mạnh luôn có chỗ trống tái dùng; repack chỉ tạo churn I/O và có thể phình lại | Kích thước *không tăng* theo thời gian | Chỉ xử lý khi **xu hướng tăng** hoặc cần trả dung lượng thật |
+| 10 | Kỳ vọng "Heap Fetches = 0" trên bảng ghi nặng, hoặc `SELECT *` rồi mong index-only | Mỗi lần sửa tắt bit all-visible của page; cột ngoài index buộc ra heap | `EXPLAIN ANALYZE`; `visible_pct` (U5) | `INCLUDE`, chọn cột tối thiểu, vacuum sớm hơn |
+| 11 | Queue/outbox xử lý bằng `DELETE` hàng loạt | Mỗi row xóa là một dead tuple + index entry chờ dọn ⇒ vacuum nặng, bảng "nhỏ mà phình" | `n_dead_tup` cao, bảng ít dòng sống | Partition theo thời gian + `DROP`, hoặc `TRUNCATE` khi xóa toàn bộ |
+| 12 | `autovacuum_vacuum_scale_factor = 0` với threshold quá nhỏ | Vacuum chạy liên tục, mỗi lần quét lại các index (pha 2) ngay cả khi rất ít rác (PG 14+ có bypass nhưng không phải lúc nào cũng áp dụng) | `autovacuum_count` tăng vọt, I/O nền cao | Threshold theo mức churn thực tế (U2-b) |
+| 13 | Để replication slot không còn consumer | Slot giữ `xmin`/WAL ⇒ giữ horizon và làm đầy đĩa WAL | U1-③ | Xóa slot (`pg_drop_replication_slot`) khi consumer đã ngừng hẳn |
+| 14 | Bật `hot_standby_feedback` mà không đánh giá | Truy vấn dài trên replica giữ horizon của primary ⇒ bloat trên primary | Xmin của replica trong `pg_stat_replication` cũ | Cân nhắc đánh đổi với hủy truy vấn xung đột (`max_standby_streaming_delay`) |
+| 15 | Dùng `REPACK CONCURRENTLY` (PG 19) như thay thế vô điều kiện cho `VACUUM FULL` | Một số nguồn lưu ý giới hạn (không an toàn MVCC hoàn toàn, tương tác khoá) | Đọc release notes + thử trên bản sao | Thử nghiệm kỹ, kiểm tra khoá chờ trước khi dùng production |
+
+---
+
+## 📚 Tài liệu dẫn chứng
+
+### Bảng: khẳng định → nguồn
+
+| Khẳng định trong bài | Nguồn |
+|---|---|
+| Page 8 KB, header 24 B, line pointer 4 B, tuple header ~23 B; CTID = (block, offset) | R1 |
+| HOT: điều kiện, pruning, line pointer `REDIRECT` | R2 |
+| Visibility map: bit `all-visible`/`all-frozen`; bị xóa khi page bị sửa; dùng cho index-only scan và VACUUM | R3, R6 |
+| Free Space Map | R4 |
+| VACUUM: tái dùng chỗ trống, hiếm khi trả file; `VACUUM FULL` viết lại bảng với khoá mạnh | R5, R7 |
+| Index-only scan vẫn phải kiểm tra visibility ở heap nếu page không all-visible; `Heap Fetches` | R6 |
+| Ngưỡng autovacuum, `*_insert_*`, cost limit, `idle_in_transaction_session_timeout` | R8 |
+| Hàm `heap_page_items`, `pgstattuple`, `pg_visibility` | R9 |
+| `pg_stat_progress_vacuum` các pha | R10 |
+| `pg_stat_user_tables` (`n_dead_tup`, `n_tup_hot_upd`), `pg_stat_user_indexes` | R11 |
+| PG 13 (insert-triggered vacuum), 14 (bypass/failsafe), 17 (TidStore), 18 (eager freezing — đối chiếu bản bạn dùng) | R12 |
+| PG 19: `REPACK`, parallel autovacuum, chấm điểm ưu tiên (bản RC khi viết) | R13 |
+| `pg_repack` yêu cầu PK/unique NOT NULL | R14 |
+| Vì sao phải dọn index trước khi giải phóng slot; 3 pha VACUUM | R16 (ch. 6), R5 |
+| Lịch sử "no-overwrite storage" của POSTGRES | R17 |
+| InnoDB dùng undo log (sửa tại chỗ) — đối chiếu | R18 |
+| `REINDEX CONCURRENTLY` | R19 |
+
+### Danh mục nguồn
+
+- **R1** — PostgreSQL docs, *Database Page Layout*: https://www.postgresql.org/docs/current/storage-page-layout.html
+- **R2** — PostgreSQL docs, *Heap-Only Tuples (HOT)*: https://www.postgresql.org/docs/current/storage-hot.html
+- **R3** — PostgreSQL docs, *Visibility Map*: https://www.postgresql.org/docs/current/storage-vm.html
+- **R4** — PostgreSQL docs, *Free Space Map*: https://www.postgresql.org/docs/current/storage-fsm.html
+- **R5** — PostgreSQL docs, *Routine Vacuuming*: https://www.postgresql.org/docs/current/routine-vacuuming.html
+- **R6** — PostgreSQL docs, *Index-Only Scans and Covering Indexes*: https://www.postgresql.org/docs/current/indexes-index-only-scans.html
+- **R7** — PostgreSQL docs, `VACUUM`: https://www.postgresql.org/docs/current/sql-vacuum.html
+- **R8** — PostgreSQL docs, *Automatic Vacuuming* (cấu hình): https://www.postgresql.org/docs/current/runtime-config-vacuum.html
+- **R9** — `pageinspect`: https://www.postgresql.org/docs/current/pageinspect.html · `pgstattuple`: https://www.postgresql.org/docs/current/pgstattuple.html · `pg_visibility`: https://www.postgresql.org/docs/current/pgvisibility.html
+- **R10** — PostgreSQL docs, *Progress Reporting*: https://www.postgresql.org/docs/current/progress-reporting.html
+- **R11** — PostgreSQL docs, *The Cumulative Statistics System*: https://www.postgresql.org/docs/current/monitoring-stats.html
+- **R12** — Release notes: https://www.postgresql.org/docs/release/13.0/ · https://www.postgresql.org/docs/release/14.0/ · https://www.postgresql.org/docs/release/17.0/ · https://www.postgresql.org/docs/release/18.0/
+- **R13** — PostgreSQL 19 (bản devel/RC khi viết): `REPACK` https://www.postgresql.org/docs/devel/sql-repack.html · EDB: https://www.enterprisedb.com/blog/postgresql-19-what-changed-what-matters-and-what-test-now · PlanetScale: https://www.planetscale.com/blog/whats-new-in-postgres-19
+- **R14** — `pg_repack`: https://github.com/reorg/pg_repack
+- **R15** — B. Momjian, *MVCC Unmasked*: https://momjian.us/main/writings/pgsql/mvcc.pdf
+- **R16** — H. Suzuki, *The Internals of PostgreSQL*: https://www.interdb.jp/pg/
+- **R17** — M. Stonebraker, *The Design of the POSTGRES Storage System*, VLDB 1987.
+- **R18** — MySQL 8.4, *InnoDB Multi-Versioning*: https://dev.mysql.com/doc/refman/8.4/en/innodb-multi-versioning.html
+- **R19** — PostgreSQL docs, `REINDEX`: https://www.postgresql.org/docs/current/sql-reindex.html
+- **R20** — J. M. Hellerstein, M. Stonebraker, J. Hamilton, *Architecture of a Database System*, Foundations and Trends in Databases 1(2), 2007.
+
+> Lưu ý trung thực: thông tin PG 19 lấy từ tài liệu devel/RC và bài viết bên thứ ba tại thời điểm 2026-11-02 — **đọc release notes chính thức của bản bạn triển khai** trước khi dùng. Các ngưỡng trong U2/U6 là điểm khởi đầu để đo, không phải giá trị chuẩn. Phiên bản ví dụ XID, ctid, kết quả `EXPLAIN` trong bài là minh họa.
