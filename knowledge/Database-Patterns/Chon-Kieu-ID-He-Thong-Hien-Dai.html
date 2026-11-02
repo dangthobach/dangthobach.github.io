@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>Chon-Kieu-ID-He-Thong-Hien-Dai</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&amp;family=Inter:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="Dang Tho Bach's Knowledge Base"/><meta property="og:title" content="Chon-Kieu-ID-He-Thong-Hien-Dai"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="Chon-Kieu-ID-He-Thong-Hien-Dai"/><meta name="twitter:description" content="Chọn kiểu ID cho hệ thống hiện đại (Database) Mục tiêu: Trả lời một câu hỏi tưởng nhỏ nhưng quyết định hình dạng của cả schema: “Primary key nên sinh ra như thế nào?” — bằng cơ chế bên trong B-Tree/InnoDB chứ không bằng “best practice” truyền miệng."/><meta property="og:description" content="Chọn kiểu ID cho hệ thống hiện đại (Database) Mục tiêu: Trả lời một câu hỏi tưởng nhỏ nhưng quyết định hình dạng của cả schema: “Primary key nên sinh ra như thế nào?” — bằng cơ chế bên trong B-Tree/InnoDB chứ không bằng “best practice” truyền miệng."/><meta property="og:image:alt" content="Chọn kiểu ID cho hệ thống hiện đại (Database) Mục tiêu: Trả lời một câu hỏi tưởng nhỏ nhưng quyết định hình dạng của cả schema: “Primary key nên sinh ra như thế nào?” — bằng cơ chế bên trong B-Tree/InnoDB chứ không bằng “best practice” truyền miệng."/><meta property="twitter:domain" content="dangthobach.github.io/knowledge"/><meta property="og:url" content="https://dangthobach.github.io/knowledge/Database-Patterns/Chon-Kieu-ID-He-Thong-Hien-Dai"/><meta property="twitter:url" content="https://dangthobach.github.io/knowledge/Database-Patterns/Chon-Kieu-ID-He-Thong-Hien-Dai"/><link rel="icon" href="../static/icon.png"/><meta name="description" content="Chọn kiểu ID cho hệ thống hiện đại (Database) Mục tiêu: Trả lời một câu hỏi tưởng nhỏ nhưng quyết định hình dạng của cả schema: “Primary key nên sinh ra như thế nào?” — bằng cơ chế bên trong B-Tree/InnoDB chứ không bằng “best practice” truyền miệng."/><meta name="generator" content="Quartz"/><link href="../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiL2hvbWUvcnVubmVyL3dvcmsvZGFuZ3Rob2JhY2guZ2l0aHViLmlvL2Rhbmd0aG9iYWNoLmdpdGh1Yi5pby9xdWFydHovcXVhcnR6L2NvbXBvbmVudHMvc3R5bGVzIiwic291cmNlcyI6WyJtZXJtYWlkLmlubGluZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFHRjtFQUNFOzs7QUFLRjtFQUNFO0VBQ0E7OztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTs7QUFJRjtFQUNFO0VBQ0E7RUFDQSIsInNvdXJjZXNDb250ZW50IjpbIi5leHBhbmQtYnV0dG9uIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbG9hdDogcmlnaHQ7XG4gIHBhZGRpbmc6IDAuNHJlbTtcbiAgbWFyZ2luOiAwLjNyZW07XG4gIHJpZ2h0OiAwOyAvLyBOT1RFOiByaWdodCB3aWxsIGJlIHNldCBpbiBtZXJtYWlkLmlubGluZS50c1xuICBjb2xvcjogdmFyKC0tZ3JheSk7XG4gIGJvcmRlci1jb2xvcjogdmFyKC0tZGFyayk7XG4gIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgYm9yZGVyOiAxcHggc29saWQ7XG4gIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgb3BhY2l0eTogMDtcbiAgdHJhbnNpdGlvbjogMC4ycztcblxuICAmID4gc3ZnIHtcbiAgICBmaWxsOiB2YXIoLS1saWdodCk7XG4gICAgZmlsdGVyOiBjb250cmFzdCgwLjMpO1xuICB9XG5cbiAgJjpob3ZlciB7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIGJvcmRlci1jb2xvcjogdmFyKC0tc2Vjb25kYXJ5KTtcbiAgfVxuXG4gICY6Zm9jdXMge1xuICAgIG91dGxpbmU6IDA7XG4gIH1cbn1cblxucHJlIHtcbiAgJjpob3ZlciA+IC5leHBhbmQtYnV0dG9uIHtcbiAgICBvcGFjaXR5OiAxO1xuICAgIHRyYW5zaXRpb246IDAuMnM7XG4gIH1cbn1cblxuI21lcm1haWQtY29udGFpbmVyIHtcbiAgcG9zaXRpb246IGZpeGVkO1xuICBjb250YWluOiBsYXlvdXQ7XG4gIHotaW5kZXg6IDk5OTtcbiAgbGVmdDogMDtcbiAgdG9wOiAwO1xuICB3aWR0aDogMTAwdnc7XG4gIGhlaWdodDogMTAwdmg7XG4gIG92ZXJmbG93OiBoaWRkZW47XG4gIGRpc3BsYXk6IG5vbmU7XG4gIGJhY2tkcm9wLWZpbHRlcjogYmx1cig0cHgpO1xuICBiYWNrZ3JvdW5kOiByZ2JhKDAsIDAsIDAsIDAuNSk7XG5cbiAgJi5hY3RpdmUge1xuICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgfVxuXG4gICYgPiAjbWVybWFpZC1zcGFjZSB7XG4gICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gICAgYm9yZGVyLXJhZGl1czogNXB4O1xuICAgIHBvc2l0aW9uOiBmaXhlZDtcbiAgICB0b3A6IDUwJTtcbiAgICBsZWZ0OiA1MCU7XG4gICAgdHJhbnNmb3JtOiB0cmFuc2xhdGUoLTUwJSwgLTUwJSk7XG4gICAgaGVpZ2h0OiA4MHZoO1xuICAgIHdpZHRoOiA4MHZ3O1xuICAgIG92ZXJmbG93OiBoaWRkZW47XG5cbiAgICAmID4gLm1lcm1haWQtY29udGVudCB7XG4gICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgICB0cmFuc2Zvcm0tb3JpZ2luOiAwIDA7XG4gICAgICB0cmFuc2l0aW9uOiB0cmFuc2Zvcm0gMC4xcyBlYXNlO1xuICAgICAgb3ZlcmZsb3c6IHZpc2libGU7XG4gICAgICBtaW4taGVpZ2h0OiAyMDBweDtcbiAgICAgIG1pbi13aWR0aDogMjAwcHg7XG5cbiAgICAgIHByZSB7XG4gICAgICAgIG1hcmdpbjogMDtcbiAgICAgICAgYm9yZGVyOiBub25lO1xuICAgICAgfVxuXG4gICAgICBzdmcge1xuICAgICAgICBtYXgtd2lkdGg6IG5vbmU7XG4gICAgICAgIGhlaWdodDogYXV0bztcbiAgICAgIH1cbiAgICB9XG5cbiAgICAmID4gLm1lcm1haWQtY29udHJvbHMge1xuICAgICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgICAgYm90dG9tOiAyMHB4O1xuICAgICAgcmlnaHQ6IDIwcHg7XG4gICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgZ2FwOiA4cHg7XG4gICAgICBwYWRkaW5nOiA4cHg7XG4gICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgYm9yZGVyLXJhZGl1czogNnB4O1xuICAgICAgYm94LXNoYWRvdzogMCAycHggNHB4IHJnYmEoMCwgMCwgMCwgMC4xKTtcbiAgICAgIHotaW5kZXg6IDI7XG5cbiAgICAgIC5tZXJtYWlkLWNvbnRyb2wtYnV0dG9uIHtcbiAgICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgIHdpZHRoOiAzMnB4O1xuICAgICAgICBoZWlnaHQ6IDMycHg7XG4gICAgICAgIHBhZGRpbmc6IDA7XG4gICAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgICAgY29sb3I6IHZhcigtLWRhcmspO1xuICAgICAgICBib3JkZXItcmFkaXVzOiA0cHg7XG4gICAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICAgICAgZm9udC1zaXplOiAxNnB4O1xuICAgICAgICBmb250LWZhbWlseTogdmFyKC0tYm9keUZvbnQpO1xuICAgICAgICB0cmFuc2l0aW9uOiBhbGwgMC4ycyBlYXNlO1xuXG4gICAgICAgICY6aG92ZXIge1xuICAgICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIH1cblxuICAgICAgICAmOmFjdGl2ZSB7XG4gICAgICAgICAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKDFweCk7XG4gICAgICAgIH1cblxuICAgICAgICAvLyBTdHlsZSB0aGUgcmVzZXQgYnV0dG9uIGRpZmZlcmVudGx5XG4gICAgICAgICY6bnRoLWNoaWxkKDIpIHtcbiAgICAgICAgICB3aWR0aDogYXV0bztcbiAgICAgICAgICBwYWRkaW5nOiAwIDEycHg7XG4gICAgICAgICAgZm9udC1zaXplOiAxNHB4O1xuICAgICAgICB9XG4gICAgICB9XG4gICAgfVxuICB9XG59XG4iXX0= */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://dangthobach.github.io/knowledge/index.xml"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image" content="https://dangthobach.github.io/knowledge/Database-Patterns/Chon-Kieu-ID-He-Thong-Hien-Dai-og-image.webp"/><meta property="og:image:url" content="https://dangthobach.github.io/knowledge/Database-Patterns/Chon-Kieu-ID-He-Thong-Hien-Dai-og-image.webp"/><meta name="twitter:image" content="https://dangthobach.github.io/knowledge/Database-Patterns/Chon-Kieu-ID-He-Thong-Hien-Dai-og-image.webp"/><meta property="og:image:type" content="image/.webp"/></head><body data-slug="Database-Patterns/Chon-Kieu-ID-He-Thong-Hien-Dai"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href=".." aria-label="Dang Tho Bach's Knowledge Base"><span class="brand-mark" aria-hidden="true">DB</span><span class="brand-copy"><span class="brand-name">Dang Tho Bach's Knowledge Base</span><span class="brand-subtitle">Engineering research system</span></span></a></h2><nav class="research-nav" aria-label="Research workspace"><div class="research-nav-label"><span class="research-nav-pulse" aria-hidden="true"></span>Research workspace</div><div class="research-nav-items"><a href="../" class="research-nav-item"><span class="research-nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3M12 19v3M2 12h3M19 12h3"></path><path d="m4.9 4.9 2.2 2.2M16.9 16.9l2.2 2.2M19.1 4.9l-2.2 2.2M7.1 16.9l-2.2 2.2"></path></svg></span><span class="research-nav-copy"><strong>Focus</strong><small>Dashboard &amp; current work</small></span></a><a href="../_moc" class="research-nav-item"><span class="research-nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 6 5-3 8 3 5-3v15l-5 3-8-3-5 3Z"></path><path d="M8 3v15M16 6v15"></path></svg></span><span class="research-nav-copy"><strong>Knowledge maps</strong><small>Topics, domains &amp; connections</small></span></a><a href="../JVM-Frameworks-2026" class="research-nav-item"><span class="research-nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 7 9-4 9 4-9 4Z"></path><path d="M7 9.2V15c3 2.4 7 2.4 10 0V9.2M21 7v6"></path></svg></span><span class="research-nav-copy"><strong>Study tracks</strong><small>Structured learning paths</small></span></a><a href="../_inbox" class="research-nav-item"><span class="research-nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4Z"></path><path d="M4 14h4l2 3h4l2-3h4"></path></svg></span><span class="research-nav-copy"><strong>Research inbox</strong><small>Capture &amp; distillation queue</small></span></a></div></nav><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search knowledge</p><kbd aria-hidden="true">Ctrl K</kbd></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="false" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>{let priority=[\&quot;_moc\&quot;,\&quot;_inbox\&quot;,\&quot;JVM-Frameworks-2026\&quot;,\&quot;Performance-System-Programming\&quot;,\&quot;Microservices-Patterns\&quot;,\&quot;Database-Patterns\&quot;,\&quot;Rust-Zero-To-Hero\&quot;,\&quot;Go-Zero-To-Hero\&quot;,\&quot;Go-Microservices-Mastery\&quot;,\&quot;concepts\&quot;],aIndex=priority.indexOf(a.slugSegment),bIndex=priority.indexOf(b.slugSegment);return aIndex!==-1||bIndex!==-1?aIndex===-1?1:bIndex===-1?-1:aIndex-bIndex:a.isFolder!==b.isFolder?a.isFolder?-1:1:a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;})}&quot;,&quot;filterFn&quot;:&quot;node=>![\&quot;tags\&quot;,\&quot;.smart-env\&quot;,\&quot;_scripts\&quot;,\&quot;_templates\&quot;,\&quot;_archive\&quot;,\&quot;Notion-Knowledge\&quot;].includes(node.slugSegment)&quot;,&quot;mapFn&quot;:&quot;node=>{let labels={_moc:\&quot;Knowledge Maps\&quot;,_inbox:\&quot;Research Inbox\&quot;,concepts:\&quot;Core Concepts\&quot;,\&quot;JVM-Frameworks-2026\&quot;:\&quot;JVM Frameworks\&quot;,\&quot;Performance-System-Programming\&quot;:\&quot;Performance &amp; Systems\&quot;,\&quot;Microservices-Patterns\&quot;:\&quot;Microservices Patterns\&quot;,\&quot;Database-Patterns\&quot;:\&quot;Database Patterns\&quot;,\&quot;Go-Microservices-Mastery\&quot;:\&quot;Go Microservices\&quot;,\&quot;Notion-Knowledge\&quot;:\&quot;Reference Library\&quot;};node.displayName=labels[node.slugSegment]??node.displayName.replaceAll(\&quot;-\&quot;,\&quot; \&quot;)}&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-145"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Knowledge library</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-145" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../Database-Patterns/">Database Patterns</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>Chon Kieu ID He Thong Hien Dai</a></div></nav><h1 class="article-title">Chon-Kieu-ID-He-Thong-Hien-Dai</h1><p show-comma="true" class="content-meta"><time datetime="2026-11-02T00:00:00.000Z">Nov 02, 2026</time><span>26 min read</span></p><ul class="tags"><li><a href="../tags/database" class="internal tag-link">database</a></li><li><a href="../tags/id-generation" class="internal tag-link">id-generation</a></li><li><a href="../tags/uuid" class="internal tag-link">uuid</a></li><li><a href="../tags/uuidv7" class="internal tag-link">uuidv7</a></li><li><a href="../tags/ulid" class="internal tag-link">ulid</a></li><li><a href="../tags/snowflake" class="internal tag-link">snowflake</a></li><li><a href="../tags/auto-increment" class="internal tag-link">auto-increment</a></li><li><a href="../tags/innodb" class="internal tag-link">innodb</a></li><li><a href="../tags/b-tree" class="internal tag-link">b-tree</a></li><li><a href="../tags/postgresql" class="internal tag-link">postgresql</a></li><li><a href="../tags/mysql" class="internal tag-link">mysql</a></li><li><a href="../tags/pdms" class="internal tag-link">pdms</a></li></ul></div></div><article class="popover-hint"><h1 id="chọn-kiểu-id-cho-hệ-thống-hiện-đại-database">Chọn kiểu ID cho hệ thống hiện đại (Database)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#chọn-kiểu-id-cho-hệ-thống-hiện-đại-database" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<blockquote>
+<p><strong>Mục tiêu:</strong> Trả lời một câu hỏi tưởng nhỏ nhưng quyết định hình dạng của cả schema: <em>“Primary key nên sinh ra như thế nào?”</em> — bằng cơ chế bên trong B-Tree/InnoDB chứ không bằng “best practice” truyền miệng.</p>
+</blockquote>
+<blockquote class="callout abstract" data-callout="abstract">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>TL;DR </p></div>
+                  
+                </div>
+<div class="callout-content">
+<ol>
+<li><strong>Auto-increment</strong> rất tốt về locality nhưng có <strong>4 giới hạn cấu trúc</strong> (single generator, đoán được, ID chỉ có sau INSERT, không merge được giữa các DB).</li>
+<li><strong>UUIDv4 làm hỏng InnoDB</strong> vì InnoDB là <em>clustered index</em>: PK ngẫu nhiên = insert rải khắp cây B+Tree → page split, fill-factor thấp, buffer pool thrashing, và PK phình to trong <em>mọi</em> secondary index.</li>
+<li><strong>Snowflake</strong> giải quyết locality nhưng đổi lại một <strong>nghĩa vụ vận hành</strong>: mỗi generator đang sống phải có <code>workerID</code> duy nhất + đồng hồ không lùi. Tính duy nhất của nó là <em>có điều kiện</em>.</li>
+<li><strong>ULID / UUIDv7 lưu <code>BINARY(16)</code></strong> (hoặc <code>uuid</code> native trên PostgreSQL) cho bạn cả ba: sinh phía application không cần phối hợp, sắp xếp theo thời gian (insert ≈ append), chỉ 16 byte. Đó là lý do chúng là <strong>mặc định cho hệ mới</strong>.</li>
+</ol>
+</div>
+</blockquote>
+<hr/>
+<h2 id="0-id-thật-sự-đóng-mấy-vai-trò">0. ID thật sự đóng mấy vai trò?<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#0-id-thật-sự-đóng-mấy-vai-trò" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Một cột <code>id</code> gánh đồng thời nhiều vai trò, và mỗi kiểu ID thắng/thua ở vai trò khác nhau:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Vai trò</th><th>Câu hỏi</th><th>Kiểu ID ảnh hưởng thế nào</th></tr></thead><tbody><tr><td><strong>Identity</strong></td><td>Hai row có cùng ID không?</td><td>Cần unique toàn cục hay chỉ trong 1 DB?</td></tr><tr><td><strong>Clustering key</strong> (InnoDB)</td><td>Row nằm vật lý ở đâu?</td><td>ID <em>quyết định</em> thứ tự lưu row trên đĩa</td></tr><tr><td><strong>Row pointer</strong></td><td>Secondary index trỏ về row bằng gì?</td><td>InnoDB copy nguyên PK vào mọi secondary index entry</td></tr><tr><td><strong>Foreign key / join key</strong></td><td>Bao nhiêu byte mỗi lần join/FK?</td><td>Kích thước ID nhân lên khắp schema</td></tr><tr><td><strong>Public identifier</strong></td><td>Có lộ ra URL/API không?</td><td>Đoán được → enumeration, lộ volume</td></tr><tr><td><strong>Idempotency / correlation key</strong></td><td>Biết ID <em>trước</em> khi persist được không?</td><td>Outbox, retry, event sourcing cần ID sinh sớm</td></tr></tbody></table></div>
+<blockquote>
+<p>Nền tảng B-Tree: <a href="../Database-Patterns/PostgreSQL/04-Index-Internals" class="internal alias" data-slug="Database-Patterns/PostgreSQL/04-Index-Internals">PostgreSQL Index Internals</a> · <a href="../Notion-Knowledge/Note/Database-Indexing-Demystified--Index-Types-and-Use-Cases" class="internal alias" data-slug="Notion-Knowledge/Note/Database-Indexing-Demystified--Index-Types-and-Use-Cases">Clustered vs Non-clustered index</a> · <a href="../Notion-Knowledge/Note/Database-Index-Internals--Understanding-the-Data-Structures" class="internal alias" data-slug="Notion-Knowledge/Note/Database-Index-Internals--Understanding-the-Data-Structures">Index data structures</a></p>
+</blockquote>
+<hr/>
+<h2 id="1-auto-increment--mạnh-ở-đâu-gãy-ở-đâu">1. Auto-increment — mạnh ở đâu, gãy ở đâu<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-auto-increment--mạnh-ở-đâu-gãy-ở-đâu" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p><code>AUTO_INCREMENT</code> (MySQL), <code>BIGSERIAL</code> / <code>GENERATED ... AS IDENTITY</code> (PostgreSQL), <code>IDENTITY</code> (SQL Server).</p>
+<h3 id="11-điểm-mạnh-thật-đừng-bỏ-qua">1.1 Điểm mạnh thật (đừng bỏ qua)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#11-điểm-mạnh-thật-đừng-bỏ-qua" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li><strong>8 byte</strong> (BIGINT) — nhỏ nhất trong các lựa chọn không-collision.</li>
+<li><strong>Append-only</strong>: mọi insert rơi vào lá phải nhất của B+Tree → locality hoàn hảo.</li>
+<li>Dễ đọc, dễ debug, <code>ORDER BY id</code> ≈ <code>ORDER BY created_at</code>.</li>
+</ul>
+<p>Với một bảng <em>nội bộ</em>, không lộ ra ngoài, nằm trên <strong>một</strong> database — auto-increment vẫn là lựa chọn hoàn toàn hợp lý.</p>
+<h3 id="12-bốn-giới-hạn-cấu-trúc">1.2 Bốn giới hạn cấu trúc<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#12-bốn-giới-hạn-cấu-trúc" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>        ┌──────────────────────────────────────────────────────────────┐
+        │              4 GIỚI HẠN CỦA AUTO-INCREMENT                   │
+        ├──────────────┬───────────────┬──────────────┬───────────────┤
+        │ ① SINGLE     │ ② ĐOÁN ĐƯỢC   │ ③ ID CHỈ CÓ  │ ④ KHÔNG MERGE │
+        │ GENERATOR    │ (predictable) │ SAU INSERT   │ ĐƯỢC          │
+        ├──────────────┼───────────────┼──────────────┼───────────────┤
+        │ 1 counter    │ id=1001,1002  │ DB cấp ID →  │ ID chỉ unique │
+        │ ở primary →  │ → enumerate,  │ app không    │ trong 1 DB →  │
+        │ không scale  │ lộ volume,    │ biết ID khi  │ gộp / shard / │
+        │ ngang        │ IDOR          │ chưa persist │ migrate = đụng│
+        └──────────────┴───────────────┴──────────────┴───────────────┘
+</code></pre>
+<p><strong>① Single generator — không scale ngang.</strong>
+Bộ đếm sống ở <em>một</em> node ghi. Multi-primary hoặc sharding ⇒ mỗi shard cấp <code>1,2,3…</code> ⇒ <strong>trùng ID</strong>. Cách chữa kiểu <code>auto_increment_increment/offset</code> (mỗi node một bước nhảy) gãy ngay khi thêm node. Đây chính là lý do ID generation là bài toán đầu tiên khi sharding — xem <a href="../Database-Patterns/PostgreSQL/10-Sharding-When-Why-Pitfalls" class="internal alias" data-slug="Database-Patterns/PostgreSQL/10-Sharding-When-Why-Pitfalls">Sharding: When, Why, Pitfalls</a>.</p>
+<p><strong>② Đoán được — lộ thông tin và dễ enumerate.</strong>
+<code>/documents/1001</code> → thử <code>1002</code>. Nếu authorization lỏng thì là IDOR; ngay cả khi authz đúng, ID tăng dần vẫn <strong>lộ tốc độ tăng trưởng</strong> (đếm ID hôm nay trừ hôm qua = số đơn/ngày). Phòng thủ đúng là authz chặt (<a href="../Microservices-Patterns/PDMS-AuthZ-Fine-Grained-Design" class="internal alias" data-slug="Microservices-Patterns/PDMS-AuthZ-Fine-Grained-Design">PDMS AuthZ Fine-Grained</a>), nhưng ID không đoán được là lớp phòng thủ thứ hai miễn phí.</p>
+<p><strong>③ ID chỉ tồn tại sau INSERT — coupling với DB.</strong></p>
+<ul>
+<li>Không biết ID trước khi persist ⇒ khó tạo aggregate + child + event trong cùng một bước, khó gắn idempotency key / correlation id, không sinh ID ở client/edge được.</li>
+<li>Với JPA: <code>GenerationType.IDENTITY</code> <strong>vô hiệu hóa JDBC batch insert</strong> vì Hibernate phải INSERT ngay để lấy ID. Dùng <code>SEQUENCE</code> + <code>allocationSize</code> (pooled optimizer) cứu được một phần — xem <a href="../Database-Patterns/Hibernate-Performance-Deep-Dive" class="internal alias" data-slug="Database-Patterns/Hibernate-Performance-Deep-Dive">Hibernate Performance Deep Dive</a> (phần ID generation) — nhưng vẫn là phối hợp với DB.</li>
+<li>Pattern Outbox cần event ID biết sớm: <a href="../Microservices-Patterns/Transactional-Outbox" class="internal alias" data-slug="Microservices-Patterns/Transactional-Outbox">Transactional Outbox</a>.</li>
+</ul>
+<p><strong>④ Không merge / migrate được.</strong>
+ID chỉ có nghĩa <em>trong một database</em>. Gộp hai DB (M&amp;A, hợp nhất tenant), chạy data migration từ hệ cũ, replicate đa vùng, hay load song song vào nhiều shard — tất cả đều va chạm key space. Thêm một cạnh: kiểu <code>INT</code> 32-bit tràn ở 2.147.483.647 (đổi <code>INT</code>→<code>BIGINT</code> trên bảng lớn là migration đau — xem <a href="../Database-Patterns/DBMigration/DBMigration-06-Flyway-TechLead-Governance" class="internal alias" data-slug="Database-Patterns/DBMigration/DBMigration-06-Flyway-TechLead-Governance">Flyway Governance</a>); và sequence/identity <strong>có gap</strong> (rollback không trả lại số) nên đừng dùng nó làm số chứng từ liên tục.</p>
+<hr/>
+<h2 id="2-vì-sao-uuidv4-giết-innodb">2. Vì sao UUIDv4 “giết” InnoDB<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-vì-sao-uuidv4-giết-innodb" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>UUIDv4 = 122 bit ngẫu nhiên. Unique toàn cục, sinh ở bất cứ đâu, không đoán được — giải được cả bốn giới hạn ở §1. Cái giá nằm ở <strong>vị trí</strong>: random ⇒ không có locality.</p>
+<h3 id="21-tiền-đề-innodb-là-clustered-index">2.1 Tiền đề: InnoDB là clustered index<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#21-tiền-đề-innodb-là-clustered-index" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Trong InnoDB, <strong>bảng chính là B+Tree của primary key</strong>: lá của cây chứa <em>nguyên row</em>. Thứ tự PK = thứ tự vật lý.</p>
+<pre><code>                     InnoDB table = B+Tree theo PK
+                              [ root ]
+                         ┌───────┼───────┐
+                      [int]    [int]    [int]          ← page 16 KB (mặc định)
+                     ┌──┼──┐  ┌──┼──┐  ┌──┼──┐
+                    [L1][L2][L3]...    ...[L98][L99]   ← LÁ = NGUYÊN ROW
+</code></pre>
+<h3 id="22-append-vs-scatter">2.2 Append vs scatter<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#22-append-vs-scatter" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code> PK tăng dần (auto-inc / UUIDv7 / ULID)         PK ngẫu nhiên (UUIDv4)
+
+ ... [L97] [L98] [L99]  ← insert chỉ ở đây       [L1] [L2] [L3] ... [L98] [L99]
+                  ▲                                ▲    ▲         ▲     ▲
+              &quot;hot tail&quot;                       insert có thể rơi vào BẤT KỲ lá nào
+ buffer pool chỉ cần giữ vài page cuối          buffer pool phải giữ TOÀN BỘ cây
+ page fill ≈ 15/16                              page fill  ≈ 1/2 … 15/16
+</code></pre>
+<p>Hệ quả cụ thể:</p>
+<ol>
+<li><strong>Page split liên tục &amp; fill-factor thấp.</strong> Theo tài liệu MySQL, insert tuần tự cho page đầy khoảng 15/16, còn insert ngẫu nhiên chỉ từ 1/2 đến 15/16. Page half-empty = <strong>space amplification</strong> và nhiều page hơn phải đọc cho cùng một lượng dữ liệu.</li>
+<li><strong>Vách đá buffer pool (the cliff).</strong> Khi index còn vừa RAM, UUIDv4 trông ổn. Khi index vượt buffer pool, <em>mỗi insert phải đọc một page ngẫu nhiên từ đĩa trước khi ghi</em> ⇒ throughput rơi thẳng đứng. Với PK tuần tự, working set luôn chỉ là vài page cuối nên không có vách đá này.</li>
+<li><strong>Write amplification.</strong> Dirty page nằm rải rác ⇒ flush ngẫu nhiên, nhiều page bị bẩn hơn mỗi checkpoint, redo/doublewrite nặng hơn.</li>
+<li><strong>Range scan theo thời gian mất nghĩa.</strong> Không còn “N row mới nhất nằm cạnh nhau”.</li>
+</ol>
+<h3 id="23-pk-được-copy-vào-mọi-secondary-index">2.3 PK được copy vào <em>mọi</em> secondary index<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#23-pk-được-copy-vào-mọi-secondary-index" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>InnoDB secondary index lưu <code>(cột index, PK)</code> — PK là con trỏ về row. Vậy kích thước PK <strong>nhân với số index</strong>:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Kiểu PK</th><th>Byte/PK</th><th>100M row × 4 secondary index (thô, chưa tính overhead)</th></tr></thead><tbody><tr><td><code>BIGINT</code></td><td>8</td><td>≈ 3,2 GB</td></tr><tr><td><code>BINARY(16)</code></td><td>16</td><td>≈ 6,4 GB</td></tr><tr><td><code>CHAR(36)</code></td><td>36</td><td>≈ 14,4 GB</td></tr></tbody></table></div>
+<p>Nên: dù chọn UUID, <strong>tuyệt đối không lưu <code>CHAR(36)</code></strong> (text hex có dấu gạch). <code>BINARY(16)</code> nhỏ hơn 2,25 lần và so sánh bằng <code>memcmp</code> nhanh hơn so sánh chuỗi theo collation.</p>
+<h3 id="24-postgresql-có-bị-không">2.4 PostgreSQL có “bị” không?<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#24-postgresql-có-bị-không" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>PostgreSQL <strong>không clustered</strong>: row nằm ở heap (append), B-Tree chỉ là index trỏ vào <code>ctid</code>. Nên cú sốc nhẹ hơn InnoDB — nhưng <strong>B-Tree index trên cột UUIDv4 vẫn bị insert ngẫu nhiên</strong>: page split, index bloat, cache locality xấu, và sau mỗi checkpoint lần chạm đầu tiên vào một page sẽ ghi <em>full page image</em> vào WAL (<code>full_page_writes</code>) ⇒ WAL phình vì các page ngẫu nhiên đều bị chạm. Xem <a href="../Database-Patterns/PostgreSQL/01-ACID-Internals" class="internal alias" data-slug="Database-Patterns/PostgreSQL/01-ACID-Internals">ACID Internals (WAL, fsync)</a> và <a href="../concepts/postgresql-index-internals" class="internal alias" data-slug="concepts/postgresql-index-internals">PostgreSQL Index Internals</a>. PostgreSQL có kiểu <code>uuid</code> native 16 byte nên không mắc lỗi <code>CHAR(36)</code> — nhưng vẫn mất locality.</p>
+<blockquote class="callout warning" data-callout="warning">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Đừng kết luận quá tay </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>UUIDv4 <em>không</em> “chết” ở bảng nhỏ (index vừa RAM) hay ở cột không phải PK/không bị index nặng. Vấn đề là <strong>bảng lớn, ghi nhiều, index vượt bộ nhớ</strong>. Và nếu ID cần <em>không đoán được tuyệt đối</em> (token, public handle) thì v4 vẫn là lựa chọn đúng — chỉ đừng dùng nó làm clustering key (xem §5, pattern <em>dual ID</em>).</p>
+</div>
+</blockquote>
+<hr/>
+<h2 id="3-snowflake--locality-tốt-nhưng-có-nghĩa-vụ-workerid">3. Snowflake — locality tốt, nhưng có nghĩa vụ <code>workerID</code><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-snowflake--locality-tốt-nhưng-có-nghĩa-vụ-workerid" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="31-bố-cục-64-bit">3.1 Bố cục 64-bit<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#31-bố-cục-64-bit" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code>  0 │       41 bit timestamp (ms)        │  10 bit worker  │  12 bit sequence
+ ───┼────────────────────────────────────┼─────────────────┼──────────────────
+ ±  │  ms kể từ custom epoch  (~69,7 năm)│ (5 DC + 5 node) │  4096 ID / ms / worker
+</code></pre>
+<ul>
+<li><code>2^41 ms ≈ 69,7 năm</code> từ custom epoch · <code>2^10 = 1024</code> worker · <code>2^12 = 4096</code> ID/ms/worker.</li>
+<li>Vừa <code>BIGINT</code> 8 byte, sort theo thời gian ⇒ locality như auto-increment, nhưng <strong>sinh phía application, không cần DB</strong>.</li>
+<li>Triển khai Java tham khảo (nodeId + sequence) nằm trong <a href="../Database-Patterns/PostgreSQL/10-Sharding-When-Why-Pitfalls" class="internal alias" data-slug="Database-Patterns/PostgreSQL/10-Sharding-When-Why-Pitfalls">note Sharding</a>; nền tảng đồng hồ: <a href="../concepts/distributed-clocks-ordering" class="internal alias" data-slug="concepts/distributed-clocks-ordering">Distributed Clocks &amp; Ordering</a>.</li>
+</ul>
+<h3 id="32-nghĩa-vụ-workerid--tính-duy-nhất-là-có-điều-kiện">3.2 “Nghĩa vụ workerID” — tính duy nhất là <strong>có điều kiện</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#32-nghĩa-vụ-workerid--tính-duy-nhất-là-có-điều-kiện" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Snowflake không <em>bảo đảm</em> unique; nó <em>chuyển</em> bài toán unique từ “chọn ID” sang “<strong>chọn workerID cho mỗi generator đang sống</strong> và <strong>đồng hồ không đi lùi</strong>”. Cụ thể bạn nợ 5 nghĩa vụ:</p>
+<pre><code>   unique(ID) ⇐ unique(workerID trong tập generator đang sống)
+              ∧ đồng hồ đơn điệu tăng
+              ∧ sequence không tràn trong 1 ms
+              ∧ epoch + bit layout bất biến
+</code></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>#</th><th>Nghĩa vụ</th><th>Vi phạm thì sao</th></tr></thead><tbody><tr><td>1</td><td><strong>Cấp phát workerID duy nhất</strong> cho mọi instance <em>đang chạy</em></td><td>Hai node cùng workerID ⇒ ID trùng âm thầm khi cùng ms + cùng sequence</td></tr><tr><td>2</td><td><strong>Đồng hồ đơn điệu</strong>: phát hiện <code>now &lt; lastTimestamp</code> (NTP step, leap second, VM migration) rồi chờ / từ chối</td><td>Đồng hồ lùi ⇒ sinh lại ID đã cấp</td></tr><tr><td>3</td><td><strong>Vòng đời workerID</strong>: khi pod chết và workerID được tái dùng, instance mới phải bắt đầu <em>sau</em> timestamp cuối của chủ cũ</td><td>Tái dùng nóng ⇒ trùng với ID chủ cũ vừa sinh</td></tr><tr><td>4</td><td><strong>Giữ layout &amp; epoch cố định mãi mãi</strong> (config-as-code, có version)</td><td>Đổi layout ⇒ vỡ thứ tự và có thể trùng ID cũ</td></tr><tr><td>5</td><td><strong>Trần dung lượng</strong>: ≤ 1024 generator sống; > 4096 ID/ms/worker thì spin sang ms sau</td><td>Vượt trần ⇒ phải chờ hoặc đổi layout</td></tr></tbody></table></div>
+<p><strong>Vì sao nghĩa vụ #1 khó trên Kubernetes?</strong> Pod là ephemeral, autoscale lên xuống, restart có IP/hostname mới. Cách chọn:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Cách cấp workerID</th><th>Ưu</th><th>Nhược</th></tr></thead><tbody><tr><td>Hash từ IP/hostname</td><td>Không cần hạ tầng</td><td><strong>Birthday paradox</strong>: 10 bit chỉ có 1024 ô — 30 node ⇒ xác suất trùng ≈ 35 %, 50 node ⇒ ≈ 70 %</td></tr><tr><td>StatefulSet ordinal (<code>pod-0..N</code>)</td><td>Ổn định, đơn giản</td><td>Gắn chặt với StatefulSet; không hợp Deployment autoscale</td></tr><tr><td><strong>Lease</strong> trong etcd / Redis / ZooKeeper / bảng DB (TTL + gia hạn + fencing)</td><td>Đúng nhất về mặt lý thuyết</td><td>Thêm một <strong>dependency có trạng thái</strong> vào service vốn stateless; lease etcd/ZK dựa trên <a href="../concepts/consensus-raft-paxos" class="internal alias" data-slug="concepts/consensus-raft-paxos">consensus</a></td></tr><tr><td>Random workerID mỗi lần khởi động</td><td>Đơn giản</td><td>Lại là birthday paradox, chỉ đẹp khi số bit worker lớn</td></tr></tbody></table></div>
+<p>Xác suất trùng tính theo xấp xỉ <code>1 − e^(−n(n−1)/2N)</code> với <code>N = 1024</code>.</p>
+<p><strong>Code tối thiểu — đúng chỗ phải kiểm tra đồng hồ:</strong></p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="java" data-theme="github-light github-dark"><code data-language="java" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">public</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> synchronized</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> long</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> nextId</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">() {</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    long</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> now </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> System.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">currentTimeMillis</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">();</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (now </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&lt;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> lastTs) {                       </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// nghĩa vụ #2: đồng hồ lùi</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        long</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> skew </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> lastTs </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> now;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (skew </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">></span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> MAX_TOLERATED_SKEW_MS) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">throw</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> new</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> ClockMovedBackwardsException</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(skew);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        now </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> waitUntil</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(lastTs);              </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// lùi nhỏ: chờ</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    }</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (now </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">==</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> lastTs) {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        seq </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (seq </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">+</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0xFFF</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;              </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// 12 bit</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (seq </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">==</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) now </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> waitNextMillis</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(lastTs);   </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// tràn 4096/ms → spin sang ms sau</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    } </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">else</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        seq </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    lastTs </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> now;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    return</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> ((now </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> EPOCH) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&lt;&lt;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 22</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">|</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> ((</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">long</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) workerId </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&lt;&lt;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 12</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">|</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> seq;   </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// 41 | 10 | 12</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></figure>
+<p><strong>Hai bẫy phụ của Snowflake:</strong></p>
+<ul>
+<li><code>long</code> 64-bit <strong>vượt 2^53</strong> ⇒ JavaScript làm tròn mất chữ số; ID Snowflake phải trả ra API dưới dạng <strong>string</strong>.</li>
+<li>Vì ID chứa timestamp, đừng dùng <em>prefix ID</em> làm shard key theo thời gian (tạo hotspot) — shard theo hash. Xem <a href="../Database-Patterns/PostgreSQL/10-Sharding-When-Why-Pitfalls" class="internal alias" data-slug="Database-Patterns/PostgreSQL/10-Sharding-When-Why-Pitfalls">Sharding</a>.</li>
+</ul>
+<hr/>
+<h2 id="4-ulid--uuidv7--binary16--mặc-định-cho-hệ-mới">4. ULID / UUIDv7 + <code>BINARY(16)</code> — mặc định cho hệ mới<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-ulid--uuidv7--binary16--mặc-định-cho-hệ-mới" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="41-bố-cục-128-bit">4.1 Bố cục 128-bit<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#41-bố-cục-128-bit" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><code> UUIDv7 (RFC 9562)
+ ┌──────────────────────┬─────┬──────────────┬────┬───────────────────────────┐
+ │ 48 bit unix_ts_ms    │ ver │ 12 bit rand_a│ var│       62 bit rand_b       │
+ │ (big-endian, ĐỨNG ĐẦU)│ 0111│ (hoặc counter)│ 10 │                           │
+ └──────────────────────┴─────┴──────────────┴────┴───────────────────────────┘
+   ~74 bit ngẫu nhiên / ms (có thể dùng rand_a làm counter đơn điệu)
+
+ ULID
+ ┌──────────────────────┬────────────────────────────────────────┐
+ │ 48 bit timestamp ms  │            80 bit randomness           │   → text: 26 ký tự Crockford Base32
+ └──────────────────────┴────────────────────────────────────────┘
+</code></pre>
+<p><strong>Điểm mấu chốt của cả hai: timestamp nằm ở byte cao nhất, big-endian.</strong> So sánh byte-by-byte (<code>memcmp</code>, đúng cách B-Tree so sánh <code>BINARY</code>) ⇒ <strong>thứ tự byte = thứ tự thời gian</strong> ⇒ insert ≈ append ⇒ giải quyết §2. UUIDv4 thì 122 bit ngẫu nhiên từ byte đầu.</p>
+<h3 id="42-vì-sao-lưu-binary16-không-phải-char36">4.2 Vì sao lưu <code>BINARY(16)</code> (không phải <code>CHAR(36)</code>)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#42-vì-sao-lưu-binary16-không-phải-char36" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li><strong>16 byte</strong> thay vì 36 (xem bảng §2.3) — nhỏ hơn 2,25 lần ở PK, ở <em>mọi</em> secondary index và ở mọi FK.</li>
+<li>So sánh <code>memcmp</code> 16 byte — nhanh, không qua collation.</li>
+<li>Giữ nguyên thứ tự byte ⇒ giữ nguyên locality của v7/ULID.</li>
+<li>PostgreSQL <strong>không cần <code>BINARY(16)</code></strong>: kiểu <code>uuid</code> native đã là 16 byte nhị phân. Khái niệm <code>BINARY(16)</code> áp dụng cho MySQL/MariaDB.</li>
+</ul>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="sql" data-theme="github-light github-dark"><code data-language="sql" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- MySQL / MariaDB (InnoDB)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">CREATE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> TABLE</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> document</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    id          </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">BINARY</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">16</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)  </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">NOT NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,          </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- UUIDv7 hoặc ULID dạng 16 byte</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    code        </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">VARCHAR</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">50</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">NOT NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,          </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- business key, tách riêng khỏi PK</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    created_at  </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">DATETIME</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">3</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">NOT NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    PRIMARY KEY</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (id),</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    UNIQUE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> KEY</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> uk_document_code (code)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) ENGINE </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> InnoDB;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Hiển thị cho người đọc</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SELECT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> BIN_TO_UUID(id) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">AS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> id_text </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">FROM</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> document;</span></span></code></pre></figure>
+<blockquote class="callout warning" data-callout="warning">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Bẫy <code>swap_flag</code> của MySQL</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p><code>UUID_TO_BIN(str, 1)</code> / <code>BIN_TO_UUID(bin, 1)</code> hoán đổi các trường thời gian để làm UUID <strong>v1</strong> có thứ tự. Với <strong>v7/ULID thì giữ <code>swap_flag = 0</code></strong> (mặc định) — bật swap sẽ <em>xáo</em> phần timestamp và phá thứ tự.</p>
+</div>
+</blockquote>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="sql" data-theme="github-light github-dark"><code data-language="sql" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- PostgreSQL 18+: native</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">CREATE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> TABLE</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> document</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    id         uuid </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">PRIMARY KEY</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> DEFAULT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> uuidv7(),</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    created_at </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">timestamptz</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> NOT NULL</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> DEFAULT</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> now</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">()</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Trích timestamp từ ID nếu cần:  SELECT uuid_extract_timestamp(id) ...</span></span></code></pre></figure>
+<p>PostgreSQL 18 (phát hành 25/09/2025) mang <code>uuidv7()</code> vào core, kèm <code>uuid_extract_timestamp()</code>, và thêm alias <code>uuidv4()</code> cho <code>gen_random_uuid()</code>. Bản triển khai của PostgreSQL dành thêm 12 bit sau timestamp làm phần mili-giây mịn để các ID sinh trong cùng session luôn đơn điệu tăng.</p>
+<h3 id="43-sinh-id-ở-phía-application">4.3 Sinh ID ở phía application<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#43-sinh-id-ở-phía-application" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Stack</th><th>Cách sinh</th></tr></thead><tbody><tr><td><strong>Hibernate 7</strong></td><td><code>@Id @UuidGenerator(style = UuidGenerator.Style.VERSION_7) UUID id;</code> — <code>Style.VERSION_7</code> có trong javadoc Hibernate 7.0; một số nguồn nói đã có từ 6.5 ⇒ đối chiếu theo phiên bản đang dùng</td></tr><tr><td><strong>Java</strong> (thư viện)</td><td><code>UuidCreator.getTimeOrderedEpoch()</code> (uuid-creator) hoặc <code>Generators.timeBasedEpochGenerator()</code> (java-uuid-generator). <code>java.util.UUID</code> của JDK chỉ có <code>randomUUID()</code> (v4)</td></tr><tr><td><strong>Rust</strong></td><td>crate <code>uuid</code> bật feature <code>v7</code>: <code>Uuid::now_v7()</code> · crate <code>ulid</code>: <code>Ulid::new()</code></td></tr><tr><td><strong>Go</strong></td><td><code>google/uuid</code> ≥ v1.6: <code>uuid.NewV7()</code></td></tr></tbody></table></div>
+<p>Vì ID biết trước khi INSERT, các giới hạn ③ của §1 biến mất: <strong>JDBC batch insert chạy lại bình thường</strong>, ID có sẵn cho outbox/idempotency, sinh được ở edge/client.</p>
+<p>Map <code>UUID</code> ↔ <code>BINARY(16)</code>: Hibernate 6+/7 map <code>java.util.UUID</code> sang <code>BINARY(16)</code> trên MySQL/MariaDB theo mặc định (đối chiếu dialect đang dùng và <code>hibernate.type.preferred_uuid_jdbc_type</code>); trên PostgreSQL map sang <code>uuid</code> native.</p>
+<h3 id="44-ulid-hay-uuidv7">4.4 ULID hay UUIDv7?<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#44-ulid-hay-uuidv7" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Cả hai đều 128 bit, 48 bit timestamp ms ở đầu, sort theo thời gian. Khác biệt thực tế:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th></th><th>UUIDv7</th><th>ULID</th></tr></thead><tbody><tr><td>Chuẩn</td><td><strong>RFC 9562</strong></td><td>Spec cộng đồng (không phải RFC)</td></tr><tr><td>Native DB type</td><td><code>uuid</code> (PostgreSQL), driver/ORM hiểu sẵn</td><td>Không — lưu <code>BINARY(16)</code> hoặc chuỗi</td></tr><tr><td>Text form</td><td>36 ký tự hex + gạch</td><td><strong>26 ký tự</strong> Crockford Base32, URL-friendly</td></tr><tr><td>Đơn điệu trong cùng ms</td><td>RFC cho phép dùng <code>rand_a</code> làm counter</td><td>”Monotonic mode”: tăng phần random</td></tr><tr><td>Mặc định nên chọn</td><td>✅ Khi có thể (chuẩn + hệ sinh thái)</td><td>Khi cần chuỗi ngắn đẹp ở API/URL</td></tr></tbody></table></div>
+<p>Lưu trữ cả hai đều là 16 byte; ULID chuyển từ Crockford Base32 về 16 byte nhị phân trước khi ghi.</p>
+<h3 id="45-cái-giá-phải-nói-thật">4.5 Cái giá phải nói thật<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#45-cái-giá-phải-nói-thật" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ol>
+<li><strong>Lộ thời điểm tạo.</strong> Timestamp nằm trong ID. Nếu thời điểm tạo là thông tin nhạy cảm với bên ngoài ⇒ dùng <em>dual ID</em> (xem §5).</li>
+<li><strong>Chỉ “k-sortable” qua nhiều node.</strong> Timestamp lấy từ đồng hồ từng máy; skew vài giây ⇒ có <em>vài hot tail</em> (mỗi node một đuôi), vẫn tốt hơn hẳn random, nhưng <strong>không dùng ID để suy ra thứ tự nhân quả</strong> — đó là việc của logical clock (<a href="../concepts/distributed-clocks-ordering" class="internal alias" data-slug="concepts/distributed-clocks-ordering">Distributed Clocks</a>).</li>
+<li><strong>Gấp đôi BIGINT.</strong> 16 byte so với 8 byte — nhân lên ở secondary index và FK.</li>
+<li><strong>Hotspot đuôi phải.</strong> Mọi writer tranh nhau page cuối của một B-Tree; ở tốc độ insert rất cao trên <em>một</em> index có thể thấy tranh chấp latch ở lá phải nhất. Khi đó cân nhắc partitioning, chứ đừng quay lại UUIDv4.</li>
+<li><strong>Không có “hợp đồng” duy nhất cứng như DB-generated.</strong> Unique dựa vào ~74 bit ngẫu nhiên mỗi ms (collision xác suất ~0) — vẫn nên có <code>PRIMARY KEY</code>/unique constraint làm lưới an toàn.</li>
+</ol>
+<hr/>
+<h2 id="5-so-sánh-tổng-và-cây-quyết-định">5. So sánh tổng và cây quyết định<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5-so-sánh-tổng-và-cây-quyết-định" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th></th><th>Auto-inc</th><th>UUIDv4</th><th>Snowflake</th><th><strong>UUIDv7 / ULID</strong></th></tr></thead><tbody><tr><td>Kích thước</td><td>8 B</td><td>16 B (<code>BINARY</code>)</td><td>8 B</td><td>16 B</td></tr><tr><td>Locality / insert</td><td>✅ append</td><td>❌ random</td><td>✅ append</td><td>✅ append</td></tr><tr><td>Sinh không cần DB</td><td>❌</td><td>✅</td><td>✅ (cần workerID)</td><td>✅</td></tr><tr><td>Cần phối hợp / registry</td><td>DB counter</td><td>Không</td><td><strong>workerID + clock</strong></td><td>Không</td></tr><tr><td>Đoán được</td><td>❌ rất dễ</td><td>✅ không</td><td>⚠️ khá dễ</td><td>✅ khó (lộ timestamp)</td></tr><tr><td>Merge / multi-DB / shard</td><td>❌</td><td>✅</td><td>✅ nếu workerID duy nhất</td><td>✅</td></tr><tr><td>Biết ID trước INSERT</td><td>❌</td><td>✅</td><td>✅</td><td>✅</td></tr><tr><td>Rủi ro vận hành</td><td>Thấp</td><td>Hiệu năng ở scale</td><td><strong>Cao</strong> (workerID, clock)</td><td>Thấp</td></tr></tbody></table></div>
+<pre><code>Bảng chỉ nằm trên 1 DB, nội bộ, không lộ ra ngoài?
+ ├─ CÓ  → BIGINT identity/sequence (đơn giản nhất, nhỏ nhất)
+ └─ KHÔNG (đa service / shard / merge / lộ API / cần ID trước INSERT)
+        │
+        ├─ Cần ID 64-bit (JS number, giới hạn kích thước) và đã có hạ tầng cấp workerID?
+        │      └─ Snowflake — nhận nghĩa vụ workerID + clock
+        │
+        ├─ Cần token không đoán được tuyệt đối (public handle, secret)?
+        │      └─ UUIDv4 làm *public ID*, KHÔNG làm clustering key
+        │
+        └─ Còn lại (mặc định hệ mới)
+               └─ UUIDv7 (hoặc ULID) lưu BINARY(16) / uuid native
+</code></pre>
+<p><strong>Pattern <em>dual ID</em></strong> khi cần cả hai thế giới: PK nội bộ tuần tự (BIGINT hoặc UUIDv7) làm clustering key + FK; thêm cột <code>public_id</code> (UUIDv4 hoặc opaque) có <code>UNIQUE</code> index để lộ ra API. Đổi lại: thêm một index và một lần lookup.</p>
+<blockquote>
+<p>Khi chốt quyết định cho một service mới, ghi lại bằng ADR: <a href="../concepts/adr-framework" class="internal alias" data-slug="concepts/adr-framework">ADR Framework</a>.</p>
+</blockquote>
+<hr/>
+<h2 id="6-áp-dụng-vào-pdms--vpbank">6. Áp dụng vào PDMS / VPBank<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#6-áp-dụng-vào-pdms--vpbank" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<ul>
+<li>Các thiết kế trong vault đang dùng <code>gen_random_uuid()</code> (<strong>v4</strong>) làm PK trên PostgreSQL, ví dụ các bảng IAM/AuthZ ở <a href="../Microservices-Patterns/AuthZ-Platform-Dynamic-5-Layer-Design" class="internal alias" data-slug="Microservices-Patterns/AuthZ-Platform-Dynamic-5-Layer-Design">AuthZ Platform 5-Layer</a> và <code>outbox_events</code> ở <a href="../Microservices-Patterns/Transactional-Outbox" class="internal alias" data-slug="Microservices-Patterns/Transactional-Outbox">Transactional Outbox</a>.</li>
+<li><strong>Bảng append-nặng, volume cao</strong> (decision log, audit, outbox, event) là nơi v4 trả giá lớn nhất (index bloat, WAL do full-page image). Đó là ứng viên đầu tiên chuyển sang <strong>UUIDv7</strong>. Bảng danh mục nhỏ (tenant, role, permission) thì v4 vô hại — không cần đụng.</li>
+<li>Giữ <strong>business key</strong> (<code>document_code</code>, <code>case_id</code>) tách khỏi PK như đã làm ở bảng <code>document</code> trong <a href="../Database-Patterns/DBMigration/DBMigration-06-Flyway-TechLead-Governance" class="internal alias" data-slug="Database-Patterns/DBMigration/DBMigration-06-Flyway-TechLead-Governance">Flyway Governance</a>; ID kỹ thuật và mã nghiệp vụ là hai thứ.</li>
+<li>Khi stack lên <strong>Spring Boot 4 / Hibernate 7</strong>, <code>@UuidGenerator(style = VERSION_7)</code> là cấu hình một dòng; trên PostgreSQL 18 thêm <code>DEFAULT uuidv7()</code> ở schema làm lưới an toàn cho insert ngoài ORM (batch/ETL).</li>
+<li>Đổi PK của bảng <em>đã có dữ liệu</em>: đừng đổi kiểu cột in-place. UUIDv7 và UUIDv4 cùng kiểu <code>uuid</code> nên <strong>không cần migration schema</strong> — chỉ đổi cách sinh ID <em>từ giờ trở đi</em>; dữ liệu cũ giữ nguyên, B-Tree chỉ có phần cũ rải rác còn phần mới nằm ở đuôi. Chiến lược migration lớn xem <a href="../Database-Patterns/DBMigration/DBMigration-06-Flyway-TechLead-Governance" class="internal alias" data-slug="Database-Patterns/DBMigration/DBMigration-06-Flyway-TechLead-Governance">Flyway Governance</a>.</li>
+<li>Với bulk load/ETL nhiều triệu row: ID sinh sớm và có thứ tự ⇒ <code>COPY</code>/batch insert ghi gần như tuần tự; ID ngẫu nhiên thì không. (Liên quan hướng ETL ở <a href="../Performance-System-Programming/03-Data-Format-Parsing/02-Read-Write-Separation-Type-Conversion" class="internal alias" data-slug="Performance-System-Programming/03-Data-Format-Parsing/02-Read-Write-Separation-Type-Conversion">Write Separation &amp; Type Conversion</a>.)</li>
+</ul>
+<hr/>
+<h2 id="7-checklist-chọn--triển-khai">7. Checklist chọn &amp; triển khai<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#7-checklist-chọn--triển-khai" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" disabled/> Bảng có lộ ra ngoài / đa service / có thể shard hoặc merge? → loại auto-increment trần.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Engine là InnoDB? → PK tuần tự theo thời gian, <strong>không UUIDv4</strong>, <strong>không <code>CHAR(36)</code></strong>.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Lưu <code>BINARY(16)</code> (MySQL) hoặc <code>uuid</code> (PostgreSQL); không lưu chuỗi.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> MySQL: <code>swap_flag = 0</code> cho v7/ULID.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Nếu Snowflake: có cơ chế cấp workerID (lease), phát hiện clock rollback, epoch+layout là hằng có version, ID ra API dạng string.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Business key tách riêng khỏi PK kỹ thuật.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Cần public ID không đoán được/không lộ thời gian? → dual ID.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Có <code>PRIMARY KEY</code>/<code>UNIQUE</code> làm lưới an toàn dù ID “gần như chắc chắn” unique.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Đo bằng dữ liệu của bạn: insert throughput và kích thước index khi index vượt buffer pool (đó mới là chỗ khác biệt lộ ra).</li>
+</ul>
+<hr/>
+<h2 id="8-đính-chính-tri-thức-trong-vault">8. Đính chính tri thức trong vault<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#8-đính-chính-tri-thức-trong-vault" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<blockquote class="callout success" data-callout="success">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Đã sửa ngày 2026-11-02 trong các note gốc </p></div>
+                  
+                </div>
+<div class="callout-content">
+<ul>
+<li><a href="../Database-Patterns/PostgreSQL/10-Sharding-When-Why-Pitfalls" class="internal alias" data-slug="Database-Patterns/PostgreSQL/10-Sharding-When-Why-Pitfalls">10-Sharding-When-Why-Pitfalls</a> — “PostgreSQL 17+: UUID v7 built-in” → đúng là <strong>PostgreSQL 18</strong> (<code>uuidv7()</code>); đồng thời bổ sung cảnh báo workerID/clock rollback vào đoạn Snowflake.</li>
+<li><a href="../concepts/distributed-clocks-ordering" class="internal alias" data-slug="concepts/distributed-clocks-ordering">distributed-clocks-ordering</a> (Tip 1) — bỏ <code>uuid_generate_v7()</code> (không tồn tại trong <code>uuid-ossp</code>), thay bằng <code>uuidv7()</code> (PG 18+) kèm cảnh báo UUIDv7 chỉ là <em>k-sortable</em>, không thay logical clock.</li>
+<li><a href="../Database-Patterns/Hibernate-Performance-Deep-Dive" class="internal alias" data-slug="Database-Patterns/Hibernate-Performance-Deep-Dive">Hibernate-Performance-Deep-Dive</a> (mục <code>@Id</code> và Strategy) — <code>Style.TIME</code> → <code>Style.VERSION_7</code>; bỏ <code>uuid_generate_v7()</code>.</li>
+</ul>
+<p>Cơ chế nền của toàn bộ chủ đề: <a href="../Database-Patterns/B-Tree-Clustered-Index-Random-Write-Cost" class="internal alias" data-slug="Database-Patterns/B-Tree-Clustered-Index-Random-Write-Cost">B-tree, clustered index và cái giá của ghi random</a>.</p>
+</div>
+</blockquote>
+<hr/>
+<h2 id="-chuỗi-tri-thức-liên-quan">🔗 Chuỗi tri thức liên quan<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-chuỗi-tri-thức-liên-quan" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p><strong>Nền tảng index &amp; lưu trữ</strong></p>
+<ul>
+<li><a href="../Database-Patterns/PostgreSQL/04-Index-Internals" class="internal alias" data-slug="Database-Patterns/PostgreSQL/04-Index-Internals">PostgreSQL 04 — Index Internals</a> — B-Tree, page split</li>
+<li><a href="../concepts/postgresql-index-internals" class="internal alias" data-slug="concepts/postgresql-index-internals">PostgreSQL Index Internals (concept)</a></li>
+<li><a href="../Database-Patterns/PostgreSQL/01-ACID-Internals" class="internal alias" data-slug="Database-Patterns/PostgreSQL/01-ACID-Internals">PostgreSQL 01 — ACID Internals</a> — WAL, full-page writes</li>
+<li><a href="../Database-Patterns/PostgreSQL/08-MVCC-MySQL-PostgreSQL-Oracle" class="internal alias" data-slug="Database-Patterns/PostgreSQL/08-MVCC-MySQL-PostgreSQL-Oracle">08 — MVCC: MySQL vs PostgreSQL vs Oracle</a> — so sánh cách lưu row giữa các engine</li>
+<li><a href="../concepts/memory-hierarchy-cpu-cache" class="internal alias" data-slug="concepts/memory-hierarchy-cpu-cache">Memory Hierarchy &amp; CPU Cache</a> — vì sao locality quyết định hiệu năng</li>
+<li><a href="../concepts/data-storage-model-java-go-rust" class="internal alias" data-slug="concepts/data-storage-model-java-go-rust">Rust</a> — bit-level layout</li>
+<li><a href="../Performance-System-Programming/01-Database-Internals/04-SSTable-Format" class="internal alias" data-slug="Performance-System-Programming/01-Database-Internals/04-SSTable-Format">SSTable Format</a> — góc nhìn LSM-Tree, nơi key ngẫu nhiên không bị phạt giống B+Tree</li>
+</ul>
+<p><strong>Phân tán &amp; thời gian</strong></p>
+<ul>
+<li><a href="../concepts/distributed-clocks-ordering" class="internal alias" data-slug="concepts/distributed-clocks-ordering">Distributed Clocks &amp; Ordering</a> — NTP, clock skew, logical clock</li>
+<li><a href="../concepts/consensus-raft-paxos" class="internal alias" data-slug="concepts/consensus-raft-paxos">Consensus: Raft &amp; Paxos</a> — nền của lease cho workerID</li>
+<li><a href="../Database-Patterns/PostgreSQL/10-Sharding-When-Why-Pitfalls" class="internal alias" data-slug="Database-Patterns/PostgreSQL/10-Sharding-When-Why-Pitfalls">Sharding: When, Why, Pitfalls</a></li>
+</ul>
+<p><strong>ORM, migration, pattern</strong></p>
+<ul>
+<li><a href="../Database-Patterns/Hibernate-Performance-Deep-Dive" class="internal alias" data-slug="Database-Patterns/Hibernate-Performance-Deep-Dive">Hibernate Performance Deep Dive</a> — IDENTITY vs SEQUENCE, batch insert</li>
+<li><a href="../Database-Patterns/DBMigration/DBMigration-06-Flyway-TechLead-Governance" class="internal alias" data-slug="Database-Patterns/DBMigration/DBMigration-06-Flyway-TechLead-Governance">Flyway Tech Lead Governance</a></li>
+<li><a href="../Microservices-Patterns/Transactional-Outbox" class="internal alias" data-slug="Microservices-Patterns/Transactional-Outbox">Transactional Outbox</a> — event ID sinh sớm</li>
+<li><a href="../Notion-Knowledge/Note/Mastering-Idempotency--Building-Reliable-APIs" class="internal alias" data-slug="Notion-Knowledge/Note/Mastering-Idempotency--Building-Reliable-APIs">Mastering Idempotency</a> — idempotency key</li>
+</ul>
+<p><strong>Bối cảnh PDMS &amp; quyết định</strong></p>
+<ul>
+<li><a href="../_moc/MOC-PDMS" class="internal alias" data-slug="_moc/MOC-PDMS">MOC PDMS</a></li>
+<li><a href="../Microservices-Patterns/PDMS-AuthZ-Fine-Grained-Design" class="internal alias" data-slug="Microservices-Patterns/PDMS-AuthZ-Fine-Grained-Design">PDMS AuthZ Fine-Grained Design</a></li>
+<li><a href="../concepts/adr-framework" class="internal alias" data-slug="concepts/adr-framework">ADR Framework</a></li>
+</ul>
+<p><strong>Hub</strong></p>
+<ul>
+<li><a href="../Database-Patterns/00-Hub-Database-Persistence" class="internal alias" data-slug="Database-Patterns/00-Hub-Database-Persistence">Hub Database Persistence</a> · <a href="../_moc/MOC-Database" class="internal alias" data-slug="_moc/MOC-Database">MOC Database</a> · <a href="../_moc/MOC-Database-Internals" class="internal alias" data-slug="_moc/MOC-Database-Internals">MOC Database Internals</a></li>
+</ul>
+<hr/>
+<p><em>Tags: <a href=".././tags/database" class="tag-link internal alias" data-slug="tags/database">database</a> <a href=".././tags/id-generation" class="tag-link internal alias" data-slug="tags/id-generation">id-generation</a> <a href=".././tags/uuid" class="tag-link internal alias" data-slug="tags/uuid">uuid</a> <a href=".././tags/uuidv7" class="tag-link internal alias" data-slug="tags/uuidv7">uuidv7</a> <a href=".././tags/ulid" class="tag-link internal alias" data-slug="tags/ulid">ulid</a> <a href=".././tags/snowflake" class="tag-link internal alias" data-slug="tags/snowflake">snowflake</a> <a href=".././tags/innodb" class="tag-link internal alias" data-slug="tags/innodb">innodb</a> <a href=".././tags/b-tree" class="tag-link internal alias" data-slug="tags/b-tree">b-tree</a></em></p>
+<h2 id="cơ-chế-nền-bổ-sung-2026-11-02">Cơ chế nền (bổ sung 2026-11-02)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#cơ-chế-nền-bổ-sung-2026-11-02" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<ul>
+<li><a href="../Database-Patterns/B-Tree-Clustered-Index-Random-Write-Cost" class="internal alias" data-slug="Database-Patterns/B-Tree-Clustered-Index-Random-Write-Cost">B-tree, clustered index và cái giá của ghi random</a> — page, buffer pool, page split, change buffer, phân mảnh: vì sao thứ tự khóa quyết định chi phí ghi (cơ sở của §2 trong bài này).</li>
+</ul>
+<hr/>
+<h2 id="-usage--công-thức-dùng-ngay">🛠 Usage — công thức dùng ngay<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-usage--công-thức-dùng-ngay" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="u1-dịch-vụ-mới-trên-mysqlinnodb-uuidv7--binary16--batch-insert">U1. Dịch vụ mới trên MySQL/InnoDB: UUIDv7 + <code>BINARY(16)</code> + batch insert<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#u1-dịch-vụ-mới-trên-mysqlinnodb-uuidv7--binary16--batch-insert" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="java" data-theme="github-light github-dark"><code data-language="java" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// Entity (Hibernate 7.x; với 6.x đối chiếu javadoc phiên bản đang dùng — xem R9)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">@</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Entity</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">public</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> class</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> Document</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    @</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Id</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    @</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">UuidGenerator</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">style</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> UuidGenerator.Style.VERSION_7)   </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// time-ordered, RFC 9562</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    private</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> UUID id;                                         </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// MySQL dialect thường map sang BINARY(16)</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    @</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Column</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">nullable</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> false</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">unique</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> true</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">length</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 50</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    private</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> String code;                                     </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// business key tách khỏi PK</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></figure>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="java" data-theme="github-light github-dark"><code data-language="java" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// Khi tự thao tác byte (JdbcTemplate, ETL): big-endian → timestamp đứng đầu → thứ tự byte = thứ tự thời gian</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">static</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> byte</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">[] </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">toBytes</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(UUID u) {</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    return</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> ByteBuffer.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">allocate</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">16</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">).</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">putLong</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(u.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">getMostSignificantBits</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">())</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">                                  .</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">putLong</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(u.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">getLeastSignificantBits</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">()).</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">array</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">();</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">static</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> UUID </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">fromBytes</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">byte</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">[] b) {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    ByteBuffer bb </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> ByteBuffer.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">wrap</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(b);</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    return</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> new</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> UUID</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(bb.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">getLong</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(), bb.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">getLong</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">());</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// Sinh v7 ngoài Hibernate:  UuidCreator.getTimeOrderedEpoch()  (uuid-creator)</span></span></code></pre></figure>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="yaml" data-theme="github-light github-dark"><code data-language="yaml" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Vì ID biết trước INSERT nên batch hoạt động — nhớ bật ở cả ORM lẫn driver</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">spring.jpa.properties.hibernate.jdbc.batch_size</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">100</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">spring.jpa.properties.hibernate.order_inserts</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">true</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;">spring.jpa.properties.hibernate.order_updates</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">true</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># MySQL Connector/J: thêm rewriteBatchedStatements=true vào JDBC URL</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># PostgreSQL JDBC:    thêm reWriteBatchedInserts=true</span></span></code></pre></figure>
+<h3 id="u2-postgresql-18-mặc-định-ở-schema--trích-timestamp">U2. PostgreSQL 18+: mặc định ở schema + trích timestamp<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#u2-postgresql-18-mặc-định-ở-schema--trích-timestamp" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="sql" data-theme="github-light github-dark"><code data-language="sql" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">CREATE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> TABLE</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> document</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    id         uuid </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">PRIMARY KEY</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> DEFAULT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> uuidv7(),     </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- lưới an toàn cho INSERT ngoài ORM (ETL, script)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    code       </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">text</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> NOT NULL</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> UNIQUE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    created_at </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">timestamptz</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> NOT NULL</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> DEFAULT</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> now</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">()</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SELECT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> uuid_extract_timestamp(id) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">AS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> id_ts, created_at </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">FROM</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> document </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">LIMIT</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 5</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;  </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- đối chiếu lệch giờ</span></span></code></pre></figure>
+<h3 id="u3-dual-id--pk-nội-bộ-có-locality-public-id-không-lộ-thời-gian">U3. Dual ID — PK nội bộ có locality, public ID không lộ thời gian<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#u3-dual-id--pk-nội-bộ-có-locality-public-id-không-lộ-thời-gian" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="sql" data-theme="github-light github-dark"><code data-language="sql" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">CREATE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> TABLE</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> case_file</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    id         uuid </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">PRIMARY KEY</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> DEFAULT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> uuidv7(),           </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- clustering/FK nội bộ</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    public_id  uuid </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">NOT NULL</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> DEFAULT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> gen_random_uuid(),     </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- v4, đưa ra API/URL</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    CONSTRAINT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> uk_case_file_public </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">UNIQUE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (public_id)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- API: GET /cases/{public_id}  → tra public_id → id nội bộ cho mọi join/FK</span></span></code></pre></figure>
+<h3 id="u4-snowflake-cấp-workerid-bằng-lease-trong-db-nghĩa-vụ-1-và-3-của-32">U4. Snowflake: cấp <code>workerID</code> bằng lease trong DB (nghĩa vụ #1 và #3 của §3.2)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#u4-snowflake-cấp-workerid-bằng-lease-trong-db-nghĩa-vụ-1-và-3-của-32" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="sql" data-theme="github-light github-dark"><code data-language="sql" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">CREATE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> TABLE</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> worker_lease</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    worker_id   </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">smallint</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    PRIMARY KEY</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> CHECK</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (worker_id </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">BETWEEN</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> AND</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 1023</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">),</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    owner</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">       text</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    lease_until </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">timestamptz</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> NOT NULL</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> DEFAULT</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> '-infinity'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    last_ts_ms  </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">bigint</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">      NOT NULL</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> DEFAULT</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">          -- timestamp ID cuối cùng chủ cũ đã phát</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Acquire: lấy một worker_id đã hết hạn, KHÔNG tranh với instance khác</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">UPDATE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> worker_lease </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SET</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> owner</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> :me, lease_until </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> now</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">() </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">+</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> interval </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">'30 seconds'</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">WHERE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> worker_id </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SELECT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> worker_id </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">FROM</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> worker_lease</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">                   WHERE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> lease_until </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&lt;</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> now</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">() </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ORDER BY</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> worker_id </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">LIMIT</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 1</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> FOR</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> UPDATE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> SKIP</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> LOCKED)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">RETURNING worker_id, last_ts_ms;</span></span></code></pre></figure>
+<p>Quy tắc đi kèm: (a) gia hạn lease định kỳ (≈ ⅓ TTL) và <strong>ngừng phát ID ngay khi mất lease</strong>; (b) chủ mới phải chờ cho tới khi <code>now_ms > last_ts_ms</code> trước khi phát ID; (c) định kỳ ghi <code>last_ts_ms</code> khi gia hạn lease.</p>
+<h3 id="u5-đổi-pk-bigint--uuidv7-trên-bảng-đã-có-dữ-liệu-expandcontract-không-alter-in-place">U5. Đổi PK <code>BIGINT</code> → UUIDv7 trên bảng đã có dữ liệu (expand/contract, không ALTER in-place)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#u5-đổi-pk-bigint--uuidv7-trên-bảng-đã-có-dữ-liệu-expandcontract-không-alter-in-place" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Bước</th><th>Việc làm</th><th>Vì sao an toàn</th></tr></thead><tbody><tr><td>1</td><td>Thêm cột <code>new_id</code> (nullable), backfill theo lô nhỏ</td><td>Không giữ khóa dài, không rewrite bảng</td></tr><tr><td>2</td><td>Tạo unique index trên <code>new_id</code> bằng <code>CREATE INDEX CONCURRENTLY</code> (PostgreSQL)</td><td>Không chặn ghi</td></tr><tr><td>3</td><td>Thêm cột FK mới ở bảng con, backfill, dual-write</td><td>Hai khóa cùng tồn tại trong giai đoạn chuyển</td></tr><tr><td>4</td><td>Chuyển đọc sang <code>new_id</code>, theo dõi lỗi</td><td>Rollback = đọc lại khóa cũ</td></tr><tr><td>5</td><td>Đổi PK/FK, bỏ cột cũ trong một lần deploy riêng</td><td>Bước phá hủy tách biệt và đảo ngược được tới phút cuối</td></tr></tbody></table></div>
+<p>Chiến lược migration dài hạn và governance: <a href="../Database-Patterns/DBMigration/DBMigration-06-Flyway-TechLead-Governance" class="internal alias" data-slug="Database-Patterns/DBMigration/DBMigration-06-Flyway-TechLead-Governance">Flyway Governance</a>.</p>
+<h3 id="u6-bài-kiểm-thử-id-có-thật-sự-tăng-theo-thời-gian-không">U6. Bài kiểm thử “ID có thật sự tăng theo thời gian không?”<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#u6-bài-kiểm-thử-id-có-thật-sự-tăng-theo-thời-gian-không" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="sql" data-theme="github-light github-dark"><code data-language="sql" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Kỳ vọng: chỉ vài ca cùng mili-giây hoặc lệch đồng hồ giữa node</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SELECT</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> COUNT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">AS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> out_of_order</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">FROM</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SELECT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> id, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">LAG</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(id) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">OVER</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ORDER BY</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> created_at, id) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">AS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> prev_id</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">      FROM</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> document </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ORDER BY</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> created_at </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">LIMIT</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 100000</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) t</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">WHERE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> prev_id </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">></span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> id;</span></span></code></pre></figure>
+<hr/>
+<h2 id="️-mistakes--lỗi-thường-gặp-cơ-chế--cách-phát-hiện--cách-sửa">⚠️ Mistakes — lỗi thường gặp (cơ chế · cách phát hiện · cách sửa)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#️-mistakes--lỗi-thường-gặp-cơ-chế--cách-phát-hiện--cách-sửa" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>#</th><th>Lỗi</th><th>Vì sao sai (cơ chế)</th><th>Cách phát hiện</th><th>Cách sửa</th></tr></thead><tbody><tr><td>1</td><td>Lưu UUID dạng <code>CHAR(36)</code>/<code>VARCHAR(36)</code></td><td>PK nhân vào mọi secondary index (InnoDB) ⇒ 36 B thay vì 16 B (≈ ×2,25); so sánh qua collation, không phải <code>memcmp</code></td><td><code>SHOW CREATE TABLE</code>; so <code>mysql.innodb_index_stats</code> (stat <code>size</code>) với dự kiến</td><td>Dùng <code>BINARY(16)</code> (MySQL) hoặc <code>uuid</code> (PostgreSQL)</td></tr><tr><td>2</td><td>UUIDv4 làm PK InnoDB cho bảng lớn</td><td>Chèn ngẫu nhiên ⇒ split, fill ≈ ½–15/16, vách đá buffer pool (xem bài B-tree §4–§7)</td><td><code>index_page_splits</code> tăng nhanh; <code>Innodb_buffer_pool_reads</code> / <code>read_requests</code> cao khi bảng > RAM</td><td>UUIDv7/ULID cho PK; v4 chỉ làm <code>public_id</code></td></tr><tr><td>3</td><td>Bật <code>swap_flag=1</code> của <code>UUID_TO_BIN</code> cho UUIDv7/ULID</td><td><code>swap_flag</code> hoán đổi trường thời gian để <em>sửa</em> UUIDv1; áp vào v7 sẽ làm xáo timestamp</td><td>Chạy U6: <code>out_of_order</code> cao bất thường</td><td><code>swap_flag=0</code> (mặc định) cho v7/ULID</td></tr><tr><td>4</td><td>Dùng <code>Style.TIME</code> hoặc <code>uuid_generate_v7()</code> cho “ordered UUID”</td><td><code>TIME</code> là kiểu v1 (time_low đứng đầu → không sort theo byte); <code>uuid-ossp</code> không có v7</td><td>Chạy U6</td><td><code>Style.VERSION_7</code>; <code>uuidv7()</code> (PG 18+) hoặc sinh ở application</td></tr><tr><td>5</td><td>Snowflake: <code>workerId = hash(IP)</code></td><td>Xác suất trùng tăng theo birthday paradox: 30 node/1024 ô ≈ 35 %</td><td>Hai instance cùng <code>workerId</code> (log khi khởi động)</td><td>Lease (U4) hoặc StatefulSet ordinal</td></tr><tr><td>6</td><td>Snowflake: không phát hiện đồng hồ lùi</td><td><code>now &lt; lastTs</code> ⇒ sinh lại cặp (timestamp, worker, sequence) đã dùng</td><td>Metric “clock moved backwards”; unique violation hiếm, khó tái hiện</td><td>Chờ/từ chối khi lùi (code §3.2), giám sát NTP offset</td></tr><tr><td>7</td><td>Tái dùng <code>workerId</code> ngay sau khi pod chết</td><td>Chủ mới có thể phát lại timestamp chủ cũ vừa dùng</td><td>So <code>last_ts_ms</code> với đồng hồ lúc khởi động</td><td>Cooldown tới <code>last_ts_ms</code> (U4-b)</td></tr><tr><td>8</td><td>Trả Snowflake <code>long</code> ra JSON số</td><td>JavaScript chỉ chính xác tới 2^53 ⇒ làm tròn chữ số cuối</td><td>ID ở client khác ID ở server</td><td>Serialize dạng <strong>string</strong></td></tr><tr><td>9</td><td>Dùng UUIDv7 làm token/secret</td><td>RFC 9562 cảnh báo không coi UUID là capability bảo mật; v7 lộ timestamp, ~74 bit ngẫu nhiên/ms</td><td>Review chỗ dùng ID làm “link bí mật”</td><td>Token ngẫu nhiên mật mã (≥128 bit từ CSPRNG) tách khỏi ID</td></tr><tr><td>10</td><td>Suy luận thứ tự nhân quả từ ID (v7/Snowflake)</td><td>Timestamp lấy từ wall clock của từng máy, có skew ⇒ chỉ k-sortable</td><td>Test với hai node lệch giờ</td><td>Dùng logical clock/version (<a href="../concepts/distributed-clocks-ordering" class="internal alias" data-slug="concepts/distributed-clocks-ordering">Distributed Clocks</a>)</td></tr><tr><td>11</td><td>Shard theo <em>prefix</em> của ID thời gian</td><td>Mọi insert mới rơi vào cùng shard ⇒ hotspot</td><td>Một shard CPU/IO cao, các shard khác rảnh</td><td>Shard theo hash của khóa (<a href="../Database-Patterns/PostgreSQL/10-Sharding-When-Why-Pitfalls" class="internal alias" data-slug="Database-Patterns/PostgreSQL/10-Sharding-When-Why-Pitfalls">Sharding</a>)</td></tr><tr><td>12</td><td>Dùng sequence/identity làm số chứng từ liên tục</td><td>Sequence không rollback ⇒ có gap; cache sequence ⇒ gap khi restart</td><td>Truy vấn tìm khoảng trống</td><td>Bảng đánh số riêng có khóa, hoặc chấp nhận gap</td></tr><tr><td>13</td><td><code>GenerationType.IDENTITY</code> rồi bật <code>batch_size</code></td><td>Hibernate phải INSERT ngay để lấy ID ⇒ batch bị vô hiệu</td><td>Bật SQL log: mỗi row một câu INSERT</td><td><code>SEQUENCE</code> + <code>allocationSize</code>, hoặc UUID sinh ở app</td></tr><tr><td>14</td><td>Bỏ unique constraint vì “ID gần như không trùng”</td><td>Bug generator/clock/sao chép dữ liệu vẫn tạo trùng; hỏng âm thầm</td><td>Không phát hiện được nếu không có ràng buộc</td><td>Luôn <code>PRIMARY KEY</code>/<code>UNIQUE</code> làm lưới an toàn</td></tr><tr><td>15</td><td><code>ALTER TABLE ... MODIFY id</code> đổi kiểu PK trực tiếp trên bảng lớn</td><td>Rewrite toàn bảng + dựng lại mọi index, khóa/tốn I/O</td><td>Ước lượng thời gian bằng bản sao</td><td>Expand/contract (U5)</td></tr></tbody></table></div>
+<hr/>
+<h2 id="-tài-liệu-dẫn-chứng">📚 Tài liệu dẫn chứng<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-tài-liệu-dẫn-chứng" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="bảng-khẳng-định--nguồn">Bảng: khẳng định → nguồn<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#bảng-khẳng-định--nguồn" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Khẳng định trong bài</th><th>Nguồn</th></tr></thead><tbody><tr><td>Insert tuần tự ⇒ page ≈ 15/16 đầy; ngẫu nhiên ⇒ ½ … 15/16; <code>innodb_fill_factor</code></td><td>R1</td></tr><tr><td>Secondary index lưu PK; PK dài làm mọi index to</td><td>R2</td></tr><tr><td><code>swap_flag</code> của <code>UUID_TO_BIN</code> dành cho UUIDv1</td><td>R3</td></tr><tr><td>Bố cục UUIDv7 (48 + 4 + 12 + 2 + 62 bit); UUID không phải capability bảo mật</td><td>R4</td></tr><tr><td>Bố cục ULID (48 + 80 bit, Crockford Base32)</td><td>R5</td></tr><tr><td>Bố cục Snowflake 41/10/12</td><td>R6</td></tr><tr><td><code>uuidv7()</code>, <code>uuid_extract_timestamp()</code> có từ PostgreSQL 18; <code>uuid-ossp</code> chỉ v1/v3/v4/v5</td><td>R7, R8</td></tr><tr><td><code>UuidGenerator.Style.VERSION_7</code></td><td>R9</td></tr><tr><td><code>IDENTITY</code> ngăn batch insert</td><td>R10</td></tr><tr><td>Xác suất trùng workerID (birthday problem)</td><td>R11</td></tr><tr><td>Đồng hồ vật lý không đủ để suy ra thứ tự nhân quả</td><td>R12</td></tr><tr><td>Kích thước PK ảnh hưởng chi phí B-Tree, locality của khóa</td><td>R13</td></tr></tbody></table></div>
+<h3 id="danh-mục-nguồn">Danh mục nguồn<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#danh-mục-nguồn" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li><strong>R1</strong> — MySQL 8.4 Reference Manual, <em>The Physical Structure of an InnoDB Index</em>: <a href="https://dev.mysql.com/doc/refman/8.4/en/innodb-physical-structure.html" class="external">https://dev.mysql.com/doc/refman/8.4/en/innodb-physical-structure.html<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><strong>R2</strong> — MySQL 8.4 Reference Manual, <em>Clustered and Secondary Indexes</em>: <a href="https://dev.mysql.com/doc/refman/8.4/en/innodb-index-types.html" class="external">https://dev.mysql.com/doc/refman/8.4/en/innodb-index-types.html<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><strong>R3</strong> — MySQL 8.4 Reference Manual, <code>UUID_TO_BIN()</code>: <a href="https://dev.mysql.com/doc/refman/8.4/en/miscellaneous-functions.html#function_uuid-to-bin" class="external">https://dev.mysql.com/doc/refman/8.4/en/miscellaneous-functions.html#function_uuid-to-bin<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><strong>R4</strong> — RFC 9562, <em>Universally Unique IDentifiers (UUIDs)</em> (có mục Security Considerations): <a href="https://www.rfc-editor.org/rfc/rfc9562" class="external">https://www.rfc-editor.org/rfc/rfc9562<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><strong>R5</strong> — ULID specification: <a href="https://github.com/ulid/spec" class="external">https://github.com/ulid/spec<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><strong>R6</strong> — Twitter Snowflake (kho lưu trữ): <a href="https://github.com/twitter-archive/snowflake" class="external">https://github.com/twitter-archive/snowflake<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><strong>R7</strong> — PostgreSQL docs, <em>UUID Functions</em>: <a href="https://www.postgresql.org/docs/current/functions-uuid.html" class="external">https://www.postgresql.org/docs/current/functions-uuid.html<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a> · Release notes 18: <a href="https://www.postgresql.org/docs/release/18.0/" class="external">https://www.postgresql.org/docs/release/18.0/<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><strong>R8</strong> — PostgreSQL docs, <code>uuid-ossp</code>: <a href="https://www.postgresql.org/docs/current/uuid-ossp.html" class="external">https://www.postgresql.org/docs/current/uuid-ossp.html<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><strong>R9</strong> — Hibernate ORM 7.0 javadoc, <code>UuidGenerator.Style</code>: <a href="https://docs.jboss.org/hibernate/orm/7.0/javadocs/org/hibernate/annotations/UuidGenerator.Style.html" class="external">https://docs.jboss.org/hibernate/orm/7.0/javadocs/org/hibernate/annotations/UuidGenerator.Style.html<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><strong>R10</strong> — Hibernate User Guide (identifier generators): <a href="https://docs.hibernate.org/orm/current/userguide/html_single/Hibernate_User_Guide.html" class="external">https://docs.hibernate.org/orm/current/userguide/html_single/Hibernate_User_Guide.html<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><strong>R11</strong> — Birthday problem: <a href="https://en.wikipedia.org/wiki/Birthday_problem" class="external">https://en.wikipedia.org/wiki/Birthday_problem<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><strong>R12</strong> — L. Lamport, <em>Time, Clocks, and the Ordering of Events in a Distributed System</em>, CACM 21(7), 1978.</li>
+<li><strong>R13</strong> — M. Kleppmann, <em>Designing Data-Intensive Applications</em>, ch. 3 (Storage and Retrieval) · G. Graefe, <em>Modern B-Tree Techniques</em>, Foundations and Trends in Databases, 2011.</li>
+</ul>
+<blockquote>
+<p>Quy ước của vault cho các article triển khai: mỗi bài có đủ <strong>Usage</strong> (dùng ngay), <strong>Mistakes</strong> (cơ chế · phát hiện · sửa) và <strong>Tài liệu dẫn chứng</strong> (khẳng định → nguồn). Số liệu mô hình hóa luôn ghi rõ là minh họa; số đo thật phải lấy từ hệ thống của bạn.</p>
+</blockquote></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-46" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#chọn-kiểu-id-cho-hệ-thống-hiện-đại-database" data-for="chọn-kiểu-id-cho-hệ-thống-hiện-đại-database">Chọn kiểu ID cho hệ thống hiện đại (Database)</a></li><li class="depth-1"><a href="#0-id-thật-sự-đóng-mấy-vai-trò" data-for="0-id-thật-sự-đóng-mấy-vai-trò">0. ID thật sự đóng mấy vai trò?</a></li><li class="depth-1"><a href="#1-auto-increment--mạnh-ở-đâu-gãy-ở-đâu" data-for="1-auto-increment--mạnh-ở-đâu-gãy-ở-đâu">1. Auto-increment — mạnh ở đâu, gãy ở đâu</a></li><li class="depth-2"><a href="#11-điểm-mạnh-thật-đừng-bỏ-qua" data-for="11-điểm-mạnh-thật-đừng-bỏ-qua">1.1 Điểm mạnh thật (đừng bỏ qua)</a></li><li class="depth-2"><a href="#12-bốn-giới-hạn-cấu-trúc" data-for="12-bốn-giới-hạn-cấu-trúc">1.2 Bốn giới hạn cấu trúc</a></li><li class="depth-1"><a href="#2-vì-sao-uuidv4-giết-innodb" data-for="2-vì-sao-uuidv4-giết-innodb">2. Vì sao UUIDv4 “giết” InnoDB</a></li><li class="depth-2"><a href="#21-tiền-đề-innodb-là-clustered-index" data-for="21-tiền-đề-innodb-là-clustered-index">2.1 Tiền đề: InnoDB là clustered index</a></li><li class="depth-2"><a href="#22-append-vs-scatter" data-for="22-append-vs-scatter">2.2 Append vs scatter</a></li><li class="depth-2"><a href="#23-pk-được-copy-vào-mọi-secondary-index" data-for="23-pk-được-copy-vào-mọi-secondary-index">2.3 PK được copy vào mọi secondary index</a></li><li class="depth-2"><a href="#24-postgresql-có-bị-không" data-for="24-postgresql-có-bị-không">2.4 PostgreSQL có “bị” không?</a></li><li class="depth-1"><a href="#3-snowflake--locality-tốt-nhưng-có-nghĩa-vụ-workerid" data-for="3-snowflake--locality-tốt-nhưng-có-nghĩa-vụ-workerid">3. Snowflake — locality tốt, nhưng có nghĩa vụ workerID</a></li><li class="depth-2"><a href="#31-bố-cục-64-bit" data-for="31-bố-cục-64-bit">3.1 Bố cục 64-bit</a></li><li class="depth-2"><a href="#32-nghĩa-vụ-workerid--tính-duy-nhất-là-có-điều-kiện" data-for="32-nghĩa-vụ-workerid--tính-duy-nhất-là-có-điều-kiện">3.2 “Nghĩa vụ workerID” — tính duy nhất là có điều kiện</a></li><li class="depth-1"><a href="#4-ulid--uuidv7--binary16--mặc-định-cho-hệ-mới" data-for="4-ulid--uuidv7--binary16--mặc-định-cho-hệ-mới">4. ULID / UUIDv7 + BINARY(16) — mặc định cho hệ mới</a></li><li class="depth-2"><a href="#41-bố-cục-128-bit" data-for="41-bố-cục-128-bit">4.1 Bố cục 128-bit</a></li><li class="depth-2"><a href="#42-vì-sao-lưu-binary16-không-phải-char36" data-for="42-vì-sao-lưu-binary16-không-phải-char36">4.2 Vì sao lưu BINARY(16) (không phải CHAR(36))</a></li><li class="depth-2"><a href="#43-sinh-id-ở-phía-application" data-for="43-sinh-id-ở-phía-application">4.3 Sinh ID ở phía application</a></li><li class="depth-2"><a href="#44-ulid-hay-uuidv7" data-for="44-ulid-hay-uuidv7">4.4 ULID hay UUIDv7?</a></li><li class="depth-2"><a href="#45-cái-giá-phải-nói-thật" data-for="45-cái-giá-phải-nói-thật">4.5 Cái giá phải nói thật</a></li><li class="depth-1"><a href="#5-so-sánh-tổng-và-cây-quyết-định" data-for="5-so-sánh-tổng-và-cây-quyết-định">5. So sánh tổng và cây quyết định</a></li><li class="depth-1"><a href="#6-áp-dụng-vào-pdms--vpbank" data-for="6-áp-dụng-vào-pdms--vpbank">6. Áp dụng vào PDMS / VPBank</a></li><li class="depth-1"><a href="#7-checklist-chọn--triển-khai" data-for="7-checklist-chọn--triển-khai">7. Checklist chọn &amp; triển khai</a></li><li class="depth-1"><a href="#8-đính-chính-tri-thức-trong-vault" data-for="8-đính-chính-tri-thức-trong-vault">8. Đính chính tri thức trong vault</a></li><li class="depth-1"><a href="#-chuỗi-tri-thức-liên-quan" data-for="-chuỗi-tri-thức-liên-quan">🔗 Chuỗi tri thức liên quan</a></li><li class="depth-1"><a href="#cơ-chế-nền-bổ-sung-2026-11-02" data-for="cơ-chế-nền-bổ-sung-2026-11-02">Cơ chế nền (bổ sung 2026-11-02)</a></li><li class="depth-1"><a href="#-usage--công-thức-dùng-ngay" data-for="-usage--công-thức-dùng-ngay">🛠 Usage — công thức dùng ngay</a></li><li class="depth-2"><a href="#u1-dịch-vụ-mới-trên-mysqlinnodb-uuidv7--binary16--batch-insert" data-for="u1-dịch-vụ-mới-trên-mysqlinnodb-uuidv7--binary16--batch-insert">U1. Dịch vụ mới trên MySQL/InnoDB: UUIDv7 + BINARY(16) + batch insert</a></li><li class="depth-2"><a href="#u2-postgresql-18-mặc-định-ở-schema--trích-timestamp" data-for="u2-postgresql-18-mặc-định-ở-schema--trích-timestamp">U2. PostgreSQL 18+: mặc định ở schema + trích timestamp</a></li><li class="depth-2"><a href="#u3-dual-id--pk-nội-bộ-có-locality-public-id-không-lộ-thời-gian" data-for="u3-dual-id--pk-nội-bộ-có-locality-public-id-không-lộ-thời-gian">U3. Dual ID — PK nội bộ có locality, public ID không lộ thời gian</a></li><li class="depth-2"><a href="#u4-snowflake-cấp-workerid-bằng-lease-trong-db-nghĩa-vụ-1-và-3-của-32" data-for="u4-snowflake-cấp-workerid-bằng-lease-trong-db-nghĩa-vụ-1-và-3-của-32">U4. Snowflake: cấp workerID bằng lease trong DB (nghĩa vụ #1 và #3 của §3.2)</a></li><li class="depth-2"><a href="#u5-đổi-pk-bigint--uuidv7-trên-bảng-đã-có-dữ-liệu-expandcontract-không-alter-in-place" data-for="u5-đổi-pk-bigint--uuidv7-trên-bảng-đã-có-dữ-liệu-expandcontract-không-alter-in-place">U5. Đổi PK BIGINT → UUIDv7 trên bảng đã có dữ liệu (expand/contract, không ALTER in-place)</a></li><li class="depth-2"><a href="#u6-bài-kiểm-thử-id-có-thật-sự-tăng-theo-thời-gian-không" data-for="u6-bài-kiểm-thử-id-có-thật-sự-tăng-theo-thời-gian-không">U6. Bài kiểm thử “ID có thật sự tăng theo thời gian không?”</a></li><li class="depth-1"><a href="#️-mistakes--lỗi-thường-gặp-cơ-chế--cách-phát-hiện--cách-sửa" data-for="️-mistakes--lỗi-thường-gặp-cơ-chế--cách-phát-hiện--cách-sửa">⚠️ Mistakes — lỗi thường gặp (cơ chế · cách phát hiện · cách sửa)</a></li><li class="depth-1"><a href="#-tài-liệu-dẫn-chứng" data-for="-tài-liệu-dẫn-chứng">📚 Tài liệu dẫn chứng</a></li><li class="depth-2"><a href="#bảng-khẳng-định--nguồn" data-for="bảng-khẳng-định--nguồn">Bảng: khẳng định → nguồn</a></li><li class="depth-2"><a href="#danh-mục-nguồn" data-for="danh-mục-nguồn">Danh mục nguồn</a></li><li class="overflow-end"></li></ul></div><div class="backlinks"><h3>Backlinks</h3><ul id="list-2" class="overflow"><li><a href="../Database-Patterns/00-Hub-Database-Persistence" class="internal">00-Hub-Database-Persistence</a></li><li><a href="../Database-Patterns/B-Tree-Clustered-Index-Random-Write-Cost" class="internal">B-Tree-Clustered-Index-Random-Write-Cost</a></li><li><a href="../Database-Patterns/Hibernate-Performance-Deep-Dive" class="internal">Hibernate-Performance-Deep-Dive</a></li><li><a href="../Database-Patterns/PostgreSQL/10-Sharding-When-Why-Pitfalls" class="internal">10-Sharding-When-Why-Pitfalls</a></li><li><a href="../Database-Patterns/PostgreSQL/19-Heap-CTID-Vacuum" class="internal">19-Heap-CTID-Vacuum</a></li><li><a href="../_moc/MOC-Database-Internals" class="internal">MOC-Database-Internals</a></li><li><a href="../_moc/MOC-Database" class="internal">MOC-Database</a></li><li><a href="../concepts/distributed-clocks-ordering" class="internal">distributed-clocks-ordering</a></li><li class="overflow-end"></li></ul></div><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:false,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://dangthobach.github.io/">Back to Portfolio</a></li><li><a href="https://github.com/dangthobach">GitHub</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../postscript.js" type="module" data-persist="true"></script></html>

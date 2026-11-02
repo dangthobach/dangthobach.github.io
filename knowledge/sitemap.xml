@@ -134,6 +134,12 @@
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/00-Hub-Database-Persistence</loc>
     <lastmod>2026-05-06T00:00:00.000Z</lastmod>
   </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Database-Patterns/B-Tree-Clustered-Index-Random-Write-Cost</loc>
+    <lastmod>2026-11-02T00:00:00.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Database-Patterns/Chon-Kieu-ID-He-Thong-Hien-Dai</loc>
+    <lastmod>2026-11-02T00:00:00.000Z</lastmod>
+  </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/DBMigration/DBMigration-00-Newbie-Guide</loc>
     <lastmod>2026-05-17T00:00:00.000Z</lastmod>
   </url><url>
@@ -242,8 +248,20 @@
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/18-Snapshot-Internals-Deep-Dive</loc>
     <lastmod>2026-05-07T00:00:00.000Z</lastmod>
   </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/19-Heap-CTID-Vacuum</loc>
+    <lastmod>2026-11-02T00:00:00.000Z</lastmod>
+  </url><url>
     <loc>https://dangthobach.github.io/knowledge/Database-Patterns/Spring-Data-R2DBC-Deep-Dive</loc>
     <lastmod>2026-04-14T00:00:00.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Deep-Research-Articles/01-Thiet-ke-index-B-tree-cho-query-thuc-te</loc>
+    <lastmod>2026-11-02T00:00:00.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Deep-Research-Articles/02-Kafka-work-queue-consumer-group-va-share-group</loc>
+    <lastmod>2026-11-02T00:00:00.000Z</lastmod>
+  </url><url>
+    <loc>https://dangthobach.github.io/knowledge/Deep-Research-Articles/03-Export-5-trieu-rows-khong-qua-tai-database</loc>
+    <lastmod>2026-11-02T00:00:00.000Z</lastmod>
   </url><url>
     <loc>https://dangthobach.github.io/knowledge/Design-Patterns-Go/00-Overview</loc>
     <lastmod>2026-05-03T00:00:00.000Z</lastmod>

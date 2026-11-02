@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>B-Tree-Clustered-Index-Random-Write-Cost</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&amp;family=Inter:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="Dang Tho Bach's Knowledge Base"/><meta property="og:title" content="B-Tree-Clustered-Index-Random-Write-Cost"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="B-Tree-Clustered-Index-Random-Write-Cost"/><meta name="twitter:description" content="B-tree, clustered index và cái giá của ghi random (Database) Mục tiêu: Nối một mạch từ đơn vị vật lý nhỏ nhất (page) đến hiện tượng người dùng nhìn thấy (insert chậm dần, index phình, backup chậm) — để khi ai đó nói “UUID random làm chậm DB”, bạn chỉ ra được chính xác cơ chế nào đang chạy ở từng tần..."/><meta property="og:description" content="B-tree, clustered index và cái giá của ghi random (Database) Mục tiêu: Nối một mạch từ đơn vị vật lý nhỏ nhất (page) đến hiện tượng người dùng nhìn thấy (insert chậm dần, index phình, backup chậm) — để khi ai đó nói “UUID random làm chậm DB”, bạn chỉ ra được chính xác cơ chế nào đang chạy ở từng tần..."/><meta property="og:image:alt" content="B-tree, clustered index và cái giá của ghi random (Database) Mục tiêu: Nối một mạch từ đơn vị vật lý nhỏ nhất (page) đến hiện tượng người dùng nhìn thấy (insert chậm dần, index phình, backup chậm) — để khi ai đó nói “UUID random làm chậm DB”, bạn chỉ ra được chính xác cơ chế nào đang chạy ở từng tần..."/><meta property="twitter:domain" content="dangthobach.github.io/knowledge"/><meta property="og:url" content="https://dangthobach.github.io/knowledge/Database-Patterns/B-Tree-Clustered-Index-Random-Write-Cost"/><meta property="twitter:url" content="https://dangthobach.github.io/knowledge/Database-Patterns/B-Tree-Clustered-Index-Random-Write-Cost"/><link rel="icon" href="../static/icon.png"/><meta name="description" content="B-tree, clustered index và cái giá của ghi random (Database) Mục tiêu: Nối một mạch từ đơn vị vật lý nhỏ nhất (page) đến hiện tượng người dùng nhìn thấy (insert chậm dần, index phình, backup chậm) — để khi ai đó nói “UUID random làm chậm DB”, bạn chỉ ra được chính xác cơ chế nào đang chạy ở từng tần..."/><meta name="generator" content="Quartz"/><link href="../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiL2hvbWUvcnVubmVyL3dvcmsvZGFuZ3Rob2JhY2guZ2l0aHViLmlvL2Rhbmd0aG9iYWNoLmdpdGh1Yi5pby9xdWFydHovcXVhcnR6L2NvbXBvbmVudHMvc3R5bGVzIiwic291cmNlcyI6WyJtZXJtYWlkLmlubGluZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFHRjtFQUNFOzs7QUFLRjtFQUNFO0VBQ0E7OztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTs7QUFJRjtFQUNFO0VBQ0E7RUFDQSIsInNvdXJjZXNDb250ZW50IjpbIi5leHBhbmQtYnV0dG9uIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbG9hdDogcmlnaHQ7XG4gIHBhZGRpbmc6IDAuNHJlbTtcbiAgbWFyZ2luOiAwLjNyZW07XG4gIHJpZ2h0OiAwOyAvLyBOT1RFOiByaWdodCB3aWxsIGJlIHNldCBpbiBtZXJtYWlkLmlubGluZS50c1xuICBjb2xvcjogdmFyKC0tZ3JheSk7XG4gIGJvcmRlci1jb2xvcjogdmFyKC0tZGFyayk7XG4gIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgYm9yZGVyOiAxcHggc29saWQ7XG4gIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgb3BhY2l0eTogMDtcbiAgdHJhbnNpdGlvbjogMC4ycztcblxuICAmID4gc3ZnIHtcbiAgICBmaWxsOiB2YXIoLS1saWdodCk7XG4gICAgZmlsdGVyOiBjb250cmFzdCgwLjMpO1xuICB9XG5cbiAgJjpob3ZlciB7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIGJvcmRlci1jb2xvcjogdmFyKC0tc2Vjb25kYXJ5KTtcbiAgfVxuXG4gICY6Zm9jdXMge1xuICAgIG91dGxpbmU6IDA7XG4gIH1cbn1cblxucHJlIHtcbiAgJjpob3ZlciA+IC5leHBhbmQtYnV0dG9uIHtcbiAgICBvcGFjaXR5OiAxO1xuICAgIHRyYW5zaXRpb246IDAuMnM7XG4gIH1cbn1cblxuI21lcm1haWQtY29udGFpbmVyIHtcbiAgcG9zaXRpb246IGZpeGVkO1xuICBjb250YWluOiBsYXlvdXQ7XG4gIHotaW5kZXg6IDk5OTtcbiAgbGVmdDogMDtcbiAgdG9wOiAwO1xuICB3aWR0aDogMTAwdnc7XG4gIGhlaWdodDogMTAwdmg7XG4gIG92ZXJmbG93OiBoaWRkZW47XG4gIGRpc3BsYXk6IG5vbmU7XG4gIGJhY2tkcm9wLWZpbHRlcjogYmx1cig0cHgpO1xuICBiYWNrZ3JvdW5kOiByZ2JhKDAsIDAsIDAsIDAuNSk7XG5cbiAgJi5hY3RpdmUge1xuICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgfVxuXG4gICYgPiAjbWVybWFpZC1zcGFjZSB7XG4gICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gICAgYm9yZGVyLXJhZGl1czogNXB4O1xuICAgIHBvc2l0aW9uOiBmaXhlZDtcbiAgICB0b3A6IDUwJTtcbiAgICBsZWZ0OiA1MCU7XG4gICAgdHJhbnNmb3JtOiB0cmFuc2xhdGUoLTUwJSwgLTUwJSk7XG4gICAgaGVpZ2h0OiA4MHZoO1xuICAgIHdpZHRoOiA4MHZ3O1xuICAgIG92ZXJmbG93OiBoaWRkZW47XG5cbiAgICAmID4gLm1lcm1haWQtY29udGVudCB7XG4gICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgICB0cmFuc2Zvcm0tb3JpZ2luOiAwIDA7XG4gICAgICB0cmFuc2l0aW9uOiB0cmFuc2Zvcm0gMC4xcyBlYXNlO1xuICAgICAgb3ZlcmZsb3c6IHZpc2libGU7XG4gICAgICBtaW4taGVpZ2h0OiAyMDBweDtcbiAgICAgIG1pbi13aWR0aDogMjAwcHg7XG5cbiAgICAgIHByZSB7XG4gICAgICAgIG1hcmdpbjogMDtcbiAgICAgICAgYm9yZGVyOiBub25lO1xuICAgICAgfVxuXG4gICAgICBzdmcge1xuICAgICAgICBtYXgtd2lkdGg6IG5vbmU7XG4gICAgICAgIGhlaWdodDogYXV0bztcbiAgICAgIH1cbiAgICB9XG5cbiAgICAmID4gLm1lcm1haWQtY29udHJvbHMge1xuICAgICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgICAgYm90dG9tOiAyMHB4O1xuICAgICAgcmlnaHQ6IDIwcHg7XG4gICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgZ2FwOiA4cHg7XG4gICAgICBwYWRkaW5nOiA4cHg7XG4gICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgYm9yZGVyLXJhZGl1czogNnB4O1xuICAgICAgYm94LXNoYWRvdzogMCAycHggNHB4IHJnYmEoMCwgMCwgMCwgMC4xKTtcbiAgICAgIHotaW5kZXg6IDI7XG5cbiAgICAgIC5tZXJtYWlkLWNvbnRyb2wtYnV0dG9uIHtcbiAgICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgIHdpZHRoOiAzMnB4O1xuICAgICAgICBoZWlnaHQ6IDMycHg7XG4gICAgICAgIHBhZGRpbmc6IDA7XG4gICAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgICAgY29sb3I6IHZhcigtLWRhcmspO1xuICAgICAgICBib3JkZXItcmFkaXVzOiA0cHg7XG4gICAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICAgICAgZm9udC1zaXplOiAxNnB4O1xuICAgICAgICBmb250LWZhbWlseTogdmFyKC0tYm9keUZvbnQpO1xuICAgICAgICB0cmFuc2l0aW9uOiBhbGwgMC4ycyBlYXNlO1xuXG4gICAgICAgICY6aG92ZXIge1xuICAgICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIH1cblxuICAgICAgICAmOmFjdGl2ZSB7XG4gICAgICAgICAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKDFweCk7XG4gICAgICAgIH1cblxuICAgICAgICAvLyBTdHlsZSB0aGUgcmVzZXQgYnV0dG9uIGRpZmZlcmVudGx5XG4gICAgICAgICY6bnRoLWNoaWxkKDIpIHtcbiAgICAgICAgICB3aWR0aDogYXV0bztcbiAgICAgICAgICBwYWRkaW5nOiAwIDEycHg7XG4gICAgICAgICAgZm9udC1zaXplOiAxNHB4O1xuICAgICAgICB9XG4gICAgICB9XG4gICAgfVxuICB9XG59XG4iXX0= */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://dangthobach.github.io/knowledge/index.xml"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image" content="https://dangthobach.github.io/knowledge/Database-Patterns/B-Tree-Clustered-Index-Random-Write-Cost-og-image.webp"/><meta property="og:image:url" content="https://dangthobach.github.io/knowledge/Database-Patterns/B-Tree-Clustered-Index-Random-Write-Cost-og-image.webp"/><meta name="twitter:image" content="https://dangthobach.github.io/knowledge/Database-Patterns/B-Tree-Clustered-Index-Random-Write-Cost-og-image.webp"/><meta property="og:image:type" content="image/.webp"/></head><body data-slug="Database-Patterns/B-Tree-Clustered-Index-Random-Write-Cost"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href=".." aria-label="Dang Tho Bach's Knowledge Base"><span class="brand-mark" aria-hidden="true">DB</span><span class="brand-copy"><span class="brand-name">Dang Tho Bach's Knowledge Base</span><span class="brand-subtitle">Engineering research system</span></span></a></h2><nav class="research-nav" aria-label="Research workspace"><div class="research-nav-label"><span class="research-nav-pulse" aria-hidden="true"></span>Research workspace</div><div class="research-nav-items"><a href="../" class="research-nav-item"><span class="research-nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3M12 19v3M2 12h3M19 12h3"></path><path d="m4.9 4.9 2.2 2.2M16.9 16.9l2.2 2.2M19.1 4.9l-2.2 2.2M7.1 16.9l-2.2 2.2"></path></svg></span><span class="research-nav-copy"><strong>Focus</strong><small>Dashboard &amp; current work</small></span></a><a href="../_moc" class="research-nav-item"><span class="research-nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 6 5-3 8 3 5-3v15l-5 3-8-3-5 3Z"></path><path d="M8 3v15M16 6v15"></path></svg></span><span class="research-nav-copy"><strong>Knowledge maps</strong><small>Topics, domains &amp; connections</small></span></a><a href="../JVM-Frameworks-2026" class="research-nav-item"><span class="research-nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 7 9-4 9 4-9 4Z"></path><path d="M7 9.2V15c3 2.4 7 2.4 10 0V9.2M21 7v6"></path></svg></span><span class="research-nav-copy"><strong>Study tracks</strong><small>Structured learning paths</small></span></a><a href="../_inbox" class="research-nav-item"><span class="research-nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4Z"></path><path d="M4 14h4l2 3h4l2-3h4"></path></svg></span><span class="research-nav-copy"><strong>Research inbox</strong><small>Capture &amp; distillation queue</small></span></a></div></nav><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search knowledge</p><kbd aria-hidden="true">Ctrl K</kbd></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="false" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>{let priority=[\&quot;_moc\&quot;,\&quot;_inbox\&quot;,\&quot;JVM-Frameworks-2026\&quot;,\&quot;Performance-System-Programming\&quot;,\&quot;Microservices-Patterns\&quot;,\&quot;Database-Patterns\&quot;,\&quot;Rust-Zero-To-Hero\&quot;,\&quot;Go-Zero-To-Hero\&quot;,\&quot;Go-Microservices-Mastery\&quot;,\&quot;concepts\&quot;],aIndex=priority.indexOf(a.slugSegment),bIndex=priority.indexOf(b.slugSegment);return aIndex!==-1||bIndex!==-1?aIndex===-1?1:bIndex===-1?-1:aIndex-bIndex:a.isFolder!==b.isFolder?a.isFolder?-1:1:a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;})}&quot;,&quot;filterFn&quot;:&quot;node=>![\&quot;tags\&quot;,\&quot;.smart-env\&quot;,\&quot;_scripts\&quot;,\&quot;_templates\&quot;,\&quot;_archive\&quot;,\&quot;Notion-Knowledge\&quot;].includes(node.slugSegment)&quot;,&quot;mapFn&quot;:&quot;node=>{let labels={_moc:\&quot;Knowledge Maps\&quot;,_inbox:\&quot;Research Inbox\&quot;,concepts:\&quot;Core Concepts\&quot;,\&quot;JVM-Frameworks-2026\&quot;:\&quot;JVM Frameworks\&quot;,\&quot;Performance-System-Programming\&quot;:\&quot;Performance &amp; Systems\&quot;,\&quot;Microservices-Patterns\&quot;:\&quot;Microservices Patterns\&quot;,\&quot;Database-Patterns\&quot;:\&quot;Database Patterns\&quot;,\&quot;Go-Microservices-Mastery\&quot;:\&quot;Go Microservices\&quot;,\&quot;Notion-Knowledge\&quot;:\&quot;Reference Library\&quot;};node.displayName=labels[node.slugSegment]??node.displayName.replaceAll(\&quot;-\&quot;,\&quot; \&quot;)}&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-143"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Knowledge library</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-143" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../Database-Patterns/">Database Patterns</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>B Tree Clustered Index Random Write Cost</a></div></nav><h1 class="article-title">B-Tree-Clustered-Index-Random-Write-Cost</h1><p show-comma="true" class="content-meta"><time datetime="2026-11-02T00:00:00.000Z">Nov 02, 2026</time><span>29 min read</span></p><ul class="tags"><li><a href="../tags/database" class="internal tag-link">database</a></li><li><a href="../tags/b-tree" class="internal tag-link">b-tree</a></li><li><a href="../tags/b-plus-tree" class="internal tag-link">b-plus-tree</a></li><li><a href="../tags/clustered-index" class="internal tag-link">clustered-index</a></li><li><a href="../tags/innodb" class="internal tag-link">innodb</a></li><li><a href="../tags/postgresql" class="internal tag-link">postgresql</a></li><li><a href="../tags/buffer-pool" class="internal tag-link">buffer-pool</a></li><li><a href="../tags/page-split" class="internal tag-link">page-split</a></li><li><a href="../tags/change-buffer" class="internal tag-link">change-buffer</a></li><li><a href="../tags/fragmentation" class="internal tag-link">fragmentation</a></li><li><a href="../tags/random-write" class="internal tag-link">random-write</a></li><li><a href="../tags/write-amplification" class="internal tag-link">write-amplification</a></li><li><a href="../tags/pdms" class="internal tag-link">pdms</a></li></ul></div></div><article class="popover-hint"><h1 id="b-tree-clustered-index-và-cái-giá-của-ghi-random-database">B-tree, clustered index và cái giá của ghi random (Database)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#b-tree-clustered-index-và-cái-giá-của-ghi-random-database" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<blockquote>
+<p><strong>Mục tiêu:</strong> Nối <strong>một mạch</strong> từ đơn vị vật lý nhỏ nhất (page) đến hiện tượng người dùng nhìn thấy (insert chậm dần, index phình, backup chậm) — để khi ai đó nói “UUID random làm chậm DB”, bạn chỉ ra được <em>chính xác</em> cơ chế nào đang chạy ở từng tầng.</p>
+<p>Bài này là phần <strong>cơ chế nền</strong> của <a href="../Database-Patterns/Chon-Kieu-ID-He-Thong-Hien-Dai" class="internal alias" data-slug="Database-Patterns/Chon-Kieu-ID-He-Thong-Hien-Dai">Chọn kiểu ID cho hệ thống hiện đại</a>: bài kia trả lời <em>“chọn ID nào”</em>, bài này trả lời <em>“vì sao thứ tự khóa quyết định chi phí ghi”</em>.</p>
+</blockquote>
+<blockquote class="callout abstract" data-callout="abstract">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>TL;DR — chuỗi nhân quả </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p><strong>Thứ tự khóa → vị trí lá bị chạm → page đó có trong buffer pool không → page có đủ chỗ không (page split) → fill factor → kích thước index → working set so với RAM → tỉ lệ miss → I/O đọc ngẫu nhiên + flush ngẫu nhiên (+ doublewrite/WAL) → phân mảnh.</strong>
+Một mắt xích xấu làm mắt xích sau xấu theo, và vòng <strong>index to ra → miss tăng → I/O tăng</strong> là vòng phản hồi dương: hiệu năng không giảm tuyến tính mà <strong>rơi vách đá</strong> khi working set vượt RAM.</p>
+</div>
+</blockquote>
+<hr/>
+<h2 id="0-bản-đồ-cả-mạch">0. Bản đồ cả mạch<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#0-bản-đồ-cả-mạch" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><code> ┌──────────────┐   ┌────────────────┐   ┌────────────────────┐   ┌──────────────────┐
+ │ ① PAGE       │──►│ ② B+TREE       │──►│ ③ CLUSTERED vs HEAP│──►│ ④ BUFFER POOL    │
+ │ đơn vị I/O   │   │ fanout, height │   │ row nằm ở đâu?     │   │ RAM giữ page nào │
+ └──────────────┘   └────────────────┘   └────────────────────┘   └────────┬─────────┘
+                                                                           │
+ ┌──────────────┐   ┌────────────────┐   ┌────────────────────┐   ┌────────▼─────────┐
+ │ ⑨ ĐO &amp; CHỮA  │◄──│ ⑧ PHÂN MẢNH    │◄──│ ⑥ CHANGE BUFFER    │◄──│ ⑤ ĐƯỜNG ĐI CỦA   │
+ │              │   │ nội + ngoại    │   │ (cứu secondary idx)│   │   MỘT INSERT     │
+ └──────────────┘   └────────────────┘   └────────────────────┘   └────────┬─────────┘
+                                                                           │
+                                                                  ┌────────▼─────────┐
+                                                                  │ ⑦ PAGE SPLIT     │
+                                                                  └──────────────────┘
+</code></pre>
+<p>Các mục dưới đi theo đúng thứ tự ①→⑨; §9 gộp lại thành một ví dụ định lượng.</p>
+<blockquote>
+<p>Nền tảng liên quan trong vault: <a href="../Database-Patterns/PostgreSQL/04-Index-Internals" class="internal alias" data-slug="Database-Patterns/PostgreSQL/04-Index-Internals">PostgreSQL Index Internals</a> · <a href="../Database-Patterns/PostgreSQL/01-ACID-Internals" class="internal alias" data-slug="Database-Patterns/PostgreSQL/01-ACID-Internals">ACID Internals (WAL)</a> · <a href="../concepts/memory-hierarchy-cpu-cache" class="internal alias" data-slug="concepts/memory-hierarchy-cpu-cache">Memory Hierarchy &amp; CPU Cache</a> · <a href="../Database-Patterns/PostgreSQL/08-MVCC-MySQL-PostgreSQL-Oracle" class="internal alias" data-slug="Database-Patterns/PostgreSQL/08-MVCC-MySQL-PostgreSQL-Oracle">MVCC MySQL vs PostgreSQL vs Oracle</a></p>
+</blockquote>
+<hr/>
+<h2 id="1--page--đơn-vị-io-không-phải-row">1. ① Page — đơn vị I/O, không phải row<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1--page--đơn-vị-io-không-phải-row" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Database không đọc/ghi từng row. Nó đọc/ghi <strong>page</strong> (block) vì thiết bị lưu trữ và OS làm việc theo khối, và vì một lần seek/IO phải được “chia” cho nhiều byte hữu ích.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Engine</th><th>Kích thước page mặc định</th><th>Ghi chú</th></tr></thead><tbody><tr><td>InnoDB</td><td><strong>16 KB</strong> (<code>innodb_page_size</code>)</td><td>Nhóm thành <em>extent</em> 1 MB = 64 page; mỗi index có segment riêng cho lá và nhánh</td></tr><tr><td>PostgreSQL</td><td><strong>8 KB</strong> (<code>BLCKSZ</code>, đặt lúc compile)</td><td>Heap page và index page cùng kích thước</td></tr></tbody></table></div>
+<pre><code> Page 16 KB (InnoDB INDEX page, rút gọn)
+ ┌─────────────────────────────────────────────────────────────┐
+ │ FIL header │ PAGE header │ Infimum/Supremum │ record │ record│
+ │            │ (level, n_recs, last_insert, direction…)        │
+ │ … record … free space … │ PAGE DIRECTORY (slots) │ FIL trailer│
+ └─────────────────────────────────────────────────────────────┘
+   ▲ ghi/đọc nguyên khối 16 KB, dù chỉ sửa 1 row ~200 B
+</code></pre>
+<p><strong>Hệ quả gốc rễ của cả bài:</strong> sửa <strong>1 row = làm bẩn (dirty) cả 1 page</strong>. Cuối cùng cả page 16 KB phải được flush. Nếu một page “hút” được nhiều row sửa trước khi flush thì rẻ; nếu mỗi page chỉ nhận 1 row rồi bị flush thì đắt gấp trăm lần (xem §9).</p>
+<hr/>
+<h2 id="2--btree--fanout-chiều-cao-và-vì-sao-lá-mới-là-chỗ-tốn-kém">2. ② B+Tree — fanout, chiều cao và vì sao lá mới là chỗ tốn kém<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2--btree--fanout-chiều-cao-và-vì-sao-lá-mới-là-chỗ-tốn-kém" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><code>                          ┌───────────────┐
+                 level 3  │     ROOT      │  1 page
+                          └───┬───────┬───┘
+                 level 2   [ nhánh ] [ nhánh ]  ~9 page
+                 level 1   [ nhánh ] … [ nhánh ] ~4.8 nghìn page   ← ~78 MB, luôn nằm trong RAM
+                 level 0   [LÁ]→[LÁ]→[LÁ]→ … →[LÁ]              ~2.86 triệu page (≈ 46 GB)
+                            └── lá nối nhau thành danh sách liên kết (range scan đi ngang)
+</code></pre>
+<ul>
+<li><strong>Nhánh (non-leaf)</strong> chỉ lưu <code>(khóa phân tách, số page con)</code>, <strong>lá (leaf)</strong> lưu dữ liệu thật (với InnoDB clustered index: <em>nguyên row</em>).</li>
+<li><strong>Fanout</strong> = số con mỗi page nhánh ≈ <code>(16384 × ~15/16) / (key + 4 B con trỏ + header ~6 B)</code>:
+<ul>
+<li>key <code>BIGINT</code> (8 B) → ≈ 850 · key <code>BINARY(16)</code> → ≈ 590 · key <code>CHAR(36)</code> → ≈ 330.</li>
+</ul>
+</li>
+<li><strong>Ví dụ 200 triệu row, row ≈ 220 B, PK <code>BINARY(16)</code>, fill ≈ 15/16:</strong> ≈ 70 row/lá ⇒ ≈ 2,86 triệu lá ⇒ ≈ 4.800 page level-1 ⇒ ≈ 9 page level-2 ⇒ 1 root ⇒ <strong>chiều cao 4</strong>. Tìm 1 row = tối đa 4 page access.</li>
+</ul>
+<blockquote class="callout tip" data-callout="tip">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Điều quan trọng nhất của mục này </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>Ba tầng trên chỉ chiếm ~0,2 % kích thước index (≈ 78 MB trên 46 GB) nên <strong>gần như luôn nằm trong buffer pool</strong>. Mọi cuộc chiến về cache/I/O diễn ra ở <strong>tầng lá</strong>. Vì vậy chi phí ghi quy về một câu hỏi: <em>“mỗi insert chạm vào lá nào, và lá đó có nóng không?”</em></p>
+</div>
+</blockquote>
+<p>PostgreSQL dùng biến thể Lehman–Yao: mỗi page có <em>high key</em> và <em>right-link</em> để reader/writer đồng thời tiếp tục đi ngang sang phải khi một page đang split — nên split không chặn đọc. Chi tiết: <a href="../Database-Patterns/PostgreSQL/04-Index-Internals" class="internal alias" data-slug="Database-Patterns/PostgreSQL/04-Index-Internals">04-Index-Internals</a> · <a href="../concepts/postgresql-index-internals" class="internal alias" data-slug="concepts/postgresql-index-internals">PostgreSQL Index Internals (concept)</a>.</p>
+<hr/>
+<h2 id="3--clustered-index-vs-heap--row-nằm-ở-đâu-quyết-định-id-có-phải-là-vị-trí-vật-lý-không">3. ③ Clustered index vs heap — row nằm ở đâu quyết định “ID có phải là vị trí vật lý không”<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3--clustered-index-vs-heap--row-nằm-ở-đâu-quyết-định-id-có-phải-là-vị-trí-vật-lý-không" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><code>        InnoDB (clustered)                          PostgreSQL (heap + index)
+
+   PK B+Tree  ── lá = NGUYÊN ROW                 heap (append, không theo thứ tự khóa)
+        ▲                                         ┌────────────────────────────┐
+        │  secondary index lá = (key, PK)         │ page: row, row, row, …      │
+ secondary B+Tree ─► lấy PK ─► đi lại PK tree     └────────────────────────────┘
+        (2 lần duyệt cây)                               ▲ ctid (page, offset)
+                                                  index B-Tree lá = (key, ctid)
+</code></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th></th><th>InnoDB</th><th>PostgreSQL</th></tr></thead><tbody><tr><td>Row sống ở đâu</td><td><strong>Lá của PK B+Tree</strong></td><td>Heap, thứ tự chèn</td></tr><tr><td>Thứ tự PK ảnh hưởng vị trí row?</td><td><strong>Có — trực tiếp</strong></td><td>Không (chỉ ảnh hưởng <em>index</em>)</td></tr><tr><td>Secondary index trỏ về</td><td><strong>PK value</strong> (nhân kích thước PK vào mọi index)</td><td><code>ctid</code> 6 byte, cố định</td></tr><tr><td>Chèn PK ngẫu nhiên</td><td>Random vào <strong>bảng + mọi index</strong></td><td>Heap vẫn append; <strong>chỉ index B-Tree</strong> bị random</td></tr><tr><td>Đổi PK/row move</td><td>Row di chuyển ⇒ đắt</td><td>UPDATE tạo version mới (xem <a href="../Database-Patterns/PostgreSQL/02-MVCC-Concurrency" class="internal alias" data-slug="Database-Patterns/PostgreSQL/02-MVCC-Concurrency">MVCC</a>)</td></tr></tbody></table></div>
+<p>Vì vậy chuyện “UUIDv4 giết InnoDB” mạnh hơn nhiều so với PostgreSQL — nhưng cả hai đều trả giá ở tầng index. Phân tích kích thước PK nhân theo số index: <a href="../Database-Patterns/Chon-Kieu-ID-He-Thong-Hien-Dai" class="internal alias" data-slug="Database-Patterns/Chon-Kieu-ID-He-Thong-Hien-Dai">bài ID Strategy §2.3</a>.</p>
+<hr/>
+<h2 id="4--buffer-pool--ram-giữ-page-nào-và-vách-đá-ở-đâu">4. ④ Buffer pool — RAM giữ page nào, và “vách đá” ở đâu<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4--buffer-pool--ram-giữ-page-nào-và-vách-đá-ở-đâu" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Buffer pool (InnoDB) / <code>shared_buffers</code> (PostgreSQL) là cache các page trong RAM. Mọi đọc/ghi đều <strong>đi qua nó</strong>.</p>
+<pre><code>        yêu cầu page P
+              │
+      ┌───────▼────────┐  HIT  → dùng ngay (ns–µs)
+      │  Buffer pool   │
+      └───────┬────────┘  MISS → đọc 1 page 16 KB từ đĩa (µs–ms), thường phải đuổi 1 page khác
+              │                 (nếu page bị đuổi đang dirty → phải flush trước)
+              ▼
+         đĩa / SSD
+</code></pre>
+<p><strong>InnoDB buffer pool</strong> dùng LRU có <em>midpoint insertion</em>: page mới đọc vào chèn ở điểm 3/8 (<code>innodb_old_blocks_pct = 37</code>), chỉ lên “young” nếu được truy cập lại sau <code>innodb_old_blocks_time</code> (1000 ms) — để một lần full scan không làm bay hết working set. Page bị sửa vào <strong>flush list</strong> (xếp theo LSN sửa đầu tiên); <em>page cleaner</em> flush nền, kiểm soát bởi <code>innodb_io_capacity</code> và checkpoint. PostgreSQL dùng clock-sweep và còn có thêm <strong>OS page cache</strong> phía dưới (double buffering).</p>
+<h3 id="công-thức-vách-đá">Công thức vách đá<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#công-thức-vách-đá" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Với truy cập ngẫu nhiên đều lên các lá, cache giữ được <code>BP / kích thước_lá</code> của chúng:</p>
+<pre><code>  miss_rate  ≈  1 − (buffer_pool / kích_thước_các_lá)        (khi lá > buffer pool, ngược lại ≈ 0)
+</code></pre>
+<p>Ví dụ buffer pool 16 GB:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Kích thước lá của B-Tree</th><th>PK tuần tự (hot tail)</th><th>PK ngẫu nhiên</th></tr></thead><tbody><tr><td>8 GB</td><td>miss ≈ 0 %</td><td>miss ≈ 0 %</td></tr><tr><td>16 GB</td><td>≈ 0 %</td><td>≈ 0 %</td></tr><tr><td>32 GB</td><td><strong>≈ 0 %</strong></td><td>≈ 50 %</td></tr><tr><td>64 GB</td><td><strong>≈ 0 %</strong></td><td>≈ 75 %</td></tr><tr><td>128 GB</td><td><strong>≈ 0 %</strong></td><td>≈ 87,5 %</td></tr></tbody></table></div>
+<p>Hai cột giống hệt nhau khi bảng còn nhỏ — <strong>đó là lý do UUIDv4 “chạy tốt” trong dev/staging rồi gãy ở production</strong>. PK tuần tự không có vách đá vì working set của <em>insert</em> luôn chỉ là vài page cuối, không phụ thuộc tổng kích thước.</p>
+<blockquote>
+<p>Nội dung này là mô hình bậc nhất (truy cập đều). Thực tế còn skew, page cold/hot, readahead — nên coi là <strong>công cụ lập luận</strong>, không phải dự báo con số.</p>
+</blockquote>
+<hr/>
+<h2 id="5--đường-đi-của-một-insert-innodb--hai-kịch-bản">5. ⑤ Đường đi của một INSERT (InnoDB) — hai kịch bản<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5--đường-đi-của-một-insert-innodb--hai-kịch-bản" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Bảng <code>document(id BINARY(16) PK, …)</code> + 2 secondary index. So sánh PK tuần tự (UUIDv7/auto-inc) với PK ngẫu nhiên (UUIDv4):</p>
+<pre><code> INSERT một row
+   │
+   ├─ 1. Duyệt PK B+Tree từ root xuống lá đích               [nhánh: luôn HIT]
+   │      • tuần tự : lá đích = lá phải nhất → HIT (nóng)
+   │      • ngẫu nhiên: lá đích bất kỳ → có thể MISS → đọc 1 page 16 KB ngẫu nhiên
+   │
+   ├─ 2. Lá còn chỗ?  ── có ─► chèn record, sửa page directory
+   │                  └─ không ─► PAGE SPLIT (§7): cấp page mới, chia record, sửa nhánh cha
+   │
+   ├─ 3. Ghi REDO LOG (WAL) — tuần tự, thêm vào cuối, fsync khi commit
+   │      (split ⇒ redo cho nhiều page: lá cũ, lá mới, nhánh cha)
+   │
+   ├─ 4. Với mỗi secondary index: chèn (key, PK) vào lá của index đó
+   │      • nếu lá không trong RAM &amp; index NON-UNIQUE → có thể đẩy vào CHANGE BUFFER (§6)
+   │      • UNIQUE index: phải đọc lá để kiểm tra trùng → không buffer được
+   │
+   └─ 5. Page bị dirty nằm trong flush list; flush nền về đĩa SAU commit
+          (qua DOUBLEWRITE để chống torn page → ghi 2 lần)
+</code></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Bước</th><th>PK tuần tự</th><th>PK ngẫu nhiên</th></tr></thead><tbody><tr><td>Lá PK</td><td>Hit (đuôi nóng)</td><td><strong>Miss khi bảng > RAM</strong> (đọc ngẫu nhiên)</td></tr><tr><td>Page split</td><td>Hiếm, <strong>split tại điểm chèn</strong> → trang trái đầy</td><td>Thường xuyên, <strong>chia ~½</strong> → hai trang nửa trống</td></tr><tr><td>Redo/WAL</td><td>Mỗi page nhận nhiều row trước khi bị flush</td><td>Nhiều page bị chạm → nhiều bản ghi hơn</td></tr><tr><td>Flush</td><td>Một page dirty chứa nhiều row mới ⇒ 1 lần ghi 16 KB “trả cho” ~70 row</td><td>Một page dirty thường chỉ chứa <strong>1</strong> row mới ⇒ 16 KB trả cho 1 row</td></tr></tbody></table></div>
+<p><strong>Write amplification chặn trên (worst case):</strong> để lưu một row ≈ 220 B, nếu mỗi lần flush ghi 16 KB cho đúng 1 row mới ⇒ <code>16384 / 220 ≈ 75×</code>; cộng doublewrite ≈ gấp đôi lượng byte ghi. PK tuần tự: một page nhận ~70 row trước khi flush ⇒ ≈ 1×. Đây là chặn trên minh họa, không phải số đo.</p>
+<hr/>
+<h2 id="6--change-buffer--cứu-được-cái-gì-và-không-cứu-được-cái-gì">6. ⑥ Change buffer — cứu được cái gì và <strong>không</strong> cứu được cái gì<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#6--change-buffer--cứu-được-cái-gì-và-không-cứu-được-cái-gì" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p><strong>Ý tưởng:</strong> khi cần sửa một lá của <em>secondary index</em> mà lá đó <strong>không nằm trong buffer pool</strong>, thay vì đọc nó lên (random read), InnoDB ghi thao tác (insert / delete-mark / purge) vào một B-Tree phụ (<strong>change buffer</strong>, nằm ở system tablespace và một phần buffer pool). Khi lá đó được đọc lên vì lý do khác — hoặc nền đến lượt — các thay đổi được <strong>merge</strong> vào.</p>
+<pre><code>   INSERT vào secondary index, lá KHÔNG trong RAM
+        │
+        ├─ non-unique index ─► ghi vào CHANGE BUFFER (không đọc lá)   ✓ tiết kiệm 1 random read
+        │                         … sau đó, khi lá được nạp: MERGE      (gom nhiều thay đổi / 1 lần ghi)
+        └─ UNIQUE index ─────► PHẢI đọc lá để kiểm tra trùng           ✗ không buffer insert được
+</code></pre>
+<p>Điều kiện / giới hạn (MySQL/InnoDB):</p>
+<ul>
+<li>Chỉ áp dụng cho <strong>secondary index</strong> (không phải clustered index/PK), và insert chỉ buffer được cho <strong>non-unique</strong>.</li>
+<li><code>innodb_change_buffering</code> (mặc định <code>all</code>) và <code>innodb_change_buffer_max_size</code> (mặc định 25 % buffer pool, tối đa 50 %).</li>
+<li>Có chi phí ẩn: merge dồn lại có thể gây <strong>đọc nặng/đột biến</strong> khi nạp lá, và kéo dài thời gian shutdown/recovery nếu quá nhiều thay đổi chờ merge (<code>innodb_fast_shutdown = 0</code> ép merge toàn bộ).</li>
+</ul>
+<blockquote class="callout warning" data-callout="warning">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Hai hiểu lầm hay gặp </p></div>
+                  
+                </div>
+<div class="callout-content">
+<ol>
+<li><strong>Change buffer KHÔNG cứu PK ngẫu nhiên.</strong> Chèn vào clustered index luôn cần đọc lá đích (để đặt row và để kiểm tra PK duy nhất). Đó là lý do §5 bước 1 vẫn miss — change buffer chỉ giảm chi phí <em>secondary index non-unique</em>.</li>
+<li><strong>Không phải engine nào cũng có.</strong> PostgreSQL <strong>không có</strong> cơ chế tương đương. MariaDB đã đặt <code>innodb_change_buffering=none</code> mặc định từ 10.5.15/10.6.7, đánh dấu deprecated ở 10.9 và <strong>gỡ hẳn ở 11.0</strong> (nguồn tài liệu MariaDB: benchmark cho thấy nó đôi khi làm giảm hiệu năng, và là nguồn lỗi corruption khó tái hiện). Với MySQL, kiểm tra release notes của đúng phiên bản đang chạy trước khi dựa vào nó.</li>
+</ol>
+</div>
+</blockquote>
+<p>Tóm lại: ngay cả khi bật change buffer, <strong>vị trí chèn của PK vẫn là thứ trả giá lớn nhất</strong> — nên chọn ID có locality (§5) vẫn đúng.</p>
+<hr/>
+<h2 id="7--page-split--cơ-chế-và-vì-sao-thứ-tự-khóa-quyết-định-fill-factor">7. ⑦ Page split — cơ chế và vì sao thứ tự khóa quyết định fill factor<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#7--page-split--cơ-chế-và-vì-sao-thứ-tự-khóa-quyết-định-fill-factor" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Khi lá đích hết chỗ:</p>
+<pre><code>   Trước:   [ … 1 2 3 4 5 6 7 8 9 … ]  ← page đầy, cần chèn khóa K
+
+   (a) CHÈN NGẪU NHIÊN (K nằm giữa) — chia ĐÔI
+       [ 1 2 3 4 5 ]  [ 6 7 8 9 ]      → cả hai page ~½ đầy; K vào một trong hai
+       + cấp 1 page mới (từ extent), chuyển ~½ record, sửa con trỏ lá trái/phải,
+         thêm 1 mục vào nhánh cha (có thể làm cha split → lan lên trên)
+
+   (b) CHÈN TUẦN TỰ (K lớn hơn tất cả) — tách tại điểm chèn
+       [ 1 2 3 … 9 ]  [ K ]            → page cũ giữ NGUYÊN đầy; page mới chỉ có K
+</code></pre>
+<ul>
+<li><strong>InnoDB</strong> nhận diện hướng chèn (<code>PAGE_DIRECTION</code>, <code>last_insert</code> trong page header) và chọn <em>split point</em> tương ứng: chèn tuần tự ⇒ trang trái giữ đầy; ngẫu nhiên ⇒ chia ở median. Theo tài liệu MySQL, insert tuần tự cho page đầy ≈ <strong>15/16</strong> (1/16 để dành cho record lớn lên; <code>innodb_fill_factor = 100</code> mặc định), còn insert ngẫu nhiên chỉ ≈ <strong>½ … 15/16</strong>.</li>
+<li><strong>Lý thuyết B-Tree:</strong> chèn khóa ngẫu nhiên đều ⇒ độ lấp đầy trung bình hội tụ về khoảng <strong>ln 2 ≈ 69 %</strong>.</li>
+<li><strong>PostgreSQL:</strong> index B-Tree có <code>fillfactor</code> mặc định <strong>90</strong> — áp dụng khi split <em>lá phải nhất</em> (kịch bản tuần tự); split ở giữa cây chọn điểm chia cân bằng ~50/50. Có thêm các tối ưu (deduplication từ PG 13, bottom-up index deletion từ PG 14) giúp <em>trì hoãn</em> split nhưng không đổi bản chất.</li>
+<li><strong>Page merge:</strong> khi xóa làm page rỗng dưới <code>MERGE_THRESHOLD</code> (mặc định 50 %), InnoDB gộp với lá lân cận — nên xóa/chèn ngẫu nhiên xen kẽ tạo “xích-xông” split ↔ merge.</li>
+</ul>
+<p><strong>Chi phí một lần split:</strong> cấp page + di chuyển ~½ record + sửa 3 page (hai lá + cha) ⇒ nhiều bản ghi redo, có khi lan ngược lên nhiều tầng. Trong PostgreSQL, nếu page chạm lần đầu sau checkpoint còn kéo theo <strong>full-page image</strong> vào WAL (<a href="../Database-Patterns/PostgreSQL/01-ACID-Internals" class="internal alias" data-slug="Database-Patterns/PostgreSQL/01-ACID-Internals">ACID Internals</a>).</p>
+<p><strong>Hệ quả định lượng (ví dụ 200 M row, row ≈ 220 B, cùng cấu hình §2):</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th></th><th>Tuần tự (fill ≈ 15/16)</th><th>Ngẫu nhiên (fill ≈ 69 %)</th></tr></thead><tbody><tr><td>Row / lá</td><td>≈ 70</td><td>≈ 51</td></tr><tr><td>Số lá</td><td>≈ 2,86 triệu</td><td>≈ 3,92 triệu</td></tr><tr><td>Kích thước PK B-Tree</td><td>≈ 46,8 GB</td><td>≈ 64,3 GB (<strong>×1,37</strong>)</td></tr></tbody></table></div>
+<p>Index to hơn 37 % ⇒ cần 37 % RAM nhiều hơn để giữ cùng tỉ lệ cache ⇒ <strong>đẩy vách đá của §4 đến sớm hơn</strong>.</p>
+<hr/>
+<h2 id="8--phân-mảnh--hai-loại-hai-cách-đo">8. ⑧ Phân mảnh — hai loại, hai cách đo<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#8--phân-mảnh--hai-loại-hai-cách-đo" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><code> Internal fragmentation (trong page)         External fragmentation (giữa các page)
+ ┌──────────────┐                            thứ tự logic:   P1 → P2 → P3 → P4
+ │ record·····  │  page ½ trống                 vị trí vật lý: P1 … P3 … P2 … … P4
+ │ ·············│  lãng phí RAM/đĩa/cache       range scan nhảy cóc → mất sequential I/O/readahead
+ └──────────────┘
+</code></pre>
+<ul>
+<li><strong>Nội (internal):</strong> do split chia đôi + xóa để lại lỗ. Hậu quả: index/bảng phình, cache loãng (§7).</li>
+<li><strong>Ngoại (external):</strong> page logic liền nhau không liền nhau trên đĩa vì page mới do split được cấp từ extent còn trống ở nơi khác. Hậu quả: range scan/backup/<code>SELECT COUNT</code> quét chậm do mất readahead; <strong>trên HDD cực rõ, trên SSD nhẹ hơn nhưng vẫn mất lợi thế đọc tuần tự</strong>.</li>
+<li>Tuần tự PK gần như <strong>không phân mảnh ngoại ở dữ liệu mới</strong> vì page mới luôn được cấp “tiếp theo”. Dữ liệu cũ đã rải thì chỉ rebuild mới gom lại.</li>
+</ul>
+<p><strong>Chữa:</strong> MySQL <code>OPTIMIZE TABLE</code> / <code>ALTER TABLE … FORCE</code> (rebuild, dùng <em>sorted index build</em> nên fill đều); PostgreSQL <code>REINDEX INDEX CONCURRENTLY</code> (không chặn ghi), <code>pg_repack</code> cho bảng. Rebuild chỉ là thuốc giảm đau nếu khóa vẫn ngẫu nhiên — rồi sẽ phân mảnh lại.</p>
+<hr/>
+<h2 id="9-nối-thành-một-mạch--vòng-phản-hồi-và-ví-dụ-định-lượng">9. Nối thành một mạch — vòng phản hồi và ví dụ định lượng<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#9-nối-thành-một-mạch--vòng-phản-hồi-và-ví-dụ-định-lượng" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><code>        khóa ngẫu nhiên
+              │
+              ▼
+   lá đích rải khắp cây ─────────────► dirty page rải rác ─► flush 16 KB/row (+doublewrite)
+              │                                                       │
+              ▼                                                       ▼
+   page split nhiều, chia ½ ─► fill ≈ ½–69 % ─► index to hơn          I/O ghi ↑
+              │                                       │
+              │                                       ▼
+              │                         working set > buffer pool
+              │                                       │
+              ▼                                       ▼
+   page cấp phát rải rác              miss ↑ ─► đọc ngẫu nhiên ↑ ─┐
+   (phân mảnh ngoại)                          ▲                    │ cạnh tranh IOPS
+              │                               └────────────────────┘ với flush → latency ↑
+              ▼
+   range scan / backup chậm
+</code></pre>
+<p><strong>Ví dụ gom lại:</strong> 200 M row, buffer pool 16 GB, PK ngẫu nhiên 64 GB lá, ba B-Tree ngẫu nhiên được chạm mỗi insert (PK + 2 secondary không buffer được), thiết bị ≈ 50 nghìn IOPS 16 KB (giả định để minh họa):</p>
+<pre><code>  miss_per_insert  ≈ (1 − 16/64) × 3 = 0,75 × 3 ≈ 2,25 lần đọc ngẫu nhiên/insert
+  trần theo đọc    ≈ 50 000 / 2,25 ≈ 22 000 insert/s   (chưa tính IOPS dành cho flush)
+  cùng bảng, PK tuần tự: PK miss ≈ 0 ⇒ chỉ còn secondary → trần cao hơn nhiều bậc
+</code></pre>
+<p>Đây là <strong>mô hình giả định</strong> để thấy <em>bậc</em> chênh lệch và hình dạng vách đá; số thật phải đo (§10).</p>
+<blockquote class="callout warning" data-callout="warning">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Giới hạn thành thật của &quot;dùng ID tuần tự&quot; </p></div>
+                  
+                </div>
+<div class="callout-content">
+<ul>
+<li>Nó chỉ sửa <strong>clustered index</strong> (và index tương quan thời gian). <strong>Secondary index trên cột ngẫu nhiên</strong> (email, hash, mã đối tác…) vẫn random insert — ID tốt không cứu được.</li>
+<li>Tuần tự = <strong>hot tail</strong>: mọi writer tranh nhau lá phải nhất; ở tốc độ rất cao có thể thấy tranh chấp latch trên page cuối. Khi đó cân nhắc partitioning thay vì quay lại khóa ngẫu nhiên.</li>
+<li>SSD/NVMe làm nhẹ <em>phân mảnh ngoại</em> và miss, nhưng <strong>không xóa</strong> write amplification, fill-factor loãng và vách đá RAM.</li>
+<li>Với workload ghi ngẫu nhiên khổng lồ, <strong>LSM-Tree</strong> biến ghi ngẫu nhiên thành ghi tuần tự (đổi lại read/compaction amplification) — xem <a href="../Performance-System-Programming/01-Database-Internals/04-SSTable-Format" class="internal alias" data-slug="Performance-System-Programming/01-Database-Internals/04-SSTable-Format">SSTable Format</a>.</li>
+</ul>
+</div>
+</blockquote>
+<hr/>
+<h2 id="10--đo--đừng-đoán">10. ⑨ Đo — đừng đoán<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#10--đo--đừng-đoán" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="mysql--innodb">MySQL / InnoDB<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#mysql--innodb" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="sql" data-theme="github-light github-dark"><code data-language="sql" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- 1) Tỉ lệ miss buffer pool: Innodb_buffer_pool_reads (đọc đĩa) / read_requests (đọc logic)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">SHOW </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">GLOBAL</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> STATUS</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> LIKE</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> 'Innodb_buffer_pool_read%'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- 2) Đếm page split / merge (bật module index trước)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SET</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> GLOBAL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> innodb_monitor_enable </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> 'module_index'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SELECT</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, count </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">FROM</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> information_schema</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">INNODB_METRICS</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">WHERE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> name</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> IN</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">'index_page_splits'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">'index_page_merge_attempts'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">'index_page_merge_successful'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- 3) Kích thước từng index (đơn vị page) để so với buffer pool</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SELECT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> table_name, index_name, stat_value </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> @@innodb_page_size </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">AS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> bytes</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">FROM</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> mysql</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">innodb_index_stats</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">WHERE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> stat_name </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> 'size'</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> AND</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> table_name </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> 'document'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- 4) Mức lấp đầy ước lượng của các lá ĐANG nằm trong buffer pool (đắt trên BP lớn!)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SELECT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> index_name, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">COUNT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">AS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> pages, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">ROUND</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">AVG</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(data_size) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> @@innodb_page_size, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">3</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">AS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> avg_fill</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">FROM</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> information_schema</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">INNODB_BUFFER_PAGE</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">WHERE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> page_type </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> 'INDEX'</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> AND</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> table_name </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">LIKE</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> '%document%'</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">GROUP BY</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> index_name;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- 5) Change buffer đang làm gì (mục INSERT BUFFER AND ADAPTIVE HASH INDEX)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">SHOW ENGINE INNODB </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">STATUS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">\G</span></span></code></pre></figure>
+<h3 id="postgresql">PostgreSQL<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#postgresql" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="sql" data-theme="github-light github-dark"><code data-language="sql" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">CREATE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> EXTENSION </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">IF</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> NOT</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> EXISTS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> pgstattuple;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SELECT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> tree_level, index_size, leaf_pages, avg_leaf_density, leaf_fragmentation</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">FROM</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> pgstatindex(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">'idx_document_pkey'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);          </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- avg_leaf_density thấp = loãng; fragmentation cao = lá lộn thứ tự</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">CREATE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> EXTENSION </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">IF</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> NOT</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> EXISTS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> pageinspect;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SELECT</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> *</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> FROM</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> bt_metap(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">'idx_document_pkey'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);    </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- chiều cao cây</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SELECT</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> *</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> FROM</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> bt_page_stats(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">'idx_document_pkey'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- WAL do full-page image phình lên khi khóa ngẫu nhiên:</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SELECT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> wal_fpi, wal_bytes </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">FROM</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> pg_stat_wal;     </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- so sánh trước/sau khi đổi kiểu ID</span></span></code></pre></figure>
+<p><strong>Thí nghiệm nên tự chạy (1 giờ):</strong> tạo hai bảng giống hệt, chỉ khác PK (UUIDv4 vs UUIDv7), nạp đến khi lá > buffer pool, đo insert/s + <code>avg_fill</code> + <code>index_page_splits</code>/<code>wal_fpi</code>. Điểm “gãy” của đường cong là mốc thực của hệ thống bạn.</p>
+<hr/>
+<h2 id="11-biện-pháp-xếp-theo-hiệu-quả--chi-phí">11. Biện pháp, xếp theo hiệu quả / chi phí<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#11-biện-pháp-xếp-theo-hiệu-quả--chi-phí" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<ol>
+<li><strong>Chọn khóa có locality cho clustered/PK B-Tree</strong> — ID theo thời gian (UUIDv7/ULID/identity): sửa gốc của §5–§7. → <a href="../Database-Patterns/Chon-Kieu-ID-He-Thong-Hien-Dai" class="internal alias" data-slug="Database-Patterns/Chon-Kieu-ID-He-Thong-Hien-Dai">ID Strategy</a></li>
+<li><strong>Giảm số index &amp; độ rộng index</strong> — mỗi secondary index = thêm một B-Tree bị chạm mỗi insert và mang theo PK; dùng covering/partial index có chủ đích (<a href="../Database-Patterns/PostgreSQL/05-Performance-Tuning" class="internal alias" data-slug="Database-Patterns/PostgreSQL/05-Performance-Tuning">Performance Tuning</a>).</li>
+<li><strong>Đặt buffer pool đủ lớn</strong> cho working set của lá nóng (InnoDB thường 50–75 % RAM máy chuyên dụng); theo dõi tỉ lệ miss.</li>
+<li><strong>Nạp hàng loạt theo thứ tự PK</strong> (sort trước khi bulk insert; tạo index <em>sau</em> khi nạp để dùng sorted index build) — liên quan hướng ETL ở <a href="../Performance-System-Programming/03-Data-Format-Parsing/02-Read-Write-Separation-Type-Conversion" class="internal alias" data-slug="Performance-System-Programming/03-Data-Format-Parsing/02-Read-Write-Separation-Type-Conversion">Write Separation &amp; Type Conversion</a>.</li>
+<li><strong>Partitioning theo thời gian</strong> để mỗi partition có B-Tree nhỏ, đuôi nóng nằm trong RAM và detach dữ liệu cũ rẻ (<a href="../Database-Patterns/PostgreSQL/10-Sharding-When-Why-Pitfalls" class="internal alias" data-slug="Database-Patterns/PostgreSQL/10-Sharding-When-Why-Pitfalls">Partitioning vs Sharding</a>).</li>
+<li><strong><code>innodb_fill_factor</code> / <code>fillfactor</code></strong> chỉnh cho bảng <em>ít ghi, nhiều sửa tại chỗ</em> (chừa chỗ); đừng hạ tùy tiện cho bảng append-only vì làm index to ra.</li>
+<li><strong>Rebuild định kỳ</strong> (<code>OPTIMIZE</code>, <code>REINDEX CONCURRENTLY</code>) — chỉ khi nguyên nhân gốc (khóa ngẫu nhiên) đã được xử lý.</li>
+<li><strong>Batch / <code>JDBC reWriteBatchedInserts</code>/multi-row insert</strong>: gom nhiều row đi cùng một lá khi khóa có thứ tự (<a href="../Database-Patterns/Hibernate-Performance-Deep-Dive" class="internal alias" data-slug="Database-Patterns/Hibernate-Performance-Deep-Dive">Hibernate Performance Deep Dive</a>).</li>
+</ol>
+<hr/>
+<h2 id="12-áp-dụng-vào-pdms--vpbank">12. Áp dụng vào PDMS / VPBank<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#12-áp-dụng-vào-pdms--vpbank" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<ul>
+<li><strong>Bảng ghi nhiều, append-only</strong> (outbox, audit, decision log): khóa theo thời gian + partition theo thời gian ⇒ đuôi nóng nhỏ, DETACH partition cũ rẻ. Đây là bài toán trong <a href="../Microservices-Patterns/Transactional-Outbox" class="internal alias" data-slug="Microservices-Patterns/Transactional-Outbox">Transactional Outbox</a> và <a href="../Microservices-Patterns/AuthZ-Platform-Dynamic-5-Layer-Design" class="internal alias" data-slug="Microservices-Patterns/AuthZ-Platform-Dynamic-5-Layer-Design">AuthZ Platform 5-Layer</a>.</li>
+<li><strong>Bảng hồ sơ (<code>document</code>)</strong>: giữ PK kỹ thuật có locality, tách business key (<code>document_code</code>) làm UNIQUE secondary — nhớ rằng index đó <strong>ngẫu nhiên theo mã</strong> nên vẫn là một B-Tree trả giá ghi (nếu mã cấp tuần tự theo chi nhánh/ngày thì tốt hơn).</li>
+<li><strong>Migration/ETL khối lượng lớn:</strong> sort theo PK trước khi nạp và dựng index sau là cách rẻ nhất để tránh toàn bộ chi phí §5–§7; bối cảnh migration xem <a href="../Database-Patterns/DBMigration/DBMigration-06-Flyway-TechLead-Governance" class="internal alias" data-slug="Database-Patterns/DBMigration/DBMigration-06-Flyway-TechLead-Governance">Flyway Governance</a>.</li>
+<li>Đừng kết luận từ staging: nhớ <strong>hai cột giống nhau khi bảng còn nhỏ</strong> (§4). Kiểm thử tải phải vượt kích thước buffer pool.</li>
+</ul>
+<hr/>
+<h2 id="13-checklist">13. Checklist<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#13-checklist" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" disabled/> Biết engine nào có clustered index (InnoDB: có; PostgreSQL: không) và PK ảnh hưởng vị trí row hay chỉ index.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Ước lượng kích thước lá của từng index so với buffer pool/<code>shared_buffers</code> — có vượt không?</li>
+<li class="task-list-item"><input type="checkbox" disabled/> PK có locality theo thời gian? Secondary index nào vẫn ngẫu nhiên?</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Đã đo: tỉ lệ miss, <code>index_page_splits</code>, mức lấp đầy (<code>avg_fill</code>/<code>avg_leaf_density</code>), <code>wal_fpi</code>.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Kiểm thử tải vượt RAM, không chỉ dữ liệu nhỏ.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Kế hoạch bảo trì: partition/detach, rebuild khi cần, theo dõi tăng trưởng index.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Không dựa vào change buffer cho PK/unique index; kiểm tra bản engine còn hỗ trợ.</li>
+</ul>
+<hr/>
+<h2 id="-chuỗi-tri-thức-liên-quan">🔗 Chuỗi tri thức liên quan<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-chuỗi-tri-thức-liên-quan" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p><strong>Cặp bài này</strong></p>
+<ul>
+<li><a href="../Database-Patterns/Chon-Kieu-ID-He-Thong-Hien-Dai" class="internal alias" data-slug="Database-Patterns/Chon-Kieu-ID-He-Thong-Hien-Dai">Chọn kiểu ID cho hệ thống hiện đại</a> — chọn ID nào (hệ quả thực hành của bài này)</li>
+</ul>
+<p><strong>Index, WAL, MVCC</strong></p>
+<ul>
+<li><a href="../Database-Patterns/PostgreSQL/04-Index-Internals" class="internal alias" data-slug="Database-Patterns/PostgreSQL/04-Index-Internals">PostgreSQL 04 — Index Internals</a></li>
+<li><a href="../concepts/postgresql-index-internals" class="internal alias" data-slug="concepts/postgresql-index-internals">PostgreSQL Index Internals (concept)</a></li>
+<li><a href="../Database-Patterns/PostgreSQL/01-ACID-Internals" class="internal alias" data-slug="Database-Patterns/PostgreSQL/01-ACID-Internals">PostgreSQL 01 — ACID Internals</a> — WAL, fsync, full-page writes</li>
+<li><a href="../Database-Patterns/PostgreSQL/02-MVCC-Concurrency" class="internal alias" data-slug="Database-Patterns/PostgreSQL/02-MVCC-Concurrency">PostgreSQL 02 — MVCC</a></li>
+<li><a href="../Database-Patterns/PostgreSQL/08-MVCC-MySQL-PostgreSQL-Oracle" class="internal alias" data-slug="Database-Patterns/PostgreSQL/08-MVCC-MySQL-PostgreSQL-Oracle">08 — MVCC: MySQL vs PostgreSQL vs Oracle</a></li>
+<li><a href="../Database-Patterns/PostgreSQL/05-Performance-Tuning" class="internal alias" data-slug="Database-Patterns/PostgreSQL/05-Performance-Tuning">PostgreSQL 05 — Performance Tuning</a></li>
+<li><a href="../Notion-Knowledge/Note/Database-Indexing-Demystified--Index-Types-and-Use-Cases" class="internal alias" data-slug="Notion-Knowledge/Note/Database-Indexing-Demystified--Index-Types-and-Use-Cases">Database Indexing Demystified</a></li>
+</ul>
+<p><strong>Bộ nhớ &amp; lưu trữ</strong></p>
+<ul>
+<li><a href="../concepts/memory-hierarchy-cpu-cache" class="internal alias" data-slug="concepts/memory-hierarchy-cpu-cache">Memory Hierarchy &amp; CPU Cache</a> — vì sao locality quyết định tốc độ</li>
+<li><a href="../concepts/data-storage-model-java-go-rust" class="internal alias" data-slug="concepts/data-storage-model-java-go-rust">Rust</a></li>
+<li><a href="../Performance-System-Programming/01-Database-Internals/04-SSTable-Format" class="internal alias" data-slug="Performance-System-Programming/01-Database-Internals/04-SSTable-Format">SSTable Format</a> — đối chiếu LSM-Tree</li>
+</ul>
+<p><strong>ORM, scale, pipeline</strong></p>
+<ul>
+<li><a href="../Database-Patterns/Hibernate-Performance-Deep-Dive" class="internal alias" data-slug="Database-Patterns/Hibernate-Performance-Deep-Dive">Hibernate Performance Deep Dive</a></li>
+<li><a href="../Database-Patterns/PostgreSQL/10-Sharding-When-Why-Pitfalls" class="internal alias" data-slug="Database-Patterns/PostgreSQL/10-Sharding-When-Why-Pitfalls">Sharding: When, Why, Pitfalls</a></li>
+<li><a href="../Database-Patterns/DBMigration/DBMigration-06-Flyway-TechLead-Governance" class="internal alias" data-slug="Database-Patterns/DBMigration/DBMigration-06-Flyway-TechLead-Governance">Flyway Tech Lead Governance</a></li>
+</ul>
+<p><strong>Hub</strong></p>
+<ul>
+<li><a href="../Database-Patterns/00-Hub-Database-Persistence" class="internal alias" data-slug="Database-Patterns/00-Hub-Database-Persistence">Hub Database Persistence</a> · <a href="../_moc/MOC-Database" class="internal alias" data-slug="_moc/MOC-Database">MOC Database</a> · <a href="../_moc/MOC-Database-Internals" class="internal alias" data-slug="_moc/MOC-Database-Internals">MOC Database Internals</a> · <a href="../_moc/MOC-PDMS" class="internal alias" data-slug="_moc/MOC-PDMS">MOC PDMS</a></li>
+</ul>
+<hr/>
+<p><em>Tags: <a href=".././tags/database" class="tag-link internal alias" data-slug="tags/database">database</a> <a href=".././tags/b-tree" class="tag-link internal alias" data-slug="tags/b-tree">b-tree</a> <a href=".././tags/clustered-index" class="tag-link internal alias" data-slug="tags/clustered-index">clustered-index</a> <a href=".././tags/innodb" class="tag-link internal alias" data-slug="tags/innodb">innodb</a> <a href=".././tags/buffer-pool" class="tag-link internal alias" data-slug="tags/buffer-pool">buffer-pool</a> <a href=".././tags/page-split" class="tag-link internal alias" data-slug="tags/page-split">page-split</a> <a href=".././tags/change-buffer" class="tag-link internal alias" data-slug="tags/change-buffer">change-buffer</a> <a href=".././tags/fragmentation" class="tag-link internal alias" data-slug="tags/fragmentation">fragmentation</a></em></p>
+<hr/>
+<h2 id="-usage--công-thức-dùng-ngay">🛠 Usage — công thức dùng ngay<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-usage--công-thức-dùng-ngay" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="u1-ước-lượng-fanout-chiều-cao-và-kích-thước-index-trước-khi-tạo-bảng">U1. Ước lượng fanout, chiều cao và kích thước index <em>trước khi</em> tạo bảng<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#u1-ước-lượng-fanout-chiều-cao-và-kích-thước-index-trước-khi-tạo-bảng" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="python" data-theme="github-light github-dark"><code data-language="python" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">def</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> estimate</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(rows, row_bytes, key_bytes, fill</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">15</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">/</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">16</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, page</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">16384</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, ptr</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">4</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, hdr</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">6</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">):</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">    &quot;&quot;&quot;Mô hình bậc nhất cho InnoDB (page 16 KB). hdr ≈ header record nhánh; số liệu là ƯỚC LƯỢNG.&quot;&quot;&quot;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    usable        </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> page </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> fill</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    rows_per_leaf </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(usable </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">//</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> row_bytes)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    leaves        </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> -</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">rows </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">//</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> rows_per_leaf)                     </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># ceil</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    fanout        </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(usable </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">//</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (key_bytes </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">+</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> ptr </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">+</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> hdr))</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    levels, n </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, leaves</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    while</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> n </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">></span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        n </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> -</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">n </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">//</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> fanout); levels </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">+=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 1</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    upper_pages </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> sum</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">leaves </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">//</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> fanout</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">**</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">k) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">for</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> k </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">in</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> range</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, levels))</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    return</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> dict</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">rows_per_leaf</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">rows_per_leaf, </span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">leaf_pages</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">leaves, </span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">fanout</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">fanout, </span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">height</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">levels,</span></span>
+<span data-line><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">                leaf_gb</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">round</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(leaves </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> page </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">/</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 1e9</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">), </span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">upper_mb</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">round</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(upper_pages </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> page </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">/</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 1e6</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">))</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">print</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(estimate(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">200_000_000</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">220</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">16</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">))                 </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># sequential, fill 15/16</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">print</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(estimate(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">200_000_000</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">220</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">16</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">fill</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0.69</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">))      </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># random, fill ≈ ln2</span></span></code></pre></figure>
+<p>So sánh hai dòng để thấy hệ số phình của index khi khóa ngẫu nhiên (≈ ×1,3–1,4 ở ví dụ này), rồi đối chiếu với buffer pool dự kiến theo §4.</p>
+<h3 id="u2-giao-thức-ab-đo-cái-giá-ghi-random-trên-máy-của-bạn-mysql-84">U2. Giao thức A/B đo “cái giá ghi random” trên máy của bạn (MySQL 8.4)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#u2-giao-thức-ab-đo-cái-giá-ghi-random-trên-máy-của-bạn-mysql-84" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p><strong>Nguyên tắc khoa học:</strong> chỉ đổi <em>một biến</em> (thứ tự khóa), giữ nguyên mọi thứ khác, và <strong>làm bảng vượt buffer pool</strong> — nếu không sẽ không thấy vách đá (xem §4).</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Buffer pool nhỏ để vách đá xuất hiện sớm (vài triệu row)</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">docker</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> run</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -d</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --name</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> mysql-lab</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -e</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> MYSQL_ROOT_PASSWORD=lab</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -p</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> 3307:3306</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> mysql:8.4</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> \</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  --innodb-buffer-pool-size=256M</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --innodb-doublewrite=ON</span></span></code></pre></figure>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="sql" data-theme="github-light github-dark"><code data-language="sql" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">CREATE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> DATABASE</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> lab</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">; </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">USE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> lab;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">CREATE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> TABLE</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> t_rand</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (id </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">BINARY</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">16</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">PRIMARY KEY</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, payload </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">CHAR</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">200</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">NOT NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) ENGINE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">InnoDB;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">CREATE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> TABLE</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> t_seq</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">  (id </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">BINARY</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">16</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">PRIMARY KEY</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, payload </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">CHAR</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">200</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">NOT NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) ENGINE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">InnoDB;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SET</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> GLOBAL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> innodb_monitor_enable </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> 'module_index'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;       </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- bật bộ đếm page split/merge</span></span></code></pre></figure>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Nạp theo lô 50 000 dòng, ghi thời gian từng lô (lặp tới khi bảng ≫ 256 MB)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">for</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> i </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">in</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> $(</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">seq</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 1</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 300</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">); </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">do</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">  S</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">$(</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">date</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> +%s.%N</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">  mysql</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -uroot</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -plab</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -P3307</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -h127.0.0.1</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> lab</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -e</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">    INSERT INTO t_rand</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">    SELECT RANDOM_BYTES(16), REPEAT('x',200)</span></span>
+<span data-line><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">    FROM (SELECT 1 FROM information_schema.columns a, information_schema.columns b LIMIT 50000) s;&quot;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">  E</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">$(</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">date</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> +%s.%N</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">); </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">echo</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;rand,</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">$i</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">,$(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">echo</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">$E</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> - </span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">$S</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot; </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">|</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> bc</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">)&quot;</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> >></span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> result.csv</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">done</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Lặp lại với bảng t_seq, thay biểu thức khóa bằng:  UUID_TO_BIN(UUID(), 1)</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># (MySQL UUID() là UUIDv1; swap_flag=1 đưa phần thời gian lên đầu → khóa tăng dần — đúng use-case của hàm)</span></span></code></pre></figure>
+<p><strong>Ghi lại sau mỗi lô:</strong> thời gian lô · <code>Innodb_buffer_pool_reads</code> (delta) · <code>index_page_splits</code> (delta, từ <code>INNODB_METRICS</code>) · kích thước index (<code>mysql.innodb_index_stats</code>, <code>stat_name='size'</code>). <strong>Hình dạng kết quả kỳ vọng:</strong> hai đường gần nhau lúc đầu; khi <code>t_rand</code> vượt buffer pool, thời gian lô và số đọc đĩa tăng vọt, <code>t_seq</code> gần như phẳng. Nếu bạn <em>không</em> thấy vậy, kiểm tra lại: bảng đã vượt buffer pool chưa, đĩa có quá nhanh/cache của OS che khuất không.</p>
+<h3 id="u3-đặt-buffer-pool-theo-working-set-đo-tỉ-lệ-miss-bằng-delta">U3. Đặt buffer pool theo working set, đo tỉ lệ miss bằng <em>delta</em><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#u3-đặt-buffer-pool-theo-working-set-đo-tỉ-lệ-miss-bằng-delta" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="sql" data-theme="github-light github-dark"><code data-language="sql" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Kích thước dữ liệu + index theo schema (clustered index nằm trong data_length)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SELECT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> table_schema,</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">       ROUND</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">SUM</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(data_length)  </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> POW(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1024</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">3</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">), </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">AS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> data_gb,</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">       ROUND</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">SUM</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(index_length) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> POW(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1024</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">3</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">), </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">AS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> secondary_index_gb</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">FROM</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> information_schema</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">tables</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> WHERE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> engine </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> 'InnoDB'</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> GROUP BY</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> table_schema;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SELECT</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> ROUND</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(@@innodb_buffer_pool_size </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> POW(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1024</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">3</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">), </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">AS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> buffer_pool_gb;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Miss rate trong một cửa sổ thời gian: lấy hai lần cách nhau 60 s rồi trừ</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">SHOW </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">GLOBAL</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> STATUS</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> WHERE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> Variable_name </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">IN</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">'Innodb_buffer_pool_reads'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">'Innodb_buffer_pool_read_requests'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">--   miss_rate = Δ(reads) / Δ(read_requests)       (các bộ đếm là TÍCH LŨY — đừng dùng giá trị thô)</span></span></code></pre></figure>
+<h3 id="u4-kịch-bản-nạp-hàng-loạt-bulk-load-đúng-cách">U4. Kịch bản nạp hàng loạt (bulk load) đúng cách<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#u4-kịch-bản-nạp-hàng-loạt-bulk-load-đúng-cách" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Bước</th><th>InnoDB (theo tài liệu MySQL, R8)</th><th>PostgreSQL</th></tr></thead><tbody><tr><td>1</td><td>Sắp dữ liệu <strong>theo PK</strong> trước khi nạp</td><td>Dùng <code>COPY</code> thay vì nhiều <code>INSERT</code></td></tr><tr><td>2</td><td>Tắt <code>autocommit</code>, commit theo lô lớn</td><td>Một transaction cho cả lô (hoặc lô lớn)</td></tr><tr><td>3</td><td>Nếu <em>chắc chắn</em> dữ liệu sạch: <code>SET unique_checks=0; SET foreign_key_checks=0;</code> rồi bật lại</td><td>Tạo FK/constraint sau khi nạp</td></tr><tr><td>4</td><td><strong>Tạo secondary index sau khi nạp</strong> (dùng sorted index build)</td><td>Tạo index sau khi nạp; tăng <code>maintenance_work_mem</code> cho <code>CREATE INDEX</code></td></tr><tr><td>5</td><td><code>ANALYZE TABLE</code></td><td><code>ANALYZE</code></td></tr></tbody></table></div>
+<blockquote>
+<p>Tắt <code>unique_checks</code> cho phép change buffer áp dụng cả với unique secondary index, nhưng nếu dữ liệu có trùng thì ràng buộc <strong>không còn được bảo vệ trong lúc nạp</strong> — chỉ dùng khi đã kiểm tra dữ liệu.</p>
+</blockquote>
+<h3 id="u5-khi-nào-rebuild--điểm-khởi-đầu-để-ra-quyết-định-không-phải-ngưỡng-chuẩn">U5. Khi nào rebuild? — điểm khởi đầu để ra quyết định (không phải ngưỡng chuẩn)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#u5-khi-nào-rebuild--điểm-khởi-đầu-để-ra-quyết-định-không-phải-ngưỡng-chuẩn" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="sql" data-theme="github-light github-dark"><code data-language="sql" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- PostgreSQL: mật độ lá và độ phân mảnh của một index</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SELECT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> index_size, leaf_pages, avg_leaf_density, leaf_fragmentation</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">FROM</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> pgstatindex(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">'idx_document_pkey'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Gợi ý: avg_leaf_density thấp kéo dài (ví dụ &lt; 60–70 %) và index lớn → ứng viên REINDEX CONCURRENTLY.</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- Luôn so với baseline của CHÍNH index đó ngay sau khi tạo mới.</span></span></code></pre></figure>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="sql" data-theme="github-light github-dark"><code data-language="sql" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- MySQL: InnoDB cấp phát lại bằng online DDL (OPTIMIZE TABLE ≈ ALTER TABLE ... FORCE + ANALYZE)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ALTER</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> TABLE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> document ENGINE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">InnoDB, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ALGORITHM=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">INPLACE, LOCK</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=NONE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;   </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- cần chỗ trống đĩa cỡ bảng; chạy ngoài giờ cao điểm</span></span></code></pre></figure>
+<h3 id="u6-bảng-điều-khiển-tối-thiểu-cho-ghi-random">U6. Bảng điều khiển tối thiểu cho “ghi random”<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#u6-bảng-điều-khiển-tối-thiểu-cho-ghi-random" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Chỉ số</th><th>Nguồn</th><th>Ý nghĩa khi xấu đi</th></tr></thead><tbody><tr><td>Miss rate buffer pool (delta)</td><td><code>Innodb_buffer_pool_reads</code> / <code>read_requests</code></td><td>Working set vượt RAM — vách đá đang đến</td></tr><tr><td><code>index_page_splits</code> / giây</td><td><code>INFORMATION_SCHEMA.INNODB_METRICS</code></td><td>Khóa ngẫu nhiên hoặc fill đã đầy</td></tr><tr><td>Tốc độ tăng kích thước index so với số row</td><td><code>mysql.innodb_index_stats</code></td><td>Fill thấp / phân mảnh nội</td></tr><tr><td>Dirty pages và checkpoint age</td><td><code>Innodb_buffer_pool_pages_dirty</code>, <code>SHOW ENGINE INNODB STATUS</code></td><td>Flush không theo kịp → stall</td></tr><tr><td>p99 latency insert (không chỉ trung bình)</td><td>APM/ứng dụng</td><td>Stall do flush/checkpoint chỉ lộ ở đuôi</td></tr><tr><td>PostgreSQL: <code>wal_fpi</code>, <code>avg_leaf_density</code></td><td><code>pg_stat_wal</code>, <code>pgstatindex()</code></td><td>Full-page image / lá thưa</td></tr></tbody></table></div>
+<hr/>
+<h2 id="️-mistakes--lỗi-thường-gặp-cơ-chế--cách-phát-hiện--cách-sửa">⚠️ Mistakes — lỗi thường gặp (cơ chế · cách phát hiện · cách sửa)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#️-mistakes--lỗi-thường-gặp-cơ-chế--cách-phát-hiện--cách-sửa" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>#</th><th>Lỗi</th><th>Vì sao sai (cơ chế)</th><th>Cách phát hiện</th><th>Cách sửa</th></tr></thead><tbody><tr><td>1</td><td>Load test với dữ liệu nhỏ hơn buffer pool</td><td>Cả hai cách chọn khóa đều ≈ 0 % miss ⇒ không thấy khác biệt (bảng §4)</td><td>So kích thước index với <code>innodb_buffer_pool_size</code></td><td>Test với bảng ≥ 2–4× buffer pool (U2)</td></tr><tr><td>2</td><td>Tăng RAM/buffer pool thay vì sửa khóa</td><td>Chỉ dời vách đá sang bảng lớn hơn; chi phí split/fill vẫn còn</td><td>Miss rate lại tăng khi dữ liệu lớn thêm</td><td>Sửa locality khóa; RAM là bước bổ sung</td></tr><tr><td>3</td><td>Tin change buffer cứu PK/unique</td><td>Insert vào clustered index và unique secondary phải đọc lá (đặt row, kiểm tra trùng) ⇒ không buffer được</td><td><code>SHOW ENGINE INNODB STATUS</code> mục <em>Ibuf</em> ít merge dù miss cao</td><td>Khóa có locality; chỉ trông chờ change buffer cho secondary non-unique</td></tr><tr><td>4</td><td>Hạ fill factor cho bảng <strong>append-only</strong> “để tránh split”</td><td>Append-only vốn ít split; chừa chỗ chỉ làm index to hơn ⇒ cần nhiều RAM hơn</td><td>Index lớn hơn dự kiến, <code>avg_fill</code> thấp</td><td>Giữ mặc định; chỉnh fill cho bảng sửa tại chỗ nhiều</td></tr><tr><td>5</td><td>Rebuild định kỳ (cron <code>OPTIMIZE</code>) thay vì chữa gốc</td><td>Khóa ngẫu nhiên sẽ phân mảnh lại ngay sau rebuild</td><td>Kích thước index quay lại mức cũ sau vài tuần</td><td>Đổi khóa/partition; rebuild chỉ là bảo trì</td></tr><tr><td>6</td><td>Index “phòng hờ” trên nhiều cột ngẫu nhiên</td><td>Mỗi index = thêm một B-Tree bị chạm mỗi insert + mang theo PK</td><td>Index <code>idx_scan = 0</code> (PostgreSQL) / <code>sys.schema_unused_indexes</code> (MySQL)</td><td>Xóa index không dùng; gộp index</td></tr><tr><td>7</td><td>Chỉ nhìn latency trung bình</td><td>Stall do flush/checkpoint xuất hiện ở đuôi (p99/p999)</td><td>So p50 với p99 insert</td><td>Theo dõi phân vị; kiểm tra <code>innodb_io_capacity</code>, dirty pages</td></tr><tr><td>8</td><td><code>innodb_io_capacity</code>/<code>_max</code> thấp hơn năng lực thiết bị</td><td>Page cleaner flush quá chậm ⇒ dirty page tích tụ ⇒ stall khi checkpoint</td><td>Dirty pages tăng đều, checkpoint age sát giới hạn</td><td>Đo IOPS thiết bị, đặt <code>io_capacity</code> tương ứng</td></tr><tr><td>9</td><td><code>OPTIMIZE TABLE</code>/rebuild giờ cao điểm hoặc thiếu chỗ đĩa</td><td>Online DDL vẫn cần chỗ trống cỡ bảng + I/O lớn + khóa ngắn ở đầu/cuối</td><td><code>df</code>; ước lượng bằng bản sao</td><td>Chạy ngoài giờ, kiểm dung lượng, dùng công cụ online khi cần</td></tr><tr><td>10</td><td>Coi <code>ln 2 ≈ 69 %</code> hay <code>15/16</code> là số tuyệt đối</td><td>Đó là kết quả lý thuyết/tài liệu cho điều kiện lý tưởng; thực tế còn kích thước record, xóa/chèn xen kẽ</td><td>Đo fill thật (<code>INNODB_BUFFER_PAGE</code>, <code>pgstatindex</code>)</td><td>Dùng làm công cụ lập luận, <strong>đo</strong> để kết luận</td></tr><tr><td>11</td><td>Chọn PK rộng (<code>CHAR(36)</code>, composite dài)</td><td>PK nhân vào mọi secondary index và làm giảm fanout nhánh ⇒ cây cao/to hơn</td><td>So <code>stat_value</code> size của index theo kiểu PK</td><td>PK hẹp (BIGINT/BINARY(16))</td></tr><tr><td>12</td><td>Cho rằng SSD “không cần locality”</td><td>SSD giảm phân mảnh <em>ngoại</em> nhưng không xóa write amplification, fill thấp, vách đá RAM</td><td>Đo trên NVMe vẫn thấy miss/flush tăng</td><td>Giữ nguyên tắc locality kể cả trên SSD</td></tr><tr><td>13</td><td>Tắt doublewrite để “nhanh” khi filesystem không đảm bảo atomic write 16 KB</td><td>Ghi dở một page (torn page) khi mất điện ⇒ page hỏng, redo log không vá được</td><td><code>innodb_doublewrite</code>; kiểm tra bảo đảm của FS/phần cứng</td><td>Giữ <code>ON</code>, trừ khi nền tảng đảm bảo atomic write đã kiểm chứng</td></tr><tr><td>14</td><td>Khóa tuần tự nhưng tốc độ ghi cực cao trên <strong>một</strong> B-Tree</td><td>Mọi writer tranh nhau latch của lá phải nhất</td><td>CPU cao, mutex/latch wait ở lá cuối</td><td>Partition (theo thời gian/hash), nhiều B-Tree nhỏ</td></tr></tbody></table></div>
+<hr/>
+<h2 id="-tài-liệu-dẫn-chứng">📚 Tài liệu dẫn chứng<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-tài-liệu-dẫn-chứng" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="bảng-khẳng-định--nguồn">Bảng: khẳng định → nguồn<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#bảng-khẳng-định--nguồn" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Khẳng định trong bài</th><th>Nguồn</th></tr></thead><tbody><tr><td>Page 16 KB, extent 1 MB, mức lấp đầy 15/16 vs ½…15/16, <code>innodb_fill_factor</code></td><td>R1, R5</td></tr><tr><td>Buffer pool: LRU điểm giữa 3/8, <code>old_blocks_time</code></td><td>R2</td></tr><tr><td>Change buffer: chỉ secondary, non-unique; <code>innodb_change_buffer_max_size</code> mặc định 25 %</td><td>R3</td></tr><tr><td>Doublewrite chống torn page</td><td>R4</td></tr><tr><td>Bộ đếm <code>index_page_splits</code>, <code>index_page_merge_*</code></td><td>R6</td></tr><tr><td><code>INNODB_BUFFER_PAGE</code> có <code>DATA_SIZE</code> theo page</td><td>R7</td></tr><tr><td>Bulk load: sắp theo PK, tắt <code>unique_checks</code>, tạo index sau</td><td>R8</td></tr><tr><td>Secondary index lưu PK</td><td>R9</td></tr><tr><td>Lehman–Yao: high key + right-link; B-Tree PostgreSQL</td><td>R10, R16</td></tr><tr><td><code>pgstatindex</code>, <code>pageinspect</code>, <code>full_page_writes</code></td><td>R11, R12, R20</td></tr><tr><td>MariaDB gỡ change buffer (11.0)</td><td>R13</td></tr><tr><td>Độ lấp đầy trung bình ≈ ln 2 khi chèn ngẫu nhiên</td><td>R17, R14</td></tr><tr><td>Dedup (PG 13), bottom-up deletion (PG 14)</td><td>R21</td></tr><tr><td>OPTIMIZE TABLE = rebuild online</td><td>R22</td></tr></tbody></table></div>
+<h3 id="danh-mục-nguồn">Danh mục nguồn<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#danh-mục-nguồn" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li><strong>R1</strong> — MySQL 8.4, <em>The Physical Structure of an InnoDB Index</em>: <a href="https://dev.mysql.com/doc/refman/8.4/en/innodb-physical-structure.html" class="external">https://dev.mysql.com/doc/refman/8.4/en/innodb-physical-structure.html<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><strong>R2</strong> — MySQL 8.4, <em>Buffer Pool</em>: <a href="https://dev.mysql.com/doc/refman/8.4/en/innodb-buffer-pool.html" class="external">https://dev.mysql.com/doc/refman/8.4/en/innodb-buffer-pool.html<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><strong>R3</strong> — MySQL 8.4, <em>Change Buffer</em>: <a href="https://dev.mysql.com/doc/refman/8.4/en/innodb-change-buffer.html" class="external">https://dev.mysql.com/doc/refman/8.4/en/innodb-change-buffer.html<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><strong>R4</strong> — MySQL 8.4, <em>Doublewrite Buffer</em>: <a href="https://dev.mysql.com/doc/refman/8.4/en/innodb-doublewrite-buffer.html" class="external">https://dev.mysql.com/doc/refman/8.4/en/innodb-doublewrite-buffer.html<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><strong>R5</strong> — MySQL 8.4, InnoDB system variables (<code>innodb_fill_factor</code>): <a href="https://dev.mysql.com/doc/refman/8.4/en/innodb-parameters.html" class="external">https://dev.mysql.com/doc/refman/8.4/en/innodb-parameters.html<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><strong>R6</strong> — MySQL 8.4, <code>INFORMATION_SCHEMA.INNODB_METRICS</code>: <a href="https://dev.mysql.com/doc/refman/8.4/en/innodb-information-schema-metrics-table.html" class="external">https://dev.mysql.com/doc/refman/8.4/en/innodb-information-schema-metrics-table.html<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><strong>R7</strong> — MySQL 8.4, <code>INNODB_BUFFER_PAGE</code>: <a href="https://dev.mysql.com/doc/refman/8.4/en/information-schema-innodb-buffer-page-table.html" class="external">https://dev.mysql.com/doc/refman/8.4/en/information-schema-innodb-buffer-page-table.html<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><strong>R8</strong> — MySQL 8.4, <em>Optimizing InnoDB Bulk Data Loading</em>: <a href="https://dev.mysql.com/doc/refman/8.4/en/optimizing-innodb-bulk-data-loading.html" class="external">https://dev.mysql.com/doc/refman/8.4/en/optimizing-innodb-bulk-data-loading.html<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><strong>R9</strong> — MySQL 8.4, <em>Clustered and Secondary Indexes</em>: <a href="https://dev.mysql.com/doc/refman/8.4/en/innodb-index-types.html" class="external">https://dev.mysql.com/doc/refman/8.4/en/innodb-index-types.html<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><strong>R10</strong> — PostgreSQL docs, <em>B-Tree Indexes</em> (implementation): <a href="https://www.postgresql.org/docs/current/btree.html" class="external">https://www.postgresql.org/docs/current/btree.html<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><strong>R11</strong> — PostgreSQL docs, <code>pgstattuple</code> (<code>pgstatindex</code>): <a href="https://www.postgresql.org/docs/current/pgstattuple.html" class="external">https://www.postgresql.org/docs/current/pgstattuple.html<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><strong>R12</strong> — PostgreSQL docs, <code>pageinspect</code>: <a href="https://www.postgresql.org/docs/current/pageinspect.html" class="external">https://www.postgresql.org/docs/current/pageinspect.html<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><strong>R13</strong> — MariaDB KB, <em>InnoDB Change Buffering</em>: <a href="https://mariadb.com/kb/en/innodb-change-buffering/" class="external">https://mariadb.com/kb/en/innodb-change-buffering/<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><strong>R14</strong> — G. Graefe, <em>Modern B-Tree Techniques</em>, Foundations and Trends in Databases 3(4), 2011.</li>
+<li><strong>R15</strong> — R. Bayer, E. McCreight, <em>Organization and Maintenance of Large Ordered Indexes</em>, Acta Informatica 1, 1972.</li>
+<li><strong>R16</strong> — P. Lehman, S. B. Yao, <em>Efficient Locking for Concurrent Operations on B-Trees</em>, ACM TODS 6(4), 1981.</li>
+<li><strong>R17</strong> — A. C.-C. Yao, <em>On Random 2–3 Trees</em>, Acta Informatica 9, 1978 (độ lấp đầy trung bình ≈ ln 2).</li>
+<li><strong>R18</strong> — J. Cole, <em>The physical structure of InnoDB index pages</em>: <a href="https://blog.jcole.us/2013/01/07/the-physical-structure-of-innodb-index-pages/" class="external">https://blog.jcole.us/2013/01/07/the-physical-structure-of-innodb-index-pages/<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><strong>R19</strong> — M. Kleppmann, <em>Designing Data-Intensive Applications</em>, ch. 3.</li>
+<li><strong>R20</strong> — PostgreSQL docs, WAL configuration (<code>full_page_writes</code>): <a href="https://www.postgresql.org/docs/current/runtime-config-wal.html" class="external">https://www.postgresql.org/docs/current/runtime-config-wal.html<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><strong>R21</strong> — PostgreSQL release notes 13 và 14: <a href="https://www.postgresql.org/docs/release/13.0/" class="external">https://www.postgresql.org/docs/release/13.0/<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a> · <a href="https://www.postgresql.org/docs/release/14.0/" class="external">https://www.postgresql.org/docs/release/14.0/<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><strong>R22</strong> — MySQL 8.4, <em>Online DDL Operations</em>: <a href="https://dev.mysql.com/doc/refman/8.4/en/innodb-online-ddl-operations.html" class="external">https://dev.mysql.com/doc/refman/8.4/en/innodb-online-ddl-operations.html<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+</ul>
+<blockquote>
+<p>Lưu ý trung thực: các con số trong §4–§9 (miss rate, trần insert/s, hệ số phình ×1,37) là <strong>mô hình minh họa</strong> suy ra từ các tham số trong bài, không phải số đo; U2 là cách bạn tự đo trên máy mình.</p>
+</blockquote>
+<h2 id="xem-thêm-2026-11-02">Xem thêm (2026-11-02)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#xem-thêm-2026-11-02" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<ul>
+<li><a href="../Database-Patterns/PostgreSQL/19-Heap-CTID-Vacuum" class="internal alias" data-slug="Database-Patterns/PostgreSQL/19-Heap-CTID-Vacuum">Heap, CTID và VACUUM</a> — đối trọng phía PostgreSQL: row nằm ở <strong>heap</strong> (không theo PK), index trỏ CTID, <code>UPDATE</code> tạo tuple mới, <code>VACUUM</code> dọn xác. Giúp hiểu vì sao cùng một khóa ngẫu nhiên, InnoDB và PostgreSQL trả giá khác nhau.</li>
+</ul></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-45" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#b-tree-clustered-index-và-cái-giá-của-ghi-random-database" data-for="b-tree-clustered-index-và-cái-giá-của-ghi-random-database">B-tree, clustered index và cái giá của ghi random (Database)</a></li><li class="depth-1"><a href="#0-bản-đồ-cả-mạch" data-for="0-bản-đồ-cả-mạch">0. Bản đồ cả mạch</a></li><li class="depth-1"><a href="#1--page--đơn-vị-io-không-phải-row" data-for="1--page--đơn-vị-io-không-phải-row">1. ① Page — đơn vị I/O, không phải row</a></li><li class="depth-1"><a href="#2--btree--fanout-chiều-cao-và-vì-sao-lá-mới-là-chỗ-tốn-kém" data-for="2--btree--fanout-chiều-cao-và-vì-sao-lá-mới-là-chỗ-tốn-kém">2. ② B+Tree — fanout, chiều cao và vì sao lá mới là chỗ tốn kém</a></li><li class="depth-1"><a href="#3--clustered-index-vs-heap--row-nằm-ở-đâu-quyết-định-id-có-phải-là-vị-trí-vật-lý-không" data-for="3--clustered-index-vs-heap--row-nằm-ở-đâu-quyết-định-id-có-phải-là-vị-trí-vật-lý-không">3. ③ Clustered index vs heap — row nằm ở đâu quyết định “ID có phải là vị trí vật lý không”</a></li><li class="depth-1"><a href="#4--buffer-pool--ram-giữ-page-nào-và-vách-đá-ở-đâu" data-for="4--buffer-pool--ram-giữ-page-nào-và-vách-đá-ở-đâu">4. ④ Buffer pool — RAM giữ page nào, và “vách đá” ở đâu</a></li><li class="depth-2"><a href="#công-thức-vách-đá" data-for="công-thức-vách-đá">Công thức vách đá</a></li><li class="depth-1"><a href="#5--đường-đi-của-một-insert-innodb--hai-kịch-bản" data-for="5--đường-đi-của-một-insert-innodb--hai-kịch-bản">5. ⑤ Đường đi của một INSERT (InnoDB) — hai kịch bản</a></li><li class="depth-1"><a href="#6--change-buffer--cứu-được-cái-gì-và-không-cứu-được-cái-gì" data-for="6--change-buffer--cứu-được-cái-gì-và-không-cứu-được-cái-gì">6. ⑥ Change buffer — cứu được cái gì và không cứu được cái gì</a></li><li class="depth-1"><a href="#7--page-split--cơ-chế-và-vì-sao-thứ-tự-khóa-quyết-định-fill-factor" data-for="7--page-split--cơ-chế-và-vì-sao-thứ-tự-khóa-quyết-định-fill-factor">7. ⑦ Page split — cơ chế và vì sao thứ tự khóa quyết định fill factor</a></li><li class="depth-1"><a href="#8--phân-mảnh--hai-loại-hai-cách-đo" data-for="8--phân-mảnh--hai-loại-hai-cách-đo">8. ⑧ Phân mảnh — hai loại, hai cách đo</a></li><li class="depth-1"><a href="#9-nối-thành-một-mạch--vòng-phản-hồi-và-ví-dụ-định-lượng" data-for="9-nối-thành-một-mạch--vòng-phản-hồi-và-ví-dụ-định-lượng">9. Nối thành một mạch — vòng phản hồi và ví dụ định lượng</a></li><li class="depth-1"><a href="#10--đo--đừng-đoán" data-for="10--đo--đừng-đoán">10. ⑨ Đo — đừng đoán</a></li><li class="depth-2"><a href="#mysql--innodb" data-for="mysql--innodb">MySQL / InnoDB</a></li><li class="depth-2"><a href="#postgresql" data-for="postgresql">PostgreSQL</a></li><li class="depth-1"><a href="#11-biện-pháp-xếp-theo-hiệu-quả--chi-phí" data-for="11-biện-pháp-xếp-theo-hiệu-quả--chi-phí">11. Biện pháp, xếp theo hiệu quả / chi phí</a></li><li class="depth-1"><a href="#12-áp-dụng-vào-pdms--vpbank" data-for="12-áp-dụng-vào-pdms--vpbank">12. Áp dụng vào PDMS / VPBank</a></li><li class="depth-1"><a href="#13-checklist" data-for="13-checklist">13. Checklist</a></li><li class="depth-1"><a href="#-chuỗi-tri-thức-liên-quan" data-for="-chuỗi-tri-thức-liên-quan">🔗 Chuỗi tri thức liên quan</a></li><li class="depth-1"><a href="#-usage--công-thức-dùng-ngay" data-for="-usage--công-thức-dùng-ngay">🛠 Usage — công thức dùng ngay</a></li><li class="depth-2"><a href="#u1-ước-lượng-fanout-chiều-cao-và-kích-thước-index-trước-khi-tạo-bảng" data-for="u1-ước-lượng-fanout-chiều-cao-và-kích-thước-index-trước-khi-tạo-bảng">U1. Ước lượng fanout, chiều cao và kích thước index trước khi tạo bảng</a></li><li class="depth-2"><a href="#u2-giao-thức-ab-đo-cái-giá-ghi-random-trên-máy-của-bạn-mysql-84" data-for="u2-giao-thức-ab-đo-cái-giá-ghi-random-trên-máy-của-bạn-mysql-84">U2. Giao thức A/B đo “cái giá ghi random” trên máy của bạn (MySQL 8.4)</a></li><li class="depth-2"><a href="#u3-đặt-buffer-pool-theo-working-set-đo-tỉ-lệ-miss-bằng-delta" data-for="u3-đặt-buffer-pool-theo-working-set-đo-tỉ-lệ-miss-bằng-delta">U3. Đặt buffer pool theo working set, đo tỉ lệ miss bằng delta</a></li><li class="depth-2"><a href="#u4-kịch-bản-nạp-hàng-loạt-bulk-load-đúng-cách" data-for="u4-kịch-bản-nạp-hàng-loạt-bulk-load-đúng-cách">U4. Kịch bản nạp hàng loạt (bulk load) đúng cách</a></li><li class="depth-2"><a href="#u5-khi-nào-rebuild--điểm-khởi-đầu-để-ra-quyết-định-không-phải-ngưỡng-chuẩn" data-for="u5-khi-nào-rebuild--điểm-khởi-đầu-để-ra-quyết-định-không-phải-ngưỡng-chuẩn">U5. Khi nào rebuild? — điểm khởi đầu để ra quyết định (không phải ngưỡng chuẩn)</a></li><li class="depth-2"><a href="#u6-bảng-điều-khiển-tối-thiểu-cho-ghi-random" data-for="u6-bảng-điều-khiển-tối-thiểu-cho-ghi-random">U6. Bảng điều khiển tối thiểu cho “ghi random”</a></li><li class="depth-1"><a href="#️-mistakes--lỗi-thường-gặp-cơ-chế--cách-phát-hiện--cách-sửa" data-for="️-mistakes--lỗi-thường-gặp-cơ-chế--cách-phát-hiện--cách-sửa">⚠️ Mistakes — lỗi thường gặp (cơ chế · cách phát hiện · cách sửa)</a></li><li class="depth-1"><a href="#-tài-liệu-dẫn-chứng" data-for="-tài-liệu-dẫn-chứng">📚 Tài liệu dẫn chứng</a></li><li class="depth-2"><a href="#bảng-khẳng-định--nguồn" data-for="bảng-khẳng-định--nguồn">Bảng: khẳng định → nguồn</a></li><li class="depth-2"><a href="#danh-mục-nguồn" data-for="danh-mục-nguồn">Danh mục nguồn</a></li><li class="depth-1"><a href="#xem-thêm-2026-11-02" data-for="xem-thêm-2026-11-02">Xem thêm (2026-11-02)</a></li><li class="overflow-end"></li></ul></div><div class="backlinks"><h3>Backlinks</h3><ul id="list-2" class="overflow"><li><a href="../Database-Patterns/00-Hub-Database-Persistence" class="internal">00-Hub-Database-Persistence</a></li><li><a href="../Database-Patterns/Chon-Kieu-ID-He-Thong-Hien-Dai" class="internal">Chon-Kieu-ID-He-Thong-Hien-Dai</a></li><li><a href="../Database-Patterns/PostgreSQL/19-Heap-CTID-Vacuum" class="internal">19-Heap-CTID-Vacuum</a></li><li><a href="../_moc/MOC-Database-Internals" class="internal">MOC-Database-Internals</a></li><li><a href="../_moc/MOC-Database" class="internal">MOC-Database</a></li><li class="overflow-end"></li></ul></div><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:false,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://dangthobach.github.io/">Back to Portfolio</a></li><li><a href="https://github.com/dangthobach">GitHub</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../postscript.js" type="module" data-persist="true"></script></html>

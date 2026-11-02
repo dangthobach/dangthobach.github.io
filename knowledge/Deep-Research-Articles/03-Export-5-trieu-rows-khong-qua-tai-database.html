@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>03-Export-5-trieu-rows-khong-qua-tai-database</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&amp;family=Inter:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="Dang Tho Bach's Knowledge Base"/><meta property="og:title" content="03-Export-5-trieu-rows-khong-qua-tai-database"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="03-Export-5-trieu-rows-khong-qua-tai-database"/><meta name="twitter:description" content="Export 5 triệu dòng mà không làm quá tải database Luận đề Năm triệu row không tự thân là nguy hiểm."/><meta property="og:description" content="Export 5 triệu dòng mà không làm quá tải database Luận đề Năm triệu row không tự thân là nguy hiểm."/><meta property="og:image:alt" content="Export 5 triệu dòng mà không làm quá tải database Luận đề Năm triệu row không tự thân là nguy hiểm."/><meta property="twitter:domain" content="dangthobach.github.io/knowledge"/><meta property="og:url" content="https://dangthobach.github.io/knowledge/Deep-Research-Articles/03-Export-5-trieu-rows-khong-qua-tai-database"/><meta property="twitter:url" content="https://dangthobach.github.io/knowledge/Deep-Research-Articles/03-Export-5-trieu-rows-khong-qua-tai-database"/><link rel="icon" href="../static/icon.png"/><meta name="description" content="Export 5 triệu dòng mà không làm quá tải database Luận đề Năm triệu row không tự thân là nguy hiểm."/><meta name="generator" content="Quartz"/><link href="../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiL2hvbWUvcnVubmVyL3dvcmsvZGFuZ3Rob2JhY2guZ2l0aHViLmlvL2Rhbmd0aG9iYWNoLmdpdGh1Yi5pby9xdWFydHovcXVhcnR6L2NvbXBvbmVudHMvc3R5bGVzIiwic291cmNlcyI6WyJtZXJtYWlkLmlubGluZS5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFHRjtFQUNFOzs7QUFLRjtFQUNFO0VBQ0E7OztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBOztBQUdGO0VBQ0U7RUFDQTs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTs7QUFJRjtFQUNFO0VBQ0E7RUFDQSIsInNvdXJjZXNDb250ZW50IjpbIi5leHBhbmQtYnV0dG9uIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbG9hdDogcmlnaHQ7XG4gIHBhZGRpbmc6IDAuNHJlbTtcbiAgbWFyZ2luOiAwLjNyZW07XG4gIHJpZ2h0OiAwOyAvLyBOT1RFOiByaWdodCB3aWxsIGJlIHNldCBpbiBtZXJtYWlkLmlubGluZS50c1xuICBjb2xvcjogdmFyKC0tZ3JheSk7XG4gIGJvcmRlci1jb2xvcjogdmFyKC0tZGFyayk7XG4gIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgYm9yZGVyOiAxcHggc29saWQ7XG4gIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgb3BhY2l0eTogMDtcbiAgdHJhbnNpdGlvbjogMC4ycztcblxuICAmID4gc3ZnIHtcbiAgICBmaWxsOiB2YXIoLS1saWdodCk7XG4gICAgZmlsdGVyOiBjb250cmFzdCgwLjMpO1xuICB9XG5cbiAgJjpob3ZlciB7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIGJvcmRlci1jb2xvcjogdmFyKC0tc2Vjb25kYXJ5KTtcbiAgfVxuXG4gICY6Zm9jdXMge1xuICAgIG91dGxpbmU6IDA7XG4gIH1cbn1cblxucHJlIHtcbiAgJjpob3ZlciA+IC5leHBhbmQtYnV0dG9uIHtcbiAgICBvcGFjaXR5OiAxO1xuICAgIHRyYW5zaXRpb246IDAuMnM7XG4gIH1cbn1cblxuI21lcm1haWQtY29udGFpbmVyIHtcbiAgcG9zaXRpb246IGZpeGVkO1xuICBjb250YWluOiBsYXlvdXQ7XG4gIHotaW5kZXg6IDk5OTtcbiAgbGVmdDogMDtcbiAgdG9wOiAwO1xuICB3aWR0aDogMTAwdnc7XG4gIGhlaWdodDogMTAwdmg7XG4gIG92ZXJmbG93OiBoaWRkZW47XG4gIGRpc3BsYXk6IG5vbmU7XG4gIGJhY2tkcm9wLWZpbHRlcjogYmx1cig0cHgpO1xuICBiYWNrZ3JvdW5kOiByZ2JhKDAsIDAsIDAsIDAuNSk7XG5cbiAgJi5hY3RpdmUge1xuICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgfVxuXG4gICYgPiAjbWVybWFpZC1zcGFjZSB7XG4gICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gICAgYm9yZGVyLXJhZGl1czogNXB4O1xuICAgIHBvc2l0aW9uOiBmaXhlZDtcbiAgICB0b3A6IDUwJTtcbiAgICBsZWZ0OiA1MCU7XG4gICAgdHJhbnNmb3JtOiB0cmFuc2xhdGUoLTUwJSwgLTUwJSk7XG4gICAgaGVpZ2h0OiA4MHZoO1xuICAgIHdpZHRoOiA4MHZ3O1xuICAgIG92ZXJmbG93OiBoaWRkZW47XG5cbiAgICAmID4gLm1lcm1haWQtY29udGVudCB7XG4gICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgICB0cmFuc2Zvcm0tb3JpZ2luOiAwIDA7XG4gICAgICB0cmFuc2l0aW9uOiB0cmFuc2Zvcm0gMC4xcyBlYXNlO1xuICAgICAgb3ZlcmZsb3c6IHZpc2libGU7XG4gICAgICBtaW4taGVpZ2h0OiAyMDBweDtcbiAgICAgIG1pbi13aWR0aDogMjAwcHg7XG5cbiAgICAgIHByZSB7XG4gICAgICAgIG1hcmdpbjogMDtcbiAgICAgICAgYm9yZGVyOiBub25lO1xuICAgICAgfVxuXG4gICAgICBzdmcge1xuICAgICAgICBtYXgtd2lkdGg6IG5vbmU7XG4gICAgICAgIGhlaWdodDogYXV0bztcbiAgICAgIH1cbiAgICB9XG5cbiAgICAmID4gLm1lcm1haWQtY29udHJvbHMge1xuICAgICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgICAgYm90dG9tOiAyMHB4O1xuICAgICAgcmlnaHQ6IDIwcHg7XG4gICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgZ2FwOiA4cHg7XG4gICAgICBwYWRkaW5nOiA4cHg7XG4gICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgYm9yZGVyLXJhZGl1czogNnB4O1xuICAgICAgYm94LXNoYWRvdzogMCAycHggNHB4IHJnYmEoMCwgMCwgMCwgMC4xKTtcbiAgICAgIHotaW5kZXg6IDI7XG5cbiAgICAgIC5tZXJtYWlkLWNvbnRyb2wtYnV0dG9uIHtcbiAgICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgIHdpZHRoOiAzMnB4O1xuICAgICAgICBoZWlnaHQ6IDMycHg7XG4gICAgICAgIHBhZGRpbmc6IDA7XG4gICAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgICAgY29sb3I6IHZhcigtLWRhcmspO1xuICAgICAgICBib3JkZXItcmFkaXVzOiA0cHg7XG4gICAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICAgICAgZm9udC1zaXplOiAxNnB4O1xuICAgICAgICBmb250LWZhbWlseTogdmFyKC0tYm9keUZvbnQpO1xuICAgICAgICB0cmFuc2l0aW9uOiBhbGwgMC4ycyBlYXNlO1xuXG4gICAgICAgICY6aG92ZXIge1xuICAgICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIH1cblxuICAgICAgICAmOmFjdGl2ZSB7XG4gICAgICAgICAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKDFweCk7XG4gICAgICAgIH1cblxuICAgICAgICAvLyBTdHlsZSB0aGUgcmVzZXQgYnV0dG9uIGRpZmZlcmVudGx5XG4gICAgICAgICY6bnRoLWNoaWxkKDIpIHtcbiAgICAgICAgICB3aWR0aDogYXV0bztcbiAgICAgICAgICBwYWRkaW5nOiAwIDEycHg7XG4gICAgICAgICAgZm9udC1zaXplOiAxNHB4O1xuICAgICAgICB9XG4gICAgICB9XG4gICAgfVxuICB9XG59XG4iXX0= */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://dangthobach.github.io/knowledge/index.xml"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image" content="https://dangthobach.github.io/knowledge/Deep-Research-Articles/03-Export-5-trieu-rows-khong-qua-tai-database-og-image.webp"/><meta property="og:image:url" content="https://dangthobach.github.io/knowledge/Deep-Research-Articles/03-Export-5-trieu-rows-khong-qua-tai-database-og-image.webp"/><meta name="twitter:image" content="https://dangthobach.github.io/knowledge/Deep-Research-Articles/03-Export-5-trieu-rows-khong-qua-tai-database-og-image.webp"/><meta property="og:image:type" content="image/.webp"/></head><body data-slug="Deep-Research-Articles/03-Export-5-trieu-rows-khong-qua-tai-database"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href=".." aria-label="Dang Tho Bach's Knowledge Base"><span class="brand-mark" aria-hidden="true">DB</span><span class="brand-copy"><span class="brand-name">Dang Tho Bach's Knowledge Base</span><span class="brand-subtitle">Engineering research system</span></span></a></h2><nav class="research-nav" aria-label="Research workspace"><div class="research-nav-label"><span class="research-nav-pulse" aria-hidden="true"></span>Research workspace</div><div class="research-nav-items"><a href="../" class="research-nav-item"><span class="research-nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3M12 19v3M2 12h3M19 12h3"></path><path d="m4.9 4.9 2.2 2.2M16.9 16.9l2.2 2.2M19.1 4.9l-2.2 2.2M7.1 16.9l-2.2 2.2"></path></svg></span><span class="research-nav-copy"><strong>Focus</strong><small>Dashboard &amp; current work</small></span></a><a href="../_moc" class="research-nav-item"><span class="research-nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 6 5-3 8 3 5-3v15l-5 3-8-3-5 3Z"></path><path d="M8 3v15M16 6v15"></path></svg></span><span class="research-nav-copy"><strong>Knowledge maps</strong><small>Topics, domains &amp; connections</small></span></a><a href="../JVM-Frameworks-2026" class="research-nav-item"><span class="research-nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 7 9-4 9 4-9 4Z"></path><path d="M7 9.2V15c3 2.4 7 2.4 10 0V9.2M21 7v6"></path></svg></span><span class="research-nav-copy"><strong>Study tracks</strong><small>Structured learning paths</small></span></a><a href="../_inbox" class="research-nav-item"><span class="research-nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4Z"></path><path d="M4 14h4l2 3h4l2-3h4"></path></svg></span><span class="research-nav-copy"><strong>Research inbox</strong><small>Capture &amp; distillation queue</small></span></a></div></nav><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search knowledge</p><kbd aria-hidden="true">Ctrl K</kbd></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="false" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>{let priority=[\&quot;_moc\&quot;,\&quot;_inbox\&quot;,\&quot;JVM-Frameworks-2026\&quot;,\&quot;Performance-System-Programming\&quot;,\&quot;Microservices-Patterns\&quot;,\&quot;Database-Patterns\&quot;,\&quot;Rust-Zero-To-Hero\&quot;,\&quot;Go-Zero-To-Hero\&quot;,\&quot;Go-Microservices-Mastery\&quot;,\&quot;concepts\&quot;],aIndex=priority.indexOf(a.slugSegment),bIndex=priority.indexOf(b.slugSegment);return aIndex!==-1||bIndex!==-1?aIndex===-1?1:bIndex===-1?-1:aIndex-bIndex:a.isFolder!==b.isFolder?a.isFolder?-1:1:a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;})}&quot;,&quot;filterFn&quot;:&quot;node=>![\&quot;tags\&quot;,\&quot;.smart-env\&quot;,\&quot;_scripts\&quot;,\&quot;_templates\&quot;,\&quot;_archive\&quot;,\&quot;Notion-Knowledge\&quot;].includes(node.slugSegment)&quot;,&quot;mapFn&quot;:&quot;node=>{let labels={_moc:\&quot;Knowledge Maps\&quot;,_inbox:\&quot;Research Inbox\&quot;,concepts:\&quot;Core Concepts\&quot;,\&quot;JVM-Frameworks-2026\&quot;:\&quot;JVM Frameworks\&quot;,\&quot;Performance-System-Programming\&quot;:\&quot;Performance &amp; Systems\&quot;,\&quot;Microservices-Patterns\&quot;:\&quot;Microservices Patterns\&quot;,\&quot;Database-Patterns\&quot;:\&quot;Database Patterns\&quot;,\&quot;Go-Microservices-Mastery\&quot;:\&quot;Go Microservices\&quot;,\&quot;Notion-Knowledge\&quot;:\&quot;Reference Library\&quot;};node.displayName=labels[node.slugSegment]??node.displayName.replaceAll(\&quot;-\&quot;,\&quot; \&quot;)}&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-228"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Knowledge library</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-228" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../Deep-Research-Articles/">Deep Research Articles</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>03 Export 5 trieu rows khong qua tai database</a></div></nav><h1 class="article-title">03-Export-5-trieu-rows-khong-qua-tai-database</h1><p show-comma="true" class="content-meta"><time datetime="2026-11-02T00:00:00.000Z">Nov 02, 2026</time><span>9 min read</span></p><ul class="tags"><li><a href="../tags/deep-research" class="internal tag-link">deep-research</a></li><li><a href="../tags/database" class="internal tag-link">database</a></li><li><a href="../tags/export" class="internal tag-link">export</a></li><li><a href="../tags/keyset-pagination" class="internal tag-link">keyset-pagination</a></li><li><a href="../tags/streaming" class="internal tag-link">streaming</a></li><li><a href="../tags/resilience" class="internal tag-link">resilience</a></li></ul></div></div><article class="popover-hint"><h1 id="export-5-triệu-dòng-mà-không-làm-quá-tải-database">Export 5 triệu dòng mà không làm quá tải database<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#export-5-triệu-dòng-mà-không-làm-quá-tải-database" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<blockquote class="callout abstract" data-callout="abstract">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Luận đề </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>Năm triệu row không tự thân là nguy hiểm. Rủi ro đến từ cách tìm row, thời gian giữ snapshot/connection, tốc độ client tiêu thụ, concurrency, backpressure và việc lỗi upload có buộc chạy lại từ đầu hay không. Thiết kế an toàn thường là <strong>keyset/range chunks + streaming có buffer hữu hạn + resumable multipart upload + checkpoint chỉ tiến sau khi bytes đã bền vững</strong>.</p>
+</div>
+</blockquote>
+<p><img src="../Deep-Research-Articles/assets/resilient-database-export-pipeline.png" width="auto" height="auto" alt/></p>
+<p><em>Pipeline: database → range chunks → bounded buffer → multipart object storage; checkpoint tạo biên durability, còn backpressure truyền ngược để ngăn đọc vượt tốc độ ghi. Hình do AI tạo để minh họa kiến trúc.</em></p>
+<h2 id="1-bốn-trục-rủi-ro-độc-lập">1. Bốn trục rủi ro độc lập<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-bốn-trục-rủi-ro-độc-lập" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Trục</th><th>Câu hỏi phải trả lời</th></tr></thead><tbody><tr><td>Access path</td><td>Database seek tới cursor hay scan rồi bỏ hàng triệu row?</td></tr><tr><td>Consistency</td><td>Cần một snapshot thống nhất hay chấp nhận mỗi chunk ở thời điểm khác nhau?</td></tr><tr><td>Flow control</td><td>Upload chậm có làm RAM tăng vô hạn hoặc DB socket đứng đọc?</td></tr><tr><td>Recovery</td><td>Crash ở 80% có resume từ checkpoint hay chạy lại từ 0?</td></tr></tbody></table></div>
+<p>Một kiến trúc tốt không chỉ “query nhanh”. Nó giới hạn blast radius: chunk nhỏ, connection có tuổi thọ hữu hạn, worker count bounded, retry deterministic và checkpoint gắn với durability thật.</p>
+<h2 id="2-offset-không-phải-vị-trí-trong-b-tree">2. <code>OFFSET</code> không phải vị trí trong B-tree<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-offset-không-phải-vị-trí-trong-b-tree" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="sql" data-theme="github-light github-dark"><code data-language="sql" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SELECT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> id, created_at, customer_id, amount</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">FROM</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> orders</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ORDER BY</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> created_at, id</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">LIMIT</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 1000</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> OFFSET </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">4000000</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span></code></pre></figure>
+<p>Database phải tạo ít nhất 4.001.000 row theo đúng thứ tự, bỏ 4.000.000 row rồi mới trả 1.000. Index có thể bỏ sort nhưng không bỏ việc skip. PostgreSQL ghi rõ rows bị <code>OFFSET</code> bỏ qua vẫn phải được tính và large offset có thể kém hiệu quả (<a href="https://www.postgresql.org/docs/current/queries-limit.html" class="external">PostgreSQL — LIMIT and OFFSET<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>).</p>
+<p>Benchmark MySQL 8.4 trên 1 triệu row cho thấy hình dạng tăng tuyến tính theo độ sâu (<a href="https://zeroexp.dev/library/mysql-keyset-pagination" class="external">ZeroExp — MySQL Keyset Pagination<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>):</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th style="text-align:right;">Vị trí bắt đầu</th><th style="text-align:right;"><code>OFFSET</code></th><th style="text-align:right;">Keyset</th></tr></thead><tbody><tr><td style="text-align:right;">0</td><td style="text-align:right;">0,70 ms</td><td style="text-align:right;">0,90 ms</td></tr><tr><td style="text-align:right;">10.000</td><td style="text-align:right;">1,77 ms</td><td style="text-align:right;">0,61 ms</td></tr><tr><td style="text-align:right;">100.000</td><td style="text-align:right;">10,60 ms</td><td style="text-align:right;">1,36 ms</td></tr><tr><td style="text-align:right;">500.000</td><td style="text-align:right;">50,39 ms</td><td style="text-align:right;">0,65 ms</td></tr><tr><td style="text-align:right;">900.000</td><td style="text-align:right;"><strong>321,68 ms</strong></td><td style="text-align:right;"><strong>1,14 ms</strong></td></tr></tbody></table></div>
+<p>Ở offset 900.000, plan tạo khoảng 900.020 row từ index scan để trả 20 row. Đây là lý do chia export thành 5.000 query <code>LIMIT 1000 OFFSET n</code> có thể tệ hơn một sequential walk: các prefix đầu bị duyệt lại liên tục.</p>
+<h2 id="3-keyset-nhanh-khi-predicate-thực-sự-trở-thành-range-seek">3. Keyset nhanh khi predicate thực sự trở thành range seek<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-keyset-nhanh-khi-predicate-thực-sự-trở-thành-range-seek" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Với khóa duy nhất:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="sql" data-theme="github-light github-dark"><code data-language="sql" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SELECT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> id, created_at, customer_id, amount</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">FROM</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> orders</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">WHERE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> id </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">></span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> :</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">cursor</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ORDER BY</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> id</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">LIMIT</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 10000</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span></code></pre></figure>
+<p>Với order key không unique, cần tie-breaker:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="sql" data-theme="github-light github-dark"><code data-language="sql" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">-- PostgreSQL</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">SELECT</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> id, created_at, customer_id, amount</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">FROM</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> orders</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">WHERE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (created_at, id) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">></span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (:created_at, :id)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ORDER BY</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> created_at, id</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">LIMIT</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 10000</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span></code></pre></figure>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="sql" data-theme="github-light github-dark"><code data-language="sql" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">CREATE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> INDEX</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> ix_orders_export</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ON</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> orders (created_at, id);</span></span></code></pre></figure>
+<p>Keyset làm work gần với <code>B-tree seek + page size</code>, thay vì <code>offset + page size</code>. Nhưng câu SQL có chữ <code>WHERE id > ?</code> chưa đủ: index leading keys phải khớp filter/order, kiểu dữ liệu/collation phải tương thích, và <code>EXPLAIN ANALYZE</code> phải cho thấy range/index condition thực sự.</p>
+<p>Với MySQL, row constructor trên composite key có thể không luôn được tối ưu thành range tốt ở mọi version/query shape. Dạng mở rộng thường an toàn hơn và phải benchmark:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="sql" data-theme="github-light github-dark"><code data-language="sql" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">WHERE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> created_at </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">></span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> :ts</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">   OR</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (created_at </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> :ts </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">AND</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> id </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">></span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> :id)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ORDER BY</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> created_at, id</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">LIMIT</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 10000</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span></code></pre></figure>
+<blockquote class="callout warning" data-callout="warning">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Mistake: “Keyset chỉ nhanh khi covering” </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>Sai. Covering không cần thiết cho seek. Non-covering keyset vẫn chỉ lookup payload cho khoảng một page kết quả. Covering giúp tránh heap/clustered-row fetch, nhưng đổi lại index lớn và write cost cao.</p>
+</div>
+</blockquote>
+<p>PostgreSQL covering:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="sql" data-theme="github-light github-dark"><code data-language="sql" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">CREATE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> INDEX</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> CONCURRENTLY</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> ix_orders_export</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ON</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> orders (created_at, id)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">INCLUDE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (customer_id, amount, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">status</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span></code></pre></figure>
+<p>Index-only scan còn phụ thuộc visibility map; kiểm tra <code>Heap Fetches</code> (<a href="https://www.postgresql.org/docs/current/indexes-index-only-scans.html" class="external">PostgreSQL — Index-Only Scans<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>). Không cover cột text/JSON lớn chỉ để phục vụ một export hiếm.</p>
+<h2 id="4-kiến-trúc-có-backpressure-và-durability-boundary">4. Kiến trúc có backpressure và durability boundary<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-kiến-trúc-có-backpressure-và-durability-boundary" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    P[Planner] --> Q[(Bounded job queue)]\n    Q --> W[Small worker pool]\n    W --> DB[(Primary/replica)]\n    DB --> K[Keyset chunk]\n    K --> E[Row encoder]\n    E --> B[Bounded byte buffer]\n    B --> S[Multipart upload]\n    S --> C[(Checkpoint store)]\n    C --> Q\n    S -. slow .-> B\n    B -. backpressure .-> W&quot;">flowchart LR
+    P[Planner] --> Q[(Bounded job queue)]
+    Q --> W[Small worker pool]
+    W --> DB[(Primary/replica)]
+    DB --> K[Keyset chunk]
+    K --> E[Row encoder]
+    E --> B[Bounded byte buffer]
+    B --> S[Multipart upload]
+    S --> C[(Checkpoint store)]
+    C --> Q
+    S -. slow .-> B
+    B -. backpressure .-> W
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h3 id="worker-item-tối-thiểu">Worker item tối thiểu<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#worker-item-tối-thiểu" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>export_id</span></span>
+<span data-line><span>partition_id</span></span>
+<span data-line><span>lower_key_exclusive</span></span>
+<span data-line><span>upper_key_inclusive</span></span>
+<span data-line><span>last_committed_key</span></span>
+<span data-line><span>upload_id</span></span>
+<span data-line><span>next_part_number</span></span>
+<span data-line><span>output_schema_version</span></span>
+<span data-line><span>snapshot_id?          # chỉ khi cần snapshot chung</span></span>
+<span data-line><span>status</span></span></code></pre></figure>
+<h3 id="quy-tắc-checkpoint">Quy tắc checkpoint<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#quy-tắc-checkpoint" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<blockquote class="callout tip" data-callout="tip">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Durability rule </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>Tiến độ database chỉ được commit sau khi bytes tương ứng đã upload thành công và metadata part/checksum đã được lưu bền vững.</p>
+</div>
+</blockquote>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    A[Load last committed key] --> B[Query chunk kế tiếp]\n    B --> C[Encode vào bounded buffer]\n    C --> D[Upload multipart part]\n    D --> E{Upload thành công?}\n    E -- Không --> D\n    E -- Có --> F[Persist ETag + part + last key]\n    F --> G{Hết range?}\n    G -- Không --> B\n    G -- Có --> H[Complete multipart upload]&quot;">flowchart TD
+    A[Load last committed key] --> B[Query chunk kế tiếp]
+    B --> C[Encode vào bounded buffer]
+    C --> D[Upload multipart part]
+    D --> E{Upload thành công?}
+    E -- Không --> D
+    E -- Có --> F[Persist ETag + part + last key]
+    F --> G{Hết range?}
+    G -- Không --> B
+    G -- Có --> H[Complete multipart upload]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p>Nếu process chết sau <code>UploadPart</code> nhưng trước checkpoint, upload lại cùng part number có thể thay thế part cũ trên S3; retry vì vậy có thể deterministic (<a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/mpuoverview.html" class="external">AWS S3 — Multipart Upload Overview<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>). Lưu <code>(upload_id, part_number, ETag/checksum, first_key, last_key, row_count, byte_count)</code>.</p>
+<h2 id="5-streaming-không-đồng-nghĩa-mọi-driver-đều-giống-nhau">5. Streaming không đồng nghĩa mọi driver đều giống nhau<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5-streaming-không-đồng-nghĩa-mọi-driver-đều-giống-nhau" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="go-databasesql">Go <code>database/sql</code><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#go-databasesql" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p><code>Rows</code> là iterator ở API level; buffering thực tế phụ thuộc driver. Usage đúng là scan và encode ngay:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="go" data-theme="github-light github-dark"><code data-language="go" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">rows, err </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">:=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> db.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">QueryContext</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(ctx, query, cursor, upper, chunkSize)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> err </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">!=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> nil</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> { </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">return</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> err }</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">defer</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> rows.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">Close</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">()</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">for</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> rows.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">Next</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">() {</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> err </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">:=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> rows.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">Scan</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">id, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">createdAt, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">customerID, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">amount); err </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">!=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> nil</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        return</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> err</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    }</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> err </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">:=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> csvWriter.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">Write</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">encodeRow</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">...</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)); err </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">!=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> nil</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        return</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> err</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">return</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> rows.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">Err</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">()</span></span></code></pre></figure>
+<p>Không append 5 triệu object vào slice trước khi upload. Giới hạn <code>SetMaxOpenConns</code>; export worker count không nên tự động bằng CPU core count.</p>
+<h3 id="postgresql-jdbc">PostgreSQL JDBC<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#postgresql-jdbc" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>pgJDBC mặc định có thể lấy toàn bộ result. Cursor-based fetching cần autocommit off, forward-only result và positive fetch size (<a href="https://jdbc.postgresql.org/documentation/query/#getting-results-based-on-a-cursor" class="external">pgJDBC — Query with a Cursor<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>):</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="java" data-theme="github-light github-dark"><code data-language="java" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">conn.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">setAutoCommit</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">false</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">PreparedStatement ps </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> conn.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">prepareStatement</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    sql,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    ResultSet.TYPE_FORWARD_ONLY,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    ResultSet.CONCUR_READ_ONLY</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">ps.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">setFetchSize</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">10_000</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span></code></pre></figure>
+<h3 id="mysql-connectorj">MySQL Connector/J<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#mysql-connectorj" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Row-at-a-time streaming:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="java" data-theme="github-light github-dark"><code data-language="java" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">Statement st </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> conn.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">createStatement</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    ResultSet.TYPE_FORWARD_ONLY,</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    ResultSet.CONCUR_READ_ONLY</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">st.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">setFetchSize</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(Integer.MIN_VALUE);</span></span></code></pre></figure>
+<p>Server cursor fetching:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>jdbc:mysql://db/export?useCursorFetch=true&amp;defaultFetchSize=10000</span></span></code></pre></figure>
+<p>Connector/J mô tả cả hai mode và cảnh báo phải đọc hết hoặc đóng streamed result trước query khác trên cùng connection (<a href="https://dev.mysql.com/doc/connector-j/en/connector-j-reference-implementation-notes.html" class="external">MySQL Connector/J — JDBC Implementation Notes<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>, <a href="https://dev.mysql.com/doc/connector-j/en/connector-j-connp-props-performance-extensions.html" class="external">Connector/J — Performance Extensions<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>).</p>
+<h2 id="6-network-timeout-là-một-phần-của-query-design">6. Network timeout là một phần của query design<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#6-network-timeout-là-một-phần-của-query-design" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Nếu exporter ngừng đọc socket để chờ upload, MySQL server có thể chạm <code>net_write_timeout</code>; default MySQL 8.4 là 60 giây. Connector/J có <code>netTimeoutForStreamingResults</code>, default 600 giây (<a href="https://dev.mysql.com/doc/refman/8.4/en/server-system-variables.html" class="external">MySQL 8.4 — Server System Variables<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>, <a href="https://dev.mysql.com/doc/connector-j/en/connector-j-connp-props-result-sets.html" class="external">Connector/J — Result Set Properties<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>).</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Failure</th><th>Biểu hiện</th><th>Thiết kế phòng vệ</th></tr></thead><tbody><tr><td>Upload chậm</td><td>DB socket không được drain</td><td>Chunk nhỏ; upload giữa chunks; bounded pipe</td></tr><tr><td>DB connection reset</td><td>Chunk dở dang</td><td>Retry từ durable cursor</td></tr><tr><td>Worker crash</td><td>Multipart upload còn dang dở</td><td>Persist upload ID/parts; resume hoặc abort</td></tr><tr><td>Checkpoint write fail</td><td>Remote part có thể đã tồn tại</td><td>Re-upload deterministic part number</td></tr><tr><td>Retry đồng thời</td><td>Duplicate part/chunk</td><td>Lease/CAS trên checkpoint</td></tr><tr><td>Query timeout</td><td>Partial result</td><td>Chunk đủ nhỏ để retry rẻ</td></tr></tbody></table></div>
+<p>Không chỉ “tăng timeout”. Timeout dài che slow consumer và kéo dài resource retention. Mục tiêu là giữ mỗi query/chunk nằm trong một latency envelope đo được.</p>
+<h2 id="7-consistency-snapshot-thống-nhất-hay-export-có-thể-resume">7. Consistency: snapshot thống nhất hay export có thể resume?<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#7-consistency-snapshot-thống-nhất-hay-export-có-thể-resume" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="một-snapshot-dài">Một snapshot dài<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#một-snapshot-dài" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Ưu điểm: toàn bộ file phản ánh một thời điểm logic. Nhược điểm: connection/transaction sống lâu; PostgreSQL giữ <code>backend_xmin</code> cũ có thể cản vacuum; InnoDB phải giữ undo version lâu hơn.</p>
+<h3 id="các-chunk-độc-lập">Các chunk độc lập<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#các-chunk-độc-lập" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Ưu điểm: retry/resume dễ, giải phóng connection giữa chunks, failure nhỏ. Nhược điểm: dữ liệu có thể thay đổi giữa chunk; update/delete/insert cần semantics rõ.</p>
+<p>Các chiến lược:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Yêu cầu</th><th>Cách tiếp cận</th></tr></thead><tbody><tr><td>Backup/migration nhất quán</td><td><code>pg_dump</code>, <code>mysqldump --single-transaction --quick</code>, native dump</td></tr><tr><td>CSV/filter tùy biến, chấp nhận snapshot theo chunk</td><td>Keyset/range chunks</td></tr><tr><td>Snapshot chung + parallel worker</td><td>Exported snapshot/DB-native tooling; vận hành phức tạp hơn</td></tr><tr><td>Incremental business export</td><td>Watermark + immutable key/version + audit semantics</td></tr></tbody></table></div>
+<p>PostgreSQL <code>COPY (SELECT ...) TO STDOUT</code> nên được benchmark trước JDBC row serialization khi output phù hợp (<a href="https://www.postgresql.org/docs/current/sql-copy.html" class="external">PostgreSQL — COPY<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>). <code>pg_dump</code> hỗ trợ consistent export và parallel directory format; <code>-j</code> tăng connection/load (<a href="https://www.postgresql.org/docs/current/app-pgdump.html" class="external">PostgreSQL — pg_dump<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>).</p>
+<p>MySQL 8.4 đã loại <code>mysqlpump</code>; dùng <code>mysqldump</code> hoặc MySQL Shell dump utilities. MySQL Shell hỗ trợ chunking, parallel threads, compression và rate limiting (<a href="https://dev.mysql.com/doc/mysql-shell/8.4/en/mysql-shell-utilities-dump-instance-schema.html" class="external">MySQL Shell — Dump Utilities<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>).</p>
+<h2 id="8-usage-cấu-hình-ban-đầu-và-cách-tune">8. Usage: cấu hình ban đầu và cách tune<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#8-usage-cấu-hình-ban-đầu-và-cách-tune" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Một starting point thận trọng, không phải guarantee:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Tham số</th><th style="text-align:right;">Giá trị khởi đầu</th><th>Tune theo</th></tr></thead><tbody><tr><td>Workers</td><td style="text-align:right;">2–4</td><td>DB latency, read IOPS, replica lag</td></tr><tr><td>DB chunk</td><td style="text-align:right;">10k–50k rows</td><td>Row width, query p95, retry cost</td></tr><tr><td>Multipart part</td><td style="text-align:right;">32–128 MiB</td><td>Compression, network, memory</td></tr><tr><td>Buffer</td><td style="text-align:right;">1–2 parts/worker</td><td>RSS và upload jitter</td></tr><tr><td>Connections</td><td style="text-align:right;">Workers + control nhỏ</td><td>DB connection budget</td></tr></tbody></table></div>
+<p>Quy trình:</p>
+<ol>
+<li>Dùng một worker, xác nhận range seek bằng <code>EXPLAIN ANALYZE</code>.</li>
+<li>Đo rows/s, bytes/s, chunk p95/p99, DB buffers/IOPS và upload latency.</li>
+<li>Tăng worker từng bước; dừng khi latency/replica lag tăng nhanh hơn throughput.</li>
+<li>Rate-limit theo DB pressure, không theo CPU exporter đơn thuần.</li>
+<li>Test kill -9, network loss, upload timeout và checkpoint conflict.</li>
+<li>Đối soát row count, duplicate key, gap và checksum trước khi mark complete.</li>
+</ol>
+<h2 id="9-bảng-monitoring-tối-thiểu">9. Bảng monitoring tối thiểu<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#9-bảng-monitoring-tối-thiểu" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Khu vực</th><th>Metrics</th></tr></thead><tbody><tr><td>Export</td><td>rows/s, bytes/s, durable cursor, ETA</td></tr><tr><td>Query</td><td>p50/p95/p99, rows/chunk, rows examined, buffers</td></tr><tr><td>DB</td><td>CPU, read IOPS, cache hit, active sessions</td></tr><tr><td>PostgreSQL</td><td><code>backend_xmin</code> age, dead tuples, autovacuum lag</td></tr><tr><td>MySQL</td><td>history list length, buffer-pool reads, aborted clients</td></tr><tr><td>Pipeline</td><td>buffer bytes, saturation time, backpressure duration</td></tr><tr><td>Object storage</td><td>part latency, retries, throughput</td></tr><tr><td>Correctness</td><td>duplicate keys, gaps, checkpoint regressions</td></tr><tr><td>Runtime</td><td>RSS, GC pauses, sockets, TCP retransmits</td></tr></tbody></table></div>
+<h2 id="10-mistakes-chi-tiết">10. Mistakes chi tiết<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#10-mistakes-chi-tiết" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Mistake</th><th>Hậu quả khoa học/vận hành</th><th>Cách sửa</th></tr></thead><tbody><tr><td>Deep <code>OFFSET</code> theo page</td><td>Work tăng theo tổng offset</td><td>Keyset/range scan</td></tr><tr><td>Không có tie-breaker unique</td><td>Bỏ sót/lặp row cùng timestamp</td><td><code>ORDER BY created_at, id</code></td></tr><tr><td>Tin tuple predicate luôn tối ưu ở MySQL</td><td>Có thể full index scan</td><td>Mở rộng predicate + <code>EXPLAIN ANALYZE</code></td></tr><tr><td>Một query 5M row duy nhất</td><td>Connection/snapshot/socket sống quá lâu</td><td>Bounded chunks</td></tr><tr><td>Buffer row không giới hạn</td><td>OOM khi upload chậm</td><td>Bounded byte buffer</td></tr><tr><td>Upload trong khi bỏ mặc DB socket</td><td><code>net_write_timeout</code>/connection reset</td><td>Upload giữa chunks hoặc drain qua bounded pipe</td></tr><tr><td>Checkpoint trước upload</td><td>File có gap sau crash</td><td>Chỉ advance sau remote durability</td></tr><tr><td>Checkpoint chỉ theo row count</td><td>Không xác định resume key ổn định</td><td>Lưu last ordered unique key</td></tr><tr><td>Chia <code>MIN(id)..MAX(id)</code> đều</td><td>Range lệch do gap/skew</td><td>Sample boundary keys/partition tự nhiên</td></tr><tr><td>Quá nhiều worker</td><td>Cache churn, IOPS/replica lag tăng</td><td>Adaptive concurrency cap</td></tr><tr><td>Snapshot nhiều giờ mà không theo dõi</td><td>Vacuum/undo pressure</td><td>Native dump, replica hoặc chunk consistency</td></tr><tr><td>Tạo covering index cực rộng</td><td>Write/storage/cache penalty</td><td>Chỉ cover projection hẹp và export thường xuyên</td></tr></tbody></table></div>
+<h2 id="11-decision-table">11. Decision table<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#11-decision-table" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>Cơ chế</th><th>Khi nên dùng</th><th>Khi tránh</th></tr></thead><tbody><tr><td><code>LIMIT/OFFSET</code></td><td>UI page nhỏ, độ sâu giới hạn</td><td>Full export/deep pagination</td></tr><tr><td>Keyset chunks</td><td>App export có cursor ổn định</td><td>Cần random page number</td></tr><tr><td>One huge stream</td><td>One-off đơn giản, snapshot ngắn</td><td>Resume/SLA nghiêm ngặt</td></tr><tr><td>PostgreSQL <code>COPY</code></td><td>CSV/native bulk transfer</td><td>Checkpoint per business chunk phức tạp</td></tr><tr><td><code>pg_dump</code>/MySQL dump</td><td>Backup/migration, consistency</td><td>Format nghiệp vụ tùy biến</td></tr><tr><td>Custom exporter</td><td>Filtering/encoding/upload/checkpoint đặc thù</td><td>Khi native tool đã đáp ứng hoàn toàn</td></tr></tbody></table></div>
+<blockquote class="callout abstract" data-callout="abstract">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Kết luận </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>Thiết kế export tốt biến một công việc khổng lồ thành chuỗi đơn vị nhỏ, deterministic và có thể phục hồi. Keyset giảm work của database; buffer hữu hạn truyền backpressure; multipart + checkpoint tạo durability boundary; consistency được chọn rõ thay vì vô tình giữ transaction nhiều giờ. Và mọi giả định phải được kiểm chứng bằng plan thật, failure injection và telemetry production.</p>
+</div>
+</blockquote>
+<h2 id="nguồn-chính">Nguồn chính<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#nguồn-chính" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<ul>
+<li><a href="https://www.postgresql.org/docs/current/queries-limit.html" class="external">PostgreSQL — LIMIT and OFFSET<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><a href="https://www.postgresql.org/docs/current/indexes-index-only-scans.html" class="external">PostgreSQL — Index-Only Scans<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><a href="https://www.postgresql.org/docs/current/sql-copy.html" class="external">PostgreSQL — COPY<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><a href="https://www.postgresql.org/docs/current/app-pgdump.html" class="external">PostgreSQL — pg_dump<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><a href="https://jdbc.postgresql.org/documentation/query/#getting-results-based-on-a-cursor" class="external">pgJDBC — Cursor-based Results<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><a href="https://dev.mysql.com/doc/connector-j/en/connector-j-reference-implementation-notes.html" class="external">MySQL Connector/J — Streaming Results<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><a href="https://dev.mysql.com/doc/mysql-shell/8.4/en/mysql-shell-utilities-dump-instance-schema.html" class="external">MySQL Shell — Dump Utilities<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/mpuoverview.html" class="external">AWS S3 — Multipart Upload<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><a href="https://zeroexp.dev/library/mysql-keyset-pagination" class="external">ZeroExp — MySQL Keyset Pagination Benchmark<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+</ul></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-87" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#export-5-triệu-dòng-mà-không-làm-quá-tải-database" data-for="export-5-triệu-dòng-mà-không-làm-quá-tải-database">Export 5 triệu dòng mà không làm quá tải database</a></li><li class="depth-1"><a href="#1-bốn-trục-rủi-ro-độc-lập" data-for="1-bốn-trục-rủi-ro-độc-lập">1. Bốn trục rủi ro độc lập</a></li><li class="depth-1"><a href="#2-offset-không-phải-vị-trí-trong-b-tree" data-for="2-offset-không-phải-vị-trí-trong-b-tree">2. OFFSET không phải vị trí trong B-tree</a></li><li class="depth-1"><a href="#3-keyset-nhanh-khi-predicate-thực-sự-trở-thành-range-seek" data-for="3-keyset-nhanh-khi-predicate-thực-sự-trở-thành-range-seek">3. Keyset nhanh khi predicate thực sự trở thành range seek</a></li><li class="depth-1"><a href="#4-kiến-trúc-có-backpressure-và-durability-boundary" data-for="4-kiến-trúc-có-backpressure-và-durability-boundary">4. Kiến trúc có backpressure và durability boundary</a></li><li class="depth-2"><a href="#worker-item-tối-thiểu" data-for="worker-item-tối-thiểu">Worker item tối thiểu</a></li><li class="depth-2"><a href="#quy-tắc-checkpoint" data-for="quy-tắc-checkpoint">Quy tắc checkpoint</a></li><li class="depth-1"><a href="#5-streaming-không-đồng-nghĩa-mọi-driver-đều-giống-nhau" data-for="5-streaming-không-đồng-nghĩa-mọi-driver-đều-giống-nhau">5. Streaming không đồng nghĩa mọi driver đều giống nhau</a></li><li class="depth-2"><a href="#go-databasesql" data-for="go-databasesql">Go database/sql</a></li><li class="depth-2"><a href="#postgresql-jdbc" data-for="postgresql-jdbc">PostgreSQL JDBC</a></li><li class="depth-2"><a href="#mysql-connectorj" data-for="mysql-connectorj">MySQL Connector/J</a></li><li class="depth-1"><a href="#6-network-timeout-là-một-phần-của-query-design" data-for="6-network-timeout-là-một-phần-của-query-design">6. Network timeout là một phần của query design</a></li><li class="depth-1"><a href="#7-consistency-snapshot-thống-nhất-hay-export-có-thể-resume" data-for="7-consistency-snapshot-thống-nhất-hay-export-có-thể-resume">7. Consistency: snapshot thống nhất hay export có thể resume?</a></li><li class="depth-2"><a href="#một-snapshot-dài" data-for="một-snapshot-dài">Một snapshot dài</a></li><li class="depth-2"><a href="#các-chunk-độc-lập" data-for="các-chunk-độc-lập">Các chunk độc lập</a></li><li class="depth-1"><a href="#8-usage-cấu-hình-ban-đầu-và-cách-tune" data-for="8-usage-cấu-hình-ban-đầu-và-cách-tune">8. Usage: cấu hình ban đầu và cách tune</a></li><li class="depth-1"><a href="#9-bảng-monitoring-tối-thiểu" data-for="9-bảng-monitoring-tối-thiểu">9. Bảng monitoring tối thiểu</a></li><li class="depth-1"><a href="#10-mistakes-chi-tiết" data-for="10-mistakes-chi-tiết">10. Mistakes chi tiết</a></li><li class="depth-1"><a href="#11-decision-table" data-for="11-decision-table">11. Decision table</a></li><li class="depth-1"><a href="#nguồn-chính" data-for="nguồn-chính">Nguồn chính</a></li><li class="overflow-end"></li></ul></div><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:false,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://dangthobach.github.io/">Back to Portfolio</a></li><li><a href="https://github.com/dangthobach">GitHub</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../postscript.js" type="module" data-persist="true"></script></html>

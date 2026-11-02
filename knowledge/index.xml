@@ -6,6 +6,42 @@
       <description>Last 10 notes on Dang Tho Bach&#039;s Knowledge Base</description>
       <generator>Quartz -- quartz.jzhao.xyz</generator>
       <item>
+    <title>B-Tree-Clustered-Index-Random-Write-Cost</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/B-Tree-Clustered-Index-Random-Write-Cost</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/B-Tree-Clustered-Index-Random-Write-Cost</guid>
+    <description><![CDATA[ B-tree, clustered index và cái giá của ghi random (Database) Mục tiêu: Nối một mạch từ đơn vị vật lý nhỏ nhất (page) đến hiện tượng người dùng nhìn thấy (insert chậm dần, index phình, backup chậm) — để khi ai đó nói “UUID random làm chậm DB”, bạn chỉ ra được chính xác cơ chế nào đang chạy ở từng tần... ]]></description>
+    <pubDate>Mon, 02 Nov 2026 00:00:00 GMT</pubDate>
+  </item><item>
+    <title>Chon-Kieu-ID-He-Thong-Hien-Dai</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/Chon-Kieu-ID-He-Thong-Hien-Dai</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/Chon-Kieu-ID-He-Thong-Hien-Dai</guid>
+    <description><![CDATA[ Chọn kiểu ID cho hệ thống hiện đại (Database) Mục tiêu: Trả lời một câu hỏi tưởng nhỏ nhưng quyết định hình dạng của cả schema: “Primary key nên sinh ra như thế nào?” — bằng cơ chế bên trong B-Tree/InnoDB chứ không bằng “best practice” truyền miệng. ]]></description>
+    <pubDate>Mon, 02 Nov 2026 00:00:00 GMT</pubDate>
+  </item><item>
+    <title>19-Heap-CTID-Vacuum</title>
+    <link>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/19-Heap-CTID-Vacuum</link>
+    <guid>https://dangthobach.github.io/knowledge/Database-Patterns/PostgreSQL/19-Heap-CTID-Vacuum</guid>
+    <description><![CDATA[ Heap, CTID và VACUUM (Database) — PostgreSQL không xếp bảng theo primary key Bài này dành cho ai? Bạn đã biết SQL, đã nghe “PostgreSQL dùng MVCC”, nhưng chưa thấy tận mắt một bảng thật sự nằm trên đĩa như thế nào. ]]></description>
+    <pubDate>Mon, 02 Nov 2026 00:00:00 GMT</pubDate>
+  </item><item>
+    <title>01-Thiet-ke-index-B-tree-cho-query-thuc-te</title>
+    <link>https://dangthobach.github.io/knowledge/Deep-Research-Articles/01-Thiet-ke-index-B-tree-cho-query-thuc-te</link>
+    <guid>https://dangthobach.github.io/knowledge/Deep-Research-Articles/01-Thiet-ke-index-B-tree-cho-query-thuc-te</guid>
+    <description><![CDATA[ Thiết kế index B-tree cho query thực tế: từ ORDER BY đến EXPLAIN ANALYZE Luận đề Index tốt không phải index “xuất hiện trong EXPLAIN”, mà là index làm giảm công việc vật lý đo được: số entry phải duyệt, số row phải lấy từ heap/clustered table, số row phải sort, lượng I/O và thời gian CPU. ]]></description>
+    <pubDate>Mon, 02 Nov 2026 00:00:00 GMT</pubDate>
+  </item><item>
+    <title>02-Kafka-work-queue-consumer-group-va-share-group</title>
+    <link>https://dangthobach.github.io/knowledge/Deep-Research-Articles/02-Kafka-work-queue-consumer-group-va-share-group</link>
+    <guid>https://dangthobach.github.io/knowledge/Deep-Research-Articles/02-Kafka-work-queue-consumer-group-va-share-group</guid>
+    <description><![CDATA[ Kafka làm work queue: Consumer Group, rebalance storm và Share Groups 4.x Luận đề Nói “Kafka không phải queue” đã lỗi thời nếu hiểu tuyệt đối: Kafka 4.2 đưa KIP-932 Share Groups lên production-ready, với concurrent consumption trong cùng partition, per-record acknowledgement, delivery count và acqui... ]]></description>
+    <pubDate>Mon, 02 Nov 2026 00:00:00 GMT</pubDate>
+  </item><item>
+    <title>03-Export-5-trieu-rows-khong-qua-tai-database</title>
+    <link>https://dangthobach.github.io/knowledge/Deep-Research-Articles/03-Export-5-trieu-rows-khong-qua-tai-database</link>
+    <guid>https://dangthobach.github.io/knowledge/Deep-Research-Articles/03-Export-5-trieu-rows-khong-qua-tai-database</guid>
+    <description><![CDATA[ Export 5 triệu dòng mà không làm quá tải database Luận đề Năm triệu row không tự thân là nguy hiểm. ]]></description>
+    <pubDate>Mon, 02 Nov 2026 00:00:00 GMT</pubDate>
+  </item><item>
     <title>SolidJS-00-Overview</title>
     <link>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-00-Overview</link>
     <guid>https://dangthobach.github.io/knowledge/SolidJS-Series/SolidJS-00-Overview</guid>
@@ -29,42 +65,6 @@
     <guid>https://dangthobach.github.io/knowledge/_moc/VAULT-REFACTOR-2026-10</guid>
     <description><![CDATA[ Vault Refactor &amp; Currency Audit — 2026-10 Tracker cho việc rà soát kiến thức lỗi thời + refactor hệ thống kiến thức. ]]></description>
     <pubDate>Sun, 25 Oct 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>data-storage-model-java-go-rust</title>
-    <link>https://dangthobach.github.io/knowledge/concepts/data-storage-model-java-go-rust</link>
-    <guid>https://dangthobach.github.io/knowledge/concepts/data-storage-model-java-go-rust</guid>
-    <description><![CDATA[ 🗄️ Java vs Go vs Rust — Toàn Chuỗi Runtime: Storage, Allocator, Vtable, GC, Context Switch, Memory Model Mental model xuyên suốt bài Một chuỗi câu hỏi áp dụng cho MỌI value trong cả 3 ngôn ngữ: representation → ai sở hữu/tham chiếu nó? → stack/register hay heap? → nếu heap thì allocator nào phát? →... ]]></description>
-    <pubDate>Wed, 02 Sep 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>Bai-1-Ownership-Mindset</title>
-    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-1-Ownership-Mindset</link>
-    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-1-Ownership-Mindset</guid>
-    <description><![CDATA[ Bài 1: Ownership - Chìa khóa Tối ưu Bộ nhớ (Deep Dive) Chào Chuyên gia Java, hãy quên Garbage Collector (GC) trong chốc lát. ]]></description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>Bai-2-Borrowing-Multi-threading</title>
-    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-2-Borrowing-Multi-threading</link>
-    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-2-Borrowing-Multi-threading</guid>
-    <description><![CDATA[ Bài 2: Borrowing &amp; Multi-threading - Bí kíp “Diệt tận gốc” Data Race (Deep Dive) Ở Bài 1, String bị move khi gán cho biến khác. ]]></description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>Bai-3-Struct-Enum-Trait</title>
-    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-3-Struct-Enum-Trait</link>
-    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-3-Struct-Enum-Trait</guid>
-    <description><![CDATA[ Bài 3: Structs, Enums &amp; Traits - “Class” kiểu mới trong Rust (Deep Dive) Không có Class, không có Inheritance — vậy Rust đóng gói (encapsulate) và trừu tượng hóa (abstract) dữ liệu bằng cơ chế gì? Câu trả lời nằm ở bộ ba: struct (dữ liệu), enum (dữ liệu có nhiều hình dạng — tagged union), trait ... ]]></description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>Bai-15c-Logging-Ecosystem-Request-Logging</title>
-    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-15c-Logging-Ecosystem-Request-Logging</link>
-    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-15c-Logging-Ecosystem-Request-Logging</guid>
-    <description><![CDATA[ Bài 15c: Logging Ecosystem &amp; Request Logging Thực Chiến Chào Chuyên gia Java, Bài 15 và 34 đã dùng thẳng tracing mà chưa giải thích tại sao chọn nó, và log mọi request thì Bài 34 mới dừng ở tầng “span cho observability” (Jaeger). ]]></description>
-    <pubDate>Wed, 26 Aug 2026 00:00:00 GMT</pubDate>
-  </item><item>
-    <title>Bai-19-Unsafe-FFI</title>
-    <link>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-19-Unsafe-FFI</link>
-    <guid>https://dangthobach.github.io/knowledge/Rust-Zero-To-Hero/Bai-19-Unsafe-FFI</guid>
-    <description><![CDATA[ Bài 19: Unsafe Rust &amp; FFI — Khi Safe Không Đủ Tại sao học Unsafe? Không phải để dùng nhiều — mà để hiểu tại sao safe Rust có những restrictions như vậy. ]]></description>
-    <pubDate>Tue, 25 Aug 2026 00:00:00 GMT</pubDate>
   </item>
     </channel>
   </rss>
