@@ -15,6 +15,7 @@ const knowledgeExplorer = () =>
       const labels: Record<string, string> = {
         _moc: "Knowledge Maps",
         _inbox: "Research Inbox",
+        "Deep-Research-Articles": "Deep Research",
         concepts: "Core Concepts",
         "JVM-Frameworks-2026": "JVM Frameworks",
         "Performance-System-Programming": "Performance & Systems",
@@ -29,6 +30,7 @@ const knowledgeExplorer = () =>
       const priority = [
         "_moc",
         "_inbox",
+        "Deep-Research-Articles",
         "JVM-Frameworks-2026",
         "Performance-System-Programming",
         "Microservices-Patterns",
@@ -69,6 +71,10 @@ export const sharedPageComponents: SharedLayout = {
 // components for pages that display a single page (e.g. a single note)
 export const defaultContentPageLayout: PageLayout = {
   beforeBody: [
+    Component.ConditionalRender({
+      component: Component.FeaturedResearch(),
+      condition: (page) => ["index", "HOME"].includes(page.fileData.slug ?? ""),
+    }),
     Component.ConditionalRender({
       component: Component.Breadcrumbs(),
       condition: (page) => page.fileData.slug !== "index",

@@ -498,10 +498,6 @@ code {
   background: color-mix(in srgb, var(--secondary) 3.5%, transparent);
 }
 
-body[data-slug="index"] .page-header {
-  display: none;
-}
-
 body[data-slug="index"] article > h1::before {
   content: "PERSONAL KNOWLEDGE SYSTEM";
   display: block;

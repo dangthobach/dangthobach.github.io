@@ -1,11 +1,13 @@
 ---
 tags: [deep-research, kafka, messaging, distributed-systems, work-queue]
+title: "Kafka làm work queue: Consumer Group, rebalance storm và Share Groups 4.x"
 type: article
 domain: distributed-systems
 status: active
 created: 2026-11-02
 updated: 2026-11-02
 source: "deep-research-report(2).md"
+cover: Deep-Research-Articles/assets/kafka-consumer-vs-share-groups.png
 ---
 
 # Kafka làm work queue: Consumer Group, rebalance storm và Share Groups 4.x

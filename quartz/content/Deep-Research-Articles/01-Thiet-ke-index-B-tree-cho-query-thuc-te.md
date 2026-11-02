@@ -1,11 +1,13 @@
 ---
 tags: [deep-research, database, mysql, postgresql, indexing, performance]
+title: "Thiết kế index B-tree cho query thực tế: từ ORDER BY đến EXPLAIN ANALYZE"
 type: article
 domain: database-engineering
 status: active
 created: 2026-11-02
 updated: 2026-11-02
 source: "deep-research-report(1).md"
+cover: Deep-Research-Articles/assets/composite-btree-query-path.png
 ---
 
 # Thiết kế index B-tree cho query thực tế: từ `ORDER BY` đến `EXPLAIN ANALYZE`
