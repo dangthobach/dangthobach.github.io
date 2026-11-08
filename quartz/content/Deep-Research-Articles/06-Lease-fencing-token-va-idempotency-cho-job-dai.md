@@ -1,13 +1,11 @@
 ---
 tags: [deep-research, distributed-systems, lease, fencing-token, idempotency, redis, postgresql]
-title: "Lease, fencing token và idempotency cho job dài"
 type: article
 domain: distributed-systems
 status: active
 created: 2026-11-03
 updated: 2026-11-03
 source: "deep-research-report(4).md"
-cover: Deep-Research-Articles/assets/lease-fencing-stale-owner-timeline.png
 ---
 
 # Lease, fencing token và idempotency cho job dài

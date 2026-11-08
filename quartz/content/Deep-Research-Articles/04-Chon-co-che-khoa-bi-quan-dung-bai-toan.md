@@ -1,13 +1,11 @@
 ---
 tags: [deep-research, database, concurrency, pessimistic-locking, postgresql, redis]
-title: "Chọn cơ chế khóa bi quan đúng bài toán: FOR UPDATE, advisory lock, DB lease hay Redis?"
 type: article
 domain: distributed-systems
 status: active
 created: 2026-11-03
 updated: 2026-11-03
 source: "deep-research-report(4).md"
-cover: Deep-Research-Articles/assets/pessimistic-coordination-decision-framework-final.png
 ---
 
 # Chọn cơ chế khóa bi quan đúng bài toán: `FOR UPDATE`, advisory lock, DB lease hay Redis?

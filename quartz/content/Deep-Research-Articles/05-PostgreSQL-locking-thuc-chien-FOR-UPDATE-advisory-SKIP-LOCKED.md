@@ -1,13 +1,11 @@
 ---
 tags: [deep-research, postgresql, concurrency, for-update, advisory-lock, skip-locked]
-title: "PostgreSQL locking thực chiến: FOR UPDATE, advisory lock và SKIP LOCKED"
 type: article
 domain: database
 status: active
 created: 2026-11-03
 updated: 2026-11-03
 source: "deep-research-report(4).md"
-cover: Deep-Research-Articles/assets/postgresql-locking-production-flows.png
 ---
 
 # PostgreSQL locking thực chiến: `FOR UPDATE`, advisory lock và `SKIP LOCKED`

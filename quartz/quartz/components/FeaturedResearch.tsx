@@ -26,7 +26,14 @@ export default ((userOpts?: Partial<Options>) => {
         const tags = page.frontmatter?.tags ?? []
         return tags.includes("deep-research") && page.slug !== opts.linkToMore
       })
-      .sort(byDateAndAlphabetical(cfg))
+      .sort((a, b) => {
+        const byDate = byDateAndAlphabetical(cfg)(a, b)
+        if (byDate !== 0) return byDate
+
+        // Research articles in a numbered series can share the same date.
+        // Prefer the later entry so the featured section surfaces new work.
+        return (b.slug ?? "").localeCompare(a.slug ?? "")
+      })
       .slice(0, opts.limit)
 
     if (pages.length === 0) return null

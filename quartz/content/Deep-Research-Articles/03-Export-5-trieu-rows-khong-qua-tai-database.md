@@ -1,13 +1,11 @@
 ---
 tags: [deep-research, database, export, keyset-pagination, streaming, resilience]
-title: "Export 5 triệu dòng mà không làm quá tải database"
 type: article
 domain: data-engineering
 status: active
 created: 2026-11-02
 updated: 2026-11-02
 source: "deep-research-report(3).md"
-cover: Deep-Research-Articles/assets/resilient-database-export-pipeline.png
 ---
 
 # Export 5 triệu dòng mà không làm quá tải database
