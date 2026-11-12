@@ -121,6 +121,7 @@ SORT week ASC
 
 ---
 
+<a id="tuan-1"></a>
 ### 🗓️ Tuần 1 — 14/04 → 20/04/2026
 
 **Focus:** Quarkus P1 — Foundation (CDI, JAX-RS)
